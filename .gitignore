@@ -10,3 +10,5 @@ CMakeFiles
 gmock_main.pc
 libs/gtest/
 libs/msgpack-c/
+Makefile
+*.a
