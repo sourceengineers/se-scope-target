@@ -7,3 +7,4 @@ gmock.pc
 gtest_main.pc
 gtest.pc
 CMakeFiles
+gmock_main.pc
