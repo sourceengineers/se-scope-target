@@ -1,0 +1,22 @@
+Start testing: Aug 28 16:47 CEST
+----------------------------------------------------------
+1/1 Testing: msgpack-parser-test
+1/1 Test: msgpack-parser-test
+Command: "/home/schuepbs/Documents/Projects/iot-scope-target/libs/msgpack-parser/test/msgpack-parser-test"
+Directory: /home/schuepbs/Documents/Projects/iot-scope-target/libs/msgpack-parser/test
+"msgpack-parser-test" start time: Aug 28 16:47 CEST
+Output:
+----------------------------------------------------------
+Running main() from gtest_main.cc
+[==========] Running 0 tests from 0 test cases.
+[==========] 0 tests from 0 test cases ran. (0 ms total)
+[  PASSED  ] 0 tests.
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"msgpack-parser-test" end time: Aug 28 16:47 CEST
+"msgpack-parser-test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Aug 28 16:47 CEST

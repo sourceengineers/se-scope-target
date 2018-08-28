@@ -8,3 +8,5 @@ gtest_main.pc
 gtest.pc
 CMakeFiles
 gmock_main.pc
+libs/gtest/
+libs/msgpack-c/
