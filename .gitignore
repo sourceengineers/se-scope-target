@@ -12,3 +12,7 @@ libs/gtest/
 libs/msgpack-c/
 Makefile
 *.a
+
+iot-scope-target
+
+libs/msgpack-parser/test/msgpack-parser-test

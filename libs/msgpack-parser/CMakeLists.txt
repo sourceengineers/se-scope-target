@@ -52,7 +52,6 @@ add_library(${LIBRARY_NAME} STATIC
     ${LIBRARY_HEADERS}
 )
 
-
 target_include_directories(${LIBRARY_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/${LIBRARY_NAME}>
     $<INSTALL_INTERFACE:include/${LIBRARY_NAME}>
@@ -63,5 +62,9 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
+################################################################################
+## Add External libraries
+################################################################################
+target_link_libraries(${LIBRARY_NAME} msgpackc)
 
 add_subdirectory(test)

@@ -10,7 +10,7 @@ file(GLOB TEST_FILES
 )
 
 set(LINKING_LIBRARIES
-  # msgpack
+  msgpackc
 )
 
 set(LIBRARY_TESTS_SOURCE
