@@ -31,6 +31,6 @@ typedef struct Msgpack_parser_struct
  */
 Msgpack_parser msgpack_parser_create();
 
-void msgpack_parser_unpack(Msgpack_parser* self, char *data, int length);
+void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size);
 
 #endif // msgpack_parser_H_

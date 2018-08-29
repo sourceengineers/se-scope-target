@@ -6,8 +6,7 @@
 typedef struct {
   msgpack_unpacked und;   /* unpacked data */
   msgpack_unpack_return ret; /* unpacking return data */
-  char data[INPUT_DATA_SIZE];            /* Input binary data */
-  size_t dataSize;
+  msgpack_object obj;
 } InputData;
 
 typedef struct {

@@ -19,13 +19,8 @@ Msgpack_parser msgpack_parser_create(){//_create(Shared_Memory_MemoryAllocator* 
     ASSERT(me != NULL);
 */
     Msgpack_parser parser;
-
     OutputData outputData;
     InputData inputData;
-    inputData.dataSize = INPUT_DATA_SIZE;
-    for(int i = 0; i<inputData.dataSize; i++){
-      inputData.data[i] = 0;
-    }
 
     /* Initialize output buffers */
     msgpack_sbuffer_init(&outputData.sbuf); /* initialize buffer */
@@ -43,9 +38,32 @@ Msgpack_parser msgpack_parser_create(){//_create(Shared_Memory_MemoryAllocator* 
     return parser;
 }
 
-void msgpack_parser_unpack(Msgpack_parser* self, char *data, int length){
+void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size){
 
-  strcpy(self->inputData.data,data);
+  if (msgpack_unpacker_buffer_capacity(&self->unp) < request_size) {
+    bool result = msgpack_unpacker_reserve_buffer(&self->unp, request_size);
+    if (!result) {
+        memcpy(msgpack_unpacker_buffer(&self->unp), data, request_size);
+        msgpack_unpacker_buffer_consumed(&self->unp, request_size);
 
-  printf(self->inputData.data);
+
+        self->inputData.ret = msgpack_unpacker_next(&self->unp, &self->inputData.und);
+        switch(self->inputData.ret) {
+        case MSGPACK_UNPACK_SUCCESS:
+            {
+                self->inputData.obj = self->inputData.und.data;
+                /* Extract msgpack_object and use it. */
+            }
+            break;
+        case MSGPACK_UNPACK_CONTINUE:
+            /* cheking capacity, reserve buffer, copy additional data to the buffer, */
+            /* notify consumed buffer size, then call msgpack_unpacker_next(&unp, &upd) again */
+            break;
+        case MSGPACK_UNPACK_PARSE_ERROR:
+            /* Error process */
+            break;
+        }
+    }
+  }
+
 }
