@@ -18,7 +18,7 @@ set(PROJECT_LIBRARIES_DIR
     libs
 )
 set(PROJECT_LIBRARIES
-    msgpack-parser
+    msgpack_parser
 )
 
 project(${PROJECT_NAME})

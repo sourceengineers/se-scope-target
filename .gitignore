@@ -15,4 +15,6 @@ Makefile
 
 iot-scope-target
 
-libs/msgpack-parser/test/msgpack-parser-test
+libs/msgpack_parser/test/msgpack_parser-test
+
+libs/msgpack_parser/test/msgpack-parser-test

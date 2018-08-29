@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.0.0)
 # The module name also has to be set in the CmakeList in the root directory,
 # for it to be compiled and included in the project
 set(LIBRARY_NAME
-  msgpack-parser
+  msgpack_parser
 )
 
 # Set Project Name

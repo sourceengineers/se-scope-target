@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 set(TEST_PROJECT_NAME
-    msgpack-parser-test
+    msgpack_parser-test
 )
 
 file(GLOB TEST_FILES
