@@ -23,6 +23,8 @@ typedef struct Msgpack_parser_struct
   InputData inputData;
   msgpack_unpacker unp;
   void(*unpack)(struct Msgpack_parser_struct* self, char* data, int length);
+  void(*print_obj)(struct Msgpack_parser_struct* self);
+
 } Msgpack_parser ;
 
 
@@ -32,5 +34,7 @@ typedef struct Msgpack_parser_struct
 Msgpack_parser msgpack_parser_create();
 
 void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size);
+
+void msgpack_parser_print_obj(Msgpack_parser* self);
 
 #endif // msgpack_parser_H_

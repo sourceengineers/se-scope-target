@@ -12,15 +12,19 @@
 #include <msgpack_parser/msgpack_parser.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-Msgpack_parser msgpack_parser_create(){//_create(Shared_Memory_MemoryAllocator* allocator)
+Msgpack_parser* msgpack_parser_create(){//_create(Shared_Memory_MemoryAllocator* allocator)
     /*
     PrivateData* me = (PrivateData*)allocator->allocate(allocator->handle, sizeof(PrivateData));
     ASSERT(me != NULL);
 */
-    Msgpack_parser parser;
     OutputData outputData;
     InputData inputData;
+
+
+    Msgpack_parser* parser = (Msgpack_parser*) malloc(sizeof(Msgpack_parser));
+
 
     /* Initialize output buffers */
     msgpack_sbuffer_init(&outputData.sbuf); /* initialize buffer */
@@ -28,12 +32,12 @@ Msgpack_parser msgpack_parser_create(){//_create(Shared_Memory_MemoryAllocator* 
 
 
     /* Initialize input buffers */
-    bool result = msgpack_unpacker_init(&parser.unp, 100);
+    bool result = msgpack_unpacker_init(parser->unp, 100);
     msgpack_unpacked_init(&inputData.und);
 
-    parser.outputData = outputData;
-    parser.inputData = inputData;
-    parser.unpack = msgpack_parser_unpack;
+    parser->outputData = outputData;
+    parser->inputData = inputData;
+    parser->unpack = msgpack_parser_unpack;
 
     return parser;
 }
@@ -65,5 +69,15 @@ void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size){
         }
     }
   }
+
+}
+
+void mgspacker_parser_print_obj(Msgpack_parser* self){
+    msgpack_object_print(stdout, self->inputData->obj);
+
+}
+
+
+void msgpack_parser_pack(Msgpack_parser* self){
 
 }

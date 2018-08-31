@@ -6,8 +6,9 @@ int main()
 {
 
 
-    Msgpack_parser parser = msgpack_parser_create();
-    parser.unpack(&parser, "Hello", 3);
+    Msgpack_parser* parser = msgpack_parser_create();
+    parser->unpack(parser, "Hello", 3);
+    parser->unpack(parser, "Hello", 3);
 
     return 0;
 }
