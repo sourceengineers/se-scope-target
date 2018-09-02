@@ -32,12 +32,13 @@ Msgpack_parser* msgpack_parser_create(){//_create(Shared_Memory_MemoryAllocator*
 
 
     /* Initialize input buffers */
-    bool result = msgpack_unpacker_init(parser->unp, 100);
+    bool result = msgpack_unpacker_init(&parser->unp, 100);
     msgpack_unpacked_init(&inputData.und);
 
     parser->outputData = outputData;
     parser->inputData = inputData;
     parser->unpack = msgpack_parser_unpack;
+    parser->print_obj = msgpack_parser_print_obj;
 
     return parser;
 }
@@ -46,7 +47,7 @@ void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size){
 
   if (msgpack_unpacker_buffer_capacity(&self->unp) < request_size) {
     bool result = msgpack_unpacker_reserve_buffer(&self->unp, request_size);
-    if (!result) {
+    if (result) {
         memcpy(msgpack_unpacker_buffer(&self->unp), data, request_size);
         msgpack_unpacker_buffer_consumed(&self->unp, request_size);
 
@@ -68,12 +69,15 @@ void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size){
             break;
         }
     }
-  }
 
+  }
 }
 
-void mgspacker_parser_print_obj(Msgpack_parser* self){
-    msgpack_object_print(stdout, self->inputData->obj);
+void msgpack_parser_print_obj(Msgpack_parser* self){
+
+    msgpack_object map =  (self->inputData.obj.via.map.ptr+1)->val;
+
+    msgpack_object_print(stdout, map);
 
 }
 

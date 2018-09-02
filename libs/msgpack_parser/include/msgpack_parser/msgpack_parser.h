@@ -31,10 +31,11 @@ typedef struct Msgpack_parser_struct
 /**
  * Creates a msgpack_parser instance.
  */
-Msgpack_parser msgpack_parser_create();
+Msgpack_parser* msgpack_parser_create();
 
 void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size);
 
 void msgpack_parser_print_obj(Msgpack_parser* self);
+
 
 #endif // msgpack_parser_H_
