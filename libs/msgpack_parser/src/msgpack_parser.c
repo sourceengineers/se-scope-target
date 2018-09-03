@@ -73,14 +73,47 @@ void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size){
   }
 }
 
+
+void msgpack_copy_key(char *key, char *data, int size){
+
+  for (int i = 0; i < size; i++) {
+    key[i] = data[i];
+  }
+  key[size] = "\0";
+}
+
 void msgpack_parser_print_obj(Msgpack_parser* self){
 
-    msgpack_object map =  (self->inputData.obj.via.map.ptr+1)->val;
+    msgpack_object payload =  (self->inputData.obj.via.map.ptr+1)->val;
+    msgpack_object sc_cmd =  payload.via.map.ptr->val;
 
-    msgpack_object_print(stdout, map);
+
+
+    /* Extract keys for every command */
+    for(int i = 0; i<sc_cmd.via.map.size; i++){
+      char key[50];
+
+      msgpack_object cmd_key = (sc_cmd.via.map.ptr+i)->key;
+      msgpack_copy_key(key, cmd_key.via.str.ptr,cmd_key.via.str.size);
+
+    }
+
+
+
+    //msgpack_object cmd_obj = sc_cmd.via.map.ptr->val;
+
+
+    msgpack_object_print(stdout, sc_cmd);
 
 }
 
+void msgpack_parser_get_cmd_data(Msgpack_parser* self, char* cmdName){
+
+    msgpack_object cmdData =  (self->inputData.obj.via.map.ptr+1)->val;
+
+    msgpack_object_print(stdout, cmdData);
+
+}
 
 void msgpack_parser_pack(Msgpack_parser* self){
 
