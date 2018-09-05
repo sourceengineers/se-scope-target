@@ -1,0 +1,29 @@
+Start testing: Sep 05 19:15 EEST
+----------------------------------------------------------
+1/1 Testing: msgpack_parser-test
+1/1 Test: msgpack_parser-test
+Command: "/Users/schuepbs/Documents/Projects/iot-scope-target/libs/msgpack_parser/test/msgpack_parser-test"
+Directory: /Users/schuepbs/Documents/Projects/iot-scope-target/libs/msgpack_parser/test
+"msgpack_parser-test" start time: Sep 05 19:15 EEST
+Output:
+----------------------------------------------------------
+Running main() from /Users/schuepbs/Documents/Projects/iot-scope-target/libs/gtest/googletest/src/gtest_main.cc
+[==========] Running 1 test from 1 test case.
+[----------] Global test environment set-up.
+[----------] 1 test from msgpack_unpacker
+[ RUN      ] msgpack_unpacker.unpack_cmd_cf_tgr
+[       OK ] msgpack_unpacker.unpack_cmd_cf_tgr (0 ms)
+[----------] 1 test from msgpack_unpacker (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test case ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"msgpack_parser-test" end time: Sep 05 19:15 EEST
+"msgpack_parser-test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Sep 05 19:15 EEST

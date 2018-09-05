@@ -33,44 +33,27 @@
 }
 */
 
-//82 a9 74 72 61 6e 73 70 6f 72 74 a3 2e 2e 2e a7 70 61 79 6c 6f 61 64 82 a6 73 63 5f 63 6d 64 86 aa 63 66 5f 72 75 6e 6e 69 6e 67 85 a1 31 c2 a1 32 c3 a1 33 c2 a1 34 c3 a1 35 c3 a7 65 76 5f 70 6f 6c 6c a3 31 31 30 a8 65 76 5f 74 72 61 6e 73 a0 a7 63 66 5f 61 64 64 72 83 a1 31 cd 04 57 a1 34 cd 11 5c a1 35 cd 15 b3 a6 63 66 5f 74 67 72 84 a5 63 6c 5f 69 64 01 a4 6d 6f 64 65 a9 43 6f 6e 74 69 6e 6f 75 73 a5 6c 65 76 65 6c cb 40 04 00 00 00 00 00 00 a4 65 64 67 65 c3 a8 63 66 5f 74 5f 69 6e 63 0a a9 66 6c 6f 77 5f 63 74 72 6c a3 41 43 4b
+/* msgpack Data is corresbonding to the above Json object */
+char data[] = "\x82\xa9\x74\x72\x61\x6e\x73\x70\x6f\x72\x74\xa3\x2e\x2e\x2e\xa7\x70\x61\x79\x6c\x6f\x61\x64\x82\xa6\x73\x63\x5f\x63\x6d\x64\x86\xaa\x63\x66\x5f\x72\x75\x6e\x6e\x69\x6e\x67\x85\xa1\x31\xc2\xa1\x32\xc3\xa1\x33\xc2\xa1\x34\xc3\xa1\x35\xc3\xa7\x65\x76\x5f\x70\x6f\x6c\x6c\xa3\x31\x31\x30\xa8\x65\x76\x5f\x74\x72\x61\x6e\x73\xa0\xa7\x63\x66\x5f\x61\x64\x64\x72\x83\xa1\x31\xcd\x04\x57\xa1\x34\xcd\x11\x5c\xa1\x35\xcd\x15\xb3\xa6\x63\x66\x5f\x74\x67\x72\x84\xa5\x63\x6c\x5f\x69\x64\x01\xa4\x6d\x6f\x64\x65\xa9\x43\x6f\x6e\x74\x69\x6e\x6f\x75\x73\xa5\x6c\x65\x76\x65\x6c\xcb\x40\x04\x00\x00\x00\x00\x00\x00\xa4\x65\x64\x67\x65\xc3\xa8\x63\x66\x5f\x74\x5f\x69\x6e\x63\x0a\xa9\x66\x6c\x6f\x77\x5f\x63\x74\x72\x6c\xa3\x41\x43\x4b\0";
 
 extern "C" {
-//	#include "Shared/Memory/MockMemoryAllocator.h"
-    #include "msgpack_parser.h"
+    #include "msgpack_unpacker.h"
 }
 
-/*class msgpack_parserTest : public ::testing::Test
+
+TEST(msgpack_unpacker, unpack_cmd_cf_tgr)
 {
-protected:
-    msgpack_parserTest()
-        : Test()
-    {
-        // TODO: Allocate as much memory you require for the unit under test
-		MockMemoryAllocator_initialize(&_mockAllocator, 50);
-    }
+  Msgpack_parser* parser = msgpack_unpacker_create();
+  parser->unpack(parser, data, 1000);
+  msgpack_object cmd = parser->getCmdObj(parser, "cf_tgr");
+  
+  int channelId = (cmd.via.map.ptr)->val.via.i64;
+  float level = (cmd.via.map.ptr+2)->val.via.f64;
+  bool edge = (cmd.via.map.ptr+3)->val.via.boolean;
 
-    void SetUp() override
-    {
-        _msgpack_parser = msgpack_parser_create(&_mockAllocator.memoryAllocator);
-    }
-
-    void TearDown() override
-    {
-    	MockMemoryAllocator_reset(&_mockAllocator);
-    }
-
-    virtual ~msgpack_parserTest()
-    {
-        MockMemoryAllocator_destroy(&_mockAllocator);
-    }
-
-    MockMemoryAllocator _mockAllocator;
-    msgpack_parser_Handle _msgpack_parser;
-};*/
-
-/*TEST_F(msgpack_parserTest, msgpack_parserCreated)
-{
-	// test that the template was created
-  //  EXPECT_NE(nullptr, _msgpack_parser);
-}*/
+  
+  EXPECT_EQ(channelId, 1);
+  EXPECT_EQ(level, 2.5f);
+  EXPECT_EQ(edge, true);
+  
+}

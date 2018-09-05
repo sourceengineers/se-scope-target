@@ -15,15 +15,14 @@
 #include <msgpack_parser/msgpack_data.h>
 
 
-//#include "Shared/types.h"
-
 typedef struct Msgpack_parser_struct
 {
   OutputData outputData;
   InputData inputData;
   msgpack_unpacker unp;
   void(*unpack)(struct Msgpack_parser_struct* self, char* data, int length);
-  void(*print_obj)(struct Msgpack_parser_struct* self);
+  void(*printObj)(struct Msgpack_parser_struct* self, msgpack_object obj);
+  msgpack_object(*getCmdObj)(struct Msgpack_parser_struct* self, char* key);
 
 } Msgpack_parser ;
 
@@ -31,11 +30,10 @@ typedef struct Msgpack_parser_struct
 /**
  * Creates a msgpack_parser instance.
  */
-Msgpack_parser* msgpack_parser_create();
+Msgpack_parser* msgpack_unpacker_create();
 
-void msgpack_parser_unpack(Msgpack_parser* self, char *data, int request_size);
+void msgpack_unpacker_unpack(Msgpack_parser* self, char *data, int request_size);
 
-void msgpack_parser_print_obj(Msgpack_parser* self);
-
+msgpack_object msgpack_parser_getCmdObj(Msgpack_parser* self, char *key);
 
 #endif // msgpack_parser_H_
