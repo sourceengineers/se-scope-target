@@ -39,7 +39,7 @@ Msgpack_unpacker* msgpack_unpacker_create(){//_create(Shared_Memory_MemoryAlloca
 }
 
 /* Unpacks the data and safes it */
-void msgpack_unpacker_unpack(Msgpack_unpacker* self, char *data, int request_size){
+bool msgpack_unpacker_unpack(Msgpack_unpacker* self, char *data, int request_size){
 
   if (msgpack_unpacker_buffer_capacity(&self->unp) < request_size) {
     bool result = msgpack_unpacker_reserve_buffer(&self->unp, request_size);
@@ -53,15 +53,16 @@ void msgpack_unpacker_unpack(Msgpack_unpacker* self, char *data, int request_siz
         case MSGPACK_UNPACK_SUCCESS:
             {
                 self->obj = self->und.data;
-                /* Extract msgpack_object and use it. */
+                return true;
             }
             break;
         case MSGPACK_UNPACK_CONTINUE:
             /* cheking capacity, reserve buffer, copy additional data to the buffer, */
             /* notify consumed buffer size, then call msgpack_unpacker_next(&unp, &upd) again */
+            return false;
             break;
         case MSGPACK_UNPACK_PARSE_ERROR:
-            /* Error process */
+          return false;
             break;
         }
     }

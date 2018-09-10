@@ -26,7 +26,7 @@ typedef struct Msgpack_unpacker_struct
   Msgpack_base_unpacker* super;
 
   /* Methodes */
-  void(*unpack)(struct Msgpack_unpacker_struct* self, char* data, int length);
+  bool(*unpack)(struct Msgpack_unpacker_struct* self, char* data, int length);
   void(*printMsgpackObj)(struct Msgpack_unpacker_struct* self, msgpack_object obj);
   msgpack_object(*getCmdObj)(struct Msgpack_unpacker_struct* self, char* key);
 
@@ -46,7 +46,7 @@ typedef struct Msgpack_unpacker_struct
 
 
 Msgpack_unpacker* msgpack_unpacker_create();
-void msgpack_unpacker_unpack(Msgpack_unpacker* self, char *data, int request_size);
+bool msgpack_unpacker_unpack(Msgpack_unpacker* self, char *data, int request_size);
 msgpack_object Msgpack_unpacker_getCmdObj(Msgpack_unpacker* self, char *key);
 
 #endif // msgpack_parser_H_

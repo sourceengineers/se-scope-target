@@ -64,10 +64,21 @@ TEST(msgpack_unpacker, unpack_cmd_cf_tgr)
 
   bool edge = unpacker->getBoolFromObj(cmd, 3);
   EXPECT_EQ(edge, true);
+}
 
 
-//  bool edge = (cmd.via.map.ptr+3)->val.via.boolean;
+TEST(msgpack_unpacker, unpack_faulty_data)
+{
+  Msgpack_unpacker* unpacker = msgpack_unpacker_create();
+
+  /* Copy data and manipulate it */
+  char str[200];
+  strcpy(str, data);
+  str[5] = '\0';
 
 
+  bool resp = unpacker->unpack(unpacker, str, 1000);
+
+  ASSERT_EQ(resp, false);
 
 }
