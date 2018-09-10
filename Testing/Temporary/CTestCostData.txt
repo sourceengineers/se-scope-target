@@ -1,2 +1,2 @@
-msgpack_parser-test 5 0.00148983
+msgpack_parser-test 7 0.000708852
 ---

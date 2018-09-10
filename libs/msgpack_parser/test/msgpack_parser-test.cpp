@@ -43,17 +43,31 @@ extern "C" {
 
 TEST(msgpack_unpacker, unpack_cmd_cf_tgr)
 {
-  Msgpack_parser* parser = msgpack_unpacker_create();
-  parser->unpack(parser, data, 1000);
-  msgpack_object cmd = parser->getCmdObj(parser, "cf_tgr");
-  
-  int channelId = (cmd.via.map.ptr)->val.via.i64;
-  float level = (cmd.via.map.ptr+2)->val.via.f64;
-  bool edge = (cmd.via.map.ptr+3)->val.via.boolean;
+  Msgpack_unpacker* unpacker = msgpack_unpacker_create();
+  unpacker->unpack(unpacker, data, 1000);
+  msgpack_object cmd = unpacker->getCmdObj(unpacker, (char *) "cf_tgr");
 
-  
+  int channelId = unpacker->getIntFromObj(cmd, 0);
   EXPECT_EQ(channelId, 1);
+
+  char str[50];
+  unpacker->getStringFromObj(cmd, 1, str, 50);
+  EXPECT_EQ(str[0], 'C');
+  EXPECT_EQ(str[1], 'o');
+
+  unpacker->getStringFromObj(cmd, 1, str, 1);
+  EXPECT_EQ(str[0],'\0');
+
+
+  float level = unpacker->getFloatFromObj(cmd, 2);
   EXPECT_EQ(level, 2.5f);
+
+  bool edge = unpacker->getBoolFromObj(cmd, 3);
   EXPECT_EQ(edge, true);
-  
+
+
+//  bool edge = (cmd.via.map.ptr+3)->val.via.boolean;
+
+
+
 }
