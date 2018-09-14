@@ -17,8 +17,11 @@ set(PROJECT_SOURCE
 set(PROJECT_LIBRARIES_DIR
     libs
 )
+
+# Set the used libraries here !!!!!!!!!!!!!!!!!!!!!!!!!!!
 set(PROJECT_LIBRARIES
     msgpack_parser
+    scope
 )
 
 project(${PROJECT_NAME})
