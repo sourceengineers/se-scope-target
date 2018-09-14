@@ -9,9 +9,12 @@
  *
  *****************************************************************************************************************************************/
 
-typedef struct IFloatStreamStruct {
+#include <unistd.h>
 
-  size_t(*getSize)(struct IFloatStreamStruct *self);
-  float(*getData)(struct IFloatStreamStruct *self);
+typedef struct IFloatStreamStruct IFloatStream;
 
-} IFloatStream ;
+struct IFloatStreamStruct {
+  
+  size_t(*getSize)(IFloatStream* self);
+  float(*getData)(IFloatStream* self);
+};

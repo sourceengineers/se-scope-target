@@ -10,13 +10,41 @@
  *****************************************************************************************************************************************/
 
 #include <scope/i_float_stream.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 /* Defines Class name */
 typedef struct RingBufferStruct RingBuffer;
+struct RingBufferStruct
+{
+  /* Private Data */
+  float *data;
+  float *head, *tail;
+  size_t capacity;
+
+  /* Interfaces */
+  IFloatStream* iFloatStream;
+
+  /* Public Functions */
+  size_t (*getCapacity)(RingBuffer* self);
+  size_t (*freeData)(RingBuffer* self);
+  size_t (*usedData)(RingBuffer* self);
+  ssize_t (*write)(RingBuffer* self, float* data, size_t length);
+  ssize_t (*read)(RingBuffer* self, float* data, size_t length);
+  void (*clear)(RingBuffer* self);
+
+  IFloatStream* (*getIFloatStream)(IFloatStream *self);
+} ;
 
 
 /* Constructor: Creates a new instanze of the buffer */
 RingBuffer* RingBuffer_create(size_t capacity);
+
+/* Empties the buffer 
+   The capacity of the buffer will not change through this, but the free data
+   will increase to be the same as the capacity */
+void RingBuffer_clear(RingBuffer* self);
 
 /* Returns the capacity of the buffer */
 size_t RingBuffer_getCapacity(RingBuffer* self);
@@ -45,3 +73,19 @@ float RingBuffer_IFloatStream_getData(IFloatStream *self);
 
 /* Returns the IFloatStream interface */
 IFloatStream* RingBuffer_getIFloatStream(IFloatStream *self);
+
+
+
+/* Private Functions */
+/* Increments the given index by one */
+float* nextIndex(RingBuffer* self, float* index);
+
+/* Increments the Head index by one 
+   Returns true if the increment was successful
+   Returns false if a overflow was detectet */
+bool incHead(RingBuffer* self);
+
+/* Increments the Tail index by one 
+   Returns true if the increment was successful
+   Returns false if a overflow was detectet */
+bool incHead(RingBuffer* self);
