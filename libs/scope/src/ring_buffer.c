@@ -12,6 +12,9 @@
 #include <scope/ring_buffer.h>
 #include <assert.h>
 
+/* Define private data */
+typedef struct RingBufferPrivateStruct RingBufferPrivate;
+
 /* Define public data */
 struct RingBufferPrivateStruct
 {
@@ -42,7 +45,7 @@ RingBuffer* RingBuffer_create(size_t capacity){
   self->read = &RingBuffer_read;
   self->clear = &RingBuffer_clear;
   self->getFloatStream = &RingBuffer_getIFloatStream;
-
+  
   /* Set interface functions */
   self->iFloatStream.implementer = self;
   self->iFloatStream.getSize = &RingBuffer_IFloatStream_getSize;

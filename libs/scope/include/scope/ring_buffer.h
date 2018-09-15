@@ -15,8 +15,6 @@
 #include <stdlib.h>
 
 /* Defines class */
-/* Define private data */
-typedef struct RingBufferPrivateStruct RingBufferPrivate;
 /* Define public data */
 typedef struct RingBufferStruct RingBuffer;
 
