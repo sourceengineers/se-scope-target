@@ -15,9 +15,20 @@ const size_t longVectorLength = 11;
 float longTestVector[longVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f,7.7f,8.8f,9.9f,10.10f, 11.11f};
 float longAnswer[longVectorLength];
 
+
+TEST(RingBuffer, test_memory_management)
+{
+  RingBuffer* buffer = RingBuffer_create(shortCapacity);    
+  ASSERT_NE(buffer, nullptr);
+  ASSERT_NE(buffer->_private, nullptr);
+  
+  RingBuffer_destroy(buffer);
+}
+
+
 TEST(RingBuffer, test_write_read)
 {
-  RingBuffer* buffer = RingBuffer_create(shortCapacity);
+  RingBuffer* buffer = RingBuffer_create(shortCapacity);  
   
   ssize_t responce = buffer->write(buffer, shortTestVector, 6);
   ASSERT_EQ(responce, 6);
@@ -67,9 +78,23 @@ TEST(RingBuffer, test_exceptions)
   /* Second read should yield a since less used data is aviable than requested */
   responce = buffer->read(buffer, shortAnswer, 6);
   ASSERT_EQ(responce, -1);
-  
-  
-  
+}
 
 
+TEST(RingBuffer, test_stream_interface)
+{
+  RingBuffer* buffer = RingBuffer_create(shortCapacity);
+  ssize_t responce = buffer->write(buffer, shortTestVector, shortVectorLength);
+  
+  IFloatStream* stream = buffer->getFloatStream(buffer);
+  const size_t size = stream->getSize(stream);
+  
+  ASSERT_EQ(size, 6);
+  
+  float streamData[6];
+  stream->open(stream, streamData);
+  stream->getStream(stream);
+  stream->close(stream);
+  
+  ASSERT_THAT(streamData, testing::ElementsAre(1.1f,2.2f,3.3f,4.4f,5.5f,6.6f));
 }

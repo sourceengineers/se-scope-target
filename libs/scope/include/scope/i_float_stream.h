@@ -9,12 +9,19 @@
  *
  *****************************************************************************************************************************************/
 
+#ifndef I_FLOAT_STREAM_H_
+#define I_FLOAT_STREAM_H_
+
 #include <unistd.h>
 
 typedef struct IFloatStreamStruct IFloatStream;
 
 struct IFloatStreamStruct {
-  
+  void* implementer;
+  void (*open)(IFloatStream* self, float* floatStream);
   size_t(*getSize)(IFloatStream* self);
-  float(*getData)(IFloatStream* self);
+  size_t(*getStream)(IFloatStream* self);
+  void (*close)(IFloatStream* self);
 };
+
+#endif
