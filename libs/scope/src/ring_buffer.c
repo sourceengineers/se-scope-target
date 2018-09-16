@@ -10,10 +10,6 @@
  *****************************************************************************************************************************************/
 
 #include <scope/ring_buffer.h>
-#include <assert.h>
-
-/* Define private data */
-typedef struct RingBufferPrivateStruct RingBufferPrivate;
 
 /* Define public data */
 struct RingBufferPrivateStruct
@@ -23,6 +19,10 @@ struct RingBufferPrivateStruct
   float *head, *tail;
   size_t capacity;
   float *floatStream;
+  
+  float* (*nextIndex)(RingBuffer* self, float* index);
+  bool (*incHead)(RingBuffer* self);
+  bool (*incTail)(RingBuffer* self);
 };
 
 RingBuffer* RingBuffer_create(size_t capacity){
@@ -37,7 +37,12 @@ RingBuffer* RingBuffer_create(size_t capacity){
   self->_private->tail = self->_private->data;
   self->_private->head = self->_private->data;
 
-  /* Set functions */
+  /* Set private functions */
+  self->_private->nextIndex = &RingBuffer_nextIndex;
+  self->_private->incHead = &RingBuffer_incHead;
+  self->_private->incTail = &RingBuffer_incTail;
+
+  /* Set public functions */
   self->getCapacity = &RingBuffer_getCapacity;
   self->freeData = &RingBuffer_freeData;
   self->usedData = &RingBuffer_usedData;
@@ -56,51 +61,52 @@ RingBuffer* RingBuffer_create(size_t capacity){
   return self;
 }
 
-RingBuffer* RingBuffer_destroy(RingBuffer* self){
+void RingBuffer_destroy(RingBuffer* self){
   free(self->_private->data);
   free(self->_private);
   free(self);
 }
 
-size_t RingBuffer_getCapacity(RingBuffer* self){
+static size_t RingBuffer_getCapacity(RingBuffer* self){
   return self->_private->capacity;
 }
 
-size_t RingBuffer_freeData(RingBuffer* self){
-  return (size_t) (self->_private->capacity - (self->_private->head - self->_private->tail));
+static size_t RingBuffer_freeData(RingBuffer* self){
+  return (size_t) (self->_private->capacity - (self->usedData(self)));
 }
 
-size_t RingBuffer_usedData(RingBuffer* self){
+static size_t RingBuffer_usedData(RingBuffer* self){
   return (size_t) (self->_private->head - self->_private->tail);
 }
 
-void RingBuffer_clear(RingBuffer* self){
+static void RingBuffer_clear(RingBuffer* self){
   self->_private->head = self->_private->data;
   self->_private->tail = self->_private->data;
 }
 
 static float* RingBuffer_nextIndex(RingBuffer* self, float* index){
-  return ((index + 1) - self->_private->data) % self->_private->capacity + self->_private->data;
+  const long positionRelative = ((index + 1) - self->_private->data);
+  return (positionRelative % self->_private->capacity) + self->_private->data;
 }
 
 static bool RingBuffer_incTail(RingBuffer* self){
   if(self->_private->tail != self->_private->head){
-    self->_private->tail = RingBuffer_nextIndex(self, self->_private->tail);
+    self->_private->tail = self->_private->nextIndex(self, self->_private->tail);
     return true;
   }
   return false;
 }
 
 static bool RingBuffer_incHead(RingBuffer* self){
-  if(RingBuffer_nextIndex(self, self->_private->head) != self->_private->tail){ //&& self->_private->head != self->_private->tail){
-    self->_private->head = RingBuffer_nextIndex(self, self->_private->head);
+  if(self->_private->nextIndex(self, self->_private->head) != self->_private->tail){ 
+    self->_private->head = self->_private->nextIndex(self, self->_private->head);
     return true;
   }
   return false;
 }
 
 
-ssize_t RingBuffer_write(RingBuffer* self, float* data, size_t length){
+static ssize_t RingBuffer_write(RingBuffer* self, const float* data, const size_t length){
 
   if(length > self->freeData(self)){
     return -1;
@@ -110,7 +116,7 @@ ssize_t RingBuffer_write(RingBuffer* self, float* data, size_t length){
   do {
     *(self->_private->head) = data[i++];
     /* Catch buffer overflow */
-    if(RingBuffer_incHead(self) == false){
+    if(self->_private->incHead(self) == false){
       return -1;
     }
   } while(length > i);
@@ -118,7 +124,7 @@ ssize_t RingBuffer_write(RingBuffer* self, float* data, size_t length){
   return i;
 }
 
-ssize_t RingBuffer_read(RingBuffer* self, float* data, size_t length){
+static ssize_t RingBuffer_read(RingBuffer* self, float* data, const size_t length){
 
   if(length > self->usedData(self)){
     return -1;
@@ -128,7 +134,7 @@ ssize_t RingBuffer_read(RingBuffer* self, float* data, size_t length){
   do {
     data[i++] = *(self->_private->tail);
     /* Catch buffer overflow */
-    if(RingBuffer_incTail(self) == false){
+    if(self->_private->incTail(self) == false){
       return -1;
     }
   } while(length > i);
@@ -163,6 +169,6 @@ static size_t RingBuffer_IFloatStream_getStream(IFloatStream* iFloatStream){
   return dataRead;
 }
 
-IFloatStream* RingBuffer_getIFloatStream(RingBuffer* self){
+static IFloatStream* RingBuffer_getIFloatStream(RingBuffer* self){
   return &self->iFloatStream;
 }
