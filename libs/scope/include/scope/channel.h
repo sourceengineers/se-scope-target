@@ -14,7 +14,10 @@
 
 #include <scope/ring_buffer.h>
 
-typedef enum CL_STATES_ENUM {CL_INIT, CL_STOPPED, CL_RUNNING} CL_STATES;
+static const int CL_CURRENT_DATA = 0;
+static const int CL_OLD_DATA = 1;
+
+typedef enum {CL_INIT, CL_STOPPED, CL_RUNNING} CL_STATES;
 
 /* Defines class */
 /* Define private data */
@@ -32,6 +35,7 @@ struct ChannelStruct
   bool (*setStateStopped)(Channel* self);
   ssize_t (*poll)(Channel* self);
   IFloatStream* (*getFloatStream)(Channel* self);
+  size_t (*getTriggerData)(Channel* self, float* triggerData);
 };
 
 /******************************************************************************
@@ -66,6 +70,11 @@ static ssize_t Channel_poll(Channel* self);
 
 /* Returns the FloatStream of the buffer, so data can be read */
 static IFloatStream* Channel_getFloatStream(Channel* self);
+
+/* Safes to data points into the triggerData and returns the amount of points 
+   written */
+static size_t Channel_getTriggerData(Channel* self, float* triggerData);
+
 /******************************************************************************
  Private Functions 
 ******************************************************************************/
@@ -74,4 +83,8 @@ static void Channel_setState(Channel* self, CL_STATES state);
 
 /* Returns the current channel state */
 static CL_STATES Channel_getState(Channel* self);
+
+/* Safes the last two polled data points, so the trigger can fetch them */
+static void Channel_prepareTriggerData(Channel* self, float triggerData);
+
 #endif

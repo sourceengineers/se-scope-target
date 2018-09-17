@@ -2,7 +2,6 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include "ring_buffer.h"
     #include "channel.h"
 }
 

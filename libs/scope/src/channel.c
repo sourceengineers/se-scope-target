@@ -18,9 +18,11 @@ struct ChannelPrivateStruct
   RingBuffer* buffer;
   CL_STATES state;
   float* pollAddress;
+  float triggerData[2];
 
   void (*setState)(Channel* self, CL_STATES state);
   CL_STATES (*getState)(Channel* self);
+  void (*prepareTriggerData)(Channel* self, float triggerData);
 };
 
 Channel* Channel_create(RingBuffer* buffer){
@@ -31,10 +33,13 @@ Channel* Channel_create(RingBuffer* buffer){
   /* Set private variables */
   self->_private->state = CL_INIT;
   self->_private->buffer = buffer;
+  self->_private->triggerData[CL_CURRENT_DATA] = 0.0f;
+  self->_private->triggerData[CL_OLD_DATA] = 0.0f;
   
   /* Attatch private functions */
   self->_private->setState = &Channel_setState;
   self->_private->getState = &Channel_getState;
+  self->_private->prepareTriggerData = &Channel_prepareTriggerData;
   
   /* Attatch public functions */
   self->setPollAddress = &Channel_setPollAddress;
@@ -43,6 +48,7 @@ Channel* Channel_create(RingBuffer* buffer){
   self->setStateStopped = &Channel_setStateStopped;
   self->poll = &Channel_poll;
   self->getFloatStream = &Channel_getFloatStream;
+  self->getTriggerData = &Channel_getTriggerData;
 
   return self;
 }
@@ -90,9 +96,22 @@ static bool Channel_setStateStopped(Channel* self){
   }
 }
 
+static void Channel_prepareTriggerData(Channel* self, float triggerData){
+  self->_private->triggerData[CL_OLD_DATA] = self->_private->triggerData[CL_CURRENT_DATA];
+  self->_private->triggerData[CL_CURRENT_DATA] = triggerData;
+}
+
+static size_t Channel_getTriggerData(Channel* self, float* triggerData){
+    triggerData[CL_CURRENT_DATA] = self->_private->triggerData[CL_CURRENT_DATA];
+    triggerData[CL_OLD_DATA] = self->_private->triggerData[CL_OLD_DATA];
+    return 2;
+}
+
 static ssize_t Channel_poll(Channel* self){
   if(self->_private->getState(self) == CL_RUNNING){
     const float polledData = *(self->_private->pollAddress);
+    self->_private->prepareTriggerData(self, polledData);
+    
     return self->_private->buffer->write(self->_private->buffer, &polledData, 1);  
   } else {
     return -1;
