@@ -17,7 +17,14 @@
 static const int CL_CURRENT_DATA = 0;
 static const int CL_OLD_DATA = 1;
 
+// fbu: ich würde CHANNEL ausschreiben
 typedef enum {CL_INIT, CL_STOPPED, CL_RUNNING} CL_STATES;
+
+
+// du kannst im header auf das struct verzichten. Es genügt eine forward declaration
+// z.b. typedef struct Channel_PrivateData* Channel_Handle;
+// das eigentliche Channel_PrivateData kannst du dann im C-File deklarieren
+// schau dir am besten nochmal die generierten templates an, dort sollte das richtig sein.
 
 /* Defines class */
 /* Define private data */
@@ -28,7 +35,9 @@ typedef struct ChannelStruct Channel;
 struct ChannelStruct
 {
   ChannelPrivate* _private;
-  
+
+  // ich glaube auf die funktionspointer kannst du hier verzichten. Die braucht es nur im interface, oder wenn du
+  // vererbung anwendest
   void (*setPollAddress)(Channel* self, float* pollAddress);
   float* (*getPollAddress)(Channel* self);
   bool (*setStateRunning)(Channel* self);

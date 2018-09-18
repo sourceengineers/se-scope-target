@@ -11,6 +11,7 @@
 
 #include <scope/channel.h>
 
+// hier typedef vorne dran, damit das ganze mit der deklaration im header geht
 /* Define public data */
 struct ChannelPrivateStruct
 {
@@ -27,6 +28,8 @@ struct ChannelPrivateStruct
 
 Channel* Channel_create(RingBuffer* buffer){
 
+   // wenn du auf die funktionspointer in der klasse verzichtest kannst du hier einfach ein private erzeugen. das reicht dann schon
+   // von aussen ist ja nur der pointer auf das private als "handle" bekannt, da kann nichts schief gehen.
   Channel* self = malloc(sizeof(Channel));
   self->_private = malloc(sizeof(ChannelPrivate));
 
