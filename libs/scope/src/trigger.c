@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         trigger.c
+ * @file         Trigger.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,61 +7,54 @@
  * 
  ******************************************************************************/
 
-#include <scope/trigger.h>
+#include <scope/Trigger.h>
 #include <math.h>
 
 /* Define public data */
-struct TriggerPrivateStruct
+typedef struct __TriggerPrivateStruct
 {
   float level;
   int sign;
   int edge;
   ssize_t triggerIndex;
-  Channel* channel;
+  ChannelHandle channel;
   TriggerStrategy triggerStrategies[3];
-  
-  TriggerStrategy (*getTriggerStrategy)(Trigger* self, TR_MODE mode);
-  void (*writeConfig)(Trigger* self, TriggerConfiguration conf);
-  bool (*checkCurrentData)(Trigger* self, float* triggerData);
-};
+} TriggerPrivateData;
 
-Trigger* Trigger_create(){
 
-  Trigger* self = malloc(sizeof(Trigger));
-  self->_private = malloc(sizeof(TriggerPrivate));
+/* schus: Gibt es einen weg wie ich die Funktionen nicht zuerst deklarieren muss? */
+static bool triggerContinuous(TriggerHandle self, const int index);
+static bool triggerNormal(TriggerHandle self, const int index);
+static bool triggerOneShot(TriggerHandle self, const int index);
+
+
+TriggerHandle Trigger_create(){
+
+  TriggerHandle self = malloc(sizeof(TriggerPrivateData));
   
   /* Writing all strategies into a array to easier load it when the trigger 
      is reconfigured */
-  self->_private->triggerStrategies[TR_CONTINUOUS] = &Trigger_continuous;
-  self->_private->triggerStrategies[TR_NORMAL] = &Trigger_normal;
-  self->_private->triggerStrategies[TR_ONESHOT] = &Trigger_oneShot;
+  self->triggerStrategies[TRIGGER_CONTINUOUS] = &triggerContinuous;
+  self->triggerStrategies[TRIGGER_NORMAL] = &triggerNormal;
+  self->triggerStrategies[TRIGGER_ONESHOT] = &triggerOneShot;
   
-  /* Attach private functions */
-  self->_private->getTriggerStrategy = &Trigger_getTriggerStrategy;
-  self->_private->writeConfig = &Trigger_writeConfig;
-  self->_private->checkCurrentData = &Trigger_checkCurrentData;
-
-  /* Attach public functions */
-  self->configure = &Trigger_configure;
-  self->trigger = &Trigger_continuous;
-  self->getTriggerIndex = &Trigger_getTriggerIndex;
+  Trigger_run = &triggerContinuous;
   
   return self;
 }
 
-void Trigger_destroy(Trigger* self){
-  free(self->_private);
+void Trigger_destroy(TriggerHandle self){
   free(self);
 }
 
-static bool Trigger_configSanityCheck(TriggerConfiguration conf){
-  if((conf.mode != TR_NORMAL) \ 
-      && (conf.mode != TR_CONTINUOUS) \ 
-      && (conf.mode != TR_ONESHOT)){
+static bool configSanityCheck(TriggerConfiguration conf){
+  if((conf.mode != TRIGGER_NORMAL) \ 
+      && (conf.mode != TRIGGER_CONTINUOUS) \ 
+      && (conf.mode != TRIGGER_ONESHOT)){
     return false;
   }
-  if((conf.edge != TR_EDGE_NEGATIVE) \
-      && (conf.edge != TR_EDGE_POSITIVE)){
+  if((conf.edge != TRIGGER_EDGE_NEGATIVE) \
+      && (conf.edge != TRIGGER_EDGE_POSITIVE)){
     return false;
   }
   if(conf.channel == NULL){
@@ -70,36 +63,36 @@ static bool Trigger_configSanityCheck(TriggerConfiguration conf){
   return true;
 }
 
-static TriggerStrategy Trigger_getTriggerStrategy(Trigger* self, TR_MODE mode){
-  return self->_private->triggerStrategies[mode];
+static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode){
+  return self->triggerStrategies[mode];
 }
 
-static void Trigger_writeConfig(Trigger* self, TriggerConfiguration conf){
-  self->_private->level = conf.level;
-  self->_private->edge = conf.edge;
-  self->_private->sign = (int) copysign(1.0f, conf.level);
-  self->_private->channel = conf.channel;
-  self->trigger = self->_private->getTriggerStrategy(self, conf.mode);
+static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
+  self->level = conf.level;
+  self->edge = conf.edge;
+  self->sign = (int) copysign(1.0f, conf.level);
+  self->channel = conf.channel;
+  Trigger_run = getTriggerStrategy(self, conf.mode);
 }
 
-static int Trigger_getTriggerIndex(Trigger* self){
-    return (int) self->_private->triggerIndex;
+static int Trigger_getTriggerIndex(TriggerHandle self){
+    return (int) self->triggerIndex;
 }
 
-static bool Trigger_configure(Trigger* self, TriggerConfiguration conf){
+static bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
     
-    if(Trigger_configSanityCheck(conf) == false){
+    if(configSanityCheck(conf) == false){
       return false;
     }
-    self->_private->writeConfig(self, conf);
+    writeConfig(self, conf);
     return true;
 }
 
-static bool Trigger_checkCurrentData(Trigger* self, float* triggerData){
+static bool checkCurrentData(TriggerHandle self, float* triggerData){
   
-  const float dataCurrent = triggerData[CL_CURRENT_DATA];
-  const float dataLast = triggerData[CL_OLD_DATA];
-  const float triggerLevel = self->_private->level;
+  const float dataCurrent = triggerData[CHANNEL_CURRENT_DATA];
+  const float dataLast = triggerData[CHANNEL_OLD_DATA];
+  const float triggerLevel = self->level;
   const int edge = (const int) dataCurrent > dataLast ? 1 : -1;
   const int sign = (const int) copysign(1.0f, dataCurrent);
   
@@ -107,7 +100,7 @@ static bool Trigger_checkCurrentData(Trigger* self, float* triggerData){
     return false;
   }
   
-  if(edge != self->_private->edge){
+  if(edge != self->edge){
     return false;
   }
   
@@ -121,27 +114,27 @@ static bool Trigger_checkCurrentData(Trigger* self, float* triggerData){
   return true;
 }
 
-static bool Trigger_continuous(Trigger* self, const int index){
-  self->_private->triggerIndex = -1;
+static bool triggerContinuous(TriggerHandle self, const int index){
+  self->triggerIndex = -1;
   return false;
 }
 
-static bool Trigger_normal(Trigger* self, const int index){
+static bool triggerNormal(TriggerHandle self, const int index){
   
-  Channel* channel = self->_private->channel;
+  ChannelHandle channel = self->channel;
   
   float triggerData[2];
-  channel->getTriggerData(channel, triggerData);
+  Channel_getTriggerData(channel, triggerData);
 
-  const bool isTriggered = self->_private->checkCurrentData(self, triggerData);
+  const bool isTriggered = checkCurrentData(self, triggerData);
   
   if(isTriggered == true){
-    self->_private->triggerIndex = index;
+    self->triggerIndex = index;
   }
   
   return isTriggered;
 }
 
-static bool Trigger_oneShot(Trigger* self, const int index){
+static bool triggerOneShot(TriggerHandle self, const int index){
   return false;
 }

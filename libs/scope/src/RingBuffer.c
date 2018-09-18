@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         ring_buffer.c
+ * @file         RingBuffer.c
  *
  * @copyright    Copyright (c) 2018 by Sonnen. All Rights Reserved.
  *
@@ -9,62 +9,63 @@
  *
  *****************************************************************************************************************************************/
 
-#include <scope/ring_buffer.h>
+#include <scope/RingBuffer.h>
 
 typedef struct __RingBufferPrivateData
 {
-  float *data;
-  float *head, *tail;
+  float* data;
+  float* head, *tail;
   size_t capacity;
-  float *floatStream;
-}RingBufferPrivateData;
+  float* floatStream;
+  IFloatStreamHandle iFloatStream;
+} RingBufferPrivateData ;
 
 // local functions to realize IFloatStream interface
-static size_t getSize(IFloatStream* iFloatStream){
-  RingBuffer* self = (RingBuffer*)iFloatStream->implementer;
-  return self->usedData(self);
+static size_t streamGetSize(IFloatStreamHandle iFloatStream){
+  RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
+  return RingBuffer_usedData(self);
 }
 
-static void open(IFloatStream* iFloatStream, float* floatStream){
-  RingBuffer* self = (RingBuffer*)iFloatStream->implementer;
+static void streamOpen(IFloatStreamHandle iFloatStream, float* floatStream){
+  RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
   if (floatStream != NULL) {
-    self->_private->floatStream = floatStream;
+    self->floatStream = floatStream;
   }
 }
 
-static void close(IFloatStream* iFloatStream){
-  RingBuffer* self = (RingBuffer*)iFloatStream->implementer;
-  self->_private->floatStream = NULL;
+static void streamClose(IFloatStreamHandle iFloatStream){
+  RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
+  self->floatStream = NULL;
 }
 
-static size_t getStream(IFloatStream* iFloatStream){
-  RingBuffer* self = (RingBuffer*)iFloatStream->implementer;
-  if(self->_private->floatStream == NULL){
+static size_t streamGetData(IFloatStreamHandle iFloatStream){
+  RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
+  if(self->floatStream == NULL){
     return -1;
   }
-  const size_t usedData = self->usedData(self);
-  const size_t dataRead = self->read(self, self->_private->floatStream, usedData);
+  const size_t usedData = RingBuffer_usedData(self);
+  const size_t dataRead = RingBuffer_read(self, self->floatStream, usedData);
   return dataRead;
 }
 
 // private functions
-static float* nextIndex(RingBuffer* self, float* index){
-  const long positionRelative = ((index + 1) - self->_private->data);
-  return (positionRelative % self->_private->capacity) + self->_private->data;
+static float* nextIndex(RingBufferHandle self, float* index){
+  const long positionRelative = ((index + 1) - self->data);
+  return (positionRelative % self->capacity) + self->data;
 }
 
 
-static bool incTail(RingBuffer* self){
-  if(self->_private->tail != self->_private->head){
-    self->_private->tail = self->_private->nextIndex(self, self->_private->tail);
+static bool incTail(RingBufferHandle self){
+  if(self->tail != self->head){
+    self->tail = nextIndex(self, self->tail);
     return true;
   }
   return false;
 }
 
-static bool incHead(RingBuffer* self){
-  if(self->_private->nextIndex(self, self->_private->head) != self->_private->tail){ 
-    self->_private->head = self->_private->nextIndex(self, self->_private->head);
+static bool incHead(RingBufferHandle self){
+  if(nextIndex(self, self->head) != self->tail){ 
+    self->head = nextIndex(self, self->head);
     return true;
   }
   return false;
@@ -74,63 +75,58 @@ static bool incHead(RingBuffer* self){
 RingBufferHandle RingBuffer_create(size_t capacity){
 
   /* Allocate memory and set _private variables */
-  RingBufferPrivateData* self = malloc(sizeof(RingBufferPrivateData));
+  RingBufferHandle self = malloc(sizeof(RingBufferPrivateData));
  
   self->capacity = capacity;
-  self>data = malloc(sizeof(float) * self->_private->capacity);
+  self->data = malloc(sizeof(float) * self->capacity);
   
-  self->tail = self->_private->data;
-  self->head = self->_private->data;
-
-  /* Set private functions */
-  self->nextIndex = &nextIndex;
-  self->incHead = &incHead;
-  self->incTail = &incTail;
+  self->tail = self->data;
+  self->head = self->data;
 
   /* Set interface functions */
-  self->iFloatStream.implementer = &self;
-  self->iFloatStream.getSize = &getSize;
-  self->iFloatStream.getStream = &getStream;
-  self->iFloatStream.open = &open;
-  self->iFloatStream.close = &close;
+  self->iFloatStream->implementer = &self;
+  self->iFloatStream->getSize = &streamGetSize;
+  self->iFloatStream->getStream = &streamGetData;
+  self->iFloatStream->open = &streamOpen;
+  self->iFloatStream->close = &streamClose;
   
   return self;
 }
 
-void RingBuffer_destroy(RingBuffer* self){
-  free(self->_private->data);
-  free(self->_private);
+void RingBuffer_destroy(RingBufferHandle self){
+  free(self->data);
+  free(self);
   free(self);
 }
 
-static size_t RingBuffer_getCapacity(RingBuffer* self){
-  return self->_private->capacity;
+static size_t RingBuffer_getCapacity(RingBufferHandle self){
+  return self->capacity;
 }
 
-static size_t RingBuffer_freeData(RingBuffer* self){
-  return (size_t) (self->_private->capacity - (self->usedData(self)));
+static size_t RingBuffer_freeData(RingBufferHandle self){
+  return (size_t) (self->capacity - (RingBuffer_usedData(self)));
 }
 
-static size_t RingBuffer_usedData(RingBuffer* self){
-  return (size_t) (self->_private->head - self->_private->tail);
+static size_t RingBuffer_usedData(RingBufferHandle self){
+  return (size_t) (self->head - self->tail);
 }
 
-static void RingBuffer_clear(RingBuffer* self){
-  self->_private->head = self->_private->data;
-  self->_private->tail = self->_private->data;
+static void RingBuffer_clear(RingBufferHandle self){
+  self->head = self->data;
+  self->tail = self->data;
 }
 
-static ssize_t RingBuffer_write(RingBuffer* self, const float* data, const size_t length){
+static ssize_t RingBuffer_write(RingBufferHandle self, const float* data, const size_t length){
 
-  if(length > self->freeData(self)){
+  if(length > RingBuffer_freeData(self)){
     return -1;
   }
 
   size_t i = 0;
   do {
-    *(self->_private->head) = data[i++];
+    *(self->head) = data[i++];
     /* Catch buffer overflow */
-    if(self->_private->incHead(self) == false){
+    if(incHead(self) == false){
       return -1;
     }
   } while(length > i);
@@ -138,17 +134,17 @@ static ssize_t RingBuffer_write(RingBuffer* self, const float* data, const size_
   return i;
 }
 
-static ssize_t RingBuffer_read(RingBuffer* self, float* data, const size_t length){
+static ssize_t RingBuffer_read(RingBufferHandle self, float* data, const size_t length){
 
-  if(length > self->usedData(self)){
+  if(length > RingBuffer_usedData(self)){
     return -1;
   }
 
   size_t i = 0;
   do {
-    data[i++] = *(self->_private->tail);
+    data[i++] = *(self->tail);
     /* Catch buffer overflow */
-    if(self->_private->incTail(self) == false){
+    if(incTail(self) == false){
       return -1;
     }
   } while(length > i);
@@ -156,6 +152,6 @@ static ssize_t RingBuffer_read(RingBuffer* self, float* data, const size_t lengt
   return i;
 }
 
-static IFloatStream* RingBuffer_getIFloatStream(RingBuffer* self){
+static IFloatStreamHandle RingBuffer_getIFloatStream(RingBufferHandle self){
   return &self->iFloatStream;
 }

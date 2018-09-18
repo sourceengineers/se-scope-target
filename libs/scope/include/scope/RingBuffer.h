@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         ring_buffer.h
+ * @file         RingBuffer.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -10,16 +10,16 @@
  *                stream interface.
  ******************************************************************************/
  
-#ifndef RING_BUFFER_H_
-#define RING_BUFFER_H_
+#ifndef RINGBUFFER_H_
+#define RINGBUFFER_H_
 
-#include <scope/i_float_stream.h>
+#include <scope/IFloatStream.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
 // forward declaration of the class handle
-typedef struct RingBufferPrivateData* RingBufferHandle; 
+typedef struct __RingBufferPrivateData* RingBufferHandle; 
 
 /******************************************************************************
  Public functions 
@@ -55,7 +55,7 @@ static ssize_t RingBuffer_write(RingBufferHandle self, const float* data, const 
 static ssize_t RingBuffer_read(RingBufferHandle self, float* data, const size_t length);
 
 /* Returns the IFloatStream interface */
-static IFloatStream* RingBuffer_getIFloatStream(RingBufferHandle self);
+static IFloatStreamHandle RingBuffer_getIFloatStream(RingBufferHandle self);
 
 
 #endif

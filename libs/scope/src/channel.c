@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         channel.c
+ * @file         Channel.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -9,118 +9,103 @@
  *
  *****************************************************************************************************************************************/
 
-#include <scope/channel.h>
+#include <scope/Channel.h>
 
 // hier typedef vorne dran, damit das ganze mit der deklaration im header geht
 /* Define public data */
 struct ChannelPrivateStruct
 {
   /* _private Data */
-  RingBuffer* buffer;
-  CL_STATES state;
+  RingBufferHandle buffer;
+  CHANNEL_STATES state;
   float* pollAddress;
   float triggerData[2];
-
-  void (*setState)(Channel* self, CL_STATES state);
-  CL_STATES (*getState)(Channel* self);
-  void (*prepareTriggerData)(Channel* self, float triggerData);
 };
 
-Channel* Channel_create(RingBuffer* buffer){
+static void prepareTriggerData(ChannelHandle self, float triggerData);
+static void setState(ChannelHandle self, CHANNEL_STATES state);
+static CHANNEL_STATES getState(ChannelHandle self);
+
+
+ChannelHandle Channel_create(RingBufferHandle buffer){
 
    // wenn du auf die funktionspointer in der klasse verzichtest kannst du hier einfach ein private erzeugen. das reicht dann schon
    // von aussen ist ja nur der pointer auf das private als "handle" bekannt, da kann nichts schief gehen.
-  Channel* self = malloc(sizeof(Channel));
-  self->_private = malloc(sizeof(ChannelPrivate));
+  ChannelHandle self = malloc(sizeof(ChannelHandle));
 
   /* Set private variables */
-  self->_private->state = CL_INIT;
-  self->_private->buffer = buffer;
-  self->_private->triggerData[CL_CURRENT_DATA] = 0.0f;
-  self->_private->triggerData[CL_OLD_DATA] = 0.0f;
-  
-  /* Attatch private functions */
-  self->_private->setState = &Channel_setState;
-  self->_private->getState = &Channel_getState;
-  self->_private->prepareTriggerData = &Channel_prepareTriggerData;
-  
-  /* Attatch public functions */
-  self->setPollAddress = &Channel_setPollAddress;
-  self->getPollAddress = &Channel_getPollAddress;
-  self->setStateRunning = &Channel_setStateRunning;
-  self->setStateStopped = &Channel_setStateStopped;
-  self->poll = &Channel_poll;
-  self->getFloatStream = &Channel_getFloatStream;
-  self->getTriggerData = &Channel_getTriggerData;
+  self->state = CHANNEL_INIT;
+  self->buffer = buffer;
+  self->triggerData[CHANNEL_CURRENT_DATA] = 0.0f;
+  self->triggerData[CHANNEL_OLD_DATA] = 0.0f;
 
   return self;
 }
 
-void Channel_destroy(Channel* self){
-  RingBuffer_destroy(self->_private->buffer);
-  free(self->_private);
+void Channel_destroy(ChannelHandle self){
+  RingBuffer_destroy(self->buffer);
   free(self);
 }
 
-static void Channel_setPollAddress(Channel* self, float* pollAddress){
-  self->_private->pollAddress = pollAddress;
-  if(self->_private->getState(self) == CL_INIT){
-    self->_private->setState(self, CL_STOPPED);
+static void Channel_setPollAddress(ChannelHandle self, float* pollAddress){
+  self->pollAddress = pollAddress;
+  if(getState(self) == CHANNEL_INIT){
+    setState(self, CHANNEL_STOPPED);
   }
 }
 
-static float* Channel_getPollAddress(Channel* self){
-  return self->_private->pollAddress;
+static float* Channel_getPollAddress(ChannelHandle self){
+  return self->pollAddress;
 }
 
-static void Channel_setState(Channel* self, CL_STATES state){
-  self->_private->state = state;
-}
-
-static CL_STATES Channel_getState(Channel* self){
-  return self->_private->state;
-}
-
-static bool Channel_setStateRunning(Channel* self){
-  if(self->_private->getState(self) == CL_STOPPED){
-    self->_private->setState(self, CL_RUNNING);
+static bool Channel_setStateRunning(ChannelHandle self){
+  if(getState(self) == CHANNEL_STOPPED){
+    setState(self, CHANNEL_RUNNING);
     return true;
   } else {
     return false;
   }
 }
 
-static bool Channel_setStateStopped(Channel* self){
-  if(self->_private->getState(self) == CL_RUNNING){
-    self->_private->setState(self, CL_STOPPED);
+static bool Channel_setStateStopped(ChannelHandle self){
+  if(getState(self) == CHANNEL_RUNNING){
+    setState(self, CHANNEL_STOPPED);
     return true;
   } else {
     return false;
   }
 }
 
-static void Channel_prepareTriggerData(Channel* self, float triggerData){
-  self->_private->triggerData[CL_OLD_DATA] = self->_private->triggerData[CL_CURRENT_DATA];
-  self->_private->triggerData[CL_CURRENT_DATA] = triggerData;
-}
-
-static size_t Channel_getTriggerData(Channel* self, float* triggerData){
-    triggerData[CL_CURRENT_DATA] = self->_private->triggerData[CL_CURRENT_DATA];
-    triggerData[CL_OLD_DATA] = self->_private->triggerData[CL_OLD_DATA];
+static size_t Channel_getTriggerData(ChannelHandle self, float* triggerData){
+    triggerData[CHANNEL_CURRENT_DATA] = self->triggerData[CHANNEL_CURRENT_DATA];
+    triggerData[CHANNEL_OLD_DATA] = self->triggerData[CHANNEL_OLD_DATA];
     return 2;
 }
 
-static ssize_t Channel_poll(Channel* self){
-  if(self->_private->getState(self) == CL_RUNNING){
-    const float polledData = *(self->_private->pollAddress);
-    self->_private->prepareTriggerData(self, polledData);
+static ssize_t Channel_poll(ChannelHandle self){
+  if(getState(self) == CHANNEL_RUNNING){
+    const float polledData = *(self->pollAddress);
+    prepareTriggerData(self, polledData);
     
-    return self->_private->buffer->write(self->_private->buffer, &polledData, 1);  
+    return RingBuffer_write(self->buffer, &polledData, 1);  
   } else {
     return -1;
   }
 }
 
-static IFloatStream* Channel_getFloatStream(Channel* self){
-  return self->_private->buffer->getFloatStream(self->_private->buffer);
+static IFloatStreamHandle Channel_getFloatStream(ChannelHandle self){
+  return RingBuffer_getFloatStream(self->buffer);
+}
+
+static void prepareTriggerData(ChannelHandle self, float triggerData){
+  self->triggerData[CHANNEL_OLD_DATA] = self->triggerData[CHANNEL_CURRENT_DATA];
+  self->triggerData[CHANNEL_CURRENT_DATA] = triggerData;
+}
+
+static void setState(ChannelHandle self, CHANNEL_STATES state){
+  self->state = state;
+}
+
+static CHANNEL_STATES getState(ChannelHandle self){
+  return self->state;
 }
