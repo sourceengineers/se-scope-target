@@ -16,7 +16,7 @@ struct TriggerPrivateStruct
   float level;
   int sign;
   int edge;
-  int triggeredIndex;
+  ssize_t triggerIndex;
   Channel* channel;
   TriggerStrategy triggerStrategies[3];
   
@@ -44,6 +44,7 @@ Trigger* Trigger_create(){
   /* Attach public functions */
   self->configure = &Trigger_configure;
   self->trigger = &Trigger_continuous;
+  self->getTriggerIndex = &Trigger_getTriggerIndex;
   
   return self;
 }
@@ -74,11 +75,15 @@ static TriggerStrategy Trigger_getTriggerStrategy(Trigger* self, TR_MODE mode){
 }
 
 static void Trigger_writeConfig(Trigger* self, TriggerConfiguration conf){
-  self->_private->level = fabs(conf.level);
+  self->_private->level = conf.level;
   self->_private->edge = conf.edge;
   self->_private->sign = (int) copysign(1.0f, conf.level);
   self->_private->channel = conf.channel;
   self->trigger = self->_private->getTriggerStrategy(self, conf.mode);
+}
+
+static int Trigger_getTriggerIndex(Trigger* self){
+    return (int) self->_private->triggerIndex;
 }
 
 static bool Trigger_configure(Trigger* self, TriggerConfiguration conf){
@@ -92,39 +97,51 @@ static bool Trigger_configure(Trigger* self, TriggerConfiguration conf){
 
 static bool Trigger_checkCurrentData(Trigger* self, float* triggerData){
   
-  const float level = triggerData[CL_CURRENT_DATA];
-  const float difference = level - triggerData[CL_OLD_DATA];
-  const int edge = (const int) copysign( 1.0f,difference);
-  const int sign = (const int) copysign( 1.0f,level);
+  const float dataCurrent = triggerData[CL_CURRENT_DATA];
+  const float dataLast = triggerData[CL_OLD_DATA];
+  const float triggerLevel = self->_private->level;
+  const int edge = (const int) dataCurrent > dataLast ? 1 : -1;
+  const int sign = (const int) copysign(1.0f, dataCurrent);
+  
+  if(dataCurrent == dataLast){
+    return false;
+  }
   
   if(edge != self->_private->edge){
     return false;
   }
   
-  if(sign != self->_private->sign){
+  /* Sort the two values to check if the triggerLevel is between them */
+  const float levelLower = dataCurrent > dataLast ? dataLast : dataCurrent;
+  const float levelHigher = dataCurrent > dataLast ? dataCurrent : dataLast;
+  if(triggerLevel < levelLower || triggerLevel > levelHigher){
     return false;
   }
-  
-  if(fabs(level) < self->_private->level){
-    return false;
-  }
-  
+
   return true;
 }
 
-static bool Trigger_continuous(Trigger* self){
+static bool Trigger_continuous(Trigger* self, const int index){
+  self->_private->triggerIndex = -1;
   return false;
 }
 
-static bool Trigger_normal(Trigger* self){
+static bool Trigger_normal(Trigger* self, const int index){
   
   Channel* channel = self->_private->channel;
   
   float triggerData[2];
   channel->getTriggerData(channel, triggerData);
-  return self->_private->checkCurrentData(self, triggerData);
+
+  const bool isTriggered = self->_private->checkCurrentData(self, triggerData);
+  
+  if(isTriggered == true){
+    self->_private->triggerIndex = index;
+  }
+  
+  return isTriggered;
 }
 
-static bool Trigger_oneShot(Trigger* self){
+static bool Trigger_oneShot(Trigger* self, const int index){
   return false;
 }

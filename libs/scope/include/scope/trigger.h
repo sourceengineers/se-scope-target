@@ -13,6 +13,9 @@
  *
  *               To configure the trigger, the specific Trigger has to be passed
  *               to the trigger and the trigger mode has to be choosen. 
+ *
+ *               TODO - OneShot tigger has to be implemented
+ *
  ******************************************************************************/
  
 #ifndef TRIGGER_H_
@@ -42,7 +45,7 @@ typedef struct {
 typedef struct TriggerPrivateStruct TriggerPrivate;
 /* Define public data */
 typedef struct TriggerStruct Trigger;
-typedef bool (*TriggerStrategy)(Trigger* self);
+typedef bool (*TriggerStrategy)(Trigger* self, const int index);
 
 /* Public data struct */
 struct TriggerStruct
@@ -51,6 +54,7 @@ struct TriggerStruct
  
  TriggerStrategy trigger;
  bool (*configure)(Trigger* self, TriggerConfiguration conf);
+ int (*getTriggerIndex)(Trigger* self);
 };
 
 /******************************************************************************
@@ -62,13 +66,15 @@ Trigger* Trigger_create();
 /* Deconstructor: Deletes the instanze of the Trigger */
 void Trigger_destroy(Trigger* self);
 
-
+/* Configures the trigger */
 static bool Trigger_configure(Trigger* self, TriggerConfiguration conf);
+
+/* Returns the triggered index */
+static int Trigger_getTriggerIndex(Trigger* self);
 
 /******************************************************************************
 Private functions 
 ******************************************************************************/
-
 /* Checks if the given configuration data is valid */
 static bool Trigger_configSanityCheck(TriggerConfiguration conf);
 
@@ -82,13 +88,12 @@ static void Trigger_writeConfig(Trigger* self, TriggerConfiguration conf);
 static bool Trigger_checkCurrentData(Trigger* self, float* triggerData);
 
 /* Strategy for the continuous trigger */
-static bool Trigger_continuous(Trigger* self);
+static bool Trigger_continuous(Trigger* self, const int index);
 
 /* Strategy for the normal trigger */
-static bool Trigger_normal(Trigger* self);
+static bool Trigger_normal(Trigger* self, const int index);
 
 /* Strategy for the oneShot trigger */
-static bool Trigger_oneShot(Trigger* self);
-
+static bool Trigger_oneShot(Trigger* self, const int index);
 
 #endif
