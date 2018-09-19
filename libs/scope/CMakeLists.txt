@@ -6,7 +6,12 @@ cmake_minimum_required(VERSION 3.0.0)
 # The module name also has to be set in the CmakeList in the root directory,
 # for it to be compiled and included in the project
 set(LIBRARY_NAME
-  scope
+  Scope
+)
+
+# Set all used dependencies
+set(DEPENDENCIES  
+   GeneralPurpose
 )
 
 # Set Project Name
@@ -65,6 +70,6 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
 ################################################################################
 ## Add External libraries
 ################################################################################
-target_link_libraries(${LIBRARY_NAME} msgpackc)
+target_link_libraries(${LIBRARY_NAME} ${DEPENDENCIES})
 
 add_subdirectory(test)
