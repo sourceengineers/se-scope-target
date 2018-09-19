@@ -1,8 +1,13 @@
 
 cmake_minimum_required(VERSION 3.0.0)
 
-# Pick the right configuration
-#set(CMAKE_BUILD_TYPE DEBUG)
+# How to build:
+# mkdir build 
+# cd build
+# Pick the right configuration:
+# Debug: cmake -DCMAKE_BUILD_TYPE=Debug ..
+# Release: cmake -DCMAKE_BUILD_TYPE=Release ..
+# make
 
 # Set the Project name
 set(PROJECT_NAME
@@ -22,24 +27,23 @@ set(PROJECT_LIBRARIES_DIR
 set(PROJECT_LIBRARIES
     msgpack_parser
     scope
+    GeneralPurpose
 )
 
 project(${PROJECT_NAME})
 
-#########
-# GTest #
-#########
+################################################################################
+# GTest 
+################################################################################
 enable_testing()
 add_subdirectory(libs/gtest)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
-###########
-# Project #
-###########
-
+################################################################################
+# Project 
+################################################################################
 
 add_executable(${PROJECT_NAME} ${PROJECT_SOURCE})
-
 
 foreach(LIBRARY ${PROJECT_LIBRARIES})
     add_subdirectory(${PROJECT_LIBRARIES_DIR}/${LIBRARY})
