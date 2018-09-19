@@ -92,7 +92,7 @@ TEST(RingBuffer, test_stream_interface)
   RingBufferHandle buffer = RingBuffer_create(shortCapacity);
   ssize_t responce = RingBuffer_write(buffer, shortTestVector, shortVectorLength);
   
-  IFloatStreamHandle stream = RingBuffer_getIFloatStream(buffer);
+  IFloatStreamHandle stream = RingBuffer_getFloatStream(buffer);
   const size_t size = stream->getSize(stream);
   
   ASSERT_EQ(size, 6);
