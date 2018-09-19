@@ -21,7 +21,7 @@
 #ifndef TRIGGER_H_
 #define TRIGGER_H_
 
-#include <scope/Channel.h>
+#include <Scope/Channel.h>
 
 /* Constants to represent the different edges on which the trigger can be 
    configured */
@@ -42,9 +42,9 @@ typedef struct {
 
 /* Defines class */
 typedef struct __TriggerPrivateStruct* TriggerHandle;
-/* Define public data */
-typedef bool (*TriggerStrategy)(TriggerHandle self, const int index);
 
+/* Typedef for a function pointer, to easier handle the strategies */
+typedef bool (*TriggerStrategy)(TriggerHandle self, const int index);
 /* Function pointer to the currently implemented strategy */
 TriggerStrategy Trigger_run;
 /******************************************************************************
@@ -57,8 +57,8 @@ TriggerHandle Trigger_create();
 void Trigger_destroy(TriggerHandle self);
 
 /* Configures the trigger */
-static bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf);
+bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf);
 
 /* Returns the triggered index */
-static int Trigger_getTriggerIndex(TriggerHandle self);
+int Trigger_getTriggerIndex(TriggerHandle self);
 #endif

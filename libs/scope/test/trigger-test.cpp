@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include <scope/Trigger.h>
+    #include "Trigger.h"
 }
 
 /* Mocking of the channel */

@@ -7,7 +7,7 @@
  * 
  ******************************************************************************/
 
-#include <scope/Trigger.h>
+#include <Scope/Trigger.h>
 #include <math.h>
 
 /* Define public data */
@@ -21,73 +21,7 @@ typedef struct __TriggerPrivateStruct
   TriggerStrategy triggerStrategies[3];
 } TriggerPrivateData;
 
-
-/* schus: Gibt es einen weg wie ich die Funktionen nicht zuerst deklarieren muss? */
-static bool triggerContinuous(TriggerHandle self, const int index);
-static bool triggerNormal(TriggerHandle self, const int index);
-static bool triggerOneShot(TriggerHandle self, const int index);
-
-
-TriggerHandle Trigger_create(){
-
-  TriggerHandle self = malloc(sizeof(TriggerPrivateData));
-  
-  /* Writing all strategies into a array to easier load it when the trigger 
-     is reconfigured */
-  self->triggerStrategies[TRIGGER_CONTINUOUS] = &triggerContinuous;
-  self->triggerStrategies[TRIGGER_NORMAL] = &triggerNormal;
-  self->triggerStrategies[TRIGGER_ONESHOT] = &triggerOneShot;
-  
-  Trigger_run = &triggerContinuous;
-  
-  return self;
-}
-
-void Trigger_destroy(TriggerHandle self){
-  free(self);
-}
-
-static bool configSanityCheck(TriggerConfiguration conf){
-  if((conf.mode != TRIGGER_NORMAL) \ 
-      && (conf.mode != TRIGGER_CONTINUOUS) \ 
-      && (conf.mode != TRIGGER_ONESHOT)){
-    return false;
-  }
-  if((conf.edge != TRIGGER_EDGE_NEGATIVE) \
-      && (conf.edge != TRIGGER_EDGE_POSITIVE)){
-    return false;
-  }
-  if(conf.channel == NULL){
-    return false;
-  }
-  return true;
-}
-
-static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode){
-  return self->triggerStrategies[mode];
-}
-
-static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
-  self->level = conf.level;
-  self->edge = conf.edge;
-  self->sign = (int) copysign(1.0f, conf.level);
-  self->channel = conf.channel;
-  Trigger_run = getTriggerStrategy(self, conf.mode);
-}
-
-static int Trigger_getTriggerIndex(TriggerHandle self){
-    return (int) self->triggerIndex;
-}
-
-static bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
-    
-    if(configSanityCheck(conf) == false){
-      return false;
-    }
-    writeConfig(self, conf);
-    return true;
-}
-
+/* Private functions */
 static bool checkCurrentData(TriggerHandle self, float* triggerData){
   
   const float dataCurrent = triggerData[CHANNEL_CURRENT_DATA];
@@ -137,4 +71,66 @@ static bool triggerNormal(TriggerHandle self, const int index){
 
 static bool triggerOneShot(TriggerHandle self, const int index){
   return false;
+}
+
+
+/* Public functions */
+TriggerHandle Trigger_create(){
+
+  TriggerHandle self = malloc(sizeof(TriggerPrivateData));
+  
+  /* Writing all strategies into a array to easier load it when the trigger 
+     is reconfigured */
+  self->triggerStrategies[TRIGGER_CONTINUOUS] = &triggerContinuous;
+  self->triggerStrategies[TRIGGER_NORMAL] = &triggerNormal;
+  self->triggerStrategies[TRIGGER_ONESHOT] = &triggerOneShot;
+  
+  Trigger_run = &triggerContinuous;
+  
+  return self;
+}
+
+void Trigger_destroy(TriggerHandle self){
+  free(self);
+}
+
+bool configSanityCheck(TriggerConfiguration conf){
+  if((conf.mode != TRIGGER_NORMAL) \ 
+      && (conf.mode != TRIGGER_CONTINUOUS) \ 
+      && (conf.mode != TRIGGER_ONESHOT)){
+    return false;
+  }
+  if((conf.edge != TRIGGER_EDGE_NEGATIVE) \
+      && (conf.edge != TRIGGER_EDGE_POSITIVE)){
+    return false;
+  }
+  if(conf.channel == NULL){
+    return false;
+  }
+  return true;
+}
+
+TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode){
+  return self->triggerStrategies[mode];
+}
+
+void writeConfig(TriggerHandle self, TriggerConfiguration conf){
+  self->level = conf.level;
+  self->edge = conf.edge;
+  self->sign = (int) copysign(1.0f, conf.level);
+  self->channel = conf.channel;
+  Trigger_run = getTriggerStrategy(self, conf.mode);
+}
+
+int Trigger_getTriggerIndex(TriggerHandle self){
+    return (int) self->triggerIndex;
+}
+
+bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
+    
+    if(configSanityCheck(conf) == false){
+      return false;
+    }
+    writeConfig(self, conf);
+    return true;
 }
