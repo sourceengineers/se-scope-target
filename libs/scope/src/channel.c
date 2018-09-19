@@ -15,10 +15,58 @@ struct __ChannelPrivateData
 {
   /* _private Data */
   RingBufferHandle buffer;
+  IFloatStream triggerDataStream;
   CHANNEL_STATES state;
   float* pollAddress;
   float triggerData[2];
+  float* floatStream;
 } ChannelPrivateData ;
+
+/* Functions for the IFloatStream interface */
+static size_t streamGetSize(IFloatStreamHandle iFloatStream){
+  return 2;
+}
+
+static void streamOpen(IFloatStreamHandle iFloatStream, float* floatStream){
+  ChannelHandle self = (ChannelHandle)iFloatStream->implementer;
+  if (floatStream != NULL) {
+    self->floatStream = floatStream;
+  }
+}
+
+static void streamClose(IFloatStreamHandle iFloatStream){
+  ChannelHandle self = (ChannelHandle)iFloatStream->implementer;
+  self->floatStream = NULL;
+}
+
+static size_t streamGetData(IFloatStreamHandle iFloatStream){
+  ChannelHandle self = (ChannelHandle)iFloatStream->implementer;
+  self->floatStream[CHANNEL_CURRENT_DATA] = self->triggerData[CHANNEL_CURRENT_DATA];
+  self->floatStream[CHANNEL_OLD_DATA] = self->triggerData[CHANNEL_OLD_DATA];
+  return 2;
+}
+
+/* Public functions */
+ChannelHandle Channel_create(RingBufferHandle buffer){
+
+  ChannelHandle self = malloc(sizeof(ChannelPrivateData));
+
+  /* Set private variables */
+  self->state = CHANNEL_INIT;
+  self->buffer = buffer;
+  self->triggerData[CHANNEL_CURRENT_DATA] = 0.0f;
+  self->triggerData[CHANNEL_OLD_DATA] = 0.0f;
+
+  /* Set interface functions */
+  self->triggerDataStream.implementer = self;
+  
+  self->triggerDataStream.getSize = &streamGetSize;
+  self->triggerDataStream.getStream = &streamGetData;
+  self->triggerDataStream.open = &streamOpen;
+  self->triggerDataStream.close = &streamClose;
+
+  return self;
+}
 
 static void prepareTriggerData(ChannelHandle self, float triggerData){
   self->triggerData[CHANNEL_OLD_DATA] = self->triggerData[CHANNEL_CURRENT_DATA];
@@ -31,21 +79,6 @@ static void setState(ChannelHandle self, CHANNEL_STATES state){
 
 static CHANNEL_STATES getState(ChannelHandle self){
   return self->state;
-}
-
-ChannelHandle Channel_create(RingBufferHandle buffer){
-
-   // wenn du auf die funktionspointer in der klasse verzichtest kannst du hier einfach ein private erzeugen. das reicht dann schon
-   // von aussen ist ja nur der pointer auf das private als "handle" bekannt, da kann nichts schief gehen.
-  ChannelHandle self = malloc(sizeof(ChannelPrivateData));
-
-  /* Set private variables */
-  self->state = CHANNEL_INIT;
-  self->buffer = buffer;
-  self->triggerData[CHANNEL_CURRENT_DATA] = 0.0f;
-  self->triggerData[CHANNEL_OLD_DATA] = 0.0f;
-
-  return self;
 }
 
 void Channel_destroy(ChannelHandle self){
@@ -82,10 +115,8 @@ bool Channel_setStateStopped(ChannelHandle self){
   }
 }
 
-size_t Channel_getTriggerData(ChannelHandle self, float* triggerData){
-    triggerData[CHANNEL_CURRENT_DATA] = self->triggerData[CHANNEL_CURRENT_DATA];
-    triggerData[CHANNEL_OLD_DATA] = self->triggerData[CHANNEL_OLD_DATA];
-    return 2;
+IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self){
+  return &self->triggerDataStream;
 }
 
 ssize_t Channel_poll(ChannelHandle self){
@@ -99,6 +130,6 @@ ssize_t Channel_poll(ChannelHandle self){
   }
 }
 
-IFloatStreamHandle Channel_getFloatStream(ChannelHandle self){
+IFloatStreamHandle Channel_getRingBufferFloatStream(ChannelHandle self){
   return RingBuffer_getFloatStream(self->buffer);
 }

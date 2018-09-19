@@ -30,7 +30,7 @@ TEST(Channel, test_polling)
   }
   
   /* Get stream interface to test the procedure */
-  IFloatStreamHandle stream = Channel_getFloatStream(channel);
+  IFloatStreamHandle stream = Channel_getRingBufferFloatStream(channel);
   stream->open(stream, shortAnswer);
   stream->getStream(stream);
   stream->close(stream);
@@ -66,4 +66,44 @@ TEST(Channel, test_states)
   isStopped = Channel_setStateStopped(channel);
   EXPECT_EQ(isStopped, true);
   EXPECT_EQ(Channel_poll(channel), -1);
+}
+
+TEST(Channel, test_trigger_stream)
+{
+  const size_t shortCapacity = 10;
+
+  const size_t shortVectorLength = 6;
+  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
+  float shortAnswer[shortVectorLength];
+
+  float data;
+
+  /* Create Instanzes */
+  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  ChannelHandle channel = Channel_create(buffer);
+  
+  /* Configure channel */
+  Channel_setPollAddress(channel, &data);
+  Channel_setStateRunning(channel);
+  
+  /* Simulate polling */
+  for(size_t i = 0; i < shortVectorLength; i++){
+    data = shortTestVector[i];
+    Channel_poll(channel);
+  }
+  
+  /* Get stream interface to test the procedure */
+  IFloatStreamHandle stream = Channel_getTriggerDataStream(channel);
+
+  float triggerData[2];
+  size_t readData;
+  stream->open(stream, triggerData);
+  readData = stream->getSize(stream);
+  ASSERT_EQ(readData, 2);
+  readData = stream->getStream(stream);
+  ASSERT_EQ(readData, 2);
+  stream->close(stream);
+  
+  ASSERT_THAT(triggerData, testing::ElementsAre(6.6f,5.5f));
+
 }

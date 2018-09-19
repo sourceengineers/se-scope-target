@@ -36,12 +36,12 @@ typedef struct {
  float level;
  int edge;
  TRIGGER_MODE mode;
- ChannelHandle channel;
+ IFloatStream stream;
 } TriggerConfiguration ;
 
 
 /* Defines class */
-typedef struct __TriggerPrivateStruct* TriggerHandle;
+typedef struct __TriggerPrivateData* TriggerHandle;
 
 /* Typedef for a function pointer, to easier handle the strategies */
 typedef bool (*TriggerStrategy)(TriggerHandle self, const int index);

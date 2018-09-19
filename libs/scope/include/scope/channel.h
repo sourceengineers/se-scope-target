@@ -53,10 +53,10 @@ bool Channel_setStateStopped(ChannelHandle self);
 ssize_t Channel_poll(ChannelHandle self);
 
 /* Returns the FloatStream of the buffer, so data can be read */
-IFloatStreamHandle Channel_getFloatStream(ChannelHandle self);
+IFloatStreamHandle Channel_getRingBufferFloatStream(ChannelHandle self);
 
 /* Safes to data points into the triggerData and returns the amount of points 
    written */
-size_t Channel_getTriggerData(ChannelHandle self, float* triggerData);
+IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self);
 
 #endif

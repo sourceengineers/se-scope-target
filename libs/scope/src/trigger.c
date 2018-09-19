@@ -11,13 +11,13 @@
 #include <math.h>
 
 /* Define public data */
-typedef struct __TriggerPrivateStruct
+typedef struct __TriggerPrivateData
 {
   float level;
   int sign;
   int edge;
   ssize_t triggerIndex;
-  ChannelHandle channel;
+  IFloatStream stream;
   TriggerStrategy triggerStrategies[3];
 } TriggerPrivateData;
 
@@ -48,17 +48,35 @@ static bool checkCurrentData(TriggerHandle self, float* triggerData){
   return true;
 }
 
+static bool getTriggerData(TriggerHandle self, float* data){
+  IFloatStream stream = self->stream;
+  
+  stream.open(&stream, data);
+  if(stream.getSize(&stream) != 2){
+    stream.close(&stream);
+    return false;
+  }
+  size_t dataFetched = stream.getStream(&stream);
+  
+  stream.close(&stream);
+  if(dataFetched != 2){
+    return false;
+  }
+  return true;
+}
+
 static bool triggerContinuous(TriggerHandle self, const int index){
   self->triggerIndex = -1;
   return false;
 }
 
 static bool triggerNormal(TriggerHandle self, const int index){
-  
-  ChannelHandle channel = self->channel;
-  
   float triggerData[2];
-  Channel_getTriggerData(channel, triggerData);
+  bool streamSuccessfull = getTriggerData(self, triggerData);
+  
+  if(streamSuccessfull == false){
+    return false;
+  }
 
   const bool isTriggered = checkCurrentData(self, triggerData);
   
@@ -73,6 +91,18 @@ static bool triggerOneShot(TriggerHandle self, const int index){
   return false;
 }
 
+static bool configSanityCheck(TriggerConfiguration conf){
+  if((conf.mode != TRIGGER_NORMAL) \ 
+      && (conf.mode != TRIGGER_CONTINUOUS) \ 
+      && (conf.mode != TRIGGER_ONESHOT)){
+    return false;
+  }
+  if((conf.edge != TRIGGER_EDGE_NEGATIVE) \
+      && (conf.edge != TRIGGER_EDGE_POSITIVE)){
+    return false;
+  }
+  return true;
+}
 
 /* Public functions */
 TriggerHandle Trigger_create(){
@@ -94,22 +124,6 @@ void Trigger_destroy(TriggerHandle self){
   free(self);
 }
 
-bool configSanityCheck(TriggerConfiguration conf){
-  if((conf.mode != TRIGGER_NORMAL) \ 
-      && (conf.mode != TRIGGER_CONTINUOUS) \ 
-      && (conf.mode != TRIGGER_ONESHOT)){
-    return false;
-  }
-  if((conf.edge != TRIGGER_EDGE_NEGATIVE) \
-      && (conf.edge != TRIGGER_EDGE_POSITIVE)){
-    return false;
-  }
-  if(conf.channel == NULL){
-    return false;
-  }
-  return true;
-}
-
 TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode){
   return self->triggerStrategies[mode];
 }
@@ -118,7 +132,7 @@ void writeConfig(TriggerHandle self, TriggerConfiguration conf){
   self->level = conf.level;
   self->edge = conf.edge;
   self->sign = (int) copysign(1.0f, conf.level);
-  self->channel = conf.channel;
+  self->stream = conf.stream;
   Trigger_run = getTriggerStrategy(self, conf.mode);
 }
 
