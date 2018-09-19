@@ -26,7 +26,7 @@ set(PROJECT_LIBRARIES_DIR
 # Set the used libraries here !!!!!!!!!!!!!!!!!!!!!!!!!!!
 set(PROJECT_LIBRARIES
     msgpack_parser
-    scope
+    Scope
     GeneralPurpose
 )
 
