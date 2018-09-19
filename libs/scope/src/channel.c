@@ -9,11 +9,9 @@
 
 #include <Scope/Channel.h>
 
-// hier typedef vorne dran, damit das ganze mit der deklaration im header geht
 /* Define public data */
-struct __ChannelPrivateData
+typedef struct __ChannelPrivateData
 {
-  /* _private Data */
   RingBufferHandle buffer;
   IFloatStream triggerDataStream;
   CHANNEL_STATES state;
@@ -59,7 +57,6 @@ ChannelHandle Channel_create(RingBufferHandle buffer){
 
   /* Set interface functions */
   self->triggerDataStream.implementer = self;
-  
   self->triggerDataStream.getSize = &streamGetSize;
   self->triggerDataStream.getStream = &streamGetData;
   self->triggerDataStream.open = &streamOpen;
