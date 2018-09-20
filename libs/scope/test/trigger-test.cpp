@@ -2,122 +2,141 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include <scope/trigger.h>
+    #include "Trigger.h"
 }
 
-/* Mocking of the channel */
+/* Mocking of the stream */
+float* globalFloatStream;
+
 float globalTriggerDataActive;
 float globalTriggerDataOld;
 
-size_t MockGetTriggerData(Channel* self, float* triggerData){
-  triggerData[0] = globalTriggerDataActive;
-  triggerData[1] = globalTriggerDataOld;
+/* Functions for the IFloatStream interface */
+static size_t streamGetSize(IFloatStreamHandle iFloatStream){
+  return 2;
+}
+
+static void streamOpen(IFloatStreamHandle iFloatStream, float* floatStream){
+  globalFloatStream = floatStream;
+}
+
+static void streamClose(IFloatStreamHandle iFloatStream){
+  globalFloatStream = NULL;
+}
+
+static size_t streamGetData(IFloatStreamHandle iFloatStream){
+  globalFloatStream[CHANNEL_CURRENT_DATA] = globalTriggerDataActive;
+  globalFloatStream[CHANNEL_OLD_DATA] = globalTriggerDataOld;
   return 2;
 }
 
 TEST(Trigger, test_normal)
 {
-  Channel* channel;
-  Trigger* trigger = Trigger_create();
-  channel->getTriggerData = &MockGetTriggerData;
-  TriggerConfiguration conf = {.level = 6.6f, .edge = TR_EDGE_POSITIVE, .channel = channel, .mode = TR_NORMAL};
-
+  IFloatStream stream;
+  stream.getSize = &streamGetSize;
+  stream.getStream = &streamGetData;
+  stream.open = &streamOpen;
+  stream.close = &streamClose;
   
-  /* Data in positive range. Trigger positive edge and positive level */
+  TriggerHandle trigger = Trigger_create();
+  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .stream = stream, .mode = TRIGGER_NORMAL};
+
   globalTriggerDataActive = 5.5f;
   globalTriggerDataOld = 1.1f;  
-  trigger->configure(trigger, conf);
-  bool isTriggered = trigger->trigger(trigger, 1);
+  Trigger_configure(trigger, conf);
+  bool isTriggered = Trigger_run(trigger, 1);
   
-  /* Data in positive range. Trigger positive edge and level lower */
   globalTriggerDataActive = 5.5f;
   globalTriggerDataOld = 1.1f;  
   conf.level = 4.4f;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, true);
   
-  /* Data in positive range, negative edge. Trigger positive edge */
   globalTriggerDataActive = 1.1f;
   globalTriggerDataOld = 5.5f;  
   conf.level = 3.3f;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, false);
   
   globalTriggerDataActive = 1.1f;
   globalTriggerDataOld = 5.5f;  
   conf.level = 3.3f;
-  conf.edge = TR_EDGE_NEGATIVE;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  conf.edge = TRIGGER_EDGE_NEGATIVE;
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, true);    
   
   globalTriggerDataActive = 1.1f;
   globalTriggerDataOld = 5.5f;  
   conf.level = 6.6f;
-  conf.edge = TR_EDGE_NEGATIVE;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  conf.edge = TRIGGER_EDGE_NEGATIVE;
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, false);  
   
   globalTriggerDataActive = -1.1f;
   globalTriggerDataOld = -5.5f;  
   conf.level = -4.4f;
-  conf.edge = TR_EDGE_NEGATIVE;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  conf.edge = TRIGGER_EDGE_NEGATIVE;
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, false);  
 
   globalTriggerDataActive = -5.5f;
   globalTriggerDataOld = -1.1f;  
   conf.level = -4.4f;
-  conf.edge = TR_EDGE_POSITIVE;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  conf.edge = TRIGGER_EDGE_POSITIVE;
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, false);  
   
   globalTriggerDataActive = -1.1f;
   globalTriggerDataOld = -5.5f;  
   conf.level = -4.4f;
-  conf.edge = TR_EDGE_POSITIVE;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  conf.edge = TRIGGER_EDGE_POSITIVE;
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, true);  
   
   globalTriggerDataActive = -1.1f;
   globalTriggerDataOld = -5.5f;  
   conf.level = -6.6f;
-  conf.edge = TR_EDGE_POSITIVE;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  conf.edge = TRIGGER_EDGE_POSITIVE;
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, false);  
   
   globalTriggerDataActive = 5.5f;
   globalTriggerDataOld = -5.5f;  
   conf.level = 3.3f;
-  conf.edge = TR_EDGE_POSITIVE;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  conf.edge = TRIGGER_EDGE_POSITIVE;
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, true);  
 
   globalTriggerDataActive = 5.5f;
   globalTriggerDataOld = -5.5f;  
   conf.level = -3.3f;
-  conf.edge = TR_EDGE_POSITIVE;
-  trigger->configure(trigger, conf);
-  isTriggered = trigger->trigger(trigger, 1);  
+  conf.edge = TRIGGER_EDGE_POSITIVE;
+  Trigger_configure(trigger, conf);
+  isTriggered = Trigger_run(trigger, 1);  
   ASSERT_EQ(isTriggered, true);  
 }
 
 TEST(Trigger, test_continuous)
 {
-  Channel* channel;
-  Trigger* trigger = Trigger_create();
-  channel->getTriggerData = &MockGetTriggerData;
-  TriggerConfiguration conf = {.channel = channel, .mode = TR_CONTINUOUS};
+  IFloatStream stream;
+  stream.getSize = &streamGetSize;
+  stream.getStream = &streamGetData;
+  stream.open = &streamOpen;
+  stream.close = &streamClose;
   
-  bool isTriggered = trigger->trigger(trigger, 1);
+  TriggerHandle trigger = Trigger_create();
+  TriggerConfiguration conf = {.stream = stream, .mode = TRIGGER_CONTINUOUS};
+  
+  bool isTriggered = Trigger_run(trigger, 1);
 
   ASSERT_EQ(isTriggered, false);  
 

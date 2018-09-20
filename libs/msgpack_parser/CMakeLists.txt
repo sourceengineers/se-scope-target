@@ -9,6 +9,11 @@ set(LIBRARY_NAME
   msgpack_parser
 )
 
+# Set all used dependencies
+set(DEPENDENCIES 
+   msgpackc 
+)
+
 # Set Project Name
 set(PROJECT_NAME
     Lib${LIBRARY_NAME}
@@ -65,6 +70,6 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
 ################################################################################
 ## Add External libraries
 ################################################################################
-target_link_libraries(${LIBRARY_NAME} msgpackc)
+target_link_libraries(${LIBRARY_NAME} ${DEPENDENCIES})
 
-add_subdirectory(test)
+#add_subdirectory(test)

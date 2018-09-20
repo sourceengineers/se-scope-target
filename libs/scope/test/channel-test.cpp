@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include "channel.h"
+    #include "Channel.h"
 }
 
 TEST(Channel, test_polling)
@@ -16,21 +16,21 @@ TEST(Channel, test_polling)
   float data;
 
   /* Create Instanzes */
-  RingBuffer* buffer = RingBuffer_create(shortCapacity);
-  Channel* channel = Channel_create(buffer);
+  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  ChannelHandle channel = Channel_create(buffer);
   
   /* Configure channel */
-  channel->setPollAddress(channel, &data);
-  channel->setStateRunning(channel);
+  Channel_setPollAddress(channel, &data);
+  Channel_setStateRunning(channel);
   
   /* Simulate polling */
   for(size_t i = 0; i < shortVectorLength; i++){
     data = shortTestVector[i];
-    channel->poll(channel);
+    Channel_poll(channel);
   }
   
   /* Get stream interface to test the procedure */
-  IFloatStream* stream = channel->getFloatStream(channel);
+  IFloatStreamHandle stream = Channel_getRingBufferFloatStream(channel);
   stream->open(stream, shortAnswer);
   stream->getStream(stream);
   stream->close(stream);
@@ -48,22 +48,62 @@ TEST(Channel, test_states)
   float data;
 
   /* Create Instanzes */
-  RingBuffer* buffer = RingBuffer_create(shortCapacity);
-  Channel* channel = Channel_create(buffer);
+  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  ChannelHandle channel = Channel_create(buffer);
 
-  EXPECT_EQ(channel->poll(channel), -1);
-  bool isRunning = channel->setStateRunning(channel);
+  EXPECT_EQ(Channel_poll(channel), -1);
+  bool isRunning = Channel_setStateRunning(channel);
   EXPECT_EQ(isRunning, false);
-  bool isStopped = channel->setStateStopped(channel);
+  bool isStopped = Channel_setStateStopped(channel);
   EXPECT_EQ(isStopped, false);
 
   /* Configure channel */
-  channel->setPollAddress(channel, &data);
-  isRunning = channel->setStateRunning(channel);
+  Channel_setPollAddress(channel, &data);
+  isRunning = Channel_setStateRunning(channel);
   EXPECT_EQ(isRunning, true);
   data = 5.5f;
-  EXPECT_EQ(channel->poll(channel), 1);
-  isStopped = channel->setStateStopped(channel);
+  EXPECT_EQ(Channel_poll(channel), 1);
+  isStopped = Channel_setStateStopped(channel);
   EXPECT_EQ(isStopped, true);
-  EXPECT_EQ(channel->poll(channel), -1);
+  EXPECT_EQ(Channel_poll(channel), -1);
+}
+
+TEST(Channel, test_trigger_stream)
+{
+  const size_t shortCapacity = 10;
+
+  const size_t shortVectorLength = 6;
+  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
+  float shortAnswer[shortVectorLength];
+
+  float data;
+
+  /* Create Instanzes */
+  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  ChannelHandle channel = Channel_create(buffer);
+  
+  /* Configure channel */
+  Channel_setPollAddress(channel, &data);
+  Channel_setStateRunning(channel);
+  
+  /* Simulate polling */
+  for(size_t i = 0; i < shortVectorLength; i++){
+    data = shortTestVector[i];
+    Channel_poll(channel);
+  }
+  
+  /* Get stream interface to test the procedure */
+  IFloatStreamHandle stream = Channel_getTriggerDataStream(channel);
+
+  float triggerData[2];
+  size_t readData;
+  stream->open(stream, triggerData);
+  readData = stream->getSize(stream);
+  ASSERT_EQ(readData, 2);
+  readData = stream->getStream(stream);
+  ASSERT_EQ(readData, 2);
+  stream->close(stream);
+  
+  ASSERT_THAT(triggerData, testing::ElementsAre(6.6f,5.5f));
+
 }

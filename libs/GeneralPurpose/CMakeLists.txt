@@ -6,12 +6,11 @@ cmake_minimum_required(VERSION 3.0.0)
 # The module name also has to be set in the CmakeList in the root directory,
 # for it to be compiled and included in the project
 set(LIBRARY_NAME
-  Scope
+  GeneralPurpose
 )
 
 # Set all used dependencies
-set(DEPENDENCIES  
-   GeneralPurpose
+set(DEPENDENCIES 
 )
 
 # Set Project Name
@@ -67,6 +66,9 @@ target_include_directories(${LIBRARY_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>
 )
 
+################################################################################
+## Add External libraries
+################################################################################
 ################################################################################
 ## Add External libraries
 ################################################################################
