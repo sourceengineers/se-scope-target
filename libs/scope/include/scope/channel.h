@@ -33,10 +33,10 @@ void Channel_destroy(ChannelHandle self);
 
 /* Sets the address which the channel will poll from
    Sets the state to CHANNEL_RUNNING */
-void Channel_setPollAddress(ChannelHandle self, float* pollAddress);
+void Channel_setPollAddress(ChannelHandle self, void* pollAddress);
 
 /* Returns the current polling address */
-float* Channel_getPollAddress(ChannelHandle self);
+void* Channel_getPollAddress(ChannelHandle self);
 
 /* Sets the channel to CHANNEL_RUNNING
    Returns -1 if the channel wasn't in CHANNEL_STOPPED */

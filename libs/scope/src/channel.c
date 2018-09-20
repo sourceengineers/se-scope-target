@@ -15,7 +15,7 @@ typedef struct __ChannelPrivateData
   RingBufferHandle buffer;
   IFloatStream triggerDataStream;
   CHANNEL_STATES state;
-  float* pollAddress;
+  void* pollAddress;
   float triggerData[2];
   float* floatStream;
 } ChannelPrivateData ;
@@ -83,14 +83,14 @@ void Channel_destroy(ChannelHandle self){
   free(self);
 }
 
-void Channel_setPollAddress(ChannelHandle self, float* pollAddress){
+void Channel_setPollAddress(ChannelHandle self, void* pollAddress){
   self->pollAddress = pollAddress;
   if(getState(self) == CHANNEL_INIT){
     setState(self, CHANNEL_STOPPED);
   }
 }
 
-float* Channel_getPollAddress(ChannelHandle self){
+void* Channel_getPollAddress(ChannelHandle self){
   return self->pollAddress;
 }
 
@@ -118,7 +118,7 @@ IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self){
 
 ssize_t Channel_poll(ChannelHandle self){
   if(getState(self) == CHANNEL_RUNNING){
-    const float polledData = *(self->pollAddress);
+    const float polledData = *((float*) self->pollAddress);
     prepareTriggerData(self, polledData);
     
     return RingBuffer_write(self->buffer, &polledData, 1);  
