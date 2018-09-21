@@ -20,7 +20,7 @@ TEST(Channel, test_polling)
   ChannelHandle channel = Channel_create(buffer);
   
   /* Configure channel */
-  Channel_setPollAddress(channel, &data);
+  Channel_setPollAddress(channel, &data, FLOAT);
   Channel_setStateRunning(channel);
   
   /* Simulate polling */
@@ -35,6 +35,60 @@ TEST(Channel, test_polling)
   stream->getStream(stream);
   stream->close(stream);
   ASSERT_THAT(shortAnswer, testing::ElementsAre(1.1f,2.2f,3.3f,4.4f,5.5f,6.6f));
+}
+
+
+TEST(Channel, test_data_types)
+{
+  const size_t shortCapacity = 10;
+
+  const size_t shortVectorLength = 6;
+  float shortAnswer[shortVectorLength];
+
+  /* Create Instanzes */
+  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  ChannelHandle channel = Channel_create(buffer);
+  IFloatStreamHandle stream = Channel_getRingBufferFloatStream(channel);
+  stream->open(stream, shortAnswer);
+
+  float data = 5.5f;
+  /* Configure channel */
+  Channel_setPollAddress(channel, &data, FLOAT);
+  Channel_setStateRunning(channel);
+  Channel_poll(channel);
+  stream->getStream(stream);
+  EXPECT_EQ(shortAnswer[0], 5.5f);
+  
+  double doubleData = 5.5f;
+  Channel_setPollAddress(channel, &doubleData, DOUBLE);
+  Channel_poll(channel);
+  stream->getStream(stream);
+  EXPECT_EQ(shortAnswer[0], 5.5f);
+  
+  uint8_t uint8Data = 12;
+  Channel_setPollAddress(channel, &uint8Data, UINT8);
+  Channel_poll(channel);
+  stream->getStream(stream);
+  EXPECT_EQ(shortAnswer[0], 12);
+  
+  uint16_t uint16Data = 12;  
+  Channel_setPollAddress(channel, &uint16Data, UINT16);
+  Channel_poll(channel);
+  stream->getStream(stream);
+  EXPECT_EQ(shortAnswer[0], 12);
+  
+  uint32_t uint32Data = 12;  
+  Channel_setPollAddress(channel, &uint32Data, UINT32);
+  Channel_poll(channel);
+  stream->getStream(stream);
+  EXPECT_EQ(shortAnswer[0], 12);
+
+  uint64_t uint64Data = 12;  
+  Channel_setPollAddress(channel, &uint64Data, UINT64);
+  Channel_poll(channel);
+  stream->getStream(stream);
+  EXPECT_EQ(shortAnswer[0], 12);
+  
 }
 
 TEST(Channel, test_states)
@@ -58,7 +112,7 @@ TEST(Channel, test_states)
   EXPECT_EQ(isStopped, false);
 
   /* Configure channel */
-  Channel_setPollAddress(channel, &data);
+  Channel_setPollAddress(channel, &data, FLOAT);
   isRunning = Channel_setStateRunning(channel);
   EXPECT_EQ(isRunning, true);
   data = 5.5f;
@@ -83,7 +137,7 @@ TEST(Channel, test_trigger_stream)
   ChannelHandle channel = Channel_create(buffer);
   
   /* Configure channel */
-  Channel_setPollAddress(channel, &data);
+  Channel_setPollAddress(channel, &data, FLOAT);
   Channel_setStateRunning(channel);
   
   /* Simulate polling */
