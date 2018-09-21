@@ -21,7 +21,8 @@ typedef struct ICommandStruct* ICommandHandle;
 typedef struct ICommandStruct {
   void* implementer;
   void (*run)(IFloatStreamHandle self);
-  size_t(*setCommandAttribute)(IFloatStreamHandle self, void* attr);
+//  void(*setCommandData)(IFloatStreamHandle self, void* data);
+  void(*setCommandAttribute)(IFloatStreamHandle self, void* attr);
 } ICommand ;
 
 #endif

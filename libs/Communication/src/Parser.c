@@ -7,6 +7,8 @@
  *
  *****************************************************************************************************************************************/
 
+#include <Communication/Parser.h>
+
 /* Define public data */
 typedef struct __ParserPrivateData
 {

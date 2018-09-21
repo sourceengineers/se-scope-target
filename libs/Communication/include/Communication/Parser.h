@@ -12,6 +12,7 @@
 #ifndef PARSER_H_
 #define PARSER_H_
 
+#include <unistd.h>
 
 /* Defines class */
 typedef struct __ParserPrivateData* ParserHandle;
