@@ -28,6 +28,7 @@ set(PROJECT_LIBRARIES
     msgpack_parser
     Scope
     GeneralPurpose
+    Communication
 )
 
 project(${PROJECT_NAME})
