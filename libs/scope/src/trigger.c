@@ -92,12 +92,12 @@ static bool triggerOneShot(TriggerHandle self, const int index){
 }
 
 static bool configSanityCheck(TriggerConfiguration conf){
-  if((conf.mode != TRIGGER_NORMAL) \ 
-      && (conf.mode != TRIGGER_CONTINUOUS) \ 
+  if((conf.mode != TRIGGER_NORMAL) 
+      && (conf.mode != TRIGGER_CONTINUOUS) 
       && (conf.mode != TRIGGER_ONESHOT)){
     return false;
   }
-  if((conf.edge != TRIGGER_EDGE_NEGATIVE) \
+  if((conf.edge != TRIGGER_EDGE_NEGATIVE)
       && (conf.edge != TRIGGER_EDGE_POSITIVE)){
     return false;
   }

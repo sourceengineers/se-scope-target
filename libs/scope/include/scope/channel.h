@@ -13,6 +13,7 @@
 #define CHANNEL_H_
 
 #include <GeneralPurpose/RingBuffer.h>
+#include <GeneralPurpose/Types.h>
 
 static const int CHANNEL_CURRENT_DATA = 0;
 static const int CHANNEL_OLD_DATA = 1;
@@ -33,7 +34,7 @@ void Channel_destroy(ChannelHandle self);
 
 /* Sets the address which the channel will poll from
    Sets the state to CHANNEL_RUNNING */
-void Channel_setPollAddress(ChannelHandle self, void* pollAddress);
+void Channel_setPollAddress(ChannelHandle self, void* pollAddress, DATA_TYPES pollDataType);
 
 /* Returns the current polling address */
 void* Channel_getPollAddress(ChannelHandle self);
