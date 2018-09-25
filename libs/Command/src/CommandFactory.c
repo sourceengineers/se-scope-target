@@ -21,7 +21,7 @@ typedef struct __CommandFactoryPrivateData
 /* Public functions */
 CommandFactoryHandle CommandFactory_create(ChannelHandle* channels, size_t ammountOfChannels){
 
-  CommandRunningHandle self = malloc(sizeof(CommandFactoryPrivateData));
+  CommandFactoryHandle self = malloc(sizeof(CommandFactoryPrivateData));
   self->commandRunning = CommandRunning_create(channels, ammountOfChannels);
   return self;
 }
@@ -31,6 +31,8 @@ ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, char* comma
   if(strcpy(command, CommandRunning_getName(self->commandRunning)) == 0){
     return CommandRunning_getICommand(self->commandRunning);
   }
+  
+  return NULL;
 }
 
 void CommandFactory_destroy(CommandFactoryHandle self){

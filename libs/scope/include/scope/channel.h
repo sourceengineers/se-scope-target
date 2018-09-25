@@ -18,7 +18,7 @@
 static const int CHANNEL_CURRENT_DATA = 0;
 static const int CHANNEL_OLD_DATA = 1;
 
-typedef enum {CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;
+typedef enum {CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;
 
 /* Defines class */
 typedef struct __ChannelPrivateData* ChannelHandle;
@@ -46,6 +46,9 @@ bool Channel_setStateRunning(ChannelHandle self);
 /* Sets the channel to CHANNEL_STOPPED
    Returns -1 if the channel wasn't in CHANNEL_RUNNING */
 bool Channel_setStateStopped(ChannelHandle self);
+
+/* Returns the state of the channel */
+CHANNEL_STATES Channel_getState(ChannelHandle self);
 
 /* Polls data and writes it into the ring buffer
    Returns the responce of the buffer->write() functions 

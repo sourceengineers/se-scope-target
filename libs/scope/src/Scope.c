@@ -16,21 +16,29 @@ typedef struct __ScopePrivateData
   ChannelHandle* channels;
   RingBufferHandle* buffers;
   TriggerHandle trigger;
+  CommandFactoryHandle commandFactory;
 } ScopePrivateData ;
 
 /* Public functions */
 ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
+
+  /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
   self->buffers = malloc(sizeof(RingBufferHandle) * numberOfChannels);
+  self->numberOfChannels = numberOfChannels;
   
   for (size_t i = 0; i < numberOfChannels; i++) {
     self->buffers[i] = RingBuffer_create(channelSize);
     self->channels[i] = Channel_create(self->buffers[i]);
   }
   
+  /* Create Trigger */
   self->trigger = Trigger_create();
+  
+  /* Create command factory */
+  self->commandFactory = CommandFactory_create(self->channels, self->numberOfChannels);
   
   return self;
 }

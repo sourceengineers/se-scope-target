@@ -8,7 +8,6 @@
  *****************************************************************************************************************************************/
 
 #include <Command/CommandRunning.h>
-#include <Scope/Channel.h>
 
 const char* commandName = "cf_running";
 
@@ -17,7 +16,7 @@ typedef struct __CommandRunningPrivateData
 {
   ICommand iCommand;
   size_t ammountOfChannels;
-  CommandRunningConfig config;
+  CHANNEL_STATES* config;
   ChannelHandle* channels;
   
 } CommandRunningPrivateData ;
@@ -25,32 +24,29 @@ typedef struct __CommandRunningPrivateData
 static void run(ICommandHandle self){
   CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
   
-  for (size_t i = 0; i < ammountOfChannels; i++) {
-    if(config.channelHasChanged[i] == true){
-      if(config.setRunning[i] == CHANNEL_RUNNING){
-        Channel_setStateRunning(commandRunning->channels[i]);
-      }
-      if(config.setRunning[i] == CHANNEL_STOPPED) {
-        Channel_setStateStopped(commandRunning->channels[i]);
-      }
+  for (size_t i = 0; i < commandRunning->ammountOfChannels; i++) {
+    if(commandRunning->config[i] == CHANNEL_RUNNING){
+      Channel_setStateRunning(commandRunning->channels[i]);
+    } else if(commandRunning->config[i] == CHANNEL_STOPPED) {
+      Channel_setStateStopped(commandRunning->channels[i]);
     }
   }
 }
 
 static void setCommandAttribute(ICommandHandle self, void* attr){
   CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
-  CommandRunningConfig conf = *(CommandRunningConfig*) attr;
+  CHANNEL_STATES* conf = (CHANNEL_STATES*) attr;
   
-  memcpy(commandRunning->conf.setRunning, conf.setRunning, self->ammountOfChannels);
-  memcpy(commandRunning->conf.channelHasChanged, conf.channelHasChanged, self->ammountOfChannels);
+  for (size_t i = 0; i < commandRunning->ammountOfChannels; i++) {
+    commandRunning->config[i] = conf[i];
+  }
 }
 
 /* Public functions */
 CommandRunningHandle CommandRunning_create(ChannelHandle* channels, size_t ammountOfChannels){
 
   CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));
-  self->config.setRunning = malloc(sizeof(bool) * ammountOfChannels);
-  self->config.channelHasChanged = (sizeof(bool) * ammountOfChannels);
+  self->config = malloc(sizeof(CHANNEL_STATES) * ammountOfChannels);
   self->channels = channels;
   self->ammountOfChannels = ammountOfChannels;
   
@@ -65,13 +61,12 @@ ICommandHandle CommandRunning_getICommand(CommandRunningHandle self){
   return &self->iCommand;
 }
 
-char* CommandRunning_getName(CommandRunningHandle self){
+const char* CommandRunning_getName(CommandRunningHandle self){
   return commandName;
 }
 
 
-void CommandRunning_destroy(ScopeHandle self){
-  free(self->conf.setRunning);
-  free(self->conf.channelHasChanged);
+void CommandRunning_destroy(CommandRunningHandle self){
+  free(self->config);
   free(self);
 }

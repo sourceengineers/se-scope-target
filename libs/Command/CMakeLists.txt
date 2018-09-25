@@ -13,6 +13,8 @@ set(LIBRARY_NAME
 set(DEPENDENCIES  
 #   GeneralPurpose
   Communication
+  Scope
+  GeneralPurpose
 )
 
 # Set Project Name

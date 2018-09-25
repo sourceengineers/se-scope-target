@@ -29,6 +29,7 @@ set(PROJECT_LIBRARIES
     Scope
     GeneralPurpose
     Communication
+    Command
 )
 
 project(${PROJECT_NAME})

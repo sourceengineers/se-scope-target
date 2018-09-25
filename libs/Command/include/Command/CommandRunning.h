@@ -21,11 +21,10 @@
 #define COMMANDRUNNING_H_
 
 #include <Communication/Parser.h>
+#include <Scope/Channel.h>
+#include <Command/ICommand.h>
 
-typedef struct {
-  CHANNEL_STATES setRunning*;
-  bool channelHasChanged*;
-} CommandRunningConfig ;
+CHANNEL_STATES* setRunning;
 
 /* Defines class */
 typedef struct __CommandRunningPrivateData* CommandRunningHandle;
@@ -43,7 +42,7 @@ void CommandRunning_destroy(CommandRunningHandle self);
 ICommandHandle CommandRunning_getICommand(CommandRunningHandle self);
 
 /* Returns the name of the command */
-char* CommandRunning_getName(CommandRunningHandle self);
+const char* CommandRunning_getName(CommandRunningHandle self);
 
 
 #endif

@@ -6,10 +6,9 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  * @brief        Streaming interface
- *               open: Opens the channel to a given float*
- *               getSize: Returns the size of data ready to be read 
- *               getStream: Writes the ready data into the float array
- *               close: Closes the stream 
+ *               run: Runs the command
+ *               setCommandAttribute: Sets the attributes needed by the command
+ *               to run.
  *
  *****************************************************************************************************************************************/
 
@@ -20,9 +19,8 @@ typedef struct ICommandStruct* ICommandHandle;
 
 typedef struct ICommandStruct {
   void* implementer;
-  void (*run)(IFloatStreamHandle self);
-//  void(*setCommandData)(IFloatStreamHandle self, void* data);
-  void(*setCommandAttribute)(IFloatStreamHandle self, void* attr);
+  void (*run)(ICommandHandle self);
+  void(*setCommandAttribute)(ICommandHandle self, void* attr);
 } ICommand ;
 
 #endif

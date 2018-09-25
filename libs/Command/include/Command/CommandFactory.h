@@ -27,7 +27,7 @@ CommandFactoryHandle CommandFactory_create(ChannelHandle* channels, size_t ammou
 void CommandFactory_destroy(CommandFactoryHandle self);
 
 /* Returns the command interface */
-ICommand CommandFactory_getICommand(CommandFactoryHandle self, char* command);
+ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, char* command);
 
 
 #endif

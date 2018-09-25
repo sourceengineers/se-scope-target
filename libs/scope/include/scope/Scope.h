@@ -14,6 +14,7 @@
 
 #include <Scope/Trigger.h>
 #include <Scope/Channel.h>
+#include <Command/CommandFactory.h>
 
 /* Defines class */
 typedef struct __ScopePrivateData* ScopeHandle;
