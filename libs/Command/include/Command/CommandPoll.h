@@ -1,36 +1,39 @@
 /*!*****************************************************************************
- * @file         Scope.h
+ * @file         CommandPoll.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the Scope.
- * 
+ * @brief        Implementation of the ev_poll command
+ *                
+ *               
  ******************************************************************************/
  
-#ifndef SCOPE_H_
-#define SCOPE_H_
+#ifndef COMMANDPOLL_H_
+#define COMMANDPOLL_H_
 
-#include <Scope/Trigger.h>
-#include <Scope/Channel.h>
 #include <Scope/IScope.h>
+#include <Command/ICommand.h>
 
-#include <Command/CommandFactory.h>
 
 /* Defines class */
-typedef struct __ScopePrivateData* ScopeHandle;
+typedef struct __CommandPollPrivateData* CommandPollHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instanze of the channel */
-ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels);
+CommandPollHandle CommandPoll_create(IScopeHandle iScope);
 
 /* Deconstructor: Deletes the instanze of the channel */
-void Scope_destroy(ScopeHandle self);
+void CommandPoll_destroy(CommandPollHandle self);
 
-/* Polls data from all channels */
-void Scope_poll(ScopeHandle self);
+/* Returns the command interface */
+ICommandHandle CommandPoll_getICommand(CommandPollHandle self);
+
+/* Returns the name of the command */
+const char* CommandPoll_getName(CommandPollHandle self);
+
 
 #endif

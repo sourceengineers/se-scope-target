@@ -15,14 +15,19 @@
 typedef struct __CommandFactoryPrivateData
 {
   CommandRunningHandle commandRunning;
+  CommandPollHandle commandPoll;
   
 } CommandFactoryPrivateData ;
 
 /* Public functions */
-CommandFactoryHandle CommandFactory_create(ChannelHandle* channels, size_t ammountOfChannels){
+CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
+                                           ChannelHandle* channels, 
+                                           size_t ammountOfChannels){
 
   CommandFactoryHandle self = malloc(sizeof(CommandFactoryPrivateData));
   self->commandRunning = CommandRunning_create(channels, ammountOfChannels);
+  self->commandPoll = CommandPoll_create(iScope);
+
   return self;
 }
 
@@ -30,6 +35,8 @@ ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, char* comma
 
   if(strcpy(command, CommandRunning_getName(self->commandRunning)) == 0){
     return CommandRunning_getICommand(self->commandRunning);
+  } else if(strcpy(command, CommandPoll_getName(self->commandPoll)) == 0){
+    return CommandPoll_getICommand(self->commandPoll);
   }
   
   return NULL;

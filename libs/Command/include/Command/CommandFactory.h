@@ -13,6 +13,8 @@
 #define COMMANDFACTORY_H_
 
 #include <Command/CommandRunning.h>
+#include <Command/CommandPoll.h>
+#include <Scope/Scope.h>
 
 /* Defines class */
 typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
@@ -21,8 +23,10 @@ typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instanze of the factory */
-CommandFactoryHandle CommandFactory_create(ChannelHandle* channels, size_t ammountOfChannels);
-
+CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
+                                           ChannelHandle* channels, 
+                                           size_t ammountOfChannels);
+                                           
 /* Deconstructor: Deletes the instanze of the factory */
 void CommandFactory_destroy(CommandFactoryHandle self);
 

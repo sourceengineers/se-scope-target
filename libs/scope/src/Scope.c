@@ -17,12 +17,21 @@ typedef struct __ScopePrivateData
   RingBufferHandle* buffers;
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
+  
+  IScope iScope;
 } ScopePrivateData ;
+
+static void iScopePoll(IScopeHandle self){
+  ScopeHandle scope = (ScopeHandle) self->implementer;
+  Scope_poll(scope);
+}
 
 /* Public functions */
 ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
+  self->iScope.implementer = self;
+  self->iScope.poll = &iScopePoll;
 
   /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
@@ -38,7 +47,9 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels){
   self->trigger = Trigger_create();
   
   /* Create command factory */
-  self->commandFactory = CommandFactory_create(self->channels, self->numberOfChannels);
+  self->commandFactory = CommandFactory_create(&self->iScope, 
+                                               self->channels, 
+                                               self->numberOfChannels);
   
   return self;
 }
