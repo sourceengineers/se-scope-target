@@ -124,7 +124,7 @@ void Channel_destroy(ChannelHandle self){
   free(self);
 }
 
-void Channel_setPollAddress(ChannelHandle self, void* pollAddress, DATA_TYPES pollDataType){
+void Channel_setPollAddress(ChannelHandle self, void* pollAddress, const DATA_TYPES pollDataType){
   self->pollAddress = pollAddress;
   self->pollDataType = pollDataType;
   if(Channel_getState(self) == CHANNEL_INIT){

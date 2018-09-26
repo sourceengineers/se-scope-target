@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandPoll.c
+ * @file         CommandTrans.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,21 +7,21 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Command/CommandPoll.h>
+#include <Command/CommandTrans.h>
 
-const char* commandName = "ev_poll";
+const char* commandName = "ev_trans";
 
 /* Define public data */
-typedef struct __CommandPollPrivateData
+typedef struct __CommandTransPrivateData
 {
   ICommand iCommand;
   IScopeHandle iScope;
   
-} CommandPollPrivateData ;
+} CommandTransPrivateData ;
 
 static void run(ICommandHandle self){
-  CommandPollHandle commandPoll = (CommandPollHandle) self->implementer;
-  commandPoll->iScope->poll(commandPoll->iScope);
+  CommandTransHandle commandTrans = (CommandTransHandle) self->implementer;
+  commandTrans->iScope->trans(commandTrans->iScope);
 }
 
 static void setCommandAttribute(ICommandHandle self, void* attr){
@@ -29,23 +29,23 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
 }
 
 /* Public functions */
-CommandPollHandle CommandPoll_create(IScopeHandle iScope){
+CommandTransHandle CommandTrans_create(IScopeHandle iScope){
 
-  CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
+  CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));
   self->iScope = iScope;
   
   return self;
 }
 
-ICommandHandle CommandPoll_getICommand(CommandPollHandle self){
+ICommandHandle CommandTrans_getICommand(CommandTransHandle self){
   return &self->iCommand;
 }
 
-const char* CommandPoll_getName(CommandPollHandle self){
+const char* CommandTrans_getName(CommandTransHandle self){
   return commandName;
 }
 
 
-void CommandPoll_destroy(CommandPollHandle self){
+void CommandTrans_destroy(CommandTransHandle self){
   free(self);
 }

@@ -15,6 +15,8 @@
 #ifndef ICOMMAND_H_
 #define ICOMMAND_H_
 
+#include <stdlib.h>
+
 typedef struct ICommandStruct* ICommandHandle;
 
 typedef struct ICommandStruct {

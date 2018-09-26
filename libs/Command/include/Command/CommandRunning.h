@@ -24,7 +24,13 @@
 #include <Scope/Channel.h>
 #include <Command/ICommand.h>
 
-CHANNEL_STATES* setRunning;
+
+typedef struct {
+  CHANNEL_STATES* newStates;
+  int* changedChannels;
+  int numberOfChangedChannels;
+} CommandRunningConf;
+
 
 /* Defines class */
 typedef struct __CommandRunningPrivateData* CommandRunningHandle;

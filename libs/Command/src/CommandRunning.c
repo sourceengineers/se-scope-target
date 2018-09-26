@@ -16,7 +16,7 @@ typedef struct __CommandRunningPrivateData
 {
   ICommand iCommand;
   size_t ammountOfChannels;
-  CHANNEL_STATES* config;
+  CommandRunningConf config;
   ChannelHandle* channels;
   
 } CommandRunningPrivateData ;
@@ -24,29 +24,53 @@ typedef struct __CommandRunningPrivateData
 static void run(ICommandHandle self){
   CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
   
-  for (size_t i = 0; i < commandRunning->ammountOfChannels; i++) {
-    if(commandRunning->config[i] == CHANNEL_RUNNING){
-      Channel_setStateRunning(commandRunning->channels[i]);
-    } else if(commandRunning->config[i] == CHANNEL_STOPPED) {
-      Channel_setStateStopped(commandRunning->channels[i]);
+  for (size_t i = 0; i < commandRunning->config.numberOfChangedChannels; i++) {
+    const int idOfChannelChanged = commandRunning->config.changedChannels[i];
+    ChannelHandle changingChannel = commandRunning->channels[i];
+    
+    if(commandRunning->config.newStates[i] == CHANNEL_RUNNING){
+      Channel_setStateRunning(changingChannel);
+    } else if(commandRunning->config.newStates[i] == CHANNEL_STOPPED) {
+      Channel_setStateStopped(changingChannel);
     }
   }
 }
 
 static void setCommandAttribute(ICommandHandle self, void* attr){
   CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
-  CHANNEL_STATES* conf = (CHANNEL_STATES*) attr;
+
+  CommandRunningConf newConfig = *(CommandRunningConf*) attr;
   
-  for (size_t i = 0; i < commandRunning->ammountOfChannels; i++) {
-    commandRunning->config[i] = conf[i];
+  /* Safety checks */
+  if(newConfig.numberOfChangedChannels > commandRunning->ammountOfChannels){
+    return;
+  }
+  
+  for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
+    if(newConfig.changedChannels[i] > commandRunning->ammountOfChannels){
+      return;
+    }
+    if(newConfig.newStates[i] != CHANNEL_STOPPED 
+      && newConfig.newStates[i] != CHANNEL_RUNNING){
+      return;
+    }
+  }
+  
+  /* Copy data to command */
+  commandRunning->config.numberOfChangedChannels = newConfig.numberOfChangedChannels;
+  for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
+    commandRunning->config.changedChannels[i] = newConfig.changedChannels[i]; 
+    commandRunning->config.newStates[i] = newConfig.newStates[i];
   }
 }
 
 /* Public functions */
-CommandRunningHandle CommandRunning_create(ChannelHandle* channels, size_t ammountOfChannels){
+CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t ammountOfChannels){
 
   CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));
-  self->config = malloc(sizeof(CHANNEL_STATES) * ammountOfChannels);
+  self->config.newStates = malloc(sizeof(CHANNEL_STATES) * ammountOfChannels);
+  self->config.changedChannels = malloc(sizeof(int) * ammountOfChannels);
+  self->config.numberOfChangedChannels = 0;
   self->channels = channels;
   self->ammountOfChannels = ammountOfChannels;
   
@@ -65,8 +89,8 @@ const char* CommandRunning_getName(CommandRunningHandle self){
   return commandName;
 }
 
-
 void CommandRunning_destroy(CommandRunningHandle self){
-  free(self->config);
+  free(self->config.newStates);
+  free(self->config.changedChannels);
   free(self);
 }

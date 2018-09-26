@@ -34,7 +34,7 @@ void Channel_destroy(ChannelHandle self);
 
 /* Sets the address which the channel will poll from
    Sets the state to CHANNEL_RUNNING */
-void Channel_setPollAddress(ChannelHandle self, void* pollAddress, DATA_TYPES pollDataType);
+void Channel_setPollAddress(ChannelHandle self, void* pollAddress, const DATA_TYPES pollDataType);
 
 /* Returns the current polling address */
 void* Channel_getPollAddress(ChannelHandle self);

@@ -1,11 +1,11 @@
-/*!****************************************************************************************************************************************
+/*!*****************************************************************************
  * @file         Channel.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- *****************************************************************************************************************************************/
+*******************************************************************************/
 
 #include <Scope/Scope.h>
 
@@ -18,6 +18,8 @@ typedef struct __ScopePrivateData
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
   
+  int timeIncrement;
+  
   IScope iScope;
 } ScopePrivateData ;
 
@@ -26,14 +28,28 @@ static void iScopePoll(IScopeHandle self){
   Scope_poll(scope);
 }
 
+static void iScopeSetTimeIncrement(IScopeHandle self, int timeIncrement){
+  ScopeHandle scope = (ScopeHandle) self->implementer;
+  scope->timeIncrement = timeIncrement;
+}
+
+static void iScopeTrans(IScopeHandle self){
+  ScopeHandle scope = (ScopeHandle) self->implementer;
+  
+  /* Trans function has to be implemented once the parser is ready */
+}
+
 /* Public functions */
 ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
   self->iScope.implementer = self;
   self->iScope.poll = &iScopePoll;
+  self->iScope.trans = &iScopeTrans;
+  self->iScope.setTimeIncrement = &iScopeSetTimeIncrement;
 
   /* Create channels and buffers */
+  self->timeIncrement = 0;
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
   self->buffers = malloc(sizeof(RingBufferHandle) * numberOfChannels);
   self->numberOfChannels = numberOfChannels;

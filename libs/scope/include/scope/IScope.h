@@ -17,6 +17,8 @@ typedef struct IScopeStruct* IScopeHandle;
 typedef struct IScopeStruct {
   void* implementer;
   void (*poll)(IScopeHandle self);
+  void (*trans)(IScopeHandle self);
+  void (*setTimeIncrement)(IScopeHandle self, int timeIncrement);
 } IScope ;
 
 #endif
