@@ -1,7 +1,7 @@
 /*!****************************************************************************************************************************************
  * @file         msgpack_unpacker.c
  *
- * @copyright    Copyright (c) 2018 by Sonnen. All Rights Reserved.
+ * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Author <Email>
  *
