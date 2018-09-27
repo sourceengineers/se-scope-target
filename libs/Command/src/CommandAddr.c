@@ -47,6 +47,7 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
     return;
   }
   
+  /* Check that no id is bigger than the maximum ammount of channels */
   for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
     if(newConfig.changedChannels[i] > commandAddr->ammountOfChannels){
       return;

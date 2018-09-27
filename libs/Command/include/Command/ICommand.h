@@ -8,7 +8,8 @@
  * @brief        Streaming interface
  *               run: Runs the command
  *               setCommandAttribute: Sets the attributes needed by the command
- *               to run.
+ *               to run. The data passed to the void pointer, is specified by 
+ *               every command on its own.
  *
  *****************************************************************************************************************************************/
 

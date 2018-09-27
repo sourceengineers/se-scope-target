@@ -7,7 +7,18 @@
  *
  * @brief        Implementation of the cf_addr command
  *                
- *               
+ *               To configure the command, the CommandAddrConf Object has to be 
+ *               passed to the setCommandAttribute function.
+ *                
+ *               The field numberOfChangedChannels is indicating how many
+ *               many channels will be changed. The field changedChannels 
+ *               contains the channels which will be changed. The field 
+ *               newAddresses contains the new addresses and types the machting 
+ *               types of addresses to which will be fed into the channels.
+ *
+ *               All of these fields cannot be longer than 
+ *               numberOfChangedChannels or it will be ingored.
+ *              
  ******************************************************************************/
  
 #ifndef COMMANDADDR_H_

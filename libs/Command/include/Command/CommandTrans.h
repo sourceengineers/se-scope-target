@@ -7,7 +7,8 @@
  *
  * @brief        Implementation of the ev_trans command
  *                
- *               
+ *               Starts a sending event, provided by the IScope interface
+ * 
  ******************************************************************************/
  
 #ifndef COMMANDTRANS_H_

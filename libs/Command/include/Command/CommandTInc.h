@@ -5,9 +5,12 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the ev_t_inc command
+ * @brief        Implementation of the cf_t_inc command
  *                
- *               
+ *               Sets the time increment of the scope poll events. 
+ *               The function will be provided by the IScope interface, to 
+ *               prevent code dublication.
+ *                
  ******************************************************************************/
  
 #ifndef COMMANDTINC_H_

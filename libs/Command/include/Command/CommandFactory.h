@@ -7,6 +7,10 @@
  *
  * @brief        Factory to generate the different Command interfaces 
  * 
+ *               Since the usage of malloc after the initial construction is 
+ *               not permitted, all objects returned by the factory are pre- 
+ *               generated during the construction process.
+ *
  ******************************************************************************/ 
  
 #ifndef COMMANDFACTORY_H_

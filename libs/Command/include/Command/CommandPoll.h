@@ -7,7 +7,9 @@
  *
  * @brief        Implementation of the ev_poll command
  *                
- *               
+ *               Executes a Poll event. The function will be provided by the 
+ *               IScope interface, to prevent code dublication.
+ *
  ******************************************************************************/
  
 #ifndef COMMANDPOLL_H_

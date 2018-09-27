@@ -7,7 +7,8 @@
  *
  * @brief        Implementation of the cf_trigger command
  *                
- *               
+ *               Configurates the Trigger. The used structure is defined and 
+ *               explained in the trigger.h file.
  ******************************************************************************/
  
 #ifndef COMMANDTRIGGER_H_
