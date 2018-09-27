@@ -25,11 +25,12 @@ set(PROJECT_LIBRARIES_DIR
 
 # Set the used libraries here !!!!!!!!!!!!!!!!!!!!!!!!!!!
 set(PROJECT_LIBRARIES
-    msgpack_parser
     Scope
     GeneralPurpose
     Communication
     Command
+    MsgpackParser
+    msgpackc
 )
 
 project(${PROJECT_NAME})

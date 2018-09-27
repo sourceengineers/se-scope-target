@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 
 set(TEST_PROJECT_NAME
-    msgpack_parser-test
+    MsgpackParser-test
 )
 
 file(GLOB TEST_FILES
@@ -10,7 +10,7 @@ file(GLOB TEST_FILES
 )
 
 set(LINKING_LIBRARIES
-  msgpackc
+#  msgpackc
 )
 
 set(LIBRARY_TESTS_SOURCE
