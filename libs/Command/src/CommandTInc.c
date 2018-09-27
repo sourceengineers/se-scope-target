@@ -9,7 +9,7 @@
 
 #include <Command/CommandTInc.h>
 
-const char* commandName = "ev_t_inc";
+static const char* commandName = "ev_t_inc";
 
 /* Define public data */
 typedef struct __CommandTIncPrivateData
@@ -36,6 +36,10 @@ CommandTIncHandle CommandTInc_create(IScopeHandle iScope){
   CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));
   self->iScope = iScope;
   self->timeIncrement = 0;
+  
+  self->iCommand.implementer = self;
+  self->iCommand.run = &run;
+  self->iCommand.setCommandAttribute = &setCommandAttribute;
   
   return self;
 }

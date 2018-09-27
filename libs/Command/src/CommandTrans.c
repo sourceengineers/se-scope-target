@@ -9,7 +9,7 @@
 
 #include <Command/CommandTrans.h>
 
-const char* commandName = "ev_trans";
+static const char* commandName = "ev_trans";
 
 /* Define public data */
 typedef struct __CommandTransPrivateData
@@ -33,6 +33,10 @@ CommandTransHandle CommandTrans_create(IScopeHandle iScope){
 
   CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));
   self->iScope = iScope;
+  
+  self->iCommand.implementer = self;
+  self->iCommand.run = &run;
+  self->iCommand.setCommandAttribute = &setCommandAttribute;
   
   return self;
 }

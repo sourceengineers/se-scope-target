@@ -9,7 +9,7 @@
 
 #include <Command/CommandPoll.h>
 
-const char* commandName = "ev_poll";
+static const char* commandName = "ev_poll";
 
 /* Define public data */
 typedef struct __CommandPollPrivateData
@@ -33,6 +33,10 @@ CommandPollHandle CommandPoll_create(IScopeHandle iScope){
 
   CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
   self->iScope = iScope;
+  
+  self->iCommand.implementer = self;
+  self->iCommand.run = &run;
+  self->iCommand.setCommandAttribute = &setCommandAttribute;
   
   return self;
 }

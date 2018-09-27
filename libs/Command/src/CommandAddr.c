@@ -9,7 +9,7 @@
 
 #include <Command/CommandAddr.h>
 
-const char* commandName = "cf_addr";
+static const char* commandName = "cf_addr";
 
 /* Define public data */
 typedef struct __CommandAddrPrivateData
@@ -71,6 +71,8 @@ CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t ammountOfCh
   CommandAddrHandle self = malloc(sizeof(CommandAddrPrivateData));
   self->config.newAddresses = malloc(sizeof(void*) * ammountOfChannels);
   self->config.changedChannels = malloc(sizeof(int) * ammountOfChannels);
+  self->config.types = malloc(sizeof(DATA_TYPES) * ammountOfChannels);
+  
   self->config.numberOfChangedChannels = 0;
 
   self->channels = channels;

@@ -65,7 +65,8 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels){
   /* Create command factory */
   self->commandFactory = CommandFactory_create(&self->iScope, 
                                                self->channels, 
-                                               self->numberOfChannels);
+                                               self->numberOfChannels,
+                                               self->trigger);
   
   return self;
 }

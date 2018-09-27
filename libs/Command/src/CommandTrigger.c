@@ -9,7 +9,7 @@
 
 #include <Command/CommandTrigger.h>
 
-const char* commandName = "cf_trigger";
+static const char* commandName = "cf_trigger";
 
 /* Define public data */
 typedef struct __CommandTriggerPrivateData

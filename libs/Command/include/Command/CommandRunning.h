@@ -24,7 +24,7 @@
 #include <Scope/Channel.h>
 #include <Command/ICommand.h>
 
-
+/* Struct used to help the command configure the channels */
 typedef struct {
   CHANNEL_STATES* newStates;
   int* changedChannels;

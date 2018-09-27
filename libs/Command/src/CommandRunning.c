@@ -9,7 +9,7 @@
 
 #include <Command/CommandRunning.h>
 
-const char* commandName = "cf_running";
+static const char* commandName = "cf_running";
 
 /* Define public data */
 typedef struct __CommandRunningPrivateData
@@ -26,7 +26,7 @@ static void run(ICommandHandle self){
   
   for (size_t i = 0; i < commandRunning->config.numberOfChangedChannels; i++) {
     const int idOfChannelChanged = commandRunning->config.changedChannels[i];
-    ChannelHandle changingChannel = commandRunning->channels[i];
+    ChannelHandle changingChannel = commandRunning->channels[idOfChannelChanged];
     
     if(commandRunning->config.newStates[i] == CHANNEL_RUNNING){
       Channel_setStateRunning(changingChannel);
