@@ -2,3 +2,7 @@ build/
 *.DS_Store
 
 *.log
+
+\.idea/
+
+cmake-build-debug/
