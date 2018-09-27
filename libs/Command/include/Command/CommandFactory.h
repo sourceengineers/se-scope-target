@@ -19,7 +19,6 @@
 #include <Command/CommandTrans.h>
 #include <Command/CommandTrigger.h>
 #include <Scope/Scope.h>
-#include <Scope/Trigger.h>
 
 /* Defines class */
 typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
@@ -37,7 +36,7 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
 void CommandFactory_destroy(CommandFactoryHandle self);
 
 /* Returns the command interface */
-ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, char* command);
+ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char* command);
 
 
 #endif

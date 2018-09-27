@@ -40,19 +40,19 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
   return self;
 }
 
-ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, char* command){
+ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char* command){
 
-  if(strcpy(command, CommandRunning_getName(self->commandRunning)) == 0){
+  if(strcmp(command, CommandRunning_getName(self->commandRunning)) == 0){
     return CommandRunning_getICommand(self->commandRunning);
-  } else if(strcpy(command, CommandPoll_getName(self->commandPoll)) == 0){
+  } else if(strcmp(command, CommandPoll_getName(self->commandPoll)) == 0){
     return CommandPoll_getICommand(self->commandPoll);
-  } else if(strcpy(command, CommandAddr_getName(self->commandAddr)) == 0){
+  } else if(strcmp(command, CommandAddr_getName(self->commandAddr)) == 0){
     return CommandAddr_getICommand(self->commandAddr);
-  } else if(strcpy(command, CommandTInc_getName(self->commandTInc)) == 0){
+  } else if(strcmp(command, CommandTInc_getName(self->commandTInc)) == 0){
     return CommandTInc_getICommand(self->commandTInc);
-  } else if(strcpy(command, CommandTrans_getName(self->commandTrans)) == 0){
+  } else if(strcmp(command, CommandTrans_getName(self->commandTrans)) == 0){
     return CommandTrans_getICommand(self->commandTrans);
-  } else if(strcpy(command, CommandTrigger_getName(self->commandTrigger)) == 0){
+  } else if(strcmp(command, CommandTrigger_getName(self->commandTrigger)) == 0){
     return CommandTrigger_getICommand(self->commandTrigger);
   }
   
@@ -60,5 +60,13 @@ ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, char* comma
 }
 
 void CommandFactory_destroy(CommandFactoryHandle self){
+
+  CommandRunning_destroy(self->commandRunning);
+  CommandPoll_destroy(self->commandPoll);
+  CommandAddr_destroy(self->commandAddr);
+  CommandTInc_destroy(self->commandTInc);
+  CommandTrans_destroy(self->commandTrans);
+  CommandTrigger_destroy(self->commandTrigger);
   free(self);
+  self = NULL;
 }
