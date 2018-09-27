@@ -52,4 +52,5 @@ const char* CommandPoll_getName(CommandPollHandle self){
 
 void CommandPoll_destroy(CommandPollHandle self){
   free(self);
+  self = NULL;
 }

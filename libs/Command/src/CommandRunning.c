@@ -91,6 +91,9 @@ const char* CommandRunning_getName(CommandRunningHandle self){
 
 void CommandRunning_destroy(CommandRunningHandle self){
   free(self->config.newStates);
+  self->config.newStates = NULL;
   free(self->config.changedChannels);
+  self->config.changedChannels = NULL;
   free(self);
+  self = NULL;
 }

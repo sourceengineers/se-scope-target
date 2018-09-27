@@ -58,4 +58,5 @@ const char* CommandTrigger_getName(CommandTriggerHandle self){
 
 void CommandTrigger_destroy(CommandTriggerHandle self){
   free(self);
+  self = NULL;
 }

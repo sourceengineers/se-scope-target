@@ -9,7 +9,7 @@
 
 #include <Command/CommandTInc.h>
 
-static const char* commandName = "ev_t_inc";
+static const char* commandName = "cf_t_inc";
 
 /* Define public data */
 typedef struct __CommandTIncPrivateData
@@ -55,4 +55,5 @@ const char* CommandTInc_getName(CommandTIncHandle self){
 
 void CommandTInc_destroy(CommandTIncHandle self){
   free(self);
+  self = NULL;
 }

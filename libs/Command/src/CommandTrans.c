@@ -52,4 +52,5 @@ const char* CommandTrans_getName(CommandTransHandle self){
 
 void CommandTrans_destroy(CommandTransHandle self){
   free(self);
+  self = NULL;
 }

@@ -96,6 +96,11 @@ const char* CommandAddr_getName(CommandAddrHandle self){
 
 void CommandAddr_destroy(CommandAddrHandle self){
   free(self->config.newAddresses);
+  self->config.newAddresses = NULL;
   free(self->config.changedChannels);
+  self->config.changedChannels = NULL;
+  free(self->config.types);
+  self->config.types = NULL;
   free(self);
+  self = NULL;
 }
