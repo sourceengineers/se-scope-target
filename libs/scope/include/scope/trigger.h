@@ -45,8 +45,7 @@ typedef struct __TriggerPrivateData* TriggerHandle;
 
 /* Typedef for a function pointer, to easier handle the strategies */
 typedef bool (*TriggerStrategy)(TriggerHandle self, const int index);
-/* Function pointer to the currently implemented strategy */
-TriggerStrategy Trigger_run;
+
 /******************************************************************************
 Public functions 
 ******************************************************************************/
@@ -61,4 +60,7 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf);
 
 /* Returns the triggered index */
 int Trigger_getTriggerIndex(TriggerHandle self);
+
+bool Trigger_run(TriggerHandle self, const int index);
+
 #endif

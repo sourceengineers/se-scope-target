@@ -19,6 +19,7 @@ typedef struct __TriggerPrivateData
   ssize_t triggerIndex;
   IFloatStream stream;
   TriggerStrategy triggerStrategies[3];
+  TriggerStrategy run;
 } TriggerPrivateData;
 
 /* Private functions */
@@ -104,6 +105,18 @@ static bool configSanityCheck(TriggerConfiguration conf){
   return true;
 }
 
+static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode){
+  return self->triggerStrategies[mode];
+}
+
+static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
+  self->level = conf.level;
+  self->edge = conf.edge;
+  self->sign = (int) copysign(1.0f, conf.level);
+  self->stream = conf.stream;
+  self->run = getTriggerStrategy(self, conf.mode);
+}
+
 /* Public functions */
 TriggerHandle Trigger_create(){
 
@@ -115,25 +128,13 @@ TriggerHandle Trigger_create(){
   self->triggerStrategies[TRIGGER_NORMAL] = &triggerNormal;
   self->triggerStrategies[TRIGGER_ONESHOT] = &triggerOneShot;
   
-  Trigger_run = &triggerContinuous;
+  self->run = &triggerContinuous;
   
   return self;
 }
 
 void Trigger_destroy(TriggerHandle self){
   free(self);
-}
-
-TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode){
-  return self->triggerStrategies[mode];
-}
-
-void writeConfig(TriggerHandle self, TriggerConfiguration conf){
-  self->level = conf.level;
-  self->edge = conf.edge;
-  self->sign = (int) copysign(1.0f, conf.level);
-  self->stream = conf.stream;
-  Trigger_run = getTriggerStrategy(self, conf.mode);
 }
 
 int Trigger_getTriggerIndex(TriggerHandle self){
@@ -147,4 +148,8 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
     }
     writeConfig(self, conf);
     return true;
+}
+
+bool Trigger_run(TriggerHandle self, const int index){
+  return self->run(self, index);
 }
