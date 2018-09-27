@@ -14,7 +14,12 @@
 
 #include <Command/CommandRunning.h>
 #include <Command/CommandPoll.h>
+#include <Command/CommandAddr.h>
+#include <Command/CommandTInc.h>
+#include <Command/CommandTrans.h>
+#include <Command/CommandTrigger.h>
 #include <Scope/Scope.h>
+#include <Scope/Trigger.h>
 
 /* Defines class */
 typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
@@ -25,7 +30,8 @@ typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
 /* Constructor: Creates a new instanze of the factory */
 CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
                                            ChannelHandle* channels, 
-                                           size_t ammountOfChannels);
+                                           size_t ammountOfChannels,
+                                           TriggerHandle trigger);
                                            
 /* Deconstructor: Deletes the instanze of the factory */
 void CommandFactory_destroy(CommandFactoryHandle self);
