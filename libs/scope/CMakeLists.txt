@@ -13,6 +13,7 @@ set(LIBRARY_NAME
 set(DEPENDENCIES  
    GeneralPurpose
    Command
+#    msgpack-c
 )
 
 # Set Project Name
