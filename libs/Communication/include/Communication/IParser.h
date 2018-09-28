@@ -22,13 +22,13 @@ typedef struct IParserStruct {
   
   const size_t (*getNumberOfCommands)(IParserHandle iParserHandle);
   bool (*getNameOfCommand)(IParserHandle self, char* name, const int maxLenght, const int index);
+  size_t (*getNumberOfFields)(IParserHandle iParserHandle, const char* commandName);
+  bool (*getNameOfField)(IParserHandle iParserHandle, const char* commandName, char* fieldName, const int maxLenght, const int index);
   
-  
-  /* Data fetcher functions */
-  int (*getIntFromCommand)(IParserHandle iParserHandle,const char* commandName, const int offset);
-  float (*getFloatFromCommand)(IParserHandle iParserHandle,const char* commandName, const int offset);
-  bool (*getBoolFromCommand)(IParserHandle iParserHandle,const char* commandName, const int offset);
-  void (*getStringFromCommand)(IParserHandle iParserHandle,const char* commandName, const int offset, char* targetStr, const int maxLenght);
+  int (*getIntFromCommand)(IParserHandle iParserHandle, const char* commandName, const char* fieldName);
+  float (*getFloatFromCommand)(IParserHandle iParserHandle,const char* commandName, const char* fieldName);
+  bool (*getBoolFromCommand)(IParserHandle iParserHandle,const char* commandName, const char* fieldName);
+  void (*getStringFromCommand)(IParserHandle iParserHandle,const char* commandName, const char* fieldName, char* targetStr, const int maxLenght);
 } IParser ;
 
 #endif
