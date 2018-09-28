@@ -91,20 +91,89 @@ TEST(msgpack_unpacker, test_fetcher_functions)
   size_t strLength = strlen(data) + 40;
   parser->unpack(parser, data, strLength);
 
-  int channelId = parser->getIntFromCommand(parser, (const char*) "cf_tgr", 0);
+  char fieldName[20];
+  parser->getNameOfField(parser, (const char*) "cf_running", fieldName, 20, 1);
+  EXPECT_STREQ(fieldName, "2");
+
+  int mapSize = parser->getNumberOfFields(parser, (const char*) "cf_tgr");
+  EXPECT_EQ(mapSize, 4);
+
+  mapSize = parser->getNumberOfFields(parser, (const char*) "cf_running");
+  EXPECT_EQ(mapSize, 5);
+
+  int channelId = parser->getIntFromCommand(parser, (const char*) "cf_tgr", (const char*) "cl_id");
   EXPECT_EQ(channelId, 1);
 
   char fetchedData[20];
-  parser->getStringFromCommand(parser,(const char*) "cf_tgr", 1, fetchedData, 20);
+  parser->getStringFromCommand(parser,(const char*) "cf_tgr", (const char*)  "mode", fetchedData, 20);
   EXPECT_STREQ(fetchedData, "Continous");
 
-  float level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", 2);
+  float level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "level");
   EXPECT_EQ(level, 2.5f);
 
-  bool edge = parser->getBoolFromCommand(parser, (const char*) "cf_tgr", 3);
+  bool edge = parser->getBoolFromCommand(parser, (const char*) "cf_tgr", "edge");
   EXPECT_EQ(edge, true);
 
-  int stamp = parser->getIntFromCommand(parser, (const char*) "ev_poll", 0);
-  EXPECT_EQ(stamp, 110);
+  int stamp = parser->getIntFromCommand(parser, (const char*) "cf_t_inc", "");
+  EXPECT_EQ(stamp, 10);
+}
+
+
+TEST(msgpack_unpacker, test_automatic_mode)
+{
+  MsgpackUnpackerHandle unpacker = MsgpackUnpacker_create(1000);
+  IParserHandle parser = MsgpackUnpacker_getIParser(unpacker);
+
+  size_t strLength = strlen(data) + 40;
+  parser->unpack(parser, data, strLength);
+
+  char fieldName[20];
+  char commandName[20];
+
+  size_t numberOfCommands = parser->getNumberOfCommands(parser);
+  EXPECT_EQ(numberOfCommands, 6);
+
+  parser->getNameOfCommand(parser,commandName, 20, 0);
+  EXPECT_STREQ(commandName, "cf_running");
+
+  size_t numberOfFields = parser->getNumberOfFields(parser, (const char*) commandName);
+  EXPECT_EQ(numberOfFields, 5);
+
+  parser->getNameOfField(parser, (const char* ) commandName, fieldName, 20, 0);
+  EXPECT_STREQ(fieldName, "1");
+
+  /* For the next step, the command parser has to know which values to parse. */
+  bool setRunning = parser->getBoolFromCommand(parser, commandName, fieldName);
+  EXPECT_EQ(setRunning, false);
+
+  setRunning = parser->getBoolFromCommand(parser, commandName, (const char*) "2");
+  EXPECT_EQ(setRunning, true);
+}
+
+TEST(msgpack_unpacker, test_errors)
+{
+  MsgpackUnpackerHandle unpacker = MsgpackUnpacker_create(1000);
+  IParserHandle parser = MsgpackUnpacker_getIParser(unpacker);
+
+  size_t strLength = strlen(data) + 40;
+  char tmpData[strLength];
+  strcpy(tmpData, data);
+
+  tmpData[10] = 'a';
+  tmpData[11] = '\0';
+  tmpData[12] = '1';
+
+  bool result = parser->unpack(parser, tmpData, strLength);
+  EXPECT_EQ(result, false);
+
+
+  parser->unpack(parser, data, strLength);
+  EXPECT_EQ(result, true);
+
+  float level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "lavel");
+  EXPECT_EQ(level, 0.0f);
+
+  level = parser->getFloatFromCommand(parser, (const char*) "cf_tgri", "lavel");
+  EXPECT_EQ(level, 0.0f);
 
 }

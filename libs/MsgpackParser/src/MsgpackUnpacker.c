@@ -11,6 +11,16 @@
 
 #include <MsgpackParser/MsgpackUnpacker.h>
 #include <msgpack/object.h>
+#include <msgpack.h>
+
+#define returnEmptyObj \
+  msgpack_object empty; \
+  empty.type = MSGPACK_OBJECT_NIL; \
+  return empty;
+
+
+/* Makro to check if the msgpack_object is a map or not. Returns a empty object if not*/
+#define msgpackObjectSanityTest(obj) if(obj.type!=MSGPACK_OBJECT_MAP){returnEmptyObj;}
 
 
 
@@ -22,10 +32,11 @@ static void copyString(char *str, char *data, int size);
 static size_t matchKeyToIndex(msgpack_object parentObj, const char *key);
 static bool getNameOfCommand(IParserHandle iParserHandle, char* name, const int maxLenght, const int index);
 static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key);
-static int getIntFromCommand(IParserHandle iParserHandle, const char* commandName, const int offset);
-static float getFloatFromCommand(IParserHandle iParserHandle,const char* commandName, const int offset);
-static bool getBoolFromCommand(IParserHandle iParserHandle,const char* commandName, const int offset);
-static void getStringFromCommand(IParserHandle iParserHandle,const char* commandName, const int offset, char* targetStr,
+static int getIntFromCommand(IParserHandle iParserHandle, const char* commandName, const char* fieldName);
+static float getFloatFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName);
+static bool getBoolFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName);
+static void getStringFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName,
+                                 char* targetStr,
                                  const int maxLenght);
 
 
@@ -44,12 +55,19 @@ typedef struct __MsgpackUnpackerPrivateData
   size_t msgLength;
 } MsgpackUnpackerPrivateData ;
 
+static bool msgpackObjIsMap(msgpack_object obj){
+  return obj.type != MSGPACK_OBJECT_MAP ? false : true;
+}
 
 static msgpack_object getCommandMap(MsgpackUnpackerHandle self){
 
   msgpack_object obj;
+
   obj = matchKeyToObj(self->obj, "payload");
+  msgpackObjectSanityTest(obj);
   obj = matchKeyToObj(obj, "sc_cmd");
+  msgpackObjectSanityTest(obj);
+
   return obj;
 }
 
@@ -58,6 +76,8 @@ static bool unpack(IParserHandle iParserHandle, const char* data, const int leng
 
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
 
+  msgpack_unpacked_destroy(&self->und);
+  msgpack_unpacked_init(&self->und);
 
   if (msgpack_unpacker_buffer_capacity(&self->unp) < length) {
     return false;
@@ -69,12 +89,25 @@ static bool unpack(IParserHandle iParserHandle, const char* data, const int leng
   switch(self->ret) {
     case MSGPACK_UNPACK_SUCCESS:
     {
-      self->obj = self->und.data;
 
-      msgpack_object obj = getCommandMap(self);
-      self->numberOfCommands = obj.via.map.size;
+      if(self->und.data.type == MSGPACK_OBJECT_MAP){
+        self->obj = self->und.data;
 
-      return true;
+        msgpack_object obj = getCommandMap(self);
+
+        if(obj.type == MSGPACK_OBJECT_NIL) {
+          return false;
+        }
+        if(obj.via.map.size <= 0){
+          return false;
+        }
+
+        self->numberOfCommands = obj.via.map.size;
+
+        return true;
+      }
+
+      return false;
       break;
     }
     case MSGPACK_UNPACK_CONTINUE:
@@ -87,19 +120,45 @@ static bool unpack(IParserHandle iParserHandle, const char* data, const int leng
   return false;
 }
 
-
 /* Returns the msgpack_object corresponding to the given key */
 static msgpack_object getCmdObj(MsgpackUnpackerHandle self, const char *key){
+
   msgpack_object obj = getCommandMap(self);
-  return matchKeyToObj(obj, key);
+  msgpackObjectSanityTest(obj);
+  obj = matchKeyToObj(obj, key);
+
+  return obj;
 }
 
+
+
+/* Returns the msgpack_object corresponding to the given key */
+static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *key){
+
+  msgpackObjectSanityTest(parentObj);
+
+  if(strcmp(key,"") == 0){
+    return parentObj;
+  }
+
+  size_t offset = matchKeyToIndex(parentObj, key);
+
+  if(offset == -1){
+    msgpack_object empty;
+    empty.type = MSGPACK_OBJECT_NIL;
+    return empty;
+  }
+
+  return (parentObj.via.map.ptr+offset)->val;
+}
+
+
+/* Returns the ammount of numbers parsed by the unpacker */
 static const size_t getNumberOfCommands(IParserHandle iParserHandle){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
 
   return self->numberOfCommands;
 }
-
 
 /* Copies the msgpack_object key to key */
  static void copyString(char *str, char *data, int size){
@@ -110,6 +169,11 @@ static const size_t getNumberOfCommands(IParserHandle iParserHandle){
 /* Matches the given key to a object on the child level of the gives parent object
     returns a integer indicating the position of the key in the object */
 static size_t matchKeyToIndex(msgpack_object parentObj, const char *key){
+
+  if(parentObj.type != MSGPACK_OBJECT_MAP){
+    return -1;
+  }
+
   for(int i = 0; i<parentObj.via.map.size; i++){
     msgpack_object objKey = (parentObj.via.map.ptr+i)->key;
 
@@ -127,9 +191,17 @@ static size_t matchKeyToIndex(msgpack_object parentObj, const char *key){
 static bool getNameOfCommand(IParserHandle iParserHandle, char* name, const int maxLenght, const int index){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
 
-  msgpack_object obj = getCommandMap(self);
-  obj = (obj.via.map.ptr+index)->key;
+  if(index < 0){
+    return false;
+  }
 
+  msgpack_object obj = getCommandMap(self);
+
+  if(obj.type != MSGPACK_OBJECT_MAP){
+    return false;
+  }
+
+  obj = (obj.via.map.ptr+index)->key;
 
   if(obj.via.str.size > maxLenght){
     return false;
@@ -143,55 +215,146 @@ static bool getNameOfCommand(IParserHandle iParserHandle, char* name, const int 
 /* Returns msgpack_object matching the the key */
 static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key){
 
-  int offset = matchKeyToIndex(parentObj, key);
-  msgpack_object obj;
-
-  if(offset >= 0 ){
-    return (parentObj.via.map.ptr+offset)->val;
+  /* If there is no field argument given, it is assumed, that the command has no fields and is the field itself */
+  if(strcmp(key, "") == 0){
+    return parentObj;
   }
-  return obj;
+
+  int offset = matchKeyToIndex(parentObj, key);
+
+  if(offset < 0){
+    returnEmptyObj;
+  }
+
+  return (parentObj.via.map.ptr+offset)->val;
+
 }
 
-static int getIntFromCommand(IParserHandle iParserHandle, const char* commandName, const int offset){
+/* Returns the value located at the Command field */
+static int getIntFromCommand(IParserHandle iParserHandle, const char* commandName, const char* fieldName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
-  return (obj.via.map.ptr+offset)->val.via.i64;
+  if((msgpackObjIsMap(obj) == true)){
+      obj = getFieldFromCommand(obj, fieldName);
+  }
+
+  if ((obj.type != MSGPACK_OBJECT_NEGATIVE_INTEGER) && (obj.type != MSGPACK_OBJECT_POSITIVE_INTEGER)){
+    return 0;
+  }
+
+  return obj.via.i64;
 }
 
 
-static float getFloatFromCommand(IParserHandle iParserHandle,const char* commandName, const int offset){
+/* Returns the value located at the Command field */
+static float getFloatFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
-  return (obj.via.map.ptr+offset)->val.via.f64;
+  if(msgpackObjIsMap(obj) == false){
+    return 0.0f;
+  }
+
+  obj = getFieldFromCommand(obj, fieldName);
+
+
+  if((obj.type != MSGPACK_OBJECT_FLOAT) && (obj.type != MSGPACK_OBJECT_FLOAT32) && (obj.type != MSGPACK_OBJECT_FLOAT64)){
+    return 0.0f;
+  }
+
+  return obj.via.f64;
 }
 
-static bool getBoolFromCommand(IParserHandle iParserHandle,const char* commandName, const int offset){
+/* Returns the value located at the Command field */
+static bool getBoolFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
-  return (obj.via.map.ptr+offset)->val.via.boolean;
+  if(msgpackObjIsMap(obj) == false){
+    return false;
+  }
+
+  obj = getFieldFromCommand(obj, fieldName);
+
+
+  if(obj.type != MSGPACK_OBJECT_BOOLEAN){
+    return false;
+  }
+
+  return obj.via.boolean;
 }
 
-static void getStringFromCommand(IParserHandle iParserHandle,const char* commandName, const int offset, char* targetStr,
+/* Returns the name of a field of a command at a specific location */
+static void getStringFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName,
+                                 char* targetStr,
                                  const int maxLenght){
 
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
-  int strLength = (obj.via.map.ptr+offset)->val.via.str.size;
+  if(msgpackObjIsMap(obj) == false) {
+    return;
+  }
+
+  obj = getFieldFromCommand(obj, fieldName);
+
+  if(obj.type != MSGPACK_OBJECT_STR) {
+    return;
+  }
+
+  int strLength = obj.via.str.size;
 
   if(maxLenght >= strLength){
-    strncpy(targetStr, (obj.via.map.ptr+offset)->val.via.str.ptr, strLength);
+    strncpy(targetStr, obj.via.str.ptr, strLength);
     targetStr[strLength] = '\0';
   } else {
     targetStr[0] = '\0';
   }
+}
+
+/* Returns the name of a field of a command at a specific location */
+static bool getNameOfField(IParserHandle iParserHandle, const char* commandName, char* fieldName,
+                           const int maxLenght,
+                           const int index){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+
+  if(index < 0){
+    return false;
+  }
+
+  msgpack_object obj = getCmdObj(self, commandName);
+
+  if(msgpackObjIsMap(obj) == false) {
+    return false;
+  }
+
+  obj = (obj.via.map.ptr+index)->key;
+
+  if(obj.via.str.size > maxLenght){
+    return false;
+  }
+
+  copyString(fieldName, (char *)obj.via.str.ptr, obj.via.str.size);
+
+  return true;
+}
+
+/* Returns the number of fields a command has */
+static size_t getNumberOfFields(IParserHandle iParserHandle, const char* commandName){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+
+  msgpack_object obj = getCmdObj(self, commandName);
+
+  if(msgpackObjIsMap(obj) == false) {
+    return -1;
+  }
+
+  return (obj.via.map.size);
 }
 
 
@@ -209,6 +372,8 @@ MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength){
   self->iParser.getStringFromCommand = &getStringFromCommand;
   self->iParser.getNameOfCommand = &getNameOfCommand;
   self->iParser.getNumberOfCommands = &getNumberOfCommands;
+  self->iParser.getNumberOfFields = &getNumberOfFields;
+  self->iParser.getNameOfField = &getNameOfField;
 
 
   bool result = msgpack_unpacker_init(&self->unp, self->msgLength);
