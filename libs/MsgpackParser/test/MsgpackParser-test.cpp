@@ -46,7 +46,7 @@ using namespace testing;
 TEST(msgpack_unpacker, unpack_ammount_of_commands)
 {
   MsgpackUnpackerHandle unpacker = MsgpackUnpacker_create(1000);
-  IParserHandle parser = MsgpackUnpacker_getIParser(unpacker);
+  IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
   parser->unpack(parser, data, strLength);
@@ -60,7 +60,7 @@ TEST(msgpack_unpacker, unpack_ammount_of_commands)
 TEST(msgpack_unpacker, unpack_name_of_command)
 {
   MsgpackUnpackerHandle unpacker = MsgpackUnpacker_create(1000);
-  IParserHandle parser = MsgpackUnpacker_getIParser(unpacker);
+  IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
   parser->unpack(parser, data, strLength);
@@ -86,7 +86,7 @@ TEST(msgpack_unpacker, unpack_name_of_command)
 TEST(msgpack_unpacker, test_fetcher_functions)
 {
   MsgpackUnpackerHandle unpacker = MsgpackUnpacker_create(1000);
-  IParserHandle parser = MsgpackUnpacker_getIParser(unpacker);
+  IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
   parser->unpack(parser, data, strLength);
@@ -122,7 +122,7 @@ TEST(msgpack_unpacker, test_fetcher_functions)
 TEST(msgpack_unpacker, test_automatic_mode)
 {
   MsgpackUnpackerHandle unpacker = MsgpackUnpacker_create(1000);
-  IParserHandle parser = MsgpackUnpacker_getIParser(unpacker);
+  IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
   parser->unpack(parser, data, strLength);
@@ -153,24 +153,38 @@ TEST(msgpack_unpacker, test_automatic_mode)
 TEST(msgpack_unpacker, test_errors)
 {
   MsgpackUnpackerHandle unpacker = MsgpackUnpacker_create(1000);
-  IParserHandle parser = MsgpackUnpacker_getIParser(unpacker);
+  IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
-  char tmpData[strLength];
-  strcpy(tmpData, data);
+  char faultyData[strLength];
+  strcpy(faultyData, data);
 
-  tmpData[10] = 'a';
-  tmpData[11] = '\0';
-  tmpData[12] = '1';
+  faultyData[10] = 'a';
+  faultyData[11] = '\0';
+  faultyData[12] = '1';
 
-  bool result = parser->unpack(parser, tmpData, strLength);
+  bool result = parser->unpack(parser, faultyData, strLength);
   EXPECT_EQ(result, false);
+  float level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "level");
+  EXPECT_EQ(level, 0.0f);
+  result = parser->unpack(parser, data, strLength);
+  EXPECT_EQ(result, true);
+  level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "level");
+  EXPECT_EQ(level, 2.5f);
+  result = parser->unpack(parser, faultyData, strLength);
+  EXPECT_EQ(result, false);
+  level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "level");
+  EXPECT_EQ(level, 2.5f);
 
-
-  parser->unpack(parser, data, strLength);
+  result = parser->unpack(parser, faultyData, strLength);
+  EXPECT_EQ(result, false);
+  result = parser->unpack(parser, data, strLength);
+  EXPECT_EQ(result, true);
+  result = parser->unpack(parser, data, strLength);
   EXPECT_EQ(result, true);
 
-  float level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "lavel");
+
+  level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "lavel");
   EXPECT_EQ(level, 0.0f);
 
   level = parser->getFloatFromCommand(parser, (const char*) "cf_tgri", "lavel");

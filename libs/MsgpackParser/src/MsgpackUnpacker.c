@@ -13,6 +13,7 @@
 #include <msgpack/object.h>
 #include <msgpack.h>
 
+/* Returns a empty msgpack object */
 #define returnEmptyObj \
   msgpack_object empty; \
   empty.type = MSGPACK_OBJECT_NIL; \
@@ -23,19 +24,18 @@
 #define msgpackObjectSanityTest(obj) if(obj.type!=MSGPACK_OBJECT_MAP){returnEmptyObj;}
 
 
-
-static msgpack_object getCommandMap(MsgpackUnpackerHandle self);
-static bool unpack(IParserHandle iParserHandle, const char* data, const int length);
+static msgpack_object getCommandMap(msgpack_object parentObj);
+static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const int length);
 static msgpack_object getCmdObj(MsgpackUnpackerHandle self, const char *key);
-static const size_t getNumberOfCommands(IParserHandle iParserHandle);
+static const size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler);
 static void copyString(char *str, char *data, int size);
 static size_t matchKeyToIndex(msgpack_object parentObj, const char *key);
-static bool getNameOfCommand(IParserHandle iParserHandle, char* name, const int maxLenght, const int index);
+static bool getNameOfCommand(IUnpackerHandle iUnpackHandler, char* name, const int maxLenght, const int index);
 static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key);
-static int getIntFromCommand(IParserHandle iParserHandle, const char* commandName, const char* fieldName);
-static float getFloatFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName);
-static bool getBoolFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName);
-static void getStringFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName,
+static int getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* commandName, const char* fieldName);
+static float getFloatFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName);
+static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName);
+static void getStringFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName,
                                  char* targetStr,
                                  const int maxLenght);
 
@@ -43,7 +43,7 @@ static void getStringFromCommand(IParserHandle iParserHandle,const char* command
 typedef struct __MsgpackUnpackerPrivateData
 {
 
-  IParser iParser;
+  IUnpacker iUnpacker;
 
   /* Attributes*/
   msgpack_unpacked und;   /* unpacked data */
@@ -59,11 +59,11 @@ static bool msgpackObjIsMap(msgpack_object obj){
   return obj.type != MSGPACK_OBJECT_MAP ? false : true;
 }
 
-static msgpack_object getCommandMap(MsgpackUnpackerHandle self){
+static msgpack_object getCommandMap(msgpack_object parentObj){
 
   msgpack_object obj;
 
-  obj = matchKeyToObj(self->obj, "payload");
+  obj = matchKeyToObj(parentObj, "payload");
   msgpackObjectSanityTest(obj);
   obj = matchKeyToObj(obj, "sc_cmd");
   msgpackObjectSanityTest(obj);
@@ -72,12 +72,14 @@ static msgpack_object getCommandMap(MsgpackUnpackerHandle self){
 }
 
 /* Unpacks the data and safes it */
-static bool unpack(IParserHandle iParserHandle, const char* data, const int length){
+static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const int length){
 
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
-  msgpack_unpacked_destroy(&self->und);
-  msgpack_unpacked_init(&self->und);
+  /* !!!! unpacker has to be reinitialized. It uses malloc for this process which is unfortunate and possibly has to
+   * be changed !!! */
+  msgpack_unpacker_destroy(&self->unp);
+  msgpack_unpacker_init(&self->unp, self->msgLength);
 
   if (msgpack_unpacker_buffer_capacity(&self->unp) < length) {
     return false;
@@ -90,10 +92,12 @@ static bool unpack(IParserHandle iParserHandle, const char* data, const int leng
     case MSGPACK_UNPACK_SUCCESS:
     {
 
-      if(self->und.data.type == MSGPACK_OBJECT_MAP){
+      /* Additional test to check if the data was processed correctly */
+      if(self->und.data.type == MSGPACK_OBJECT_MAP && getCommandMap(self->und.data).type != MSGPACK_OBJECT_NIL){
+
         self->obj = self->und.data;
 
-        msgpack_object obj = getCommandMap(self);
+        msgpack_object obj = getCommandMap(self->obj);
 
         if(obj.type == MSGPACK_OBJECT_NIL) {
           return false;
@@ -110,9 +114,6 @@ static bool unpack(IParserHandle iParserHandle, const char* data, const int leng
       return false;
       break;
     }
-    case MSGPACK_UNPACK_CONTINUE:
-      return false;
-      break;
     case MSGPACK_UNPACK_PARSE_ERROR:
       return false;
       break;
@@ -123,14 +124,12 @@ static bool unpack(IParserHandle iParserHandle, const char* data, const int leng
 /* Returns the msgpack_object corresponding to the given key */
 static msgpack_object getCmdObj(MsgpackUnpackerHandle self, const char *key){
 
-  msgpack_object obj = getCommandMap(self);
+  msgpack_object obj = getCommandMap(self->obj);
   msgpackObjectSanityTest(obj);
   obj = matchKeyToObj(obj, key);
 
   return obj;
 }
-
-
 
 /* Returns the msgpack_object corresponding to the given key */
 static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *key){
@@ -154,8 +153,8 @@ static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *
 
 
 /* Returns the ammount of numbers parsed by the unpacker */
-static const size_t getNumberOfCommands(IParserHandle iParserHandle){
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+static const size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   return self->numberOfCommands;
 }
@@ -188,14 +187,14 @@ static size_t matchKeyToIndex(msgpack_object parentObj, const char *key){
 }
 
 /* Returns the name of a command at a given index */
-static bool getNameOfCommand(IParserHandle iParserHandle, char* name, const int maxLenght, const int index){
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+static bool getNameOfCommand(IUnpackerHandle iUnpackHandler, char* name, const int maxLenght, const int index){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   if(index < 0){
     return false;
   }
 
-  msgpack_object obj = getCommandMap(self);
+  msgpack_object obj = getCommandMap(self->obj);
 
   if(obj.type != MSGPACK_OBJECT_MAP){
     return false;
@@ -231,8 +230,8 @@ static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key){
 }
 
 /* Returns the value located at the Command field */
-static int getIntFromCommand(IParserHandle iParserHandle, const char* commandName, const char* fieldName){
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+static int getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* commandName, const char* fieldName){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
@@ -249,8 +248,8 @@ static int getIntFromCommand(IParserHandle iParserHandle, const char* commandNam
 
 
 /* Returns the value located at the Command field */
-static float getFloatFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName){
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+static float getFloatFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
@@ -269,8 +268,8 @@ static float getFloatFromCommand(IParserHandle iParserHandle,const char* command
 }
 
 /* Returns the value located at the Command field */
-static bool getBoolFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName){
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
@@ -289,11 +288,11 @@ static bool getBoolFromCommand(IParserHandle iParserHandle,const char* commandNa
 }
 
 /* Returns the name of a field of a command at a specific location */
-static void getStringFromCommand(IParserHandle iParserHandle,const char* commandName, const char* fieldName,
+static void getStringFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName,
                                  char* targetStr,
                                  const int maxLenght){
 
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
@@ -318,10 +317,10 @@ static void getStringFromCommand(IParserHandle iParserHandle,const char* command
 }
 
 /* Returns the name of a field of a command at a specific location */
-static bool getNameOfField(IParserHandle iParserHandle, const char* commandName, char* fieldName,
+static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandName, char* fieldName,
                            const int maxLenght,
                            const int index){
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   if(index < 0){
     return false;
@@ -345,8 +344,8 @@ static bool getNameOfField(IParserHandle iParserHandle, const char* commandName,
 }
 
 /* Returns the number of fields a command has */
-static size_t getNumberOfFields(IParserHandle iParserHandle, const char* commandName){
-  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iParserHandle->implementer;
+static size_t getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
@@ -364,16 +363,16 @@ MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength){
 
   self->numberOfCommands = 0;
   self->msgLength = msgLength;
-  self->iParser.implementer = self;
-  self->iParser.unpack = &unpack;
-  self->iParser.getBoolFromCommand = &getBoolFromCommand;
-  self->iParser.getFloatFromCommand = &getFloatFromCommand;
-  self->iParser.getIntFromCommand = &getIntFromCommand;
-  self->iParser.getStringFromCommand = &getStringFromCommand;
-  self->iParser.getNameOfCommand = &getNameOfCommand;
-  self->iParser.getNumberOfCommands = &getNumberOfCommands;
-  self->iParser.getNumberOfFields = &getNumberOfFields;
-  self->iParser.getNameOfField = &getNameOfField;
+  self->iUnpacker.implementer = self;
+  self->iUnpacker.unpack = &unpack;
+  self->iUnpacker.getBoolFromCommand = &getBoolFromCommand;
+  self->iUnpacker.getFloatFromCommand = &getFloatFromCommand;
+  self->iUnpacker.getIntFromCommand = &getIntFromCommand;
+  self->iUnpacker.getStringFromCommand = &getStringFromCommand;
+  self->iUnpacker.getNameOfCommand = &getNameOfCommand;
+  self->iUnpacker.getNumberOfCommands = &getNumberOfCommands;
+  self->iUnpacker.getNumberOfFields = &getNumberOfFields;
+  self->iUnpacker.getNameOfField = &getNameOfField;
 
 
   bool result = msgpack_unpacker_init(&self->unp, self->msgLength);
@@ -388,10 +387,12 @@ MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength){
 }
 
 void MsgpackUnpacker_destroy(MsgpackUnpackerHandle self){
+  msgpack_unpacked_destroy(&self->und);
+  msgpack_unpacker_destroy(&self->unp);
   free(self);
   self = NULL;
 }
 
-IParserHandle MsgpackUnpacker_getIParser(MsgpackUnpackerHandle self){
-  return &self->iParser;
+IUnpackerHandle MsgpackUnpacker_getIUnpacker(MsgpackUnpackerHandle self){
+  return &self->iUnpacker;
 }
