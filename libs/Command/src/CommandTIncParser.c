@@ -23,8 +23,7 @@ CommandTIncParserHandle CommandTIncParser_create(ICommandHandle iCommand, IUnpac
   CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
   self->iCommand = iCommand;
   self->iUnpacker = iUnpacker;
-  self->commandName = self->iCommand->getCommandName(self->iCommand);
-
+  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
   return self;
 }
 

@@ -64,6 +64,13 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   }
 }
 
+
+static const char* getCommandName(ICommandHandle self){
+  CommandRunningHandle commandAddr = (CommandRunningHandle) self->implementer;
+
+  return CommandRunning_getName(commandAddr);
+}
+
 /* Public functions */
 CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t ammountOfChannels){
 
@@ -77,7 +84,8 @@ CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t
   self->iCommand.implementer = self;
   self->iCommand.run = &run;
   self->iCommand.setCommandAttribute = &setCommandAttribute;
-  
+  self->iCommand.getCommandName = &getCommandName;
+
   return self;
 }
 

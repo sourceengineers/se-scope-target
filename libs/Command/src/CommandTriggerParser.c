@@ -27,8 +27,7 @@ CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle iCommand, 
   CommandTriggerParserHandle self = malloc(sizeof(CommandTriggerParserPrivateData));
   self->iCommand = iCommand;
   self->iUnpacker = iUnpacker;
-  self->commandName = self->iCommand->getCommandName(self->iCommand);
-
+  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
   self->channels = channels;
   self->numberOfChannels = numberOfChannels;
 

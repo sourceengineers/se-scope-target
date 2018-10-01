@@ -23,8 +23,7 @@ CommandRunningParserHandle CommandRunningParser_create(ICommandHandle iCommand, 
   CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
   self->iCommand = iCommand;
   self->iUnpacker = iUnpacker;
-  self->commandName = self->iCommand->getCommandName(self->iCommand);
-
+  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
   return self;
 }
 

@@ -30,6 +30,12 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   commandTInc->timeIncrement = *(int*) attr;
 }
 
+static const char* getCommandName(ICommandHandle self){
+  CommandTIncHandle commandAddr = (CommandTIncHandle) self->implementer;
+
+  return CommandTInc_getName(commandAddr);
+}
+
 /* Public functions */
 CommandTIncHandle CommandTInc_create(IScopeHandle iScope){
 
@@ -40,7 +46,8 @@ CommandTIncHandle CommandTInc_create(IScopeHandle iScope){
   self->iCommand.implementer = self;
   self->iCommand.run = &run;
   self->iCommand.setCommandAttribute = &setCommandAttribute;
-  
+  self->iCommand.getCommandName = &getCommandName;
+
   return self;
 }
 

@@ -34,6 +34,12 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   commandTrigger->config = newConfig;
 }
 
+static const char* getCommandName(ICommandHandle self){
+  CommandTriggerHandle commandAddr = (CommandTriggerHandle) self->implementer;
+
+  return CommandTrigger_getName(commandAddr);
+}
+
 /* Public functions */
 CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger){
 
@@ -43,7 +49,8 @@ CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger){
   self->iCommand.implementer = self;
   self->iCommand.run = &run;
   self->iCommand.setCommandAttribute = &setCommandAttribute;
-  
+  self->iCommand.getCommandName = &getCommandName;
+
   return self;
 }
 

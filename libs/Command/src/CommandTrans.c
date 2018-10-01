@@ -28,6 +28,12 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   return;
 }
 
+static const char* getCommandName(ICommandHandle self){
+  CommandTransHandle commandAddr = (CommandTransHandle) self->implementer;
+
+  return CommandTrans_getName(commandAddr);
+}
+
 /* Public functions */
 CommandTransHandle CommandTrans_create(IScopeHandle iScope){
 
@@ -37,7 +43,8 @@ CommandTransHandle CommandTrans_create(IScopeHandle iScope){
   self->iCommand.implementer = self;
   self->iCommand.run = &run;
   self->iCommand.setCommandAttribute = &setCommandAttribute;
-  
+  self->iCommand.getCommandName = &getCommandName;
+
   return self;
 }
 

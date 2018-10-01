@@ -23,8 +23,7 @@ CommandAddrParserHandle CommandAddrParser_create(ICommandHandle iCommand, IUnpac
   CommandAddrParserHandle self = malloc(sizeof(CommandAddrParserPrivateData));
   self->iCommand = iCommand;
   self->iUnpacker = iUnpacker;
-  self->commandName = self->iCommand->getCommandName(self->iCommand);
-
+  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
   return self;
 }
 
