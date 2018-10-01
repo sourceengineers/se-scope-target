@@ -8,6 +8,8 @@
 *******************************************************************************/
 
 #include <Scope/Scope.h>
+#include <Communication/Unpacker.h>
+#include <MsgpackParser/MsgpackUnpacker.h>
 
 /* Define public data */
 typedef struct __ScopePrivateData
@@ -21,6 +23,10 @@ typedef struct __ScopePrivateData
   int timeIncrement;
   
   IScope iScope;
+
+  MsgpackUnpackerHandle msgpackUnpacker;
+  UnpackerHandle unpacker;
+
 } ScopePrivateData ;
 
 static void iScopePoll(IScopeHandle self){
@@ -40,7 +46,7 @@ static void iScopeTrans(IScopeHandle self){
 }
 
 /* Public functions */
-ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels){
+ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t communicationBufferSize, COM_TYPE comType){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
   self->iScope.implementer = self;
@@ -61,13 +67,18 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels){
   
   /* Create Trigger */
   self->trigger = Trigger_create();
-  
+
+  /* Creates the unpacking communication */
+  self->msgpackUnpacker = MsgpackUnpacker_create(communicationBufferSize);
+  self->unpacker = Unpacker_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker), comType);
+
   /* Create command factory */
   self->commandFactory = CommandFactory_create(&self->iScope, 
                                                self->channels, 
                                                self->numberOfChannels,
-                                               self->trigger);
-  
+                                               self->trigger,
+                                               self->unpacker);
+
   return self;
 }
 
@@ -75,6 +86,37 @@ void Scope_destroy(ScopeHandle self){
   free(self->buffers);
   free(self->channels);
   free(self);
+}
+
+static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
+  const size_t maxCommandNameLength = 30;
+  char commandName[maxCommandNameLength];
+
+  for (size_t i = 0; i < numberOfCommands; ++i) {
+    unpacker->getNameOfCommand(unpacker, commandName, maxCommandNameLength, i);
+    commands[i] = CommandFactory_getICommand(scope->commandFactory, commandName);
+  }
+}
+
+static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
+  for (size_t i = 0; i < numberOfCommands; ++i) {
+    commands[i]->run(commands[i]);
+  }
+}
+
+void Scope_command(ScopeHandle self, const char* data, size_t dataLength){
+
+  IUnpackerHandle unpacker = Unpacker_getIUnpacker(self->unpacker);
+
+  if(unpacker->unpack(unpacker, data, dataLength) == false){
+    return;
+  }
+
+  size_t numberOfCommands = unpacker->getNumberOfCommands(unpacker);
+  ICommandHandle commands[numberOfCommands];
+
+  fetchCommands(self, unpacker, commands, numberOfCommands);
+  runCommands(commands, numberOfCommands);
 }
 
 void Scope_poll(ScopeHandle self){

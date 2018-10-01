@@ -13,6 +13,8 @@ set(LIBRARY_NAME
 set(DEPENDENCIES  
    GeneralPurpose
    Command
+    MsgpackParser
+    Communication
 #    msgpack-c
 )
 
