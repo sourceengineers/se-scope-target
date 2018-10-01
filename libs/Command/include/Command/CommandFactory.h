@@ -22,6 +22,11 @@
 #include <Command/CommandTInc.h>
 #include <Command/CommandTrans.h>
 #include <Command/CommandTrigger.h>
+#include <Command/CommandAddrParser.h>
+#include <Command/CommandRunningParser.h>
+#include <Command/CommandTIncParser.h>
+#include <Command/CommandTriggerParser.h>
+
 #include <Scope/Scope.h>
 
 /* Defines class */
@@ -34,7 +39,8 @@ typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
 CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
                                            ChannelHandle* channels, 
                                            size_t ammountOfChannels,
-                                           TriggerHandle trigger);
+                                           TriggerHandle trigger,
+                                           UnpackerHandle unpacker);
                                            
 /* Deconstructor: Deletes the instanze of the factory */
 void CommandFactory_destroy(CommandFactoryHandle self);

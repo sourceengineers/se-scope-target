@@ -20,14 +20,20 @@ typedef struct __CommandFactoryPrivateData
   CommandTIncHandle commandTInc;
   CommandTransHandle commandTrans;
   CommandTriggerHandle commandTrigger;
-  
+
+  CommandAddrParserHandle commandAddrParser;
+  CommandRunningParserHandle commandRunningParser;
+  CommandTIncParserHandle commandTIncParser;
+  CommandTriggerParserHandle commandTriggerParser;
+
 } CommandFactoryPrivateData ;
 
 /* Public functions */
 CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
                                            ChannelHandle* channels, 
                                            size_t ammountOfChannels,
-                                           TriggerHandle trigger){
+                                           TriggerHandle trigger,
+                                           UnpackerHandle unpacker){
 
   CommandFactoryHandle self = malloc(sizeof(CommandFactoryPrivateData));
   self->commandRunning = CommandRunning_create(channels, ammountOfChannels);
@@ -37,22 +43,43 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
   self->commandTrans = CommandTrans_create(iScope);
   self->commandTrigger = CommandTrigger_create(trigger);
 
+  self->commandAddrParser = CommandAddrParser_create(CommandAddr_getICommand(self->commandAddr),
+                                                     Unpacker_getIUnpacker(unpacker));
+
+  self->commandRunningParser = CommandRunningParser_create(CommandRunning_getICommand(self->commandRunning),
+                                                           Unpacker_getIUnpacker(unpacker));
+
+  self->commandTIncParser = CommandTIncParser_create(CommandTInc_getICommand(self->commandTInc),
+                                                     Unpacker_getIUnpacker(unpacker));
+
+  self->commandTriggerParser = CommandTriggerParser_create(CommandTrigger_getICommand(self->commandTrigger),
+                                                           Unpacker_getIUnpacker(unpacker), channels, ammountOfChannels);
+
   return self;
 }
 
 ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char* command){
 
   if(strcmp(command, CommandRunning_getName(self->commandRunning)) == 0){
+    CommandRunningParser_configure(self->commandRunningParser);
     return CommandRunning_getICommand(self->commandRunning);
+
   } else if(strcmp(command, CommandPoll_getName(self->commandPoll)) == 0){
     return CommandPoll_getICommand(self->commandPoll);
-  } else if(strcmp(command, CommandAddr_getName(self->commandAddr)) == 0){
+
+  } else if(strcmp(command, CommandAddr_getName(self->commandAddr)) == 0) {
+    CommandAddrParser_configure(self->commandAddrParser);
     return CommandAddr_getICommand(self->commandAddr);
+
   } else if(strcmp(command, CommandTInc_getName(self->commandTInc)) == 0){
+    CommandTIncParser_configure(self->commandTIncParser);
     return CommandTInc_getICommand(self->commandTInc);
+
   } else if(strcmp(command, CommandTrans_getName(self->commandTrans)) == 0){
     return CommandTrans_getICommand(self->commandTrans);
+
   } else if(strcmp(command, CommandTrigger_getName(self->commandTrigger)) == 0){
+    CommandTriggerParser_configure(self->commandTriggerParser);
     return CommandTrigger_getICommand(self->commandTrigger);
   }
   
