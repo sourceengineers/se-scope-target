@@ -16,11 +16,13 @@ typedef struct __ScopePrivateData
 {
   size_t numberOfChannels;
   ChannelHandle* channels;
+  RingBufferHandle timeStampBuffer;
   RingBufferHandle* buffers;
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
   
   int timeIncrement;
+  int timeStamp;
   
   IScope iScope;
 
@@ -49,13 +51,15 @@ static void iScopeTrans(IScopeHandle self){
 ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t communicationBufferSize, COM_TYPE comType){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
+  self->timeStamp = 0;
+  self->timeIncrement = 0;
+
   self->iScope.implementer = self;
   self->iScope.poll = &iScopePoll;
   self->iScope.trans = &iScopeTrans;
   self->iScope.setTimeIncrement = &iScopeSetTimeIncrement;
 
   /* Create channels and buffers */
-  self->timeIncrement = 0;
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
   self->buffers = malloc(sizeof(RingBufferHandle) * numberOfChannels);
   self->numberOfChannels = numberOfChannels;
@@ -64,6 +68,7 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
     self->buffers[i] = RingBuffer_create(channelSize);
     self->channels[i] = Channel_create(self->buffers[i]);
   }
+  self->timeStampBuffer = RingBuffer_create(channelSize);
   
   /* Create Trigger */
   self->trigger = Trigger_create();
@@ -88,6 +93,7 @@ void Scope_destroy(ScopeHandle self){
     RingBuffer_destroy(self->buffers[i]);
     Channel_destroy(self->channels[i]);
   }
+  RingBuffer_destroy(self->timeStampBuffer);
 
   Trigger_destroy(self->trigger);
   CommandFactory_destroy(self->commandFactory);
@@ -130,6 +136,11 @@ void Scope_command(ScopeHandle self, const char* data, size_t dataLength){
 }
 
 void Scope_poll(ScopeHandle self){
+
+  RingBuffer_write(self->timeStampBuffer, (const float*) self->timeStamp, 1);
+
+  self->timeStamp += self->timeIncrement;
+
   for (size_t i = 0; i < self->numberOfChannels; i++) {
     Channel_poll(self->channels[i]);
   }
