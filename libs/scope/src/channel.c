@@ -121,7 +121,9 @@ ChannelHandle Channel_create(RingBufferHandle buffer){
 
 void Channel_destroy(ChannelHandle self){
   RingBuffer_destroy(self->buffer);
+  self->buffer = NULL;
   free(self);
+  self = NULL;
 }
 
 void Channel_setPollAddress(ChannelHandle self, void* pollAddress, const DATA_TYPES pollDataType){

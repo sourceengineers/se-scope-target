@@ -135,6 +135,7 @@ TriggerHandle Trigger_create(){
 
 void Trigger_destroy(TriggerHandle self){
   free(self);
+  self = NULL;
 }
 
 int Trigger_getTriggerIndex(TriggerHandle self){

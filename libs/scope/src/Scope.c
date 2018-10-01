@@ -83,9 +83,19 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
 }
 
 void Scope_destroy(ScopeHandle self){
-  free(self->buffers);
-  free(self->channels);
+
+  for (size_t i = 0; i < self->numberOfChannels; ++i) {
+    RingBuffer_destroy(self->buffers[i]);
+    Channel_destroy(self->channels[i]);
+  }
+
+  Trigger_destroy(self->trigger);
+  CommandFactory_destroy(self->commandFactory);
+  MsgpackUnpacker_destroy(self->msgpackUnpacker);
+  Unpacker_destroy(self->unpacker);
+
   free(self);
+  self = NULL;
 }
 
 static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){

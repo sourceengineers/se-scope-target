@@ -33,4 +33,6 @@ IUnpackerHandle Unpacker_getIUnpacker(UnpackerHandle self){
 }
 
 void Unpacker_destroy(UnpackerHandle self){
+  free(self);
+  self = NULL;
 }

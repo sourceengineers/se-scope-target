@@ -94,6 +94,12 @@ void CommandFactory_destroy(CommandFactoryHandle self){
   CommandTInc_destroy(self->commandTInc);
   CommandTrans_destroy(self->commandTrans);
   CommandTrigger_destroy(self->commandTrigger);
+
+  CommandRunningParser_destroy(self->commandRunningParser);
+  CommandAddrParser_destroy(self->commandAddrParser);
+  CommandTIncParser_destroy(self->commandTIncParser);
+  CommandTriggerParser_destroy(self->commandTriggerParser);
+
   free(self);
   self = NULL;
 }

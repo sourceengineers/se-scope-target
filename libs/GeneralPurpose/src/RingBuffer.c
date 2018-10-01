@@ -95,7 +95,9 @@ RingBufferHandle RingBuffer_create(size_t capacity){
 
 void RingBuffer_destroy(RingBufferHandle self){
   free(self->data);
+  self->data = NULL;
   free(self);
+  self = NULL;
 }
 
 size_t RingBuffer_getCapacity(RingBufferHandle self){
