@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         Channel.c
+ * @file         Unpacker.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,18 +7,30 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Communication/Parser.h>
+#include <Communication/Unpacker.h>
 
 /* Define public data */
-typedef struct __ParserPrivateData
+typedef struct __UnpackerPrivateData
 {
-} ParserPrivateData ;
+  IUnpacker iUnpacker;
+  COM_TYPE comType;
+
+
+} UnpackerPrivateData ;
 
 /* Public functions */
-ParserHandle Parser_create(){
-  
-  return NULL;
+UnpackerHandle Unpacker_create(IUnpackerHandle iUnpacker, COM_TYPE comType){
+
+  UnpackerHandle self = malloc(sizeof(UnpackerPrivateData));
+
+  self->iUnpacker = *iUnpacker;
+
+  return self;
 }
 
-void Parser_destroy(ParserHandle self){
+IUnpackerHandle Unpacker_getIUnpacker(UnpackerHandle self){
+  return &self->iUnpacker;
+}
+
+void Unpacker_destroy(UnpackerHandle self){
 }

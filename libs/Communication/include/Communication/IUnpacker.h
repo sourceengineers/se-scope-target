@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         IParser.h
+ * @file         IUnpacker.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -22,6 +22,7 @@
 #define IUNPACKER_H_
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct IUnpackerStruct* IUnpackerHandle;
 
