@@ -19,7 +19,7 @@ TEST(CommandFactory, test_destroy)
   ICommand* commandTrans = NULL;
   ICommand* commandTrigger = NULL;
   
-  CommandFactoryHandle factory = CommandFactory_create(NULL, channels, numberOfChannels, NULL);
+  CommandFactoryHandle factory = CommandFactory_create(NULL, channels, numberOfChannels, NULL, NULL);
   
   commandRunning = CommandFactory_getICommand(factory, (const char*) "cf_running");
   ASSERT_THAT(commandRunning, NotNull());
