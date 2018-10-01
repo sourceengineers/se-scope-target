@@ -15,7 +15,7 @@ typedef struct __ParserPrivateData
 } ParserPrivateData ;
 
 /* Public functions */
-ParserHandle Scope_create(){
+ParserHandle Parser_create(){
   
   return NULL;
 }
