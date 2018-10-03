@@ -33,7 +33,7 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
                                            ChannelHandle* channels, 
                                            size_t ammountOfChannels,
                                            TriggerHandle trigger,
-                                           UnpackerHandle unpacker){
+                                           IUnpackerHandle unpacker){
 
   CommandFactoryHandle self = malloc(sizeof(CommandFactoryPrivateData));
   self->commandRunning = CommandRunning_create(channels, ammountOfChannels);
@@ -43,17 +43,14 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
   self->commandTrans = CommandTrans_create(iScope);
   self->commandTrigger = CommandTrigger_create(trigger);
 
-  self->commandAddrParser = CommandAddrParser_create(CommandAddr_getICommand(self->commandAddr),
-                                                     Unpacker_getIUnpacker(unpacker));
+  self->commandAddrParser = CommandAddrParser_create(CommandAddr_getICommand(self->commandAddr), unpacker);
 
-  self->commandRunningParser = CommandRunningParser_create(CommandRunning_getICommand(self->commandRunning),
-                                                           Unpacker_getIUnpacker(unpacker));
+  self->commandRunningParser = CommandRunningParser_create(CommandRunning_getICommand(self->commandRunning), unpacker);
 
-  self->commandTIncParser = CommandTIncParser_create(CommandTInc_getICommand(self->commandTInc),
-                                                     Unpacker_getIUnpacker(unpacker));
+  self->commandTIncParser = CommandTIncParser_create(CommandTInc_getICommand(self->commandTInc), unpacker);
 
-  self->commandTriggerParser = CommandTriggerParser_create(CommandTrigger_getICommand(self->commandTrigger),
-                                                           Unpacker_getIUnpacker(unpacker), channels, ammountOfChannels);
+  self->commandTriggerParser = CommandTriggerParser_create(CommandTrigger_getICommand(self->commandTrigger), unpacker,
+                                                           channels, ammountOfChannels);
 
   return self;
 }

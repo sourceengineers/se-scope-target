@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         Unpacker.c
+ * @file         Reciever.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,32 +7,32 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Communication/Unpacker.h>
+#include <Communication/Reciever.h>
 
 /* Define public data */
-typedef struct __UnpackerPrivateData
+typedef struct __RecieverPrivateData
 {
   IUnpacker iUnpacker;
   COM_TYPE comType;
 
 
-} UnpackerPrivateData ;
+} RecieverPrivateData ;
 
 /* Public functions */
-UnpackerHandle Unpacker_create(IUnpackerHandle iUnpacker, COM_TYPE comType){
+RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, COM_TYPE comType){
 
-  UnpackerHandle self = malloc(sizeof(UnpackerPrivateData));
+  RecieverHandle self = malloc(sizeof(RecieverPrivateData));
 
   self->iUnpacker = *iUnpacker;
 
   return self;
 }
 
-IUnpackerHandle Unpacker_getIUnpacker(UnpackerHandle self){
+IUnpackerHandle Reciever_getIUnpacker(RecieverHandle self){
   return &self->iUnpacker;
 }
 
-void Unpacker_destroy(UnpackerHandle self){
+void Reciever_destroy(RecieverHandle self){
   free(self);
   self = NULL;
 }

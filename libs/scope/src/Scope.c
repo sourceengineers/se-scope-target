@@ -8,7 +8,7 @@
 *******************************************************************************/
 
 #include <Scope/Scope.h>
-#include <Communication/Unpacker.h>
+#include <Communication/Reciever.h>
 #include <MsgpackParser/MsgpackUnpacker.h>
 
 /* Define public data */
@@ -27,7 +27,7 @@ typedef struct __ScopePrivateData
   IScope iScope;
 
   MsgpackUnpackerHandle msgpackUnpacker;
-  UnpackerHandle unpacker;
+  RecieverHandle reciever;
 
 } ScopePrivateData ;
 
@@ -75,14 +75,14 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
 
   /* Creates the unpacking communication */
   self->msgpackUnpacker = MsgpackUnpacker_create(communicationBufferSize);
-  self->unpacker = Unpacker_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker), comType);
+  self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker), comType);
 
   /* Create command factory */
   self->commandFactory = CommandFactory_create(&self->iScope, 
                                                self->channels, 
                                                self->numberOfChannels,
                                                self->trigger,
-                                               self->unpacker);
+                                               Reciever_getIUnpacker(self->reciever));
 
   return self;
 }
@@ -98,7 +98,7 @@ void Scope_destroy(ScopeHandle self){
   Trigger_destroy(self->trigger);
   CommandFactory_destroy(self->commandFactory);
   MsgpackUnpacker_destroy(self->msgpackUnpacker);
-  Unpacker_destroy(self->unpacker);
+  Reciever_destroy(self->reciever);
 
   free(self);
   self = NULL;
@@ -122,7 +122,7 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
 
 void Scope_command(ScopeHandle self, const char* data, size_t dataLength){
 
-  IUnpackerHandle unpacker = Unpacker_getIUnpacker(self->unpacker);
+  IUnpackerHandle unpacker = Reciever_getIUnpacker(self->reciever);
 
   if(unpacker->unpack(unpacker, data, dataLength) == false){
     return;

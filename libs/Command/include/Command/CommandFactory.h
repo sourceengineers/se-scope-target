@@ -40,7 +40,7 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
                                            ChannelHandle* channels, 
                                            size_t ammountOfChannels,
                                            TriggerHandle trigger,
-                                           UnpackerHandle unpacker);
+                                           IUnpackerHandle unpacker);
                                            
 /* Deconstructor: Deletes the instanze of the factory */
 void CommandFactory_destroy(CommandFactoryHandle self);

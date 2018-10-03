@@ -17,7 +17,7 @@
 #include <Scope/IScope.h>
 
 #include <Command/CommandFactory.h>
-#include <Communication/Unpacker.h>
+#include <Communication/Reciever.h>
 
 /* Defines class */
 typedef struct __ScopePrivateData* ScopeHandle;

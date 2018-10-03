@@ -1,21 +1,21 @@
 /*!*****************************************************************************
- * @file         Unpacker.h
+ * @file         Reciever.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the Unpacker.
+ * @brief        Implementation of the Reciever.
  *
- *               Custom functions like "Unpacker_unpack()" will have to be defined in a next step. These will have to
+ *               Custom functions like "Reciever_unpack()" will have to be defined in a next step. These will have to
  *               include options to check the communication specific fields, like checksums and so on.
  *
- *               The unpacker will have to be renamed to reciever.
+ *               The Reciever will have to be renamed to reciever.
  * 
  ******************************************************************************/
  
-#ifndef UNPACKER_H_
-#define UNPACKER_H_
+#ifndef RECIEVER_H_
+#define RECIEVER_H_
 
 #include <unistd.h>
 #include <Communication/IUnpacker.h>
@@ -26,18 +26,18 @@ typedef enum {ETHERNET, RS232} COM_TYPE;
 
 
 /* Defines class */
-typedef struct __UnpackerPrivateData* UnpackerHandle;
+typedef struct __RecieverPrivateData* RecieverHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instanze of the channel */
-UnpackerHandle Unpacker_create(IUnpackerHandle iUnpacker, COM_TYPE comType);
+RecieverHandle Reciever_create(IUnpackerHandle iReciever, COM_TYPE comType);
 
-IUnpackerHandle Unpacker_getIUnpacker(UnpackerHandle self);
+IUnpackerHandle Reciever_getIUnpacker(RecieverHandle self);
 
 /* Deconstructor: Deletes the instanze of the channel */
-void Unpacker_destroy(UnpackerHandle self);
+void Reciever_destroy(RecieverHandle self);
 
 
 #endif
