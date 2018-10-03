@@ -19,17 +19,18 @@
 #include <Scope/IScope.h>
 #include <Command/ICommand.h>
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandTIncPrivateData* CommandTIncHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command */
 CommandTIncHandle CommandTInc_create(IScopeHandle iScope);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the command */
 void CommandTInc_destroy(CommandTIncHandle self);
 
 /* Returns the command interface */

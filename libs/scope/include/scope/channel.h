@@ -13,14 +13,18 @@
 #define CHANNEL_H_
 
 #include <GeneralPurpose/RingBuffer.h>
-#include <GeneralPurpose/Types.h>
+#include <GeneralPurpose/DataTypes.h>
 
+/* Indication for the trigger data */
 static const int CHANNEL_CURRENT_DATA = 0;
 static const int CHANNEL_OLD_DATA = 1;
 
+/* Channels States */
 typedef enum {CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;
 
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __ChannelPrivateData* ChannelHandle;
 
 /******************************************************************************

@@ -10,8 +10,10 @@
 #include <Command/CommandFactory.h>
 #include <string.h>
 
-
-/* Define public data */
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __CommandFactoryPrivateData
 {
   CommandRunningHandle commandRunning;
@@ -28,14 +30,18 @@ typedef struct __CommandFactoryPrivateData
 
 } CommandFactoryPrivateData ;
 
-/* Public functions */
-CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
+
+/******************************************************************************
+ Public functions
+******************************************************************************/
+CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
                                            ChannelHandle* channels, 
                                            size_t ammountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker){
 
   CommandFactoryHandle self = malloc(sizeof(CommandFactoryPrivateData));
+  /* Initialize commands */
   self->commandRunning = CommandRunning_create(channels, ammountOfChannels);
   self->commandPoll = CommandPoll_create(iScope);
   self->commandAddr = CommandAddr_create(channels, ammountOfChannels);
@@ -43,6 +49,8 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
   self->commandTrans = CommandTrans_create(iScope);
   self->commandTrigger = CommandTrigger_create(trigger);
 
+  /* Initialize needed command parser
+   * Not all commands need parser, which is why there are less parser as commands */
   self->commandAddrParser = CommandAddrParser_create(CommandAddr_getICommand(self->commandAddr), unpacker);
 
   self->commandRunningParser = CommandRunningParser_create(CommandRunning_getICommand(self->commandRunning), unpacker);

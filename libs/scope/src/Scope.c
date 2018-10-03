@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         Channel.c
+ * @file         Scope.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -11,7 +11,10 @@
 #include <Communication/Reciever.h>
 #include <MsgpackParser/MsgpackUnpacker.h>
 
-/* Define public data */
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __ScopePrivateData
 {
   size_t numberOfChannels;
@@ -31,6 +34,15 @@ typedef struct __ScopePrivateData
 
 } ScopePrivateData ;
 
+/* Fetches all commands from the Parser */
+static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands);
+
+/* Excecutes all fetched commands */
+static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
+
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static void iScopePoll(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
   Scope_poll(scope);
@@ -47,7 +59,24 @@ static void iScopeTrans(IScopeHandle self){
   /* Trans function has to be implemented once the parser is ready */
 }
 
-/* Public functions */
+static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
+  const size_t maxCommandNameLength = 30;
+  char commandName[maxCommandNameLength];
+
+  for (size_t i = 0; i < numberOfCommands; ++i) {
+    unpacker->getNameOfCommand(unpacker, commandName, maxCommandNameLength, i);
+    commands[i] = CommandFactory_getICommand(scope->commandFactory, commandName);
+  }
+}
+
+static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
+  for (size_t i = 0; i < numberOfCommands; ++i) {
+    commands[i]->run(commands[i]);
+  }
+}
+/******************************************************************************
+ Public functions
+******************************************************************************/
 ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t communicationBufferSize, COM_TYPE comType){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
@@ -104,29 +133,14 @@ void Scope_destroy(ScopeHandle self){
   self = NULL;
 }
 
-static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
-  const size_t maxCommandNameLength = 30;
-  char commandName[maxCommandNameLength];
-
-  for (size_t i = 0; i < numberOfCommands; ++i) {
-    unpacker->getNameOfCommand(unpacker, commandName, maxCommandNameLength, i);
-    commands[i] = CommandFactory_getICommand(scope->commandFactory, commandName);
-  }
-}
-
-static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
-  for (size_t i = 0; i < numberOfCommands; ++i) {
-    commands[i]->run(commands[i]);
-  }
-}
-
 void Scope_command(ScopeHandle self, const char* data, size_t dataLength){
 
-  IUnpackerHandle unpacker = Reciever_getIUnpacker(self->reciever);
-
-  if(unpacker->unpack(unpacker, data, dataLength) == false){
+  if(Reciever_unpack(self->reciever, data, dataLength) == false){
     return;
   }
+
+
+  IUnpackerHandle unpacker = Reciever_getIUnpacker(self->reciever);
 
   size_t numberOfCommands = unpacker->getNumberOfCommands(unpacker);
   ICommandHandle commands[numberOfCommands];

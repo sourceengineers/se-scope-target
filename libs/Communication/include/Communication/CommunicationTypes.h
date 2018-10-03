@@ -1,20 +1,19 @@
 /*!****************************************************************************************************************************************
- * @file         Types.h
+ * @file         CommunicationTypes.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Defines different types in a enum to achieve a "template" kind
- *               of programming.
+ * @brief        Defines different communication types. New types should only be added, once their implementation
+ *               is ready to be used.
  *
  *****************************************************************************************************************************************/
  
-#ifndef TYPES_H_
-#define TYPES_H_
+#ifndef COMMUNICATIONTYPES_H_
+#define COMMUNICATIONTYPES_H_
 
-
-typedef enum {UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE} DATA_TYPES;
-
+/* Defines possible communication types */
+typedef enum {ETHERNET} COM_TYPE;
 
 #endif

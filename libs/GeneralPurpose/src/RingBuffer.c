@@ -9,6 +9,10 @@
 
 #include <GeneralPurpose/RingBuffer.h>
 
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __RingBufferPrivateData
 {
   float* data;
@@ -19,8 +23,18 @@ typedef struct __RingBufferPrivateData
   IFloatStream iFloatStream;
 } RingBufferPrivateData ;
 
+/* Returns the next index of the given index */
+static float* nextIndex(RingBufferHandle self, float* index);
 
-/* Functions for the IFloatStream interface */
+/* Increments the tail index */
+static bool incTail(RingBufferHandle self);
+
+/* Increments the head index */
+static bool incHead(RingBufferHandle self);
+
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static size_t streamGetSize(IFloatStreamHandle iFloatStream){
   RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
   return RingBuffer_usedData(self);
@@ -48,7 +62,6 @@ static size_t streamGetData(IFloatStreamHandle iFloatStream){
   return dataRead;
 }
 
-// private functions
 static float* nextIndex(RingBufferHandle self, float* index){
   const long positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
@@ -70,7 +83,9 @@ static bool incHead(RingBufferHandle self){
   return false;
 }
 
-// public functions
+/******************************************************************************
+ Private functions
+******************************************************************************/
 RingBufferHandle RingBuffer_create(size_t capacity){
 
   /* Allocate memory and set _private variables */

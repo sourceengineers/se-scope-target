@@ -17,17 +17,18 @@
 #include <Scope/IScope.h>
 #include <Command/ICommand.h>
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandTransPrivateData* CommandTransHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command */
 CommandTransHandle CommandTrans_create(IScopeHandle iScope);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the command */
 void CommandTrans_destroy(CommandTransHandle self);
 
 /* Returns the command interface */

@@ -17,16 +17,18 @@
 #include <Scope/Trigger.h>
 #include <Command/ICommand.h>
 
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandTriggerPrivateData* CommandTriggerHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command */
 CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the command */
 void CommandTrigger_destroy(CommandTriggerHandle self);
 
 /* Returns the command interface */

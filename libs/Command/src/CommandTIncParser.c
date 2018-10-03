@@ -9,7 +9,10 @@
 
 #include <Command/CommandTIncParser.h>
 
-
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __CommandTIncParserPrivateData
 {
   ICommandHandle iCommand;
@@ -18,7 +21,9 @@ typedef struct __CommandTIncParserPrivateData
 
 } CommandTIncParserPrivateData ;
 
-
+/******************************************************************************
+ Public functions
+******************************************************************************/
 CommandTIncParserHandle CommandTIncParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker){
   CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
   self->iCommand = iCommand;
@@ -35,7 +40,6 @@ void CommandTIncParser_configure(CommandTIncParserHandle self){
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &timeIncrement);
 }
 
-/* Deconstructor: Deletes the instanze of the channel */
 void CommandTIncParser_destroy(CommandTIncParserHandle self){
   free(self);
   self = NULL;

@@ -9,7 +9,10 @@
 
 #include <Command/CommandRunningParser.h>
 
-
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __CommandRunningParserPrivateData
 {
   ICommandHandle iCommand;
@@ -18,7 +21,9 @@ typedef struct __CommandRunningParserPrivateData
 
 } CommandRunningParserPrivateData ;
 
-
+/******************************************************************************
+ Public functions
+******************************************************************************/
 CommandRunningParserHandle CommandRunningParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker){
   CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
   self->iCommand = iCommand;
@@ -59,7 +64,6 @@ void CommandRunningParser_configure(CommandRunningParserHandle self){
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &conf);
 }
 
-/* Deconstructor: Deletes the instanze of the channel */
 void CommandRunningParser_destroy(CommandRunningParserHandle self){
   free(self);
   self = NULL;

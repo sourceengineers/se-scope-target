@@ -17,20 +17,21 @@
 #include <Communication/Reciever.h>
 #include <Command/CommandAddr.h>
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandAddrParserPrivateData* CommandAddrParserHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command parser */
 CommandAddrParserHandle CommandAddrParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker);
 
-/* Configurates the gives channel */
+/* Configurates the given command */
 void CommandAddrParser_configure(CommandAddrParserHandle self);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the parser */
 void CommandAddrParser_destroy(CommandAddrParserHandle self);
 
 #endif

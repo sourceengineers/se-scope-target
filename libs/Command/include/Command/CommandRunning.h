@@ -31,17 +31,18 @@ typedef struct {
   int numberOfChangedChannels;
 } CommandRunningConf;
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandRunningPrivateData* CommandRunningHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command */
 CommandRunningHandle CommandRunning_create(ChannelHandle* channels, size_t ammountOfChannels);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the command */
 void CommandRunning_destroy(CommandRunningHandle self);
 
 /* Returns the command interface */

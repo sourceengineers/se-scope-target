@@ -18,10 +18,14 @@
 
 #include <unistd.h>
 
+/******************************************************************************
+ Define interface handle data
+******************************************************************************/
 typedef struct IFloatStreamStruct* IFloatStreamHandle;
-typedef void* Shared_Safety_Util_Runnable_RunnableHandle;
 
-
+/******************************************************************************
+ Define interface
+******************************************************************************/
 typedef struct IFloatStreamStruct {
   void* implementer;
   void (*open)(IFloatStreamHandle self, float* floatStream);

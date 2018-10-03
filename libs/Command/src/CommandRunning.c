@@ -9,9 +9,13 @@
 
 #include <Command/CommandRunning.h>
 
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Name of the command */
 static const char* commandName = "cf_running";
 
-/* Define public data */
+/* Class data */
 typedef struct __CommandRunningPrivateData
 {
   ICommand iCommand;
@@ -21,6 +25,9 @@ typedef struct __CommandRunningPrivateData
   
 } CommandRunningPrivateData ;
 
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static void run(ICommandHandle self){
   CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
   
@@ -71,7 +78,9 @@ static const char* getCommandName(ICommandHandle self){
   return CommandRunning_getName(commandAddr);
 }
 
-/* Public functions */
+/******************************************************************************
+ Public functions
+******************************************************************************/
 CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t ammountOfChannels){
 
   CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));

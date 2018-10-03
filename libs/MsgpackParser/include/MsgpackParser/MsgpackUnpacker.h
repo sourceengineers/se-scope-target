@@ -1,11 +1,11 @@
 /*!****************************************************************************************************************************************
- * @file         msgpack_parser.h
+ * @file         MsgpackUnpacker.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
- * @brief        Unpacks incoming msgpack data
+ * @brief        Implements functions of the IUnpacker.h interface.
  *
  *****************************************************************************************************************************************/
 
@@ -15,19 +15,20 @@
 #include <msgpack.h>
 #include <Communication/IUnpacker.h>
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __MsgpackUnpackerPrivateData* MsgpackUnpackerHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the factory */
+/* Constructor: Creates a new instanze of the msgpack unpacker */
 MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength);
 
 /* Destroys the instance of the msgpack unpacker */
 void MsgpackUnpacker_destroy(MsgpackUnpackerHandle self);
 
-/* Returns the Iparser interface */
+/* Returns the IUnpacker interface */
 IUnpackerHandle MsgpackUnpacker_getIUnpacker(MsgpackUnpackerHandle self);
 #endif

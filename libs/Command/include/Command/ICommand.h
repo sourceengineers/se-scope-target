@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         IFloatStream.h
+ * @file         ICommand.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -10,6 +10,7 @@
  *               setCommandAttribute: Sets the attributes needed by the command
  *               to run. The data passed to the void pointer, is specified by 
  *               every command on its own.
+ *               getCommandName: returns the name of the command
  *
  *****************************************************************************************************************************************/
 
@@ -18,8 +19,14 @@
 
 #include <stdlib.h>
 
+/******************************************************************************
+ Define interface handle data
+******************************************************************************/
 typedef struct ICommandStruct* ICommandHandle;
 
+/******************************************************************************
+ Define interface
+******************************************************************************/
 typedef struct ICommandStruct {
   void* implementer;
   void (*run)(ICommandHandle self);

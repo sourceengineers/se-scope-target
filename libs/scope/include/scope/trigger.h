@@ -40,7 +40,9 @@ typedef struct {
 } TriggerConfiguration ;
 
 
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __TriggerPrivateData* TriggerHandle;
 
 /* Typedef for a function pointer, to easier handle the strategies */
@@ -61,6 +63,7 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf);
 /* Returns the triggered index */
 int Trigger_getTriggerIndex(TriggerHandle self);
 
-bool Trigger_run(TriggerHandle self, const int index);
+/* Function which calls the currently choosen trigger strategy */
+inline bool Trigger_run(TriggerHandle self, const int timstamp);
 
 #endif

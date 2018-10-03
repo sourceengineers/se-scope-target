@@ -49,7 +49,9 @@ TEST(msgpack_unpacker, unpack_ammount_of_commands)
   IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
-  parser->unpack(parser, data, strLength);
+  if(parser->unpack(parser, data, strLength)){
+    parser->activateNewMessage(parser);
+  }
 
   size_t numberOfCommands = parser->getNumberOfCommands(parser);
 
@@ -63,7 +65,9 @@ TEST(msgpack_unpacker, unpack_name_of_command)
   IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
-  parser->unpack(parser, data, strLength);
+  if(parser->unpack(parser, data, strLength)){
+    parser->activateNewMessage(parser);
+  }
 
   char name[20];
 
@@ -89,7 +93,10 @@ TEST(msgpack_unpacker, test_fetcher_functions)
   IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
-  parser->unpack(parser, data, strLength);
+  if(parser->unpack(parser, data, strLength)){
+    parser->activateNewMessage(parser);
+  }
+
 
   char fieldName[20];
   parser->getNameOfField(parser, (const char*) "cf_running", fieldName, 20, 1);
@@ -125,7 +132,9 @@ TEST(msgpack_unpacker, test_automatic_mode)
   IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
   size_t strLength = strlen(data) + 40;
-  parser->unpack(parser, data, strLength);
+  if(parser->unpack(parser, data, strLength)){
+    parser->activateNewMessage(parser);
+  }
 
   char fieldName[20];
   char commandName[20];
@@ -163,24 +172,47 @@ TEST(msgpack_unpacker, test_errors)
   faultyData[11] = '\0';
   faultyData[12] = '1';
 
-  bool result = parser->unpack(parser, faultyData, strLength);
+  bool result;
+  if((result = parser->unpack(parser, faultyData, strLength))){
+    parser->activateNewMessage(parser);
+  }
+
   EXPECT_EQ(result, false);
   float level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "level");
   EXPECT_EQ(level, 0.0f);
-  result = parser->unpack(parser, data, strLength);
+
+  if((result = parser->unpack(parser, data, strLength))){
+    parser->activateNewMessage(parser);
+  }
+
   EXPECT_EQ(result, true);
   level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "level");
   EXPECT_EQ(level, 2.5f);
-  result = parser->unpack(parser, faultyData, strLength);
+
+  if((result = parser->unpack(parser, faultyData, strLength))){
+    parser->activateNewMessage(parser);
+  }
+
   EXPECT_EQ(result, false);
   level = parser->getFloatFromCommand(parser, (const char*) "cf_tgr", "level");
   EXPECT_EQ(level, 2.5f);
 
-  result = parser->unpack(parser, faultyData, strLength);
+  if((result = parser->unpack(parser, faultyData, strLength))){
+    parser->activateNewMessage(parser);
+  }
+
   EXPECT_EQ(result, false);
-  result = parser->unpack(parser, data, strLength);
+
+  if((result = parser->unpack(parser, data, strLength))){
+    parser->activateNewMessage(parser);
+  }
+
   EXPECT_EQ(result, true);
-  result = parser->unpack(parser, data, strLength);
+
+  if((result = parser->unpack(parser, data, strLength))){
+    parser->activateNewMessage(parser);
+  }
+
   EXPECT_EQ(result, true);
 
 

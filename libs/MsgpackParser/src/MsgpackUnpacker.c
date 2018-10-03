@@ -1,11 +1,9 @@
 /*!****************************************************************************************************************************************
- * @file         msgpack_unpacker.c
+ * @file         MsgpackUnpacker.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
- * @authors      Author <Email>
- *
- * @brief        TODO
+ * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  *****************************************************************************************************************************************/
 
@@ -23,23 +21,10 @@
 /* Makro to check if the msgpack_object is a map or not. Returns a empty object if not*/
 #define msgpackObjectSanityTest(obj) if(obj.type!=MSGPACK_OBJECT_MAP){returnEmptyObj;}
 
-
-static msgpack_object getCommandMap(msgpack_object parentObj);
-static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const int length);
-static msgpack_object getCmdObj(MsgpackUnpackerHandle self, const char *key);
-static const size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler);
-static void copyString(char *str, char *data, int size);
-static size_t matchKeyToIndex(msgpack_object parentObj, const char *key);
-static bool getNameOfCommand(IUnpackerHandle iUnpackHandler, char* name, const int maxLenght, const int index);
-static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key);
-static int getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* commandName, const char* fieldName);
-static float getFloatFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName);
-static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName);
-static void getStringFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName,
-                                 char* targetStr,
-                                 const int maxLenght);
-
-
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __MsgpackUnpackerPrivateData
 {
 
@@ -55,6 +40,31 @@ typedef struct __MsgpackUnpackerPrivateData
   size_t msgLength;
 } MsgpackUnpackerPrivateData ;
 
+/* Checks if the gives object is a map */
+static bool msgpackObjIsMap(msgpack_object obj);
+
+/* Returns a map, broken down to the command map */
+static msgpack_object getCommandMap(msgpack_object parentObj);
+
+/* Returns the msgpack_object corresponding to the given key */
+static msgpack_object getCmdObj(MsgpackUnpackerHandle self, const char *key);
+
+/* Returns the msgpack_object corresponding to the given key */
+static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *key);
+
+/* Copies the msgpack_object key to key */
+static void copyString(char *str, char *data, int size);
+
+/* Matches the given key to a object on the child level of the gives parent object
+    returns a integer indicating the position of the key in the object */
+static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key);
+
+/* Returns msgpack_object matching the the key */
+static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key);
+
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static bool msgpackObjIsMap(msgpack_object obj){
   return obj.type != MSGPACK_OBJECT_MAP ? false : true;
 }
@@ -71,8 +81,7 @@ static msgpack_object getCommandMap(msgpack_object parentObj){
   return obj;
 }
 
-/* Unpacks the data and safes it */
-static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const int length){
+static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_t length){
 
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
@@ -95,9 +104,7 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const int l
       /* Additional test to check if the data was processed correctly */
       if(self->und.data.type == MSGPACK_OBJECT_MAP && getCommandMap(self->und.data).type != MSGPACK_OBJECT_NIL){
 
-        self->obj = self->und.data;
-
-        msgpack_object obj = getCommandMap(self->obj);
+        msgpack_object obj = getCommandMap(self->und.data);
 
         if(obj.type == MSGPACK_OBJECT_NIL) {
           return false;
@@ -106,7 +113,6 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const int l
           return false;
         }
 
-        self->numberOfCommands = obj.via.map.size;
 
         return true;
       }
@@ -121,7 +127,13 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const int l
   return false;
 }
 
-/* Returns the msgpack_object corresponding to the given key */
+static void activateNewMessage(IUnpackerHandle iUnpackHandler){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
+
+  self->obj = self->und.data;
+  self->numberOfCommands = getCommandMap(self->und.data).via.map.size;
+}
+
 static msgpack_object getCmdObj(MsgpackUnpackerHandle self, const char *key){
 
   msgpack_object obj = getCommandMap(self->obj);
@@ -131,17 +143,18 @@ static msgpack_object getCmdObj(MsgpackUnpackerHandle self, const char *key){
   return obj;
 }
 
-/* Returns the msgpack_object corresponding to the given key */
 static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *key){
 
   msgpackObjectSanityTest(parentObj);
 
+  /* Returns the parent object if no key is given */
   if(strcmp(key,"") == 0){
     return parentObj;
   }
 
-  size_t offset = matchKeyToIndex(parentObj, key);
+  const ssize_t offset = matchKeyToIndex(parentObj, key);
 
+  /* Returns a empty object if no key could be matched */
   if(offset == -1){
     msgpack_object empty;
     empty.type = MSGPACK_OBJECT_NIL;
@@ -151,33 +164,30 @@ static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *
   return (parentObj.via.map.ptr+offset)->val;
 }
 
-
-/* Returns the ammount of numbers parsed by the unpacker */
 static const size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   return self->numberOfCommands;
 }
 
-/* Copies the msgpack_object key to key */
  static void copyString(char *str, char *data, int size){
   strncpy(str, data, size);
   str[size] = '\0';
 }
 
-/* Matches the given key to a object on the child level of the gives parent object
-    returns a integer indicating the position of the key in the object */
-static size_t matchKeyToIndex(msgpack_object parentObj, const char *key){
+static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key){
 
+  /* Returns an error the object is not a map */
   if(parentObj.type != MSGPACK_OBJECT_MAP){
     return -1;
   }
 
+  /* Check all objects for the given key */
   for(int i = 0; i<parentObj.via.map.size; i++){
     msgpack_object objKey = (parentObj.via.map.ptr+i)->key;
 
     char tmpKey[objKey.via.str.size + 1];
-    copyString(tmpKey, (char *)objKey.via.str.ptr, objKey.via.str.size);
+    copyString(tmpKey, (char*) objKey.via.str.ptr, objKey.via.str.size);
 
     if(strncmp(tmpKey, key, objKey.via.str.size) == 0){
       return i;
@@ -186,22 +196,25 @@ static size_t matchKeyToIndex(msgpack_object parentObj, const char *key){
   return -1;
 }
 
-/* Returns the name of a command at a given index */
 static bool getNameOfCommand(IUnpackerHandle iUnpackHandler, char* name, const int maxLenght, const int index){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
+  /* Yeilds an eror if the index is negative */
   if(index < 0){
     return false;
   }
 
   msgpack_object obj = getCommandMap(self->obj);
 
+  /* Make sure the object is a map */
   if(obj.type != MSGPACK_OBJECT_MAP){
     return false;
   }
 
+  /* Get the key if name of the command */
   obj = (obj.via.map.ptr+index)->key;
 
+  /* Yield error if the command name is too big */
   if(obj.via.str.size > maxLenght){
     return false;
   }
@@ -211,7 +224,6 @@ static bool getNameOfCommand(IUnpackerHandle iUnpackHandler, char* name, const i
   return true;
 }
 
-/* Returns msgpack_object matching the the key */
 static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key){
 
   /* If there is no field argument given, it is assumed, that the command has no fields and is the field itself */
@@ -219,17 +231,16 @@ static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key){
     return parentObj;
   }
 
-  int offset = matchKeyToIndex(parentObj, key);
+  const ssize_t offset = matchKeyToIndex(parentObj, key);
 
+  /* Return empty object if offset is negative */
   if(offset < 0){
     returnEmptyObj;
   }
 
   return (parentObj.via.map.ptr+offset)->val;
-
 }
 
-/* Returns the value located at the Command field */
 static int getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* commandName, const char* fieldName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
@@ -239,6 +250,7 @@ static int getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* command
       obj = getFieldFromCommand(obj, fieldName);
   }
 
+  /* Return 0 if the object is not integer */
   if ((obj.type != MSGPACK_OBJECT_NEGATIVE_INTEGER) && (obj.type != MSGPACK_OBJECT_POSITIVE_INTEGER)){
     return 0;
   }
@@ -246,40 +258,39 @@ static int getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* command
   return obj.via.i64;
 }
 
-
-/* Returns the value located at the Command field */
 static float getFloatFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
+  /* Return zero if the object isn't the right type */
   if(msgpackObjIsMap(obj) == false){
     return 0.0f;
   }
 
   obj = getFieldFromCommand(obj, fieldName);
 
-
+  /* Return zero if the object isn't the right type */
   if((obj.type != MSGPACK_OBJECT_FLOAT) && (obj.type != MSGPACK_OBJECT_FLOAT32) && (obj.type != MSGPACK_OBJECT_FLOAT64)){
     return 0.0f;
   }
 
-  return obj.via.f64;
+  return (float) obj.via.f64;
 }
 
-/* Returns the value located at the Command field */
 static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
 
+  /* Return false if the object isn't the right type */
   if(msgpackObjIsMap(obj) == false){
     return false;
   }
 
   obj = getFieldFromCommand(obj, fieldName);
 
-
+  /* Return false if the object isn't the right type */
   if(obj.type != MSGPACK_OBJECT_BOOLEAN){
     return false;
   }
@@ -287,7 +298,6 @@ static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler,const char* comman
   return obj.via.boolean;
 }
 
-/* Returns the name of a field of a command at a specific location */
 static void getStringFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName,
                                  char* targetStr,
                                  const int maxLenght){
@@ -296,18 +306,21 @@ static void getStringFromCommand(IUnpackerHandle iUnpackHandler,const char* comm
 
   msgpack_object obj = getCmdObj(self, commandName);
 
+  /* Return false if the object isn't the right type */
   if(msgpackObjIsMap(obj) == false) {
     return;
   }
 
   obj = getFieldFromCommand(obj, fieldName);
 
+  /* Return false if the object isn't the right type */
   if(obj.type != MSGPACK_OBJECT_STR) {
     return;
   }
 
   int strLength = obj.via.str.size;
 
+  /* Copy string */
   if(maxLenght >= strLength){
     strncpy(targetStr, obj.via.str.ptr, strLength);
     targetStr[strLength] = '\0';
@@ -316,24 +329,26 @@ static void getStringFromCommand(IUnpackerHandle iUnpackHandler,const char* comm
   }
 }
 
-/* Returns the name of a field of a command at a specific location */
 static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandName, char* fieldName,
                            const int maxLenght,
                            const int index){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
+  /* Return error if index is negative */
   if(index < 0){
     return false;
   }
 
   msgpack_object obj = getCmdObj(self, commandName);
 
+  /* Return error if object isn't the right type */
   if(msgpackObjIsMap(obj) == false) {
     return false;
   }
 
   obj = (obj.via.map.ptr+index)->key;
 
+  /* Return error if the buffer isn't big enough */
   if(obj.via.str.size > maxLenght){
     return false;
   }
@@ -343,8 +358,7 @@ static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandNa
   return true;
 }
 
-/* Returns the number of fields a command has */
-static size_t getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){
+static ssize_t getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
@@ -356,7 +370,9 @@ static size_t getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* comm
   return (obj.via.map.size);
 }
 
-
+/******************************************************************************
+ Public functions
+******************************************************************************/
 MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength){
   
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) malloc(sizeof(MsgpackUnpackerPrivateData));
@@ -373,6 +389,7 @@ MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength){
   self->iUnpacker.getNumberOfCommands = &getNumberOfCommands;
   self->iUnpacker.getNumberOfFields = &getNumberOfFields;
   self->iUnpacker.getNameOfField = &getNameOfField;
+  self->iUnpacker.activateNewMessage = &activateNewMessage;
 
 
   bool result = msgpack_unpacker_init(&self->unp, self->msgLength);

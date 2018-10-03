@@ -17,20 +17,21 @@
 #include <Communication/Reciever.h>
 #include <Command/CommandTInc.h>
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandTIncParserPrivateData* CommandTIncParserHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command parser */
 CommandTIncParserHandle CommandTIncParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker);
 
-/* Configurates the gives channel */
+/* Configurates the gives command */
 void CommandTIncParser_configure(CommandTIncParserHandle self);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the command parser */
 void CommandTIncParser_destroy(CommandTIncParserHandle self);
 
 #endif

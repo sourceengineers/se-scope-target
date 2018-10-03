@@ -8,6 +8,8 @@
  * @brief        Parser interface.
  *
  *               unpack: Unpacks the given data. Returns false if the parsing process failed
+ *               activateNewMessage: Activates the last parsed message to be the new object, from which the data gets
+*                                     fetched. This is used in case as example checksums are faulty.
  *               getNumberOfCommands: Returns the number of parser commands
  *               getNameOfCommand: Writes the name of the command, at the given index into the name field
  *               getNameOfField: Same as getNameOfCommand, but for the command fields
@@ -24,15 +26,22 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+/******************************************************************************
+ Define interface handle data
+******************************************************************************/
 typedef struct IUnpackerStruct* IUnpackerHandle;
 
+/******************************************************************************
+ Define interface
+******************************************************************************/
 typedef struct IUnpackerStruct {
   void* implementer;
-  bool (*unpack)(IUnpackerHandle iUnpacker, const char* data, const int length);
+  bool (*unpack)(IUnpackerHandle iUnpacker, const char* data, const size_t length);
+  void (*activateNewMessage)(IUnpackerHandle iUnpacker);
   
   const size_t (*getNumberOfCommands)(IUnpackerHandle iUnpacker);
   bool (*getNameOfCommand)(IUnpackerHandle iUnpacker, char* name, const int maxLenght, const int index);
-  size_t (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
+  ssize_t (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
   bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
   
   int (*getIntFromCommand)(IUnpackerHandle iUnpacker, const char* commandName, const char* fieldName);

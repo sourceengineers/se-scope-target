@@ -10,11 +10,13 @@
 #include <Scope/Trigger.h>
 #include <math.h>
 
-/* Define public data */
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __TriggerPrivateData
 {
   float level;
-  int sign;
   int edge;
   ssize_t triggerIndex;
   IFloatStream stream;
@@ -22,7 +24,34 @@ typedef struct __TriggerPrivateData
   TriggerStrategy run;
 } TriggerPrivateData;
 
-/* Private functions */
+/* Checks if the trigger criteria matches the current data */
+static bool checkCurrentData(TriggerHandle self, float* triggerData);
+
+/* Fetches the current trigger values from the stream */
+static bool getTriggerData(TriggerHandle self, float* data);
+
+/* Strategy for the continous trigger */
+static bool triggerContinuous(TriggerHandle self, const int index);
+
+/* Strategy for the normal trigger */
+static bool triggerNormal(TriggerHandle self, const int index);
+
+/* Strategy for the one shot trigger */
+static bool triggerOneShot(TriggerHandle self, const int index);
+
+/* Checks the given configuration data for possible errors and return false
+ * if errors were found */
+static bool configSanityCheck(TriggerConfiguration conf);
+
+/* Returns the right trigger strategy */
+static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode);
+
+/* Configures the trigger */
+static void writeConfig(TriggerHandle self, TriggerConfiguration conf);
+
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static bool checkCurrentData(TriggerHandle self, float* triggerData){
   
   const float dataCurrent = triggerData[CHANNEL_CURRENT_DATA];
@@ -112,12 +141,13 @@ static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode)
 static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
   self->level = conf.level;
   self->edge = conf.edge;
-  self->sign = (int) copysign(1.0f, conf.level);
   self->stream = conf.stream;
   self->run = getTriggerStrategy(self, conf.mode);
 }
 
-/* Public functions */
+/******************************************************************************
+ Public functions
+******************************************************************************/
 TriggerHandle Trigger_create(){
 
   TriggerHandle self = malloc(sizeof(TriggerPrivateData));
@@ -151,6 +181,6 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
     return true;
 }
 
-bool Trigger_run(TriggerHandle self, const int index){
-  return self->run(self, index);
+inline bool Trigger_run(TriggerHandle self, const int timestamp){
+  return self->run(self, timestamp);
 }

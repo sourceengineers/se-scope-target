@@ -18,8 +18,10 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-// forward declaration of the class handle
-typedef struct __RingBufferPrivateData* RingBufferHandle; 
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
+typedef struct __RingBufferPrivateData* RingBufferHandle;
 
 /******************************************************************************
  Public functions 

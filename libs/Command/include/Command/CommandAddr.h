@@ -27,6 +27,7 @@
 #include <Scope/Channel.h>
 #include <Command/ICommand.h>
 
+/* Definition of the configuration struct */
 typedef struct {
   void** newAddresses;
   int* changedChannels;
@@ -34,17 +35,18 @@ typedef struct {
   DATA_TYPES* types;
 } CommandAddrConf;
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandAddrPrivateData* CommandAddrHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command */
 CommandAddrHandle CommandAddr_create(ChannelHandle* channels, const size_t ammountOfChannels);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the command */
 void CommandAddr_destroy(CommandAddrHandle self);
 
 /* Returns the command interface */

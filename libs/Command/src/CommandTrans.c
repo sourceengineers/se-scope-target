@@ -9,9 +9,13 @@
 
 #include <Command/CommandTrans.h>
 
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Name of the command */
 static const char* commandName = "ev_trans";
 
-/* Define public data */
+/* Class data */
 typedef struct __CommandTransPrivateData
 {
   ICommand iCommand;
@@ -19,6 +23,9 @@ typedef struct __CommandTransPrivateData
   
 } CommandTransPrivateData ;
 
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static void run(ICommandHandle self){
   CommandTransHandle commandTrans = (CommandTransHandle) self->implementer;
   commandTrans->iScope->trans(commandTrans->iScope);
@@ -34,7 +41,9 @@ static const char* getCommandName(ICommandHandle self){
   return CommandTrans_getName(commandAddr);
 }
 
-/* Public functions */
+/******************************************************************************
+ Private functions
+******************************************************************************/
 CommandTransHandle CommandTrans_create(IScopeHandle iScope){
 
   CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));

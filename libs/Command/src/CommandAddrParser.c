@@ -9,7 +9,10 @@
 
 #include <Command/CommandAddrParser.h>
 
-
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __CommandAddrParserPrivateData
 {
   ICommandHandle iCommand;
@@ -18,7 +21,9 @@ typedef struct __CommandAddrParserPrivateData
 
 } CommandAddrParserPrivateData ;
 
-
+/******************************************************************************
+ Public functions
+******************************************************************************/
 CommandAddrParserHandle CommandAddrParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker){
   CommandAddrParserHandle self = malloc(sizeof(CommandAddrParserPrivateData));
   self->iCommand = iCommand;

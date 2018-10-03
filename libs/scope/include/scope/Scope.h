@@ -19,7 +19,9 @@
 #include <Command/CommandFactory.h>
 #include <Communication/Reciever.h>
 
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __ScopePrivateData* ScopeHandle;
 
 /******************************************************************************
@@ -35,7 +37,6 @@ void Scope_destroy(ScopeHandle self);
  * be rejected.
  * After parsing, the commands will be executed */
 void Scope_command(ScopeHandle self, const char* data, size_t dataLength);
-
 
 /* Polls data from all channels */
 void Scope_poll(ScopeHandle self);

@@ -9,9 +9,13 @@
 
 #include <Command/CommandAddr.h>
 
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Name of the command */
 static const char* commandName = "cf_addr";
 
-/* Define public data */
+/* Class data */
 typedef struct __CommandAddrPrivateData
 {
   ICommand iCommand;
@@ -23,6 +27,9 @@ typedef struct __CommandAddrPrivateData
   
 } CommandAddrPrivateData ;
 
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static void run(ICommandHandle self){
   CommandAddrHandle commandAddr = (CommandAddrHandle) self->implementer;
   
@@ -93,6 +100,9 @@ CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t ammountOfCh
   return self;
 }
 
+/******************************************************************************
+ Public functions
+******************************************************************************/
 ICommandHandle CommandAddr_getICommand(CommandAddrHandle self){
   return &self->iCommand;
 }
@@ -100,7 +110,6 @@ ICommandHandle CommandAddr_getICommand(CommandAddrHandle self){
 const char* CommandAddr_getName(CommandAddrHandle self){
   return commandName;
 }
-
 
 void CommandAddr_destroy(CommandAddrHandle self){
   free(self->config.newAddresses);

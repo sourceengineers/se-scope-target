@@ -9,9 +9,13 @@
 
 #include <Command/CommandPoll.h>
 
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Name of the command */
 static const char* commandName = "ev_poll";
 
-/* Define public data */
+/* Class data */
 typedef struct __CommandPollPrivateData
 {
   ICommand iCommand;
@@ -19,6 +23,18 @@ typedef struct __CommandPollPrivateData
   
 } CommandPollPrivateData ;
 
+/* Implementation of the run command, which will be passed into the interface */
+static void run(ICommandHandle self);
+
+/* Implementation of the getCommandName command, which will be passed into the interface */
+static const char* getCommandName(ICommandHandle self);
+
+/* Implementation of the setCommandAttribute command, which will be passed into the interface */
+static void setCommandAttribute(ICommandHandle self, void* attr);
+
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static void run(ICommandHandle self){
   CommandPollHandle commandPoll = (CommandPollHandle) self->implementer;
   commandPoll->iScope->poll(commandPoll->iScope);
@@ -34,7 +50,9 @@ static const char* getCommandName(ICommandHandle self){
   return CommandPoll_getName(commandAddr);
 }
 
-/* Public functions */
+/******************************************************************************
+ Public functions
+******************************************************************************/
 CommandPollHandle CommandPoll_create(IScopeHandle iScope){
 
   CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));

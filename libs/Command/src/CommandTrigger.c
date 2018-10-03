@@ -9,9 +9,13 @@
 
 #include <Command/CommandTrigger.h>
 
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Name of the command */
 static const char* commandName = "cf_trigger";
 
-/* Define public data */
+/* Class data */
 typedef struct __CommandTriggerPrivateData
 {
   ICommand iCommand;
@@ -21,6 +25,9 @@ typedef struct __CommandTriggerPrivateData
   
 } CommandTriggerPrivateData ;
 
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static void run(ICommandHandle self){
   CommandTriggerHandle commandTrigger = (CommandTriggerHandle) self->implementer;
   
@@ -40,7 +47,9 @@ static const char* getCommandName(ICommandHandle self){
   return CommandTrigger_getName(commandAddr);
 }
 
-/* Public functions */
+/******************************************************************************
+Public functions
+******************************************************************************/
 CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger){
 
   CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
@@ -61,7 +70,6 @@ ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self){
 const char* CommandTrigger_getName(CommandTriggerHandle self){
   return commandName;
 }
-
 
 void CommandTrigger_destroy(CommandTriggerHandle self){
   free(self);

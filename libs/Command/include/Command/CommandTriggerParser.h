@@ -17,21 +17,22 @@
 #include <Communication/Reciever.h>
 #include <Command/CommandTrigger.h>
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandTriggerParserPrivateData* CommandTriggerParserHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command parser */
 CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker,
                                                        ChannelHandle* channels, size_t numberOfChannels);
 
-/* Configurates the gives channel */
+/* Configurates the gives command */
 void CommandTriggerParser_configure(CommandTriggerParserHandle self);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the command parser */
 void CommandTriggerParser_destroy(CommandTriggerParserHandle self);
 
 #endif

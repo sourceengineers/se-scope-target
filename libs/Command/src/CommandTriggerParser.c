@@ -10,7 +10,10 @@
 #include <Command/CommandTriggerParser.h>
 #include <string.h>
 
-
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __CommandTriggerParserPrivateData
 {
   ICommandHandle iCommand;
@@ -21,19 +24,15 @@ typedef struct __CommandTriggerParserPrivateData
 
 } CommandTriggerParserPrivateData ;
 
+/* Parses the given string into the correct trigger mode. Default is continious */
+static TRIGGER_MODE parserStringToTriggerMode(const char* triggerModeString, size_t maxStringSize);
 
-CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker,
-                                                       ChannelHandle* channels, size_t numberOfChannels){
-  CommandTriggerParserHandle self = malloc(sizeof(CommandTriggerParserPrivateData));
-  self->iCommand = iCommand;
-  self->iUnpacker = iUnpacker;
-  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
-  self->channels = channels;
-  self->numberOfChannels = numberOfChannels;
+/* Parses the given string into a trigger edge. Default is rising edge */
+static int parserStringToEdge(const char* triggerModeString, size_t maxStringSize);
 
-  return self;
-}
-
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static TRIGGER_MODE parserStringToTriggerMode(const char* triggerModeString, size_t maxStringSize){
 
   if(strncmp(triggerModeString, "Continous", maxStringSize) == 0){
@@ -56,6 +55,21 @@ static int parserStringToEdge(const char* triggerModeString, size_t maxStringSiz
   }
 
   return TRIGGER_EDGE_POSITIVE;
+}
+
+/******************************************************************************
+ Public functions
+******************************************************************************/
+CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker,
+                                                       ChannelHandle* channels, size_t numberOfChannels){
+  CommandTriggerParserHandle self = malloc(sizeof(CommandTriggerParserPrivateData));
+  self->iCommand = iCommand;
+  self->iUnpacker = iUnpacker;
+  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
+  self->channels = channels;
+  self->numberOfChannels = numberOfChannels;
+
+  return self;
 }
 
 void CommandTriggerParser_configure(CommandTriggerParserHandle self){
@@ -91,7 +105,6 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &conf);
 }
 
-/* Deconstructor: Deletes the instanze of the channel */
 void CommandTriggerParser_destroy(CommandTriggerParserHandle self){
   free(self);
   self = NULL;

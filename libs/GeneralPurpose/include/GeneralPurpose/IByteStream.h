@@ -1,33 +1,39 @@
 /*!****************************************************************************************************************************************
- * @file         IFloatStream.h
+ * @file         IByteStream.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  * @brief        Streaming interface
- *               open: Opens the channel to a given float*
- *               getSize: Returns the size of data ready to be read 
- *               getStream: Writes the ready data into the float array
- *               close: Closes the stream 
+ *               open: opens the channel to a given byte pointer
+ *               size: returns the amount of bytes ready to be read
+ *               read: returns a pointer to the beginning of the byte array
+ *               write: writes bytes into the stream
+ *               close: closes the stream
  *
  *****************************************************************************************************************************************/
 
-#ifndef IFloatStream_H_
-#define IFloatStream_H_
+#ifndef IByteStream_H_
+#define IByteStream_H_
 
 #include <unistd.h>
 
-typedef struct IFloatStreamStruct* IFloatStreamHandle;
-typedef void* Shared_Safety_Util_Runnable_RunnableHandle;
+/******************************************************************************
+ Define interface handle data
+******************************************************************************/
+typedef struct IByteStreamStruct* IByteStreamHandle;
 
-
-typedef struct IFloatStreamStruct {
+/******************************************************************************
+ Define interface
+******************************************************************************/
+typedef struct IByteStreamStruct {
   void* implementer;
-  void (*open)(IFloatStreamHandle self, float* floatStream);
-  size_t(*getSize)(IFloatStreamHandle self);
-  size_t(*getStream)(IFloatStreamHandle self);
-  void (*close)(IFloatStreamHandle self);
-} IFloatStream ;
+  void (*open)(IByteStreamHandle self, uint8_t* stream);
+  ssize_t (*size)(IByteStreamHandle self);
+  const uint8_t*(*read)(IByteStreamHandle self);
+  ssize_t (*write)(IByteStreamHandle self, const uint8_t* data, const size_t length);
+  void (*close)(IByteStreamHandle self);
+} IByteStream ;
 
 #endif

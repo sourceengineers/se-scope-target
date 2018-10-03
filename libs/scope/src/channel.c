@@ -8,9 +8,12 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Channel.h>
-#include <GeneralPurpose/Types.h>
+#include <GeneralPurpose/DataTypes.h>
 
-/* Define public data */
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Class data */
 typedef struct __ChannelPrivateData
 {
   RingBufferHandle buffer;
@@ -24,6 +27,19 @@ typedef struct __ChannelPrivateData
   float* floatStream;
 } ChannelPrivateData ;
 
+/* Casts the data of the address to float */
+static float castDataToFloat(ChannelHandle self);
+
+/* Pushes the latest data point into the trigger stream and copies the last one
+ * further back */
+static void prepareTriggerData(ChannelHandle self, float triggerData);
+
+/* Sets a new state */
+static void setState(ChannelHandle self, CHANNEL_STATES state);
+
+/******************************************************************************
+ Private functions
+******************************************************************************/
 /* Functions for the IFloatStream interface */
 static size_t streamGetSize(IFloatStreamHandle iFloatStream){
   return 2;
@@ -48,7 +64,6 @@ static size_t streamGetData(IFloatStreamHandle iFloatStream){
   return 2;
 }
 
-// Private functions
 static float castDataToFloat(ChannelHandle self){
   
   uint32_t transportData32;
@@ -98,7 +113,9 @@ static void setState(ChannelHandle self, CHANNEL_STATES state){
   self->state = state;
 }
 
-/* Public functions */
+/******************************************************************************
+ Public functions
+******************************************************************************/
 ChannelHandle Channel_create(RingBufferHandle buffer){
 
   ChannelHandle self = malloc(sizeof(ChannelPrivateData));

@@ -18,17 +18,18 @@
 #include <Scope/IScope.h>
 #include <Command/ICommand.h>
 
-
-/* Defines class */
+/******************************************************************************
+ Define class handle data
+******************************************************************************/
 typedef struct __CommandPollPrivateData* CommandPollHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instanze of the command */
 CommandPollHandle CommandPoll_create(IScopeHandle iScope);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instanze of the command */
 void CommandPoll_destroy(CommandPollHandle self);
 
 /* Returns the command interface */

@@ -9,9 +9,13 @@
 
 #include <Command/CommandTInc.h>
 
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Name of the command */
 static const char* commandName = "cf_t_inc";
 
-/* Define public data */
+/* Class data */
 typedef struct __CommandTIncPrivateData
 {
   ICommand iCommand;
@@ -20,6 +24,9 @@ typedef struct __CommandTIncPrivateData
   int timeIncrement;
 } CommandTIncPrivateData ;
 
+/******************************************************************************
+ Private functions
+******************************************************************************/
 static void run(ICommandHandle self){
   CommandTIncHandle commandTInc = (CommandTIncHandle) self->implementer;
   commandTInc->iScope->setTimeIncrement(commandTInc->iScope, commandTInc->timeIncrement);
@@ -36,7 +43,9 @@ static const char* getCommandName(ICommandHandle self){
   return CommandTInc_getName(commandAddr);
 }
 
-/* Public functions */
+/******************************************************************************
+ Private functions
+******************************************************************************/
 CommandTIncHandle CommandTInc_create(IScopeHandle iScope){
 
   CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));

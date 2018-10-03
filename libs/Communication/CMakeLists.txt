@@ -11,7 +11,7 @@ set(LIBRARY_NAME
 
 # Set all used dependencies
 set(DEPENDENCIES  
-#   GeneralPurpose
+   GeneralPurpose
 )
 
 # Set Project Name
