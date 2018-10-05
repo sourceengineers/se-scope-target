@@ -67,7 +67,6 @@ static size_t streamGetData(IFloatStreamHandle iFloatStream){
 static float castDataToFloat(ChannelHandle self){
   
   uint32_t transportData32;
-  uint64_t transportData64;
 
   float data;
   
@@ -85,17 +84,17 @@ static float castDataToFloat(ChannelHandle self){
       data = ((uint32_t)*((uint32_t*)&transportData32));
       break;
     case FLOAT:
-      transportData32 = *((uint32_t*)self->pollAddress);
+      transportData32 = *((uint32_t *)self->pollAddress);
       data = ((float)*((float*)&transportData32));
       break;
-    case DOUBLE:
-      transportData64 = *((uint64_t*)self->pollAddress);
-      data = ((double)*((double*)&transportData64));
+/*    case DOUBLE:
+      transportData32 = *((uint32_t*)self->pollAddress);
+      data = ((double)*((double*)&transportData32));
       break;
     case UINT64:
-      transportData64 = *((uint64_t*)self->pollAddress);
-      data = ((uint64_t)*((uint64_t*)&transportData64));
-      break;
+      transportData32 = *((uint32_t*)self->pollAddress);
+      data = ((uint64_t)*((uint64_t*)&transportData32));
+      break;*/
     default:
       transportData32 = *((uint32_t*)self->pollAddress);
       data = ((float)*((float*)&transportData32));
