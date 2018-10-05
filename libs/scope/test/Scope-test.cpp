@@ -2,162 +2,117 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include "Channel.h"
+    #include "Scope.h"
 }
 
-TEST(Channel, test_polling)
+using namespace std;
+
+/* Msgpart 1 */
+/*
 {
-  const size_t shortCapacity = 10;
+	"transport": "...",
+	"payload": {
+		"sc_cmd": {
+			"cf_addr": {
+				"1":
+ */
 
-  const size_t shortVectorLength = 6;
-  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
-  float shortAnswer[shortVectorLength];
+const char partOne[] = "\x82\xa9\x74\x72\x61\x6e\x73\x70\x6f\x72\x74\xa3\x2e\x2e\x2e\xa7\x70\x61\x79\x6c\x6f\x61\x64\x81\xa6\x73\x63\x5f\x63\x6d\x64\x83\xa7\x63\x66\x5f\x61\x64\x64\x72\x82\xa1\x31";
 
-  float data;
+/* Middle of message */
+/*
+ , "2":
+*/
+const char partTwo[] =  "\xa1\x32";
 
-  /* Create Instanzes */
-  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
-  ChannelHandle channel = Channel_create(buffer);
-  
-  /* Configure channel */
-  Channel_setPollAddress(channel, &data, FLOAT);
-  Channel_setStateRunning(channel);
-  
-  /* Simulate polling */
-  for(size_t i = 0; i < shortVectorLength; i++){
-    data = shortTestVector[i];
-    Channel_poll(channel);
+
+/* End of message */
+/*
+			},
+			"cf_tgr": {
+				"cl_id": 1,
+				"mode": "Continous",
+				"level": 2.5,
+				"edge": true
+			}
+		}
+	}
+}
+*/
+const char partThree[] = "\xaa\x63\x66\x5f\x72\x75\x6e\x6e\x69\x6e\x67\x82\xa1\x31\xc3\xa1\x32\xc3\xa6\x63\x66\x5f\x74\x67\x72\x84\xa5\x63\x6c\x5f\x69\x64\x01\xa4\x6d\x6f\x64\x65\xa9\x43\x6f\x6e\x74\x69\x6e\x6f\x75\x73\xa5\x6c\x65\x76\x65\x6c\xcb\x40\x04\x00\x00\x00\x00\x00\x00\xa4\x65\x64\x67\x65\xc3";
+
+const char intPrefix[] = "\xce";
+
+void copyByte(char* data, void* addr){
+  const char* tmp =  (char*) addr;
+  for(int i = 0; i<4; i++){
+    data[i] = tmp[i];
   }
-  
-  /* Get stream interface to test the procedure */
-  IFloatStreamHandle stream = Channel_getRingBufferFloatStream(channel);
-  stream->open(stream, shortAnswer);
-  stream->getStream(stream);
-  stream->close(stream);
-  ASSERT_THAT(shortAnswer, testing::ElementsAre(1.1f,2.2f,3.3f,4.4f,5.5f,6.6f));
+  data[4] = '\0';
 }
 
-
-TEST(Channel, test_data_types)
+TEST(Scope, test_all)
 {
-  const size_t shortCapacity = 10;
 
-  const size_t shortVectorLength = 6;
-  float shortAnswer[shortVectorLength];
+  const size_t maxLength = 230;
 
-  /* Create Instanzes */
-  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
-  ChannelHandle channel = Channel_create(buffer);
-  IFloatStreamHandle stream = Channel_getRingBufferFloatStream(channel);
-  stream->open(stream, shortAnswer);
+  volatile float vars[2];
 
-  float data = 5.5f;
-  /* Configure channel */
-  Channel_setPollAddress(channel, &data, FLOAT);
-  Channel_setStateRunning(channel);
-  Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 5.5f);
-  
-  double doubleData = 5.5f;
-  Channel_setPollAddress(channel, &doubleData, DOUBLE);
-  Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 5.5f);
-  
-  uint8_t uint8Data = 12;
-  Channel_setPollAddress(channel, &uint8Data, UINT8);
-  Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 12);
-  
-  uint16_t uint16Data = 12;  
-  Channel_setPollAddress(channel, &uint16Data, UINT16);
-  Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 12);
-  
-  uint32_t uint32Data = 12;  
-  Channel_setPollAddress(channel, &uint32Data, UINT32);
-  Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 12);
+  vars[0] = 1.45f;
+  vars[1] = 1.3f;
 
-  uint64_t uint64Data = 12;  
-  Channel_setPollAddress(channel, &uint64Data, UINT64);
-  Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 12);
-  
-}
+  uint8_t data[maxLength];
 
-TEST(Channel, test_states)
-{
-  const size_t shortCapacity = 10;
+  uint32_t  addrOne = __builtin_bswap32((uint32_t) &vars[0]);
+  uint32_t  addrTwo = __builtin_bswap32((uint32_t) &vars[1]);
 
-  const size_t shortVectorLength = 6;
-  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
-  float shortAnswer[shortVectorLength];
+  printf("\n");
+  printf("%lu\n", (uint32_t) &vars[0]);
+  printf("%lu\n", (uint32_t) &vars[1]);
 
-  float data;
+  char addrBytesOne[5];
+  copyByte(addrBytesOne, &addrOne);
+  printf("%02x\n", addrBytesOne);
 
-  /* Create Instanzes */
-  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
-  ChannelHandle channel = Channel_create(buffer);
+  char addrBytesTwo[5];
+  copyByte(addrBytesTwo, &addrTwo);
+  printf("%02x\n", addrBytesTwo);
 
-  EXPECT_EQ(Channel_poll(channel), -1);
-  bool isRunning = Channel_setStateRunning(channel);
-  EXPECT_EQ(isRunning, false);
-  bool isStopped = Channel_setStateStopped(channel);
-  EXPECT_EQ(isStopped, false);
 
-  /* Configure channel */
-  Channel_setPollAddress(channel, &data, FLOAT);
-  isRunning = Channel_setStateRunning(channel);
-  EXPECT_EQ(isRunning, true);
-  data = 5.5f;
-  EXPECT_EQ(Channel_poll(channel), 1);
-  isStopped = Channel_setStateStopped(channel);
-  EXPECT_EQ(isStopped, true);
-  EXPECT_EQ(Channel_poll(channel), -1);
-}
+  int len = 0;
 
-TEST(Channel, test_trigger_stream)
-{
-  const size_t shortCapacity = 10;
+  memcpy( data, partOne, 43);
+  len = 43;
+  memcpy( data + len, intPrefix, 1);
+  len += 1;
+  memcpy(data + len, addrBytesOne, 4);
+  len += 4;
+  memcpy(data + len, partTwo, 2);
+  len += 2;
+  memcpy( data + len, intPrefix, 1);
+  len += 1;
+  memcpy( data + len, addrBytesTwo, 4);
+  len += 4;
+  memcpy(data + len, partThree, 69);
+  len += 69;
 
-  const size_t shortVectorLength = 6;
-  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
-  float shortAnswer[shortVectorLength];
+  data[len] = '\0';
 
-  float data;
-
-  /* Create Instanzes */
-  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
-  ChannelHandle channel = Channel_create(buffer);
-  
-  /* Configure channel */
-  Channel_setPollAddress(channel, &data, FLOAT);
-  Channel_setStateRunning(channel);
-  
-  /* Simulate polling */
-  for(size_t i = 0; i < shortVectorLength; i++){
-    data = shortTestVector[i];
-    Channel_poll(channel);
+  printf("\n");
+  for(int i = 0; i < len+1; i++){
+    printf("%02x ",data[i]);
   }
-  
-  /* Get stream interface to test the procedure */
-  IFloatStreamHandle stream = Channel_getTriggerDataStream(channel);
+  printf("\n");
 
-  float triggerData[2];
-  size_t readData;
-  stream->open(stream, triggerData);
-  readData = stream->getSize(stream);
-  ASSERT_EQ(readData, 2);
-  readData = stream->getStream(stream);
-  ASSERT_EQ(readData, 2);
-  stream->close(stream);
-  
-  ASSERT_THAT(triggerData, testing::ElementsAre(6.6f,5.5f));
 
+  ScopeHandle scope = Scope_create(100,2,400,ETHERNET);
+  Scope_command(scope, (char*) data, len);
+  Scope_poll(scope);
+
+  ChannelHandle channel = Scope_test(scope, 0);
+  void* addr = Channel_getPollAddress(channel);
+
+  vars[0] = 1.45f;
+  printf("%lf", vars[0]);
+  printf("%lf", vars[1]);
 }
