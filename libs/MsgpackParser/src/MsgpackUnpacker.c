@@ -10,6 +10,8 @@
 #include <MsgpackParser/MsgpackUnpacker.h>
 #include <msgpack/object.h>
 #include <msgpack.h>
+#include <string.h>
+#include <GeneralPurpose/Memory.h>
 
 /* Returns a empty msgpack object */
 #define returnEmptyObj \
@@ -93,7 +95,7 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
   if (msgpack_unpacker_buffer_capacity(&self->unp) < length) {
     return false;
   }
-  memcpy(msgpack_unpacker_buffer(&self->unp), data, length);
+  copyMemory(msgpack_unpacker_buffer(&self->unp), data, length);
   msgpack_unpacker_buffer_consumed(&self->unp, length);
 
   self->ret = msgpack_unpacker_next(&self->unp, &self->und);
@@ -171,7 +173,7 @@ static const size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
 }
 
  static void copyString(char *str, char *data, int size){
-  strncpy(str, data, size);
+  copyMemory(str, data, size);
   str[size] = '\0';
 }
 
@@ -185,6 +187,10 @@ static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key){
   /* Check all objects for the given key */
   for(int i = 0; i<parentObj.via.map.size; i++){
     msgpack_object objKey = (parentObj.via.map.ptr+i)->key;
+
+    if(objKey.type != MSGPACK_OBJECT_STR){
+      return -1;
+    }
 
     char tmpKey[objKey.via.str.size + 1];
     copyString(tmpKey, (char*) objKey.via.str.ptr, objKey.via.str.size);
