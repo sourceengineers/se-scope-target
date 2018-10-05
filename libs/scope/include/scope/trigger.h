@@ -64,6 +64,6 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf);
 int Trigger_getTriggerIndex(TriggerHandle self);
 
 /* Function which calls the currently choosen trigger strategy */
-inline bool Trigger_run(TriggerHandle self, const int timstamp);
+bool Trigger_run(TriggerHandle self, const int timstamp);
 
 #endif

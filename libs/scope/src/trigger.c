@@ -181,6 +181,6 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
     return true;
 }
 
-inline bool Trigger_run(TriggerHandle self, const int timestamp){
+bool Trigger_run(TriggerHandle self, const int timestamp){
   return self->run(self, timestamp);
 }
