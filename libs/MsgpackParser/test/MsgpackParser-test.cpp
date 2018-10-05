@@ -164,9 +164,9 @@ TEST(msgpack_unpacker, test_errors)
   MsgpackUnpackerHandle unpacker = MsgpackUnpacker_create(1000);
   IUnpackerHandle parser = MsgpackUnpacker_getIUnpacker(unpacker);
 
-  size_t strLength = strlen(data) + 40;
-  char faultyData[strLength];
-  strcpy(faultyData, data);
+  size_t strLength = 182;
+  char faultyData[strLength + 1];
+  memcpy(faultyData, data, strLength);
 
   faultyData[10] = 'a';
   faultyData[11] = '\0';
