@@ -13,7 +13,7 @@
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static const char* commandName = "cf_trigger";
+static const char* commandName = "cf_tgr";
 
 /* Class data */
 typedef struct __CommandTriggerPrivateData
