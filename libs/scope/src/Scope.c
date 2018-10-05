@@ -60,11 +60,10 @@ static void iScopeTrans(IScopeHandle self){
 }
 
 static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
-  const size_t maxCommandNameLength = 30;
-  char commandName[maxCommandNameLength];
+  char commandName[MAX_COMMAND_LENGTH];
 
   for (size_t i = 0; i < numberOfCommands; ++i) {
-    unpacker->getNameOfCommand(unpacker, commandName, maxCommandNameLength, i);
+    unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
     commands[i] = CommandFactory_getICommand(scope->commandFactory, commandName);
   }
 }
