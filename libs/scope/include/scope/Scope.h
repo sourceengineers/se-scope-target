@@ -41,4 +41,7 @@ void Scope_command(ScopeHandle self, const char* data, size_t dataLength);
 /* Polls data from all channels */
 void Scope_poll(ScopeHandle self);
 
+/* Temporary function to test the functionality of the scope, before the output arlgorithmes exists */
+ChannelHandle Scope_test(ScopeHandle self, int index);
+
 #endif

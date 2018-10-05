@@ -159,3 +159,7 @@ void Scope_poll(ScopeHandle self){
     Channel_poll(self->channels[i]);
   }
 }
+
+ChannelHandle Scope_test(ScopeHandle self, int index){
+  return self->channels[index];
+}
