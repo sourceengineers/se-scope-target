@@ -34,19 +34,26 @@ CommandRunningParserHandle CommandRunningParser_create(ICommandHandle iCommand, 
 
 void CommandRunningParser_configure(CommandRunningParserHandle self){
 
-  size_t numberOfFields = self->iUnpacker->getNumberOfFields(self->iUnpacker, (const char*) self->commandName);
+  if(self->iUnpacker == NULL){
+    return;
+  }
+
+  ssize_t numberOfFields = self->iUnpacker->getNumberOfFields(self->iUnpacker, (const char*) self->commandName);
+
+  if(numberOfFields == -1){
+    return;
+  }
 
   int channelIds[numberOfFields];
   CHANNEL_STATES newStates[numberOfFields];
 
-  size_t maxSizeOfFieldName;
-  char nameOfField[maxSizeOfFieldName];
+  char nameOfField[MAX_FIELD_LENGTH];
 
   for (size_t i = 0; i < numberOfFields; ++i) {
 
-    bool foundField = self->iUnpacker->getNameOfField(self->iUnpacker, self->commandName, nameOfField, maxSizeOfFieldName, i);
+    bool foundField = self->iUnpacker->getNameOfField(self->iUnpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
     if(foundField == true){
-      channelIds[i] = atoi(nameOfField);
+      channelIds[i] = atoi(nameOfField) - 1;
       bool newState = self->iUnpacker->getBoolFromCommand(self->iUnpacker, self->commandName, nameOfField);
       if(newState == true){
         newStates[i] = CHANNEL_RUNNING;

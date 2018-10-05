@@ -74,6 +74,10 @@ CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle iCommand, 
 
 void CommandTriggerParser_configure(CommandTriggerParserHandle self){
 
+  if(self->iUnpacker == NULL){
+    return;
+  }
+
   const size_t maxStringSize = 20;
 
   /* Get the correct data stream */

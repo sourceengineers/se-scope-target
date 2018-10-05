@@ -34,6 +34,10 @@ CommandTIncParserHandle CommandTIncParser_create(ICommandHandle iCommand, IUnpac
 
 void CommandTIncParser_configure(CommandTIncParserHandle self){
 
+  if(self->iUnpacker == NULL){
+    return;
+  }
+
   const int timeIncrement = self->iUnpacker->getIntFromCommand(self->iUnpacker, (const char*) self->commandName,
                                                         (const char*) "");
 

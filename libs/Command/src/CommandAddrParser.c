@@ -34,20 +34,27 @@ CommandAddrParserHandle CommandAddrParser_create(ICommandHandle iCommand, IUnpac
 
 void CommandAddrParser_configure(CommandAddrParserHandle self){
 
-  size_t numberOfFields = self->iUnpacker->getNumberOfFields(self->iUnpacker, (const char*) self->commandName);
+  if(self->iUnpacker == NULL){
+    return;
+  }
+
+  ssize_t numberOfFields = self->iUnpacker->getNumberOfFields(self->iUnpacker, (const char*) self->commandName);
+
+  if(numberOfFields == -1){
+    return;
+  }
 
   int channelIds[numberOfFields];
   void* newAddresses[numberOfFields];
   DATA_TYPES types[numberOfFields];
 
-  size_t maxSizeOfFieldName;
-  char nameOfField[maxSizeOfFieldName];
+  char nameOfField[MAX_FIELD_LENGTH];
 
   for (size_t i = 0; i < numberOfFields; ++i) {
 
-    bool foundField = self->iUnpacker->getNameOfField(self->iUnpacker, self->commandName, nameOfField, maxSizeOfFieldName, i);
+    bool foundField = self->iUnpacker->getNameOfField(self->iUnpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
     if(foundField == true){
-      channelIds[i] = atoi(nameOfField);
+      channelIds[i] = atoi(nameOfField) - 1;
       newAddresses[i] = (void*) (uint32_t) self->iUnpacker->getIntFromCommand(self->iUnpacker, self->commandName, nameOfField);
       types[i] = FLOAT;
     }
