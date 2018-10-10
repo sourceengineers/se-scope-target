@@ -18,11 +18,11 @@ typedef struct __RecieverPrivateData
 {
   IUnpacker iUnpacker;
   COM_TYPE comType;
+  IByteStreamHandle byteStream;
 
   /* The Reciever will later be implemented with a bytestream as a input method */
   IByteStream stream;
   uint8_t data[200];
-
 } RecieverPrivateData ;
 
 /* Prototype for strategy */
@@ -41,12 +41,13 @@ static bool checkTransportEthernet(RecieverHandle self){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, COM_TYPE comType){
+RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, COM_TYPE comType, IByteStreamHandle byteStream){
 
   RecieverHandle self = malloc(sizeof(RecieverPrivateData));
 
   self->iUnpacker = *iUnpacker;
   self->comType = comType;
+  self->byteStream = byteStream;
 
   switch(comType){
     case ETHERNET:
@@ -60,10 +61,12 @@ RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, COM_TYPE comType){
   return self;
 }
 
-bool Reciever_unpack(RecieverHandle self, const char* data, const size_t length){
+bool Reciever_unpack(RecieverHandle self){
 
   /* Check if Parser is able to parse the given data */
-  bool parsingIsValid = self->iUnpacker.unpack(&self->iUnpacker, data, length);
+  const size_t length = self->byteStream->length(self->byteStream);
+  const uint8_t* data = self->byteStream->read(self->byteStream);
+  bool parsingIsValid = self->iUnpacker.unpack(&self->iUnpacker, (const char*) data, length);
   if(parsingIsValid == false){
     return false;
   }

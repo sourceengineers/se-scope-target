@@ -7,9 +7,12 @@
  *
  * @brief        Streaming interface
  *               open: opens the channel to a given byte pointer
- *               size: returns the amount of bytes ready to be read
+ *               length: returns the amount of bytes ready to be read
  *               read: returns a pointer to the beginning of the byte array
  *               write: writes bytes into the stream
+ *               writeByte: writes a single byte into the stream
+ *               readByte: returns a single byte from the stream
+ *               flush: flushs the stream
  *               close: closes the stream
  *
  *****************************************************************************************************************************************/
@@ -18,6 +21,8 @@
 #define IByteStream_H_
 
 #include <unistd.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 /******************************************************************************
  Define interface handle data
@@ -30,10 +35,14 @@ typedef struct IByteStreamStruct* IByteStreamHandle;
 typedef struct IByteStreamStruct {
   void* implementer;
   void (*open)(IByteStreamHandle self, uint8_t* stream);
-  ssize_t (*size)(IByteStreamHandle self);
+  bool (*byteIsReady)(IByteStreamHandle self);
+  const uint8_t (*readByte)(IByteStreamHandle self);
+  size_t (*length)(IByteStreamHandle self);
   const uint8_t*(*read)(IByteStreamHandle self);
-  ssize_t (*write)(IByteStreamHandle self, const uint8_t* data, const size_t length);
+  void (*writeByte)(IByteStreamHandle self, const uint8_t data);
+  void (*write)(IByteStreamHandle self, const uint8_t* data, const size_t length);
   void (*close)(IByteStreamHandle self);
+  void (*flush)(IByteStreamHandle self);
 } IByteStream ;
 
 #endif

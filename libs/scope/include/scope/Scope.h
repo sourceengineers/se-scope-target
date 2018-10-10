@@ -19,6 +19,8 @@
 #include <Command/CommandFactory.h>
 #include <Communication/Reciever.h>
 
+#include <GeneralPurpose/ByteStream.h>
+
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
@@ -36,7 +38,11 @@ void Scope_destroy(ScopeHandle self);
 /* Passes data to the scope which has to be parsed. The data has to be in the form of the specified protocol, or will
  * be rejected.
  * After parsing, the commands will be executed */
-void Scope_command(ScopeHandle self, const char* data, size_t dataLength);
+void Scope_command(ScopeHandle self);
+
+
+/* Returns the input stream which feeds data into the Reciever */
+IByteStreamHandle Scope_getInputStream(ScopeHandle self);
 
 /* Polls data from all channels */
 void Scope_poll(ScopeHandle self);

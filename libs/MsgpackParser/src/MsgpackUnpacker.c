@@ -12,6 +12,7 @@
 #include <msgpack.h>
 #include <string.h>
 #include <GeneralPurpose/Memory.h>
+#include <GeneralPurpose/IByteStream.h>
 
 /* Returns a empty msgpack object */
 #define returnEmptyObj \

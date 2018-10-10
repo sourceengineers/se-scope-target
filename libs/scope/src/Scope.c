@@ -32,6 +32,9 @@ typedef struct __ScopePrivateData
   MsgpackUnpackerHandle msgpackUnpacker;
   RecieverHandle reciever;
 
+  /* Streams */
+  ByteStreamHandle inputStream;
+
 } ScopePrivateData ;
 
 /* Fetches all commands from the Parser */
@@ -87,6 +90,9 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
   self->iScope.trans = &iScopeTrans;
   self->iScope.setTimeIncrement = &iScopeSetTimeIncrement;
 
+  /* Create input and output streams */
+  self->inputStream = ByteStream_create(communicationBufferSize);
+
   /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
   self->buffers = malloc(sizeof(RingBufferHandle) * numberOfChannels);
@@ -103,7 +109,8 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
 
   /* Creates the unpacking communication */
   self->msgpackUnpacker = MsgpackUnpacker_create(communicationBufferSize);
-  self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker), comType);
+  self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker), comType,
+                                   ByteStream_getByteStream(self->inputStream));
 
   /* Create command factory */
   self->commandFactory = CommandFactory_create(&self->iScope, 
@@ -127,17 +134,17 @@ void Scope_destroy(ScopeHandle self){
   CommandFactory_destroy(self->commandFactory);
   MsgpackUnpacker_destroy(self->msgpackUnpacker);
   Reciever_destroy(self->reciever);
+  ByteStream_destroy(self->inputStream);
 
   free(self);
   self = NULL;
 }
 
-void Scope_command(ScopeHandle self, const char* data, size_t dataLength){
+void Scope_command(ScopeHandle self){
 
-  if(Reciever_unpack(self->reciever, data, dataLength) == false){
+  if(Reciever_unpack(self->reciever) == false){
     return;
   }
-
 
   IUnpackerHandle unpacker = Reciever_getIUnpacker(self->reciever);
 
@@ -146,6 +153,10 @@ void Scope_command(ScopeHandle self, const char* data, size_t dataLength){
 
   fetchCommands(self, unpacker, commands, numberOfCommands);
   runCommands(commands, numberOfCommands);
+}
+
+IByteStreamHandle Scope_getInputStream(ScopeHandle self){
+  return ByteStream_getByteStream(self->inputStream);
 }
 
 void Scope_poll(ScopeHandle self){
