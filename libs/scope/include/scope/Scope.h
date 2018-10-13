@@ -29,10 +29,10 @@ typedef struct __ScopePrivateData* ScopeHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instance of the channel */
 ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t communicationBufferSize, COM_TYPE comType);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instance of the channel */
 void Scope_destroy(ScopeHandle self);
 
 /* Passes data to the scope which has to be parsed. The data has to be in the form of the specified protocol, or will

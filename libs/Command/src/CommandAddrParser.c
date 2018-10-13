@@ -69,7 +69,7 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &conf);
 }
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instance of the channel */
 void CommandAddrParser_destroy(CommandAddrParserHandle self){
   free(self);
   self = NULL;

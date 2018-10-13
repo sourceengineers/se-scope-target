@@ -26,10 +26,10 @@ typedef struct __RingBufferPrivateData* RingBufferHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the buffer */
+/* Constructor: Creates a new instance of the buffer */
 RingBufferHandle RingBuffer_create(size_t capacity);
 
-/* Deconstructor: Deletes the instanze of the buffer */
+/* Deconstructor: Deletes the instance of the buffer */
 void RingBuffer_destroy(RingBufferHandle self);
 
 /* Empties the buffer 

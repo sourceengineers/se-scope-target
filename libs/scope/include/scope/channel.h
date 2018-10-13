@@ -30,10 +30,10 @@ typedef struct __ChannelPrivateData* ChannelHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the channel */
+/* Constructor: Creates a new instance of the channel */
 ChannelHandle Channel_create(RingBufferHandle buffer);
 
-/* Deconstructor: Deletes the instanze of the channel */
+/* Deconstructor: Deletes the instance of the channel */
 void Channel_destroy(ChannelHandle self);
 
 /* Sets the address which the channel will poll from

@@ -27,10 +27,10 @@ typedef struct __CommandTIncPrivateData* CommandTIncHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the command */
+/* Constructor: Creates a new instance of the command */
 CommandTIncHandle CommandTInc_create(IScopeHandle iScope);
 
-/* Deconstructor: Deletes the instanze of the command */
+/* Deconstructor: Deletes the instance of the command */
 void CommandTInc_destroy(CommandTIncHandle self);
 
 /* Returns the command interface */

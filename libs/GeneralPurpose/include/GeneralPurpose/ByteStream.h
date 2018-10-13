@@ -29,10 +29,10 @@ typedef struct __ByteStreamPrivateData* ByteStreamHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the stream */
+/* Constructor: Creates a new instance of the stream */
 ByteStreamHandle ByteStream_create(size_t capacity);
 
-/* Deconstructor: Deletes the instanze of the stream */
+/* Deconstructor: Deletes the instance of the stream */
 void ByteStream_destroy(ByteStreamHandle self);
 
 /* Returns the IByteStream interface */

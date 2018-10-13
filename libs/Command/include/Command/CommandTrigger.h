@@ -25,10 +25,10 @@ typedef struct __CommandTriggerPrivateData* CommandTriggerHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the command */
+/* Constructor: Creates a new instance of the command */
 CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger);
 
-/* Deconstructor: Deletes the instanze of the command */
+/* Deconstructor: Deletes the instance of the command */
 void CommandTrigger_destroy(CommandTriggerHandle self);
 
 /* Returns the command interface */

@@ -25,10 +25,10 @@ typedef struct __CommandTransPrivateData* CommandTransHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the command */
+/* Constructor: Creates a new instance of the command */
 CommandTransHandle CommandTrans_create(IScopeHandle iScope);
 
-/* Deconstructor: Deletes the instanze of the command */
+/* Deconstructor: Deletes the instance of the command */
 void CommandTrans_destroy(CommandTransHandle self);
 
 /* Returns the command interface */

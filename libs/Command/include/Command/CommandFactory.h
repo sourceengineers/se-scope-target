@@ -37,14 +37,14 @@ typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the factory */
+/* Constructor: Creates a new instance of the factory */
 CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
                                            ChannelHandle* channels, 
                                            size_t ammountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker);
                                            
-/* Deconstructor: Deletes the instanze of the factory */
+/* Deconstructor: Deletes the instance of the factory */
 void CommandFactory_destroy(CommandFactoryHandle self);
 
 /* Returns the command interface */

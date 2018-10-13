@@ -33,7 +33,7 @@ typedef struct __RecieverPrivateData* RecieverHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the reciever */
+/* Constructor: Creates a new instance of the reciever */
 RecieverHandle Reciever_create(IUnpackerHandle iReciever, COM_TYPE comType, IByteStreamHandle byteStream);
 
 /* Returns the IUnpacker interface */
@@ -42,7 +42,7 @@ IUnpackerHandle Reciever_getIUnpacker(RecieverHandle self);
 /* Unpacks the data in the inputstream */
 bool Reciever_unpack(RecieverHandle self);
 
-/* Deconstructor: Deletes the instanze of the reciever */
+/* Deconstructor: Deletes the instance of the reciever */
 void Reciever_destroy(RecieverHandle self);
 
 
