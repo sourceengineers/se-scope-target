@@ -142,6 +142,13 @@ void Channel_destroy(ChannelHandle self){
   self = NULL;
 }
 
+bool Channel_isRunning(ChannelHandle self){
+  if(self->state == CHANNEL_RUNNING){
+    return true;
+  }
+  return false;
+}
+
 void Channel_setPollAddress(ChannelHandle self, void* pollAddress, const DATA_TYPES pollDataType){
   self->pollAddress = pollAddress;
   self->pollDataType = pollDataType;

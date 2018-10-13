@@ -54,6 +54,9 @@ bool Channel_setStateStopped(ChannelHandle self);
 /* Returns the state of the channel */
 CHANNEL_STATES Channel_getState(ChannelHandle self);
 
+/* Returns true if the channel is running */
+bool Channel_isRunning(ChannelHandle self);
+
 /* Polls data and writes it into the ring buffer
    Returns the responce of the buffer->write() functions 
    Will be written data point in a success case and a -1 if something went 
