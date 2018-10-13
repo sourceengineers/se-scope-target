@@ -20,9 +20,6 @@ typedef struct __RecieverPrivateData
   COM_TYPE comType;
   IByteStreamHandle byteStream;
 
-  /* The Reciever will later be implemented with a bytestream as a input method */
-  IByteStream stream;
-  uint8_t data[200];
 } RecieverPrivateData ;
 
 /* Prototype for strategy */
@@ -79,6 +76,7 @@ bool Reciever_unpack(RecieverHandle self){
 
   /* Accept the new data as new commands */
   self->iUnpacker.activateNewMessage(&self->iUnpacker);
+  self->byteStream->flush(self->byteStream);
   return true;
 }
 
