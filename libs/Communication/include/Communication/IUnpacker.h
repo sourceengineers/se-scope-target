@@ -44,7 +44,7 @@ typedef struct IUnpackerStruct {
   ssize_t (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
   bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
   
-  int (*getIntFromCommand)(IUnpackerHandle iUnpacker, const char* commandName, const char* fieldName);
+  uint32_t (*getIntFromCommand)(IUnpackerHandle iUnpacker, const char* commandName, const char* fieldName);
   float (*getFloatFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName);
   bool (*getBoolFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName);
   void (*getStringFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName, char* targetStr, const int maxLenght);
