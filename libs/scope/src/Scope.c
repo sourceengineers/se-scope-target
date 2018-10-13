@@ -24,8 +24,8 @@ typedef struct __ScopePrivateData
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
   
-  int timeIncrement;
-  int timeStamp;
+  uint32_t timeIncrement;
+  uint32_t timeStamp;
   
   IScope iScope;
 
@@ -51,7 +51,7 @@ static void iScopePoll(IScopeHandle self){
   Scope_poll(scope);
 }
 
-static void iScopeSetTimeIncrement(IScopeHandle self, int timeIncrement){
+static void iScopeSetTimeIncrement(IScopeHandle self, uint32_t timeIncrement){
   ScopeHandle scope = (ScopeHandle) self->implementer;
   scope->timeIncrement = timeIncrement;
 }
@@ -76,6 +76,15 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
     commands[i]->run(commands[i]);
   }
 }
+
+static uint32_t getTimeIncrement(IScopeHandle self){
+  ScopeHandle scope = (ScopeHandle) self->implementer;
+  return scope->timeIncrement;
+}
+static uint32_t getTimestamp(IScopeHandle self){
+  ScopeHandle scope = (ScopeHandle) self->implementer;
+  return scope->timeStamp;
+}
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -89,6 +98,8 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
   self->iScope.poll = &iScopePoll;
   self->iScope.trans = &iScopeTrans;
   self->iScope.setTimeIncrement = &iScopeSetTimeIncrement;
+  self->iScope.getTimeIncrement = &getTimeIncrement;
+  self->iScope.getTimestamp = &getTimestamp;
 
   /* Create input and output streams */
   self->inputStream = ByteStream_create(communicationBufferSize);
@@ -160,8 +171,6 @@ IByteStreamHandle Scope_getInputStream(ScopeHandle self){
 }
 
 void Scope_poll(ScopeHandle self){
-
-  RingBuffer_write(self->timeStampBuffer, (const float*) self->timeStamp, 1);
 
   self->timeStamp += self->timeIncrement;
 
