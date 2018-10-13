@@ -2,11 +2,17 @@ cmake_minimum_required(VERSION 3.0.0)
 
 set (CMAKE_CXX_STANDARD 11)
 
+set(ARCHITECTURE_32BIT OFF)
+
 set(CMAKE_BUILD_TYPE DEBUG)
 set(CMAKE_C_COMPILER clang)
 set(CMAKE_CXX_COMPILER clang++)
-set(CMAKE_C_FLAGS -m32)
-set(CMAKE_CXX_FLAGS -m32)
+
+if(ARCHITECTURE_32BIT)
+    set(CMAKE_C_FLAGS -m32)
+    set(CMAKE_CXX_FLAGS -m32)
+    set(MSGPACK_32BIT ON)
+endif()
 
 # How to build:
 # mkdir build 
@@ -33,9 +39,6 @@ set(PROJECT_LIBRARIES_DIR
 #######################################################################################################################
 ## Custom Libraries
 #######################################################################################################################
-## Set custom parameters
-set(MSGPACK_32BIT ON)
-
 # Set the used libraries here !!!!!!!!!!!!!!!!!!!!!!!!!!!
 set(PROJECT_LIBRARIES
     Scope
