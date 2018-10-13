@@ -23,7 +23,7 @@ typedef struct __MsgpackUnpackerPrivateData* MsgpackUnpackerHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the msgpack unpacker */
+/* Constructor: Creates a new instance of the msgpack unpacker */
 MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength);
 
 /* Destroys the instance of the msgpack unpacker */

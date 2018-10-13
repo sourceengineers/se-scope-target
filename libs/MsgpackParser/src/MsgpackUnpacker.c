@@ -55,9 +55,6 @@ static msgpack_object getCmdObj(MsgpackUnpackerHandle self, const char *key);
 /* Returns the msgpack_object corresponding to the given key */
 static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *key);
 
-/* Copies the msgpack_object key to key */
-static void copyString(char *str, char *data, int size);
-
 /* Matches the given key to a object on the child level of the gives parent object
     returns a integer indicating the position of the key in the object */
 static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key);
@@ -171,11 +168,6 @@ static const size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   return self->numberOfCommands;
-}
-
- static void copyString(char *str, char *data, int size){
-  copyMemory(str, data, size);
-  str[size] = '\0';
 }
 
 static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key){

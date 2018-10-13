@@ -16,4 +16,7 @@
 
 void copyMemory(char* dest, const char* src, size_t length);
 
+/* Copies the msgpack_object key to key */
+void copyString(char *str, const char *data, size_t size);
+
 #endif

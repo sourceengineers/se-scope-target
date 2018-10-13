@@ -14,3 +14,8 @@ void copyMemory(char* dest, const char* src, size_t length){
     dest[i] = src[i];
   }
 }
+
+void copyString(char *str, const char *data, size_t size){
+  copyMemory(str, data, size);
+  str[size] = '\0';
+}
