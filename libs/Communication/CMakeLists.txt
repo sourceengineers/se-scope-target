@@ -12,6 +12,7 @@ set(LIBRARY_NAME
 # Set all used dependencies
 set(DEPENDENCIES  
    GeneralPurpose
+    Scope
 )
 
 # Set Project Name
