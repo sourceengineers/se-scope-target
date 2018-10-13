@@ -18,10 +18,12 @@ typedef struct __TriggerPrivateData
 {
   float level;
   int edge;
-  ssize_t triggerIndex;
+  uint32_t triggerIndex;
   IFloatStream stream;
   TriggerStrategy triggerStrategies[3];
   TriggerStrategy run;
+  uint32_t activeChannelId;
+  bool isTriggered;
 } TriggerPrivateData;
 
 /* Checks if the trigger criteria matches the current data */
@@ -31,13 +33,13 @@ static bool checkCurrentData(TriggerHandle self, float* triggerData);
 static bool getTriggerData(TriggerHandle self, float* data);
 
 /* Strategy for the continous trigger */
-static bool triggerContinuous(TriggerHandle self, const int index);
+static bool triggerContinuous(TriggerHandle self, const uint32_t index);
 
 /* Strategy for the normal trigger */
-static bool triggerNormal(TriggerHandle self, const int index);
+static bool triggerNormal(TriggerHandle self, const uint32_t index);
 
 /* Strategy for the one shot trigger */
-static bool triggerOneShot(TriggerHandle self, const int index);
+static bool triggerOneShot(TriggerHandle self, const uint32_t index);
 
 /* Checks the given configuration data for possible errors and return false
  * if errors were found */
@@ -58,8 +60,7 @@ static bool checkCurrentData(TriggerHandle self, float* triggerData){
   const float dataLast = triggerData[CHANNEL_OLD_DATA];
   const float triggerLevel = self->level;
   const int edge = (const int) dataCurrent > dataLast ? 1 : -1;
-  const int sign = (const int) copysign(1.0f, dataCurrent);
-  
+
   if(dataCurrent == dataLast){
     return false;
   }
@@ -95,12 +96,11 @@ static bool getTriggerData(TriggerHandle self, float* data){
   return true;
 }
 
-static bool triggerContinuous(TriggerHandle self, const int index){
-  self->triggerIndex = -1;
+static bool triggerContinuous(TriggerHandle self, const uint32_t index){
   return false;
 }
 
-static bool triggerNormal(TriggerHandle self, const int index){
+static bool triggerNormal(TriggerHandle self, const uint32_t index){
   float triggerData[2];
   bool streamSuccessfull = getTriggerData(self, triggerData);
   
@@ -117,7 +117,7 @@ static bool triggerNormal(TriggerHandle self, const int index){
   return isTriggered;
 }
 
-static bool triggerOneShot(TriggerHandle self, const int index){
+static bool triggerOneShot(TriggerHandle self, const uint32_t index){
   return false;
 }
 
@@ -129,6 +129,9 @@ static bool configSanityCheck(TriggerConfiguration conf){
   }
   if((conf.edge != TRIGGER_EDGE_NEGATIVE)
       && (conf.edge != TRIGGER_EDGE_POSITIVE)){
+    return false;
+  }
+  if(conf.channelId < 0){
     return false;
   }
   return true;
@@ -143,6 +146,7 @@ static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
   self->edge = conf.edge;
   self->stream = conf.stream;
   self->run = getTriggerStrategy(self, conf.mode);
+  self->activeChannelId = conf.channelId;
 }
 
 /******************************************************************************
@@ -157,6 +161,8 @@ TriggerHandle Trigger_create(){
   self->triggerStrategies[TRIGGER_CONTINUOUS] = &triggerContinuous;
   self->triggerStrategies[TRIGGER_NORMAL] = &triggerNormal;
   self->triggerStrategies[TRIGGER_ONESHOT] = &triggerOneShot;
+  self->activeChannelId = 0;
+  self->isTriggered = false;
   
   self->run = &triggerContinuous;
   
@@ -168,8 +174,8 @@ void Trigger_destroy(TriggerHandle self){
   self = NULL;
 }
 
-int Trigger_getTriggerIndex(TriggerHandle self){
-    return (int) self->triggerIndex;
+uint32_t Trigger_getTriggerIndex(TriggerHandle self){
+    return self->triggerIndex;
 }
 
 bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
@@ -181,6 +187,20 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
     return true;
 }
 
-bool Trigger_run(TriggerHandle self, const int timestamp){
-  return self->run(self, timestamp);
+bool Trigger_run(TriggerHandle self, const uint32_t timestamp){
+  self->isTriggered = self->run(self, timestamp);
+  return self->isTriggered;
+}
+
+bool Trigger_isTriggered(TriggerHandle self){
+  return self->isTriggered;
+}
+
+void Trigger_release(TriggerHandle self){
+  self->isTriggered = false;
+  self->triggerIndex = 0;
+}
+
+uint32_t Trigger_getChannelId(TriggerHandle self){
+  return self->activeChannelId;
 }

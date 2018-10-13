@@ -81,7 +81,7 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
   const size_t maxStringSize = 20;
 
   /* Get the correct data stream */
-  int channelId = self->iUnpacker->getIntFromCommand(self->iUnpacker, (const char*) self->commandName,
+  uint32_t channelId = self->iUnpacker->getIntFromCommand(self->iUnpacker, (const char*) self->commandName,
                                                      (const char*) "cl_id");
   if(channelId > self->numberOfChannels){
     channelId = 0;
@@ -104,7 +104,7 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
                                         (const char*) "edge", edgeToParser, maxStringSize);
   int edge = parserStringToEdge(triggerModeToParse, maxStringSize);
 
-  TriggerConfiguration conf = {.level = level, .mode = mode, .stream = stream, .edge = edge};
+  TriggerConfiguration conf = {.level = level, .mode = mode, .stream = stream, .edge = edge, .channelId = channelId};
 
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &conf);
 }

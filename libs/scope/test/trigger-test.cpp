@@ -39,7 +39,7 @@ TEST(Trigger, test_normal)
   stream.close = &streamClose;
   
   TriggerHandle trigger = Trigger_create();
-  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .stream = stream, .mode = TRIGGER_NORMAL};
+  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .stream = stream, .mode = TRIGGER_NORMAL, .channelId = 1};
 
   globalTriggerDataActive = 5.5f;
   globalTriggerDataOld = 1.1f;  

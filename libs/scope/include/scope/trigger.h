@@ -37,6 +37,7 @@ typedef struct {
  int edge;
  TRIGGER_MODE mode;
  IFloatStream stream;
+ uint32_t channelId;
 } TriggerConfiguration ;
 
 
@@ -46,24 +47,33 @@ typedef struct {
 typedef struct __TriggerPrivateData* TriggerHandle;
 
 /* Typedef for a function pointer, to easier handle the strategies */
-typedef bool (*TriggerStrategy)(TriggerHandle self, const int index);
+typedef bool (*TriggerStrategy)(TriggerHandle self, const uint32_t index);
 
 /******************************************************************************
 Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instanze of the Trigger */
+/* Constructor: Creates a new instance of the Trigger */
 TriggerHandle Trigger_create();
 
-/* Deconstructor: Deletes the instanze of the Trigger */
+/* Deconstructor: Deletes the instance of the Trigger */
 void Trigger_destroy(TriggerHandle self);
 
 /* Configures the trigger */
 bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf);
 
 /* Returns the triggered index */
-int Trigger_getTriggerIndex(TriggerHandle self);
+uint32_t Trigger_getTriggerIndex(TriggerHandle self);
 
-/* Function which calls the currently choosen trigger strategy */
-bool Trigger_run(TriggerHandle self, const int timstamp);
+/* Returns if the trigger is triggered or not */
+bool Trigger_isTriggered(TriggerHandle self);
+
+/* Releases the currently triggered value */
+void Trigger_release(TriggerHandle self);
+
+/* Returns the id of the channel which is currently active */
+uint32_t Trigger_getChannelId(TriggerHandle self);
+
+/* Function which calls the currently chosen trigger strategy */
+bool Trigger_run(TriggerHandle self, const uint32_t timstamp);
 
 #endif
