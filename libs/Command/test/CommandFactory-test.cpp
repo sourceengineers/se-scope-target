@@ -31,7 +31,7 @@ TEST(CommandFactory, test_destroy)
   ASSERT_THAT(commandTInc, NotNull());
   commandTrans = CommandFactory_getICommand(factory, (const char*) "ev_trans");
   ASSERT_THAT(commandTrans, NotNull());
-  commandTrigger = CommandFactory_getICommand(factory, (const char*) "cf_trigger");
+  commandTrigger = CommandFactory_getICommand(factory, (const char*) "cf_tgr");
   ASSERT_THAT(commandTrigger, NotNull());
 
   CommandFactory_destroy(factory);
