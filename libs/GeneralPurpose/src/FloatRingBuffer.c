@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         RingBuffer.c
+ * @file         FloatRingBuffer.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,13 +7,13 @@
  *
  *****************************************************************************************************************************************/
 
-#include <GeneralPurpose/RingBuffer.h>
+#include <GeneralPurpose/FloatRingBuffer.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __RingBufferPrivateData
+typedef struct __FloatRingBufferPrivateData
 {
   float* data;
   float* head;
@@ -21,53 +21,53 @@ typedef struct __RingBufferPrivateData
   size_t capacity;
   float* floatStream;
   IFloatStream iFloatStream;
-} RingBufferPrivateData ;
+} FloatRingBufferPrivateData ;
 
 /* Returns the next index of the given index */
-static float* nextIndex(RingBufferHandle self, float* index);
+static float* nextIndex(FloatRingBufferHandle self, float* index);
 
 /* Increments the tail index */
-static bool incTail(RingBufferHandle self);
+static bool incTail(FloatRingBufferHandle self);
 
 /* Increments the head index */
-static bool incHead(RingBufferHandle self);
+static bool incHead(FloatRingBufferHandle self);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
 static size_t streamGetSize(IFloatStreamHandle iFloatStream){
-  RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
-  return RingBuffer_usedData(self);
+  FloatRingBufferHandle self = (FloatRingBufferHandle)iFloatStream->implementer;
+  return FloatRingBuffer_usedData(self);
 }
 
 static void streamOpen(IFloatStreamHandle iFloatStream, float* floatStream){
-  RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
+  FloatRingBufferHandle self = (FloatRingBufferHandle)iFloatStream->implementer;
   if (floatStream != NULL) {
     self->floatStream = floatStream;
   }
 }
 
 static void streamClose(IFloatStreamHandle iFloatStream){
-  RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
+  FloatRingBufferHandle self = (FloatRingBufferHandle)iFloatStream->implementer;
   self->floatStream = NULL;
 }
 
 static size_t streamGetData(IFloatStreamHandle iFloatStream){
-  RingBufferHandle self = (RingBufferHandle)iFloatStream->implementer;
+  FloatRingBufferHandle self = (FloatRingBufferHandle)iFloatStream->implementer;
   if(self->floatStream == NULL){
     return -1;
   }
-  const size_t usedData = RingBuffer_usedData(self);
-  const size_t dataRead = RingBuffer_read(self, self->floatStream, usedData);
+  const size_t usedData = FloatRingBuffer_usedData(self);
+  const size_t dataRead = FloatRingBuffer_read(self, self->floatStream, usedData);
   return dataRead;
 }
 
-static float* nextIndex(RingBufferHandle self, float* index){
+static float* nextIndex(FloatRingBufferHandle self, float* index){
   const long positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
 }
 
-static bool incTail(RingBufferHandle self){
+static bool incTail(FloatRingBufferHandle self){
   if(self->tail != self->head){
     self->tail = nextIndex(self, self->tail);
     return true;
@@ -75,7 +75,7 @@ static bool incTail(RingBufferHandle self){
   return false;
 }
 
-static bool incHead(RingBufferHandle self){
+static bool incHead(FloatRingBufferHandle self){
   if(nextIndex(self, self->head) != self->tail){ 
     self->head = nextIndex(self, self->head);
     return true;
@@ -86,10 +86,10 @@ static bool incHead(RingBufferHandle self){
 /******************************************************************************
  Private functions
 ******************************************************************************/
-RingBufferHandle RingBuffer_create(size_t capacity){
+FloatRingBufferHandle FloatRingBuffer_create(size_t capacity){
 
   /* Allocate memory and set _private variables */
-  RingBufferHandle self = malloc(sizeof(RingBufferPrivateData));
+  FloatRingBufferHandle self = malloc(sizeof(FloatRingBufferPrivateData));
  
   self->capacity = capacity;
   self->data = malloc(sizeof(float) * self->capacity);
@@ -108,33 +108,33 @@ RingBufferHandle RingBuffer_create(size_t capacity){
   return self;
 }
 
-void RingBuffer_destroy(RingBufferHandle self){
+void FloatRingBuffer_destroy(FloatRingBufferHandle self){
   free(self->data);
   self->data = NULL;
   free(self);
   self = NULL;
 }
 
-size_t RingBuffer_getCapacity(RingBufferHandle self){
+size_t FloatRingBuffer_getCapacity(FloatRingBufferHandle self){
   return self->capacity;
 }
 
-size_t RingBuffer_freeData(RingBufferHandle self){
-  return (size_t) (self->capacity - (RingBuffer_usedData(self)));
+size_t FloatRingBuffer_freeData(FloatRingBufferHandle self){
+  return (size_t) (self->capacity - (FloatRingBuffer_usedData(self)));
 }
 
-size_t RingBuffer_usedData(RingBufferHandle self){
+size_t FloatRingBuffer_usedData(FloatRingBufferHandle self){
   return (size_t) (self->head - self->tail);
 }
 
-void RingBuffer_clear(RingBufferHandle self){
+void FloatRingBuffer_clear(FloatRingBufferHandle self){
   self->head = self->data;
   self->tail = self->data;
 }
 
-ssize_t RingBuffer_write(RingBufferHandle self, const float* data, const size_t length){
+ssize_t FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const size_t length){
 
-  if(length > RingBuffer_freeData(self)){
+  if(length > FloatRingBuffer_freeData(self)){
     return -1;
   }
 
@@ -150,9 +150,9 @@ ssize_t RingBuffer_write(RingBufferHandle self, const float* data, const size_t 
   return i;
 }
 
-ssize_t RingBuffer_read(RingBufferHandle self, float* data, const size_t length){
+ssize_t FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length){
 
-  if(length > RingBuffer_usedData(self)){
+  if(length > FloatRingBuffer_usedData(self)){
     return -1;
   }
 
@@ -168,6 +168,6 @@ ssize_t RingBuffer_read(RingBufferHandle self, float* data, const size_t length)
   return i;
 }
 
-IFloatStreamHandle RingBuffer_getFloatStream(RingBufferHandle self){
+IFloatStreamHandle FloatRingBuffer_getFloatStream(FloatRingBufferHandle self){
   return &self->iFloatStream;
 }
