@@ -82,7 +82,8 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
 
   /* Get the correct data stream */
   uint32_t channelId = self->iUnpacker->getIntFromCommand(self->iUnpacker, (const char*) self->commandName,
-                                                     (const char*) "cl_id");
+                                                     (const char*) "cl_id") - 1;
+
   if(channelId > self->numberOfChannels){
     channelId = 0;
   }
