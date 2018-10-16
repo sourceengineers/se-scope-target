@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <GeneralPurpose/Memory.h>
+#include <MsgpackParser/MsgpackCommon.h>
 
 
 static const char* KEYWORD_PAYLOAD = "payload";
@@ -78,22 +79,6 @@ typedef struct __MsgpackPackerPrivateData
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void printObj(IPackerHandle iPacker){
-  MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
-
-  msgpack_zone mempool;
-  msgpack_object deserialized;
-
-
-  /* deserialize the buffer into msgpack_object instance. */
-  /* deserialized object is valid during the msgpack_zone instance alive. */
-  msgpack_zone_init(&mempool, 2048);
-
-  msgpack_unpack(self->sbuf.data, self->sbuf.size, NULL, &mempool, &deserialized);
-
-  /* print the deserialized object. */
-  msgpack_object_print(stdout, deserialized);
-}
 
 static void incrementPayloadField(MsgpackPackerHandle self){
 
@@ -216,11 +201,10 @@ static void packChannel(MsgpackPackerHandle self){
     msgpack_pack_str(&self->pk, strlen(id));
     msgpack_pack_str_body(&self->pk, id, strlen(id));
 
-    const size_t dataLength = self->floatStreams[i]->getSize(self->floatStreams[i]);
+    const size_t dataLength = self->floatStreams[i]->length(self->floatStreams[i]);
     float data[dataLength];
 
-    self->floatStreams[i]->open(self->floatStreams[i], data);
-    self->floatStreams[i]->getStream(self->floatStreams[i]);
+    self->floatStreams[i]->read(self->floatStreams[i], data, dataLength);
 
     msgpack_pack_array(&self->pk, dataLength);
 
@@ -403,7 +387,6 @@ MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t ma
   self->iPacker.prepareTimestamp = &prepareTimestamp;
   self->iPacker.prepareTransportData = &prepareTransportData;
   self->iPacker.prepareTrigger = &prepareTrigger;
-  self->iPacker.print = &printObj;
 
   msgpack_sbuffer_init(&self->sbuf);
   msgpack_packer_init(&self->pk, &self->sbuf, msgpack_sbuffer_write);
@@ -414,6 +397,10 @@ MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t ma
 }
 
 void MsgpackPacker_destroy(MsgpackPackerHandle self){
+  free(self->floatStreams);
+  self->floatStreams = NULL;
+  free(self->channelIds);
+  self->channelIds = NULL;
   free(self);
   self = NULL;
 }

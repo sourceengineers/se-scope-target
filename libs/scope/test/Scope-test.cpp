@@ -3,6 +3,7 @@
 
 extern "C" {
     #include "Scope.h"
+    #include <MsgpackParser/MsgpackCommon.h>
 }
 
 using namespace std;
@@ -31,7 +32,7 @@ const char partTwo[] =  "\xa1\x32";
 			},
 			"cf_tgr": {
 				"cl_id": 1,
-				"mode": "Continous",
+				"mode": "Normal",
 				"level": 2.5,
 				"edge": true
 			}
@@ -56,27 +57,22 @@ TEST(Scope, test_all)
 
   const size_t maxLength = 230;
 
-  volatile float vars[2];
+  const float testData[5] = {1.1f,2.2f,3.3f,4.4f,5.5f};
 
-  vars[0] = 1.45f;
-  vars[1] = 1.3f;
+  volatile float vars[2];
 
   uint8_t data[maxLength];
 
   uint32_t  addrOne = __builtin_bswap32((uint32_t) &vars[0]);
   uint32_t  addrTwo = __builtin_bswap32((uint32_t) &vars[1]);
 
-  printf("\n");
-  printf("%lu\n", (uint32_t) &vars[0]);
-  printf("%lu\n", (uint32_t) &vars[1]);
-
   char addrBytesOne[5];
   copyByte(addrBytesOne, &addrOne);
-  printf("%02x\n", addrBytesOne);
+  printf("\nAddres one: %02x\n", addrBytesOne);
 
   char addrBytesTwo[5];
   copyByte(addrBytesTwo, &addrTwo);
-  printf("%02x\n", addrBytesTwo);
+  printf("Addres one: %02x\n", addrBytesTwo);
 
 
   int len = 0;
@@ -98,21 +94,35 @@ TEST(Scope, test_all)
 
   data[len] = '\0';
 
-  printf("\n");
+  printf("\nMsgpack data: ");
   for(int i = 0; i < len+1; i++){
     printf("%02x ",data[i]);
   }
   printf("\n");
 
+  ScopeHandle scope = Scope_create(100,2,500,ETHERNET);
 
-  ScopeHandle scope = Scope_create(100,2,400,ETHERNET);
-  Scope_command(scope, (char*) data, len);
-  Scope_poll(scope);
+  IByteStreamHandle inputStream = Scope_getInputStream(scope);
+  IByteStreamHandle outputStream = Scope_getOutputStream(scope);
 
-  ChannelHandle channel = Scope_test(scope, 0);
-  void* addr = Channel_getPollAddress(channel);
+  inputStream->write(inputStream, data, len);
 
-  vars[0] = 1.45f;
-  printf("%lf", vars[0]);
-  printf("%lf", vars[1]);
+  Scope_command(scope);
+
+  for (int j = 0; j < 5; ++j) {
+    vars[0] = testData[j];
+    vars[1] = testData[j];
+
+    Scope_poll(scope);
+  }
+
+  Scope_packMessage(scope);
+
+  const size_t length = outputStream->length(outputStream);
+  uint8_t outputData[length];
+  outputStream->read(outputStream, outputData, length);
+
+  printf("Parsed data: ");
+  Msgpack_printObjFromByte(outputData, length);
+
 }

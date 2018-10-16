@@ -8,7 +8,6 @@
  *****************************************************************************************************************************************/
 
 #include <Communication/Sender.h>
-#include <GeneralPurpose/IByteStream.h>
 
 /******************************************************************************
  Define private data
@@ -18,7 +17,6 @@ typedef struct __SenderPrivateData
 {
   IPackerHandle packer;
   COM_TYPE comType;
-  IByteStreamHandle byteStream;
   TriggerHandle trigger;
   IScopeHandle scope;
 
@@ -37,13 +35,11 @@ typedef struct __SenderPrivateData
 /* Constructor: Creates a new instance of the Sender */
 SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t numberOfChannels,
                            COM_TYPE comType,
-                           IByteStreamHandle byteStream,
                            TriggerHandle trigger,
                            IScopeHandle scope){
 
   SenderHandle self = (SenderHandle) malloc(sizeof(SenderPrivateData));
 
-  self->byteStream = byteStream;
   self->comType = comType;
   self->packer = packer;
   self->trigger = trigger;
@@ -56,7 +52,7 @@ SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const 
 }
 
 /* Prepares a data package with channel and trigger data */
-bool Sender_pack(SenderHandle self){
+void Sender_pack(SenderHandle self){
 
   for (size_t i = 0; i < self->numberOfChannels; ++i) {
     if(Channel_isRunning(self->channels[i]) == true){
@@ -75,10 +71,15 @@ bool Sender_pack(SenderHandle self){
 
   const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
   self->packer->prepareTimeIncrement(self->packer, timeIncrement);
+
+  self->packer->pack(self->packer);
 }
 
 /* Transmits a data package */
 bool Sender_transmit(SenderHandle self);
 
 /* Deconstructor: Deletes the instance of the Sender */
-void Sender_destroy(SenderHandle self);
+void Sender_destroy(SenderHandle self){
+  free(self);
+  self = NULL;
+}

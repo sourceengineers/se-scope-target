@@ -12,7 +12,7 @@
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
 
-#include <GeneralPurpose/RingBuffer.h>
+#include <GeneralPurpose/FloatRingBuffer.h>
 #include <GeneralPurpose/DataTypes.h>
 
 /* Indication for the trigger data */
@@ -31,7 +31,7 @@ typedef struct __ChannelPrivateData* ChannelHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-ChannelHandle Channel_create(RingBufferHandle buffer);
+ChannelHandle Channel_create(FloatRingBufferHandle buffer);
 
 /* Deconstructor: Deletes the instance of the channel */
 void Channel_destroy(ChannelHandle self);

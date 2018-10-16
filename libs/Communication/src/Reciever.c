@@ -62,7 +62,8 @@ bool Reciever_unpack(RecieverHandle self){
 
   /* Check if Parser is able to parse the given data */
   const size_t length = self->byteStream->length(self->byteStream);
-  const uint8_t* data = self->byteStream->read(self->byteStream);
+  uint8_t data[length];
+  self->byteStream->read(self->byteStream, data, length);
   bool parsingIsValid = self->iUnpacker.unpack(&self->iUnpacker, (const char*) data, length);
   if(parsingIsValid == false){
     return false;

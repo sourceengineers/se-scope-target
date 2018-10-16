@@ -38,7 +38,7 @@ typedef struct IByteStreamStruct {
   bool (*byteIsReady)(IByteStreamHandle self);
   const uint8_t (*readByte)(IByteStreamHandle self);
   size_t (*length)(IByteStreamHandle self);
-  const uint8_t*(*read)(IByteStreamHandle self);
+  void (*read)(IByteStreamHandle self, uint8_t* data, const size_t length);
   void (*writeByte)(IByteStreamHandle self, const uint8_t data);
   void (*write)(IByteStreamHandle self, const uint8_t* data, const size_t length);
   void (*close)(IByteStreamHandle self);

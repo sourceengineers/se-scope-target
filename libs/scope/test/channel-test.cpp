@@ -16,7 +16,7 @@ TEST(Channel, test_polling)
   float data;
 
   /* Create Instanzes */
-  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
   ChannelHandle channel = Channel_create(buffer);
   
   /* Configure channel */
@@ -31,9 +31,8 @@ TEST(Channel, test_polling)
   
   /* Get stream interface to test the procedure */
   IFloatStreamHandle stream = Channel_getRingBufferFloatStream(channel);
-  stream->open(stream, shortAnswer);
-  stream->getStream(stream);
-  stream->close(stream);
+  stream->read(stream, shortAnswer, shortVectorLength);
+
   ASSERT_THAT(shortAnswer, testing::ElementsAre(1.1f,2.2f,3.3f,4.4f,5.5f,6.6f));
 }
 
@@ -46,18 +45,17 @@ TEST(Channel, test_data_types)
   float shortAnswer[shortVectorLength];
 
   /* Create Instanzes */
-  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
   ChannelHandle channel = Channel_create(buffer);
   IFloatStreamHandle stream = Channel_getRingBufferFloatStream(channel);
-  stream->open(stream, shortAnswer);
 
   float data = 5.5f;
   /* Configure channel */
   Channel_setPollAddress(channel, &data, FLOAT);
   Channel_setStateRunning(channel);
   Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 5.5f);
+  float answer = stream->readData(stream);
+  EXPECT_EQ(answer, 5.5f);
   
  /* double doubleData = 5.5f;
   Channel_setPollAddress(channel, &doubleData, DOUBLE);
@@ -68,20 +66,20 @@ TEST(Channel, test_data_types)
   uint8_t uint8Data = 12;
   Channel_setPollAddress(channel, &uint8Data, UINT8);
   Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 12);
+  answer = stream->readData(stream);
+  EXPECT_EQ((uint8_t) answer, 12);
   
   uint16_t uint16Data = 12;  
   Channel_setPollAddress(channel, &uint16Data, UINT16);
   Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 12);
+  answer = stream->readData(stream);
+  EXPECT_EQ((uint16_t) answer, 12);
   
   uint32_t uint32Data = 12;  
   Channel_setPollAddress(channel, &uint32Data, UINT32);
   Channel_poll(channel);
-  stream->getStream(stream);
-  EXPECT_EQ(shortAnswer[0], 12);
+  answer = stream->readData(stream);
+  EXPECT_EQ((uint32_t) answer, 12);
 
 /*  uint64_t uint64Data = 12;
   Channel_setPollAddress(channel, &uint64Data, UINT64);
@@ -102,7 +100,7 @@ TEST(Channel, test_states)
   float data;
 
   /* Create Instanzes */
-  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
   ChannelHandle channel = Channel_create(buffer);
 
   EXPECT_EQ(Channel_poll(channel), -1);
@@ -128,12 +126,11 @@ TEST(Channel, test_trigger_stream)
 
   const size_t shortVectorLength = 6;
   float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
-  float shortAnswer[shortVectorLength];
 
   float data;
 
   /* Create Instanzes */
-  RingBufferHandle buffer = RingBuffer_create(shortCapacity);
+  FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity + 2);
   ChannelHandle channel = Channel_create(buffer);
   
   /* Configure channel */
@@ -149,15 +146,13 @@ TEST(Channel, test_trigger_stream)
   /* Get stream interface to test the procedure */
   IFloatStreamHandle stream = Channel_getTriggerDataStream(channel);
 
-  float triggerData[2];
   size_t readData;
-  stream->open(stream, triggerData);
-  readData = stream->getSize(stream);
+  readData = stream->length(stream);
   ASSERT_EQ(readData, 2);
-  readData = stream->getStream(stream);
-  ASSERT_EQ(readData, 2);
-  stream->close(stream);
-  
-  ASSERT_THAT(triggerData, testing::ElementsAre(6.6f,5.5f));
+
+  float triggerData[2];
+  stream->read(stream, triggerData, 2);
+
+  ASSERT_THAT(triggerData, testing::ElementsAre(5.5f,6.6f));
 
 }

@@ -2,103 +2,69 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include "FloatRingBuffer.h"
+    #include "ByteStream.h"
 }
 
-TEST(FloatRingBuffer, test_write_read)
+TEST(Bytestream, test_read_write_single)
 {
-  
-  const size_t shortCapacity = 10;
+  IByteStreamHandle stream = ByteStream_getByteStream(ByteStream_create(4));
 
-  const size_t shortVectorLength = 6;
-  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
-  float shortAnswer[shortVectorLength];
-  
-  FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
-  
-  ssize_t responce = FloatRingBuffer_write(buffer, shortTestVector, 6);
-  ASSERT_EQ(responce, 6);
-  responce = FloatRingBuffer_read(buffer, shortAnswer, 6);
-  ASSERT_EQ(responce, 6);
-  ASSERT_THAT(shortAnswer, testing::ElementsAre(1.1f,2.2f,3.3f,4.4f,5.5f,6.6f));
+  stream->writeByte(stream, '\x11');
+  stream->writeByte(stream, '\x22');
+  stream->writeByte(stream, '\x33');
+  stream->writeByte(stream, '\x44');
+
+  size_t length = stream->length(stream);
+  ASSERT_EQ(length, 4);
+
+  bool byteIsReady = stream->byteIsReady(stream);
+  ASSERT_EQ(byteIsReady, true);
+  char byte = stream->readByte(stream);
+  ASSERT_EQ(byte, '\x11');
+
+  byteIsReady = stream->byteIsReady(stream);
+  ASSERT_EQ(byteIsReady, true);
+  byte = stream->readByte(stream);
+  ASSERT_EQ(byte, '\x22');
+
+  byteIsReady = stream->byteIsReady(stream);
+  ASSERT_EQ(byteIsReady, true);
+  byte = stream->readByte(stream);
+  ASSERT_EQ(byte, '\x33');
+
+  byteIsReady = stream->byteIsReady(stream);
+  ASSERT_EQ(byteIsReady, true);
+  byte = stream->readByte(stream);
+  ASSERT_EQ(byte, '\x44');
+
+  byteIsReady = stream->byteIsReady(stream);
+  ASSERT_EQ(byteIsReady, false);
+
 }
 
-
-TEST(FloatRingBuffer, test_helper_functions)
+TEST(Bytestream, test_read_write_packets)
 {
-  const size_t shortCapacity = 10;
+  IByteStreamHandle stream = ByteStream_getByteStream(ByteStream_create(4));
 
-  const size_t shortVectorLength = 6;
-  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
-  float shortAnswer[shortVectorLength];
-  
-  FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
-  size_t getCapacity = FloatRingBuffer_getCapacity(buffer);
-  EXPECT_EQ(getCapacity, shortCapacity);
-  
-  ssize_t responce = FloatRingBuffer_write(buffer, shortTestVector, 6);
-  EXPECT_EQ(FloatRingBuffer_usedData(buffer), 6);
-  EXPECT_EQ(FloatRingBuffer_freeData(buffer), 4);
-  
-  FloatRingBuffer_clear(buffer);
-  
-  EXPECT_EQ(FloatRingBuffer_usedData(buffer), 0);
-  EXPECT_EQ(FloatRingBuffer_freeData(buffer), 10);
+  stream->write(stream, (const uint8_t*) "\x11\x22\x33\x44",4);
+
+  size_t length = stream->length(stream);
+  ASSERT_EQ(length, 4);
+
+  uint8_t data[4];
+  stream->read(stream, data,4);
+
+  ASSERT_THAT(data, testing::ElementsAre('\x11', '\x22', '\x33', '\x44'));
 }
 
-
-TEST(FloatRingBuffer, test_exceptions)
+TEST(Bytestream, test_flush)
 {
-  
-  const size_t shortCapacity = 10;
+  IByteStreamHandle stream = ByteStream_getByteStream(ByteStream_create(4));
 
-  const size_t shortVectorLength = 6;
-  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
-  float shortAnswer[shortVectorLength];
+  stream->write(stream, (const uint8_t*) "\x11\x22\x33\x44",4);
 
-  const size_t longVectorLength = 11;
-  float longTestVector[longVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f,7.7f,8.8f,9.9f,10.10f, 11.11f};
-  float longAnswer[longVectorLength];
-  
-  FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
-  ssize_t responce = FloatRingBuffer_write(buffer, longTestVector, longVectorLength);
-  
-  /* First test edge cases for writing */
-  ASSERT_EQ(responce, -1);
-  FloatRingBuffer_clear(buffer);
-  responce = FloatRingBuffer_write(buffer, shortTestVector, shortVectorLength);
-  responce = FloatRingBuffer_write(buffer, shortTestVector, shortVectorLength);
-  ASSERT_EQ(responce, -1);
-  
-  /* Test edge cases for reading */
-  responce = FloatRingBuffer_read(buffer, longAnswer, longVectorLength);
-  ASSERT_EQ(responce, -1);
-  responce = FloatRingBuffer_read(buffer, shortAnswer, 6);
-  /* First read should yield proper results */
-  ASSERT_THAT(shortAnswer, testing::ElementsAre(1.1f,2.2f,3.3f,4.4f,5.5f,6.6f));
-  /* Second read should yield a since less used data is aviable than requested */
-  responce = FloatRingBuffer_read(buffer, shortAnswer, 6);
-  ASSERT_EQ(responce, -1);
-}
+  stream->flush(stream);
 
-TEST(FloatRingBuffer, test_stream_interface)
-{
-  const size_t shortCapacity = 10;
-
-  const size_t shortVectorLength = 6;
-  float shortTestVector[shortVectorLength] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f};
-  float shortAnswer[shortVectorLength];
-
-  FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
-  ssize_t responce = FloatRingBuffer_write(buffer, shortTestVector, shortVectorLength);
-  
-  IFloatStreamHandle stream = FloatRingBuffer_getFloatStream(buffer);
-  const size_t size = stream->length(stream);
-  
-  ASSERT_EQ(size, 6);
-  
-  float streamData[6];
-  stream->read(stream, streamData, 6);
-
-  ASSERT_THAT(streamData, testing::ElementsAre(1.1f,2.2f,3.3f,4.4f,5.5f,6.6f));
+  size_t length = stream->length(stream);
+  ASSERT_EQ(length, 0);
 }

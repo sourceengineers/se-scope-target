@@ -10,7 +10,7 @@ TEST(CommandRunning, test_command)
   const size_t testElements = 5;
   const size_t amountChannelChanged = 3;
   float data = 5.5f;
-  RingBufferHandle buffers[testElements];
+  FloatRingBufferHandle buffers[testElements];
   ChannelHandle channels[testElements];
   
   CHANNEL_STATES newStates[amountChannelChanged] = {CHANNEL_RUNNING, CHANNEL_STOPPED, CHANNEL_RUNNING};
@@ -23,7 +23,7 @@ TEST(CommandRunning, test_command)
   
   /* Set initial state to control */
   for (size_t i = 0; i < testElements; i++) {
-    buffers[i] = RingBuffer_create(10);
+    buffers[i] = FloatRingBuffer_create(10);
     channels[i] = Channel_create(buffers[i]);
     Channel_setPollAddress(channels[i], &data, FLOAT);
     Channel_setStateRunning(channels[i]);

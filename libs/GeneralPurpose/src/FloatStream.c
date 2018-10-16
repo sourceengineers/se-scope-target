@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         ByteStream.c
+ * @file         FloatStream.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,40 +7,40 @@
  *
  *****************************************************************************************************************************************/
 
-#include <GeneralPurpose/ByteStream.h>
-#include <GeneralPurpose/ByteRingBuffer.h>
+#include <GeneralPurpose/FloatStream.h>
+#include <GeneralPurpose/FloatRingBuffer.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __ByteStreamPrivateData
+typedef struct __FloatStreamPrivateData
 {
-  ByteRingBufferHandle buffer;
+  FloatRingBufferHandle buffer;
 
-  IByteStream iByteStream;
+  IFloatStream iFloatStream;
 
-} ByteStreamPrivateData ;
+} FloatStreamPrivateData ;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ByteStreamHandle ByteStream_create(size_t capacity){
+FloatStreamHandle FloatStream_create(size_t capacity){
 
-  ByteStreamHandle self = (ByteStreamHandle) malloc(sizeof(ByteStreamPrivateData));
+  FloatStreamHandle self = (FloatStreamHandle) malloc(sizeof(FloatStreamPrivateData));
 
-  self->buffer = ByteRingBuffer_create(capacity);
+  self->buffer = FloatRingBuffer_create(capacity);
 
   return self;
 }
 
-void ByteStream_destroy(ByteStreamHandle self){
+void FloatStream_destroy(FloatStreamHandle self){
   free(self);
   self = NULL;
 }
 
-IByteStreamHandle ByteStream_getByteStream(ByteStreamHandle self){
-  return ByteRingBuffer_getByteStream(self->buffer);
+IFloatStreamHandle FloatStream_getFloatStream(FloatStreamHandle self){
+  return FloatRingBuffer_getFloatStream(self->buffer);
 }
 
 

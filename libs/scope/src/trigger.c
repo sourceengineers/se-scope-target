@@ -56,8 +56,8 @@ static void writeConfig(TriggerHandle self, TriggerConfiguration conf);
 ******************************************************************************/
 static bool checkCurrentData(TriggerHandle self, float* triggerData){
   
-  const float dataCurrent = triggerData[CHANNEL_CURRENT_DATA];
-  const float dataLast = triggerData[CHANNEL_OLD_DATA];
+  const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
+  const float dataLast = triggerData[CHANNEL_CURRENT_DATA];
   const float triggerLevel = self->level;
   const int edge = (const int) dataCurrent > dataLast ? 1 : -1;
 
@@ -80,19 +80,13 @@ static bool checkCurrentData(TriggerHandle self, float* triggerData){
 }
 
 static bool getTriggerData(TriggerHandle self, float* data){
-  IFloatStream stream = self->stream;
-  
-  stream.open(&stream, data);
-  if(stream.getSize(&stream) != 2){
-    stream.close(&stream);
+
+  if(self->stream.length(&self->stream) != 2){
     return false;
   }
-  size_t dataFetched = stream.getStream(&stream);
-  
-  stream.close(&stream);
-  if(dataFetched != 2){
-    return false;
-  }
+
+  self->stream.read(&self->stream, data, 2);
+
   return true;
 }
 

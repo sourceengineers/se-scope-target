@@ -9,6 +9,7 @@
 
 #include <Scope/Channel.h>
 #include <GeneralPurpose/DataTypes.h>
+#include <GeneralPurpose/FloatStream.h>
 
 /******************************************************************************
  Define private data
@@ -16,15 +17,14 @@
 /* Class data */
 typedef struct __ChannelPrivateData
 {
-  RingBufferHandle buffer;
-  IFloatStream triggerDataStream;
+  FloatRingBufferHandle buffer;
+  IFloatStreamHandle stream;
   CHANNEL_STATES state;
-  
+
   DATA_TYPES pollDataType;
   void* pollAddress;
-  
-  float triggerData[2];
-  float* floatStream;
+
+  float oldTriggerData;
 } ChannelPrivateData ;
 
 /* Casts the data of the address to float */
@@ -40,36 +40,12 @@ static void setState(ChannelHandle self, CHANNEL_STATES state);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-/* Functions for the IFloatStream interface */
-static size_t streamGetSize(IFloatStreamHandle iFloatStream){
-  return 2;
-}
-
-static void streamOpen(IFloatStreamHandle iFloatStream, float* floatStream){
-  ChannelHandle self = (ChannelHandle)iFloatStream->implementer;
-  if (floatStream != NULL) {
-    self->floatStream = floatStream;
-  }
-}
-
-static void streamClose(IFloatStreamHandle iFloatStream){
-  ChannelHandle self = (ChannelHandle)iFloatStream->implementer;
-  self->floatStream = NULL;
-}
-
-static size_t streamGetData(IFloatStreamHandle iFloatStream){
-  ChannelHandle self = (ChannelHandle)iFloatStream->implementer;
-  self->floatStream[CHANNEL_CURRENT_DATA] = self->triggerData[CHANNEL_CURRENT_DATA];
-  self->floatStream[CHANNEL_OLD_DATA] = self->triggerData[CHANNEL_OLD_DATA];
-  return 2;
-}
-
 static float castDataToFloat(ChannelHandle self){
-  
+
   uint32_t transportData32;
 
   float data;
-  
+
   switch (self->pollDataType) {
     case UINT8:
       transportData32 = *((uint32_t*)self->pollAddress);
@@ -100,12 +76,17 @@ static float castDataToFloat(ChannelHandle self){
       data = ((float)*((float*)&transportData32));
       break;
   }
-  return data;  
+  return data;
 }
 
 static void prepareTriggerData(ChannelHandle self, float triggerData){
-  self->triggerData[CHANNEL_OLD_DATA] = self->triggerData[CHANNEL_CURRENT_DATA];
-  self->triggerData[CHANNEL_CURRENT_DATA] = triggerData;
+
+  self->stream->flush(self->stream);
+
+  self->stream->writeData(self->stream, self->oldTriggerData);
+  self->stream->writeData(self->stream, triggerData);
+
+  self->oldTriggerData = triggerData;
 }
 
 static void setState(ChannelHandle self, CHANNEL_STATES state){
@@ -115,28 +96,21 @@ static void setState(ChannelHandle self, CHANNEL_STATES state){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ChannelHandle Channel_create(RingBufferHandle buffer){
+ChannelHandle Channel_create(FloatRingBufferHandle buffer){
 
   ChannelHandle self = malloc(sizeof(ChannelPrivateData));
+  self->stream = FloatStream_getFloatStream(FloatStream_create(4));
 
   /* Set private variables */
   self->state = CHANNEL_INIT;
   self->buffer = buffer;
-  self->triggerData[CHANNEL_CURRENT_DATA] = 0.0f;
-  self->triggerData[CHANNEL_OLD_DATA] = 0.0f;
-
-  /* Set interface functions */
-  self->triggerDataStream.implementer = self;
-  self->triggerDataStream.getSize = &streamGetSize;
-  self->triggerDataStream.getStream = &streamGetData;
-  self->triggerDataStream.open = &streamOpen;
-  self->triggerDataStream.close = &streamClose;
+  self->oldTriggerData = 0.0f;
 
   return self;
 }
 
 void Channel_destroy(ChannelHandle self){
-  RingBuffer_destroy(self->buffer);
+  FloatRingBuffer_destroy(self->buffer);
   self->buffer = NULL;
   free(self);
   self = NULL;
@@ -184,7 +158,7 @@ CHANNEL_STATES Channel_getState(ChannelHandle self){
 }
 
 IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self){
-  return &self->triggerDataStream;
+  return self->stream;
 }
 
 ssize_t Channel_poll(ChannelHandle self){
@@ -192,12 +166,12 @@ ssize_t Channel_poll(ChannelHandle self){
     const float polledData = castDataToFloat(self);
     prepareTriggerData(self, polledData);
     
-    return RingBuffer_write(self->buffer, &polledData, 1);  
+    return FloatRingBuffer_write(self->buffer, &polledData, 1);
   } else {
     return -1;
   }
 }
 
 IFloatStreamHandle Channel_getRingBufferFloatStream(ChannelHandle self){
-  return RingBuffer_getFloatStream(self->buffer);
+  return FloatRingBuffer_getFloatStream(self->buffer);
 }

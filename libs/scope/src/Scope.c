@@ -10,6 +10,8 @@
 #include <Scope/Scope.h>
 #include <Communication/Reciever.h>
 #include <MsgpackParser/MsgpackUnpacker.h>
+#include <MsgpackParser/MsgpackPacker.h>
+#include <Communication/Sender.h>
 
 /******************************************************************************
  Define private data
@@ -19,8 +21,8 @@ typedef struct __ScopePrivateData
 {
   size_t numberOfChannels;
   ChannelHandle* channels;
-  RingBufferHandle timeStampBuffer;
-  RingBufferHandle* buffers;
+  FloatRingBufferHandle timeStampBuffer;
+  FloatRingBufferHandle* buffers;
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
   
@@ -29,11 +31,17 @@ typedef struct __ScopePrivateData
   
   IScope iScope;
 
+  /* Recieving part */
   MsgpackUnpackerHandle msgpackUnpacker;
   RecieverHandle reciever;
 
+  /* Sending part */
+  MsgpackPackerHandle msgpackPacker;
+  SenderHandle sender;
+
   /* Streams */
   ByteStreamHandle inputStream;
+  ByteStreamHandle outputStream;
 
 } ScopePrivateData ;
 
@@ -103,17 +111,18 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
 
   /* Create input and output streams */
   self->inputStream = ByteStream_create(communicationBufferSize);
+  self->outputStream = ByteStream_create(communicationBufferSize);
 
   /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
-  self->buffers = malloc(sizeof(RingBufferHandle) * numberOfChannels);
+  self->buffers = malloc(sizeof(FloatRingBufferHandle) * numberOfChannels);
   self->numberOfChannels = numberOfChannels;
   
   for (size_t i = 0; i < numberOfChannels; i++) {
-    self->buffers[i] = RingBuffer_create(channelSize);
+    self->buffers[i] = FloatRingBuffer_create(channelSize);
     self->channels[i] = Channel_create(self->buffers[i]);
   }
-  self->timeStampBuffer = RingBuffer_create(channelSize);
+  self->timeStampBuffer = FloatRingBuffer_create(channelSize);
   
   /* Create Trigger */
   self->trigger = Trigger_create();
@@ -122,6 +131,13 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
   self->msgpackUnpacker = MsgpackUnpacker_create(communicationBufferSize);
   self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker), comType,
                                    ByteStream_getByteStream(self->inputStream));
+
+  self->msgpackPacker = MsgpackPacker_create(communicationBufferSize, self->numberOfChannels,
+                                             ByteStream_getByteStream(self->outputStream));
+  self->sender = Sender_create(MsgpackPacker_getIPacker(self->msgpackPacker), self->channels, self->numberOfChannels,
+                               comType,
+                               self->trigger,
+                               &self->iScope);
 
   /* Create command factory */
   self->commandFactory = CommandFactory_create(&self->iScope, 
@@ -136,16 +152,19 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
 void Scope_destroy(ScopeHandle self){
 
   for (size_t i = 0; i < self->numberOfChannels; ++i) {
-    RingBuffer_destroy(self->buffers[i]);
+    FloatRingBuffer_destroy(self->buffers[i]);
     Channel_destroy(self->channels[i]);
   }
-  RingBuffer_destroy(self->timeStampBuffer);
+  FloatRingBuffer_destroy(self->timeStampBuffer);
 
   Trigger_destroy(self->trigger);
   CommandFactory_destroy(self->commandFactory);
   MsgpackUnpacker_destroy(self->msgpackUnpacker);
   Reciever_destroy(self->reciever);
   ByteStream_destroy(self->inputStream);
+  ByteStream_destroy(self->outputStream);
+  MsgpackPacker_destroy(self->msgpackPacker);
+  Sender_destroy(self->sender);
 
   free(self);
   self = NULL;
@@ -170,6 +189,10 @@ IByteStreamHandle Scope_getInputStream(ScopeHandle self){
   return ByteStream_getByteStream(self->inputStream);
 }
 
+IByteStreamHandle Scope_getOutputStream(ScopeHandle self){
+  return ByteStream_getByteStream(self->outputStream);
+}
+
 void Scope_poll(ScopeHandle self){
 
   self->timeStamp += self->timeIncrement;
@@ -177,6 +200,12 @@ void Scope_poll(ScopeHandle self){
   for (size_t i = 0; i < self->numberOfChannels; i++) {
     Channel_poll(self->channels[i]);
   }
+
+  Trigger_run(self->trigger, self->timeStamp);
+}
+
+void Scope_packMessage(ScopeHandle self){
+  Sender_pack(self->sender);
 }
 
 ChannelHandle Scope_test(ScopeHandle self, int index){

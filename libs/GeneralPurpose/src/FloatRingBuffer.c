@@ -19,8 +19,7 @@ typedef struct __FloatRingBufferPrivateData
   float* head;
   float* tail;
   size_t capacity;
-  float* floatStream;
-  IFloatStream iFloatStream;
+  IFloatStream stream;
 } FloatRingBufferPrivateData ;
 
 /* Returns the next index of the given index */
@@ -35,31 +34,60 @@ static bool incHead(FloatRingBufferHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static size_t streamGetSize(IFloatStreamHandle iFloatStream){
-  FloatRingBufferHandle self = (FloatRingBufferHandle)iFloatStream->implementer;
+static void openStream(IFloatStreamHandle floatstream, float* data, const size_t capacity){
+  return;
+}
+
+static bool dataIsReady(IFloatStreamHandle stream){
+  FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
+
+  if(FloatRingBuffer_usedData(self) > 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+static const float readData(IFloatStreamHandle stream){
+  FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
+
+  float data;
+  FloatRingBuffer_read(self, &data, 1);
+
+  return data;
+}
+
+static void readAll(IFloatStreamHandle stream, float* data, const size_t length){
+  FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
+
+  FloatRingBuffer_read(self, data, length);
+}
+
+static size_t streamLength(IFloatStreamHandle stream){
+  FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
+
   return FloatRingBuffer_usedData(self);
 }
 
-static void streamOpen(IFloatStreamHandle iFloatStream, float* floatStream){
-  FloatRingBufferHandle self = (FloatRingBufferHandle)iFloatStream->implementer;
-  if (floatStream != NULL) {
-    self->floatStream = floatStream;
-  }
+static void writeData(IFloatStreamHandle stream, const float data){
+  FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
+
+  FloatRingBuffer_write(self, &data, 1);
 }
 
-static void streamClose(IFloatStreamHandle iFloatStream){
-  FloatRingBufferHandle self = (FloatRingBufferHandle)iFloatStream->implementer;
-  self->floatStream = NULL;
+static void writeAll(IFloatStreamHandle stream, const float* data, const size_t length){
+  FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
+
+  FloatRingBuffer_write(self, data, length);
 }
 
-static size_t streamGetData(IFloatStreamHandle iFloatStream){
-  FloatRingBufferHandle self = (FloatRingBufferHandle)iFloatStream->implementer;
-  if(self->floatStream == NULL){
-    return -1;
-  }
-  const size_t usedData = FloatRingBuffer_usedData(self);
-  const size_t dataRead = FloatRingBuffer_read(self, self->floatStream, usedData);
-  return dataRead;
+static void closeStream(IFloatStreamHandle stream){
+  return;
+}
+static void flush(IFloatStreamHandle stream){
+  FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
+
+  FloatRingBuffer_clear(self);
 }
 
 static float* nextIndex(FloatRingBufferHandle self, float* index){
@@ -76,7 +104,7 @@ static bool incTail(FloatRingBufferHandle self){
 }
 
 static bool incHead(FloatRingBufferHandle self){
-  if(nextIndex(self, self->head) != self->tail){ 
+  if(nextIndex(self, self->head) != self->tail){
     self->head = nextIndex(self, self->head);
     return true;
   }
@@ -90,21 +118,24 @@ FloatRingBufferHandle FloatRingBuffer_create(size_t capacity){
 
   /* Allocate memory and set _private variables */
   FloatRingBufferHandle self = malloc(sizeof(FloatRingBufferPrivateData));
- 
-  self->capacity = capacity;
+
+  self->stream.implementer = self;
+  self->stream.open = &openStream;
+  self->stream.dataIsReady = &dataIsReady;
+  self->stream.readData = &readData;
+  self->stream.length = &streamLength;
+  self->stream.read = &readAll;
+  self->stream.writeData = writeData;
+  self->stream.write = writeAll;
+  self->stream.close = closeStream;
+  self->stream.flush = flush;
+
+  self->capacity = capacity + 1;
   self->data = malloc(sizeof(float) * self->capacity);
   
   self->tail = self->data;
   self->head = self->data;
 
-  /* Set interface functions */
-  self->iFloatStream.implementer = self;
-  
-  self->iFloatStream.getSize = &streamGetSize;
-  self->iFloatStream.getStream = &streamGetData;
-  self->iFloatStream.open = &streamOpen;
-  self->iFloatStream.close = &streamClose;
-  
   return self;
 }
 
@@ -169,5 +200,5 @@ ssize_t FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size
 }
 
 IFloatStreamHandle FloatRingBuffer_getFloatStream(FloatRingBufferHandle self){
-  return &self->iFloatStream;
+  return &self->stream;
 }

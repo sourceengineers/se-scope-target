@@ -36,12 +36,11 @@ typedef struct __SenderPrivateData* SenderHandle;
 /* Constructor: Creates a new instance of the Sender */
 SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t numberOfChannels,
                            COM_TYPE comType,
-                           IByteStreamHandle byteStream,
                            TriggerHandle trigger,
                            IScopeHandle scope);
 
 /* Prepares a data package with channel and trigger data */
-bool Sender_pack(SenderHandle self);
+void Sender_pack(SenderHandle self);
 
 /* Transmits a data package */
 bool Sender_transmit(SenderHandle self);

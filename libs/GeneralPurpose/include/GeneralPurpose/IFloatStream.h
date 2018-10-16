@@ -6,10 +6,14 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  * @brief        Streaming interface
- *               open: Opens the channel to a given float*
- *               getSize: Returns the size of data ready to be read 
- *               getStream: Writes the ready data into the float array
- *               close: Closes the stream 
+ *               open: opens the channel to a given Float pointer
+ *               length: returns the amount of data ready to be read
+ *               read: returns a pointer to the beginning of the data array
+ *               write: writes Floats into the stream
+ *               writeData: writes a single data point into the stream
+ *               readData: returns a single data point from the stream
+ *               flush: flushs the stream
+ *               close: closes the stream
  *
  *****************************************************************************************************************************************/
 
@@ -17,6 +21,8 @@
 #define IFloatStream_H_
 
 #include <unistd.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 /******************************************************************************
  Define interface handle data
@@ -27,11 +33,16 @@ typedef struct IFloatStreamStruct* IFloatStreamHandle;
  Define interface
 ******************************************************************************/
 typedef struct IFloatStreamStruct {
-  void* implementer;
-  void (*open)(IFloatStreamHandle self, float* floatStream);
-  size_t(*getSize)(IFloatStreamHandle self);
-  size_t(*getStream)(IFloatStreamHandle self);
-  void (*close)(IFloatStreamHandle self);
+    void* implementer;
+    void (*open)(IFloatStreamHandle self, float* stream, const size_t capacity);
+    bool (*dataIsReady)(IFloatStreamHandle self);
+    const float (*readData)(IFloatStreamHandle self);
+    size_t (*length)(IFloatStreamHandle self);
+    void (*read)(IFloatStreamHandle self, float* data, const size_t length);
+    void (*writeData)(IFloatStreamHandle self, const float data);
+    void (*write)(IFloatStreamHandle self, const float* data, const size_t length);
+    void (*close)(IFloatStreamHandle self);
+    void (*flush)(IFloatStreamHandle self);
 } IFloatStream ;
 
 #endif
