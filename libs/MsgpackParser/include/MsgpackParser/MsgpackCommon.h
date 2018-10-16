@@ -1,35 +1,21 @@
 /*!****************************************************************************************************************************************
- * @file         MsgpackPacker.h
+ * @file         MsgpackCommon.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
- * @brief        Implements functions of the IPacker.h interface.
+ * @brief        Implements functions for which get used by both the packer and the unpacker
  *
  *****************************************************************************************************************************************/
 
-#ifndef MSGPACKPACKER_H_
-#define MSGPACKPACKER_H_
+#ifndef MSGPACKCOMMON_H_
+#define MSGPACKCOMMON_H_
 
 #include <msgpack.h>
-#include <Communication/IPacker.h>
 
-/******************************************************************************
- Define class handle data
-******************************************************************************/
-typedef struct __MsgpackPackerPrivateData* MsgpackPackerHandle;
 
-/******************************************************************************
- Public functions 
-******************************************************************************/
-/* Constructor: Creates a new instance of the msgpack Packer */
-MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t maxNumberOfChannels,
-                                         IByteStreamHandle byteStream);
+void Msgpack_printObjFromByte(const uint8_t* data, const size_t length);
 
-/* Destroys the instance of the msgpack Packer */
-void MsgpackPacker_destroy(MsgpackPackerHandle self);
 
-/* Returns the IPacker interface */
-IPackerHandle MsgpackPacker_getIPacker(MsgpackPackerHandle self);
 #endif
