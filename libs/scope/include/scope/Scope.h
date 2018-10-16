@@ -40,9 +40,14 @@ void Scope_destroy(ScopeHandle self);
  * After parsing, the commands will be executed */
 void Scope_command(ScopeHandle self);
 
-
 /* Returns the input stream which feeds data into the Reciever */
 IByteStreamHandle Scope_getInputStream(ScopeHandle self);
+
+/* Returns the output stream, with data fed by the sender */
+IByteStreamHandle Scope_getOutputStream(ScopeHandle self);
+
+/* Packs all the necessary data into a package ready to be sent */
+void Scope_packMessage(ScopeHandle self);
 
 /* Polls data from all channels */
 void Scope_poll(ScopeHandle self);
