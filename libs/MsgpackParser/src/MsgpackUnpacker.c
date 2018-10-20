@@ -188,7 +188,7 @@ static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key){
     char tmpKey[objKey.via.str.size + 1];
     copyString(tmpKey, (char*) objKey.via.str.ptr, objKey.via.str.size);
 
-    if(strncmp(tmpKey, key, objKey.via.str.size) == 0){
+    if((strncmp(tmpKey, key, objKey.via.str.size) == 0) && (strlen(key) == objKey.via.str.size)){
       return i;
     }
   }
