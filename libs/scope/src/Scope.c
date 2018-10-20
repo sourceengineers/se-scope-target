@@ -25,11 +25,14 @@ typedef struct __ScopePrivateData
   FloatRingBufferHandle* buffers;
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
-  
-  uint32_t timeIncrement;
-  uint32_t timeStamp;
-  
+
   IScope iScope;
+
+  /* Timestamping data */
+  uint32_t timeIncrement;
+  FloatRingBufferHandle timeStamp;
+  TIMESTAMPING_MODE timestampingMode;
+  uint32_t currentTimestamp;
 
   /* Recieving part */
   MsgpackUnpackerHandle msgpackUnpacker;
@@ -54,9 +57,9 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void iScopePoll(IScopeHandle self){
+static void iScopePoll(IScopeHandle self, uint32_t timeStamp){
   ScopeHandle scope = (ScopeHandle) self->implementer;
-  Scope_poll(scope);
+  Scope_poll(scope, timeStamp);
 }
 
 static void iScopeSetTimeIncrement(IScopeHandle self, uint32_t timeIncrement){
@@ -89,18 +92,19 @@ static uint32_t getTimeIncrement(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
   return scope->timeIncrement;
 }
-static uint32_t getTimestamp(IScopeHandle self){
+static IFloatStreamHandle getTimestamp(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
-  return scope->timeStamp;
+  return FloatRingBuffer_getFloatStream(scope->timeStamp);
 }
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t communicationBufferSize, COM_TYPE comType){
+ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE comType, TIMESTAMPING_MODE timestampingMode){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
-  self->timeStamp = 0;
+  self->currentTimestamp = 0;
   self->timeIncrement = 0;
+  self->timestampingMode = timestampingMode;
 
   self->iScope.implementer = self;
   self->iScope.poll = &iScopePoll;
@@ -109,9 +113,17 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
   self->iScope.getTimeIncrement = &getTimeIncrement;
   self->iScope.getTimestamp = &getTimestamp;
 
+  /* Calculates size needed for the output communication buffer */
+  /* communicationBufferSize = (numberOfChannels + timestampBuffer) * channelSize + constantProtocolSize */
+  const size_t outputBufferSize = (numberOfChannels + 1) * channelSize + 200;
+  /* The input buffer is not dependent of the buffer sizes, but on how many channels are in use */
+  /* Each channel uses max. 50 bytes of data in the input protocol. Everything not dependent on the channels
+   * will be of constant size */
+  const size_t inputBufferSize = numberOfChannels * 50 + 400;
+
   /* Create input and output streams */
-  self->inputStream = ByteStream_create(communicationBufferSize);
-  self->outputStream = ByteStream_create(communicationBufferSize);
+  self->inputStream = ByteStream_create(inputBufferSize);
+  self->outputStream = ByteStream_create(outputBufferSize);
 
   /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
@@ -123,16 +135,17 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, size_t com
     self->channels[i] = Channel_create(self->buffers[i]);
   }
   self->timeStampBuffer = FloatRingBuffer_create(channelSize);
+  self->timeStamp = FloatRingBuffer_create(channelSize);
   
   /* Create Trigger */
   self->trigger = Trigger_create();
 
   /* Creates the unpacking communication */
-  self->msgpackUnpacker = MsgpackUnpacker_create(communicationBufferSize);
+  self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
   self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker), comType,
                                    ByteStream_getByteStream(self->inputStream));
 
-  self->msgpackPacker = MsgpackPacker_create(communicationBufferSize, self->numberOfChannels,
+  self->msgpackPacker = MsgpackPacker_create(outputBufferSize, self->numberOfChannels,
                                              ByteStream_getByteStream(self->outputStream));
   self->sender = Sender_create(MsgpackPacker_getIPacker(self->msgpackPacker), self->channels, self->numberOfChannels,
                                comType,
@@ -193,15 +206,25 @@ IByteStreamHandle Scope_getOutputStream(ScopeHandle self){
   return ByteStream_getByteStream(self->outputStream);
 }
 
-void Scope_poll(ScopeHandle self){
+void Scope_poll(ScopeHandle self, uint32_t timeStamp){
 
-  self->timeStamp += self->timeIncrement;
+  uint32_t prepareTimeStamp = 0;
+
+  if(self->timestampingMode == TIMESTAMP_AUTOMATIC){
+    self->currentTimestamp += self->timeIncrement;
+    prepareTimeStamp = self->currentTimestamp;
+  } else if(self->timestampingMode == TIMESTAMP_MANUAL){
+    prepareTimeStamp = timeStamp;
+  }
+
+  const float timestampToCast = (float) prepareTimeStamp;
+  FloatRingBuffer_write(self->timeStamp, &timestampToCast, 1);
 
   for (size_t i = 0; i < self->numberOfChannels; i++) {
     Channel_poll(self->channels[i]);
   }
 
-  Trigger_run(self->trigger, self->timeStamp);
+  Trigger_run(self->trigger, timeStamp);
 }
 
 void Scope_packMessage(ScopeHandle self){

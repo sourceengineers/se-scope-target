@@ -20,7 +20,9 @@ typedef struct __CommandPollPrivateData
 {
   ICommand iCommand;
   IScopeHandle iScope;
-  
+
+  uint32_t nextTimeStamp;
+
 } CommandPollPrivateData ;
 
 /* Implementation of the run command, which will be passed into the interface */
@@ -37,11 +39,13 @@ static void setCommandAttribute(ICommandHandle self, void* attr);
 ******************************************************************************/
 static void run(ICommandHandle self){
   CommandPollHandle commandPoll = (CommandPollHandle) self->implementer;
-  commandPoll->iScope->poll(commandPoll->iScope);
+  commandPoll->iScope->poll(commandPoll->iScope, commandPoll->nextTimeStamp);
 }
 
 static void setCommandAttribute(ICommandHandle self, void* attr){
-  return;
+  CommandPollHandle commandPoll = (CommandPollHandle) self->implementer;
+
+  commandPoll->nextTimeStamp = *(uint32_t*) attr;
 }
 
 static const char* getCommandName(ICommandHandle self){
@@ -62,6 +66,8 @@ CommandPollHandle CommandPoll_create(IScopeHandle iScope){
   self->iCommand.run = &run;
   self->iCommand.setCommandAttribute = &setCommandAttribute;
   self->iCommand.getCommandName = &getCommandName;
+
+  self->nextTimeStamp = 0;
 
   return self;
 }

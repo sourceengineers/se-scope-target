@@ -110,7 +110,7 @@ TEST(Scope, test_all)
   }
   printf("\n");
 
-  ScopeHandle scope = Scope_create(100,2,500,ETHERNET);
+  ScopeHandle scope = Scope_create(100,2,ETHERNET, TIMESTAMP_MANUAL);
 
   IByteStreamHandle inputStream = Scope_getInputStream(scope);
   IByteStreamHandle outputStream = Scope_getOutputStream(scope);
@@ -123,7 +123,7 @@ TEST(Scope, test_all)
     testVarFloat = testDataFloat[j];
     testVarInt = testDataInt[j];
 
-    Scope_poll(scope);
+    Scope_poll(scope, j);
   }
 
   Scope_packMessage(scope);

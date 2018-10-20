@@ -9,6 +9,7 @@
 
 #include <Command/CommandFactory.h>
 #include <string.h>
+#include <CommandPollParser.h>
 
 /******************************************************************************
  Define private data
@@ -27,6 +28,7 @@ typedef struct __CommandFactoryPrivateData
   CommandRunningParserHandle commandRunningParser;
   CommandTIncParserHandle commandTIncParser;
   CommandTriggerParserHandle commandTriggerParser;
+  CommandPollParserHandle commandPollParser;
 
 } CommandFactoryPrivateData ;
 
@@ -60,6 +62,8 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
   self->commandTriggerParser = CommandTriggerParser_create(CommandTrigger_getICommand(self->commandTrigger), unpacker,
                                                            channels, ammountOfChannels);
 
+  self->commandPollParser = CommandPollParser_create(CommandPoll_getICommand(self->commandPoll), unpacker);
+
   return self;
 }
 
@@ -70,6 +74,7 @@ ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char*
     return CommandRunning_getICommand(self->commandRunning);
 
   } else if(strcmp(command, CommandPoll_getName(self->commandPoll)) == 0){
+    CommandPollParser_configure(self->commandPollParser);
     return CommandPoll_getICommand(self->commandPoll);
 
   } else if(strcmp(command, CommandAddr_getName(self->commandAddr)) == 0) {
@@ -104,6 +109,7 @@ void CommandFactory_destroy(CommandFactoryHandle self){
   CommandAddrParser_destroy(self->commandAddrParser);
   CommandTIncParser_destroy(self->commandTIncParser);
   CommandTriggerParser_destroy(self->commandTriggerParser);
+  CommandPollParser_destroy(self->commandPollParser);
 
   free(self);
   self = NULL;

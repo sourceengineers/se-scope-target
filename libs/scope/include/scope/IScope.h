@@ -15,6 +15,7 @@
 #define ISCOPE_H_
 
 #include <stdint.h>
+#include <GeneralPurpose/IFloatStream.h>
 
 /******************************************************************************
  Define interface handle data
@@ -26,11 +27,11 @@ typedef struct IScopeStruct* IScopeHandle;
 ******************************************************************************/
 typedef struct IScopeStruct {
   void* implementer;
-  void (*poll)(IScopeHandle self);
+  void (*poll)(IScopeHandle self, uint32_t timeStamp);
   void (*trans)(IScopeHandle self);
   void (*setTimeIncrement)(IScopeHandle self, uint32_t timeIncrement);
   uint32_t (*getTimeIncrement)(IScopeHandle self);
-  uint32_t (*getTimestamp)(IScopeHandle self);
+  IFloatStreamHandle (*getTimestamp)(IScopeHandle self);
 } IScope ;
 
 #endif
