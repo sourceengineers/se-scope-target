@@ -90,7 +90,7 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
   IFloatStream stream = *Channel_getTriggerDataStream(self->channels[channelId]);
 
   /* Get the trigger level */
-  const float level =  self->iUnpacker->getIntFromCommand(self->iUnpacker, (const char*) self->commandName,
+  const float level =  self->iUnpacker->getFloatFromCommand(self->iUnpacker, (const char*) self->commandName,
                                                           (const char*) "level");
 
   /* Get the trigger mode */

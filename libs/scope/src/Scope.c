@@ -206,6 +206,7 @@ void Scope_poll(ScopeHandle self){
 
 void Scope_packMessage(ScopeHandle self){
   Sender_pack(self->sender);
+  Trigger_release(self->trigger);
 }
 
 ChannelHandle Scope_test(ScopeHandle self, int index){

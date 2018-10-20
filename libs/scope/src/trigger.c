@@ -55,7 +55,7 @@ static void writeConfig(TriggerHandle self, TriggerConfiguration conf);
  Private functions
 ******************************************************************************/
 static bool checkCurrentData(TriggerHandle self, float* triggerData){
-  
+
   const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
   const float dataLast = triggerData[CHANNEL_CURRENT_DATA];
   const float triggerLevel = self->level;
@@ -102,12 +102,17 @@ static bool triggerNormal(TriggerHandle self, const uint32_t index){
     return false;
   }
 
-  const bool isTriggered = checkCurrentData(self, triggerData);
-  
+  bool isTriggered = checkCurrentData(self, triggerData);
+
+  /* If the trigger is already triggered, it shouldn't overwrite this status
+   * But is should still be able to update the trigger index if a new trigger event occurred */
   if(isTriggered == true){
     self->triggerIndex = index;
   }
-  
+  if(self->isTriggered == true){
+    isTriggered = true;
+  }
+
   return isTriggered;
 }
 
