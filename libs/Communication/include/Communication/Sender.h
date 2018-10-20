@@ -19,7 +19,7 @@
 
 #include <unistd.h>
 #include <Communication/IPacker.h>
-#include <Communication/CommunicationTypes.h>
+#include <Communication/ComTypes.h>
 #include <GeneralPurpose/IByteStream.h>
 #include <Scope/Channel.h>
 #include <Scope/Trigger.h>

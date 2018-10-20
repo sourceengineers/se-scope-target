@@ -18,6 +18,13 @@
  *               getBoolFromCommand: Returns the float value of a given command and field
  *               getStringFromCommand: Returns the float value of a given command and field
  *
+ *               getLengthOfCheck: Returns the number of bytes present in check field of the received data
+ *               getCheck: Returns the bytes of the check
+ *               getLengthOfBytesToCheck: Returns the amount of data over which a check has to be conducted
+ *               getBytesToCheck: Returns the bytes over which a check will be generated. This is the data in the
+ *                                  payload field
+ *
+ *
  *****************************************************************************************************************************************/
 
 #ifndef IUNPACKER_H_
@@ -25,6 +32,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 /******************************************************************************
  Define interface handle data
@@ -38,16 +46,25 @@ typedef struct IUnpackerStruct {
   void* implementer;
   bool (*unpack)(IUnpackerHandle iUnpacker, const char* data, const size_t length);
   void (*activateNewMessage)(IUnpackerHandle iUnpacker);
-  
+
+  /* Functions to fetch commands and fields */
   const size_t (*getNumberOfCommands)(IUnpackerHandle iUnpacker);
   bool (*getNameOfCommand)(IUnpackerHandle iUnpacker, char* name, const int maxLenght, const int index);
   ssize_t (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
   bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
-  
+
+  /* Functions to fetch the data from commands */
   uint32_t (*getIntFromCommand)(IUnpackerHandle iUnpacker, const char* commandName, const char* fieldName);
   float (*getFloatFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName);
   bool (*getBoolFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName);
   void (*getStringFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName, char* targetStr, const int maxLenght);
+
+  /* Functions to help the communication validators */
+  size_t (*getLengthOfCheck)(IUnpackerHandle iUnpackHandler);
+  size_t (*getLengthOfBytesToCheck)(IUnpackerHandle iUnpackHandler);
+  void (*getBytesToCheck)(IUnpackerHandle iUnpackHandler, uint8_t* data);
+  void (*getCheck)(IUnpackerHandle iUnpackHandler, uint8_t* checkData);
 } IUnpacker ;
 
 #endif
+

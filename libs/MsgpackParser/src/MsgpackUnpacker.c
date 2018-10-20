@@ -37,7 +37,10 @@ typedef struct __MsgpackUnpackerPrivateData
   msgpack_unpacked und;   /* unpacked data */
   msgpack_unpack_return ret; /* unpacking return data */
   msgpack_object obj;
-  msgpack_unpacker unp;
+  msgpack_unpacker unp; /* unpacker */
+
+  msgpack_sbuffer sbuf; /* buffer */
+  msgpack_packer pk;    /* packer */
 
   size_t numberOfCommands;
   size_t msgLength;
@@ -89,6 +92,7 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
    * be changed !!! */
   msgpack_unpacker_destroy(&self->unp);
   msgpack_unpacker_init(&self->unp, self->msgLength);
+  msgpack_sbuffer_clear(&self->sbuf);
 
   if (msgpack_unpacker_buffer_capacity(&self->unp) < length) {
     return false;
@@ -113,6 +117,7 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
           return false;
         }
 
+        msgpack_pack_object(&self->pk, obj);
 
         return true;
       }
@@ -357,6 +362,43 @@ static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandNa
   return true;
 }
 
+static size_t getLengthOfCheck(IUnpackerHandle iUnpackHandler){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
+
+  msgpack_object transportObject = matchKeyToObj(self->obj, (const char*) "transport");
+
+  /* Return false if the object isn't the right type */
+  if(transportObject.type != MSGPACK_OBJECT_BIN) {
+    return 0;
+  }
+  return transportObject.via.bin.size;
+}
+
+static size_t getLengthOfBytesToCheck(IUnpackerHandle iUnpackHandler){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
+
+  return self->sbuf.size;
+}
+
+static void getBytesToCheck(IUnpackerHandle iUnpackHandler, uint8_t* data){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
+
+  copyMemory((char*) data, self->sbuf.data, self->sbuf.size);
+}
+
+static void getCheck(IUnpackerHandle iUnpackHandler, uint8_t* checkData){
+  MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
+
+  msgpack_object transportObject = matchKeyToObj(self->obj, (const char*) "transport");
+
+  /* Return false if the object isn't the right type */
+  if(transportObject.type != MSGPACK_OBJECT_BIN) {
+    return;
+  }
+
+  copyMemory((char*) checkData, transportObject.via.bin.ptr, transportObject.via.bin.size);
+}
+
 static ssize_t getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
@@ -389,7 +431,10 @@ MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength){
   self->iUnpacker.getNumberOfFields = &getNumberOfFields;
   self->iUnpacker.getNameOfField = &getNameOfField;
   self->iUnpacker.activateNewMessage = &activateNewMessage;
-
+  self->iUnpacker.getLengthOfBytesToCheck = &getLengthOfBytesToCheck;
+  self->iUnpacker.getLengthOfCheck = &getLengthOfCheck;
+  self->iUnpacker.getCheck = &getCheck;
+  self->iUnpacker.getBytesToCheck = &getBytesToCheck;
 
   bool result = msgpack_unpacker_init(&self->unp, self->msgLength);
 
@@ -399,12 +444,16 @@ MsgpackUnpackerHandle MsgpackUnpacker_create(const size_t msgLength){
 
   msgpack_unpacked_init(&self->und);
 
+  /* The packer functions are used to provide data to the IValidator interface */
+  msgpack_sbuffer_init(&self->sbuf);
+  msgpack_packer_init(&self->pk, &self->sbuf, msgpack_sbuffer_write);
   return self;
 }
 
 void MsgpackUnpacker_destroy(MsgpackUnpackerHandle self){
   msgpack_unpacked_destroy(&self->und);
   msgpack_unpacker_destroy(&self->unp);
+  msgpack_sbuffer_destroy(&self->sbuf);
   free(self);
   self = NULL;
 }

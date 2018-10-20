@@ -16,7 +16,6 @@
 typedef struct __SenderPrivateData
 {
   IPackerHandle packer;
-  COM_TYPE comType;
   TriggerHandle trigger;
   IScopeHandle scope;
 
@@ -40,7 +39,6 @@ SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const 
 
   SenderHandle self = (SenderHandle) malloc(sizeof(SenderPrivateData));
 
-  self->comType = comType;
   self->packer = packer;
   self->trigger = trigger;
   self->scope = scope;
@@ -66,7 +64,7 @@ void Sender_pack(SenderHandle self){
 
   self->packer->prepareTrigger(self->packer, isTriggered, channelId, triggerTimestamp);
 
-  const uint32_t scopeTimestamp = self->scope->getTimestamp(self->scope);
+  IFloatStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
   self->packer->prepareTimestamp(self->packer, scopeTimestamp);
 
   const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
