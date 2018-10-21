@@ -71,10 +71,9 @@ static void iScopeSetTimeIncrement(IScopeHandle self, uint32_t timeIncrement){
   scope->timeIncrement = timeIncrement;
 }
 
-static void iScopeTrans(IScopeHandle self){
+static void iScopeTransmit(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
-  
-  /* Trans function has to be implemented once the parser is ready */
+  Sender_scopeData(scope->sender);
 }
 
 static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
@@ -112,10 +111,11 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
 
   self->iScope.implementer = self;
   self->iScope.poll = &iScopePoll;
-  self->iScope.trans = &iScopeTrans;
+  self->iScope.transmit = &iScopeTransmit;
   self->iScope.setTimeIncrement = &iScopeSetTimeIncrement;
   self->iScope.getTimeIncrement = &getTimeIncrement;
   self->iScope.getTimestamp = &getTimestamp;
+  self->iScope.transmitTimestampInc = &transmitTimestampInc;
 
   /* Calculates size needed for the output communication buffer */
   /* communicationBufferSize = (numberOfChannels + timestampBuffer) * channelSize + constantProtocolSize */

@@ -28,7 +28,7 @@ typedef struct __CommandTransPrivateData
 ******************************************************************************/
 static void run(ICommandHandle self){
   CommandTransHandle commandTrans = (CommandTransHandle) self->implementer;
-  commandTrans->iScope->trans(commandTrans->iScope);
+  commandTrans->iScope->transmit(commandTrans->iScope);
 }
 
 static void setCommandAttribute(ICommandHandle self, void* attr){
