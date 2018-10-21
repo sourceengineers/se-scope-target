@@ -60,6 +60,18 @@ void copyByte(char* data, void* addr){
   data[4] = '\0';
 }
 
+void transmit(IByteStreamHandle stream){
+
+  const size_t length = stream->length(stream);
+
+  uint8_t data[length];
+
+  stream->read(stream, data, length);
+
+  Msgpack_printAsBytes(data, length);
+  Msgpack_printObjFromByte(data, length);
+}
+
 TEST(Scope, test_all)
 {
 
@@ -78,12 +90,9 @@ TEST(Scope, test_all)
 
   char addrBytesOne[5];
   copyByte(addrBytesOne, &addrOne);
-  printf("\nAddres one: %02x\n", addrBytesOne);
 
   char addrBytesTwo[5];
   copyByte(addrBytesTwo, &addrTwo);
-  printf("Addres two: %02x\n", addrBytesTwo);
-
 
   int len = 0;
 
@@ -104,22 +113,15 @@ TEST(Scope, test_all)
 
   data[len] = '\0';
 
-  printf("\nMsgpack data: ");
-  for(int i = 0; i < len+1; i++){
-    printf("%02x ",data[i]);
-  }
-  printf("\n");
-
-  ScopeHandle scope = Scope_create(100,2, ETHERNET, TIMESTAMP_MANUAL, NULL);
+  ScopeHandle scope = Scope_create(100,2, UART, TIMESTAMP_MANUAL, transmit);
 
   IByteStreamHandle inputStream = Scope_getInputStream(scope);
-  IByteStreamHandle outputStream = Scope_getOutputStream(scope);
 
   inputStream->write(inputStream, data, len);
 
   Scope_command(scope);
 
-  for (int j = 0; j < 5; ++j) {
+  for (uint32_t j = 0; j < 5; ++j) {
     testVarFloat = testDataFloat[j];
     testVarInt = testDataInt[j];
 
@@ -128,16 +130,4 @@ TEST(Scope, test_all)
 
   Scope_packMessage(scope);
 
-  const size_t length = outputStream->length(outputStream);
-  uint8_t outputData[length];
-  outputStream->read(outputStream, outputData, length);
-
-  printf("Parsed data: ");
-  Msgpack_printObjFromByte(outputData, length);
-
-  printf("\nAs bytes: ");
-  for(int i = 0; i < length; i++){
-    printf("%02x ",outputData[i]);
-  }
-  printf("\n");
 }
