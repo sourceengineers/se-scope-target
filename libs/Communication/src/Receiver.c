@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         Reciever.c
+ * @file         Receiver.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,20 +7,20 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Communication/Reciever.h>
+#include <Communication/Receiver.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __RecieverPrivateData
+typedef struct __ReceiverPrivateData
 {
   IUnpacker iUnpacker;
   IByteStreamHandle byteStream;
   IComValidatorHandle validator;
   SenderHandle sender;
 
-} RecieverPrivateData ;
+} ReceiverPrivateData ;
 
 /******************************************************************************
  Private functions
@@ -29,10 +29,10 @@ typedef struct __RecieverPrivateData
 /******************************************************************************
  Public functions
 ******************************************************************************/
-RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator,
+ReceiverHandle Receiver_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator,
                                SenderHandle sender){
 
-  RecieverHandle self = malloc(sizeof(RecieverPrivateData));
+  ReceiverHandle self = malloc(sizeof(ReceiverPrivateData));
 
   self->iUnpacker = *iUnpacker;
   self->byteStream = byteStream;
@@ -42,7 +42,7 @@ RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, IByteStreamHandle byte
   return self;
 }
 
-bool Reciever_unpack(RecieverHandle self){
+bool Receiver_unpack(ReceiverHandle self){
 
   /* Check if Parser is able to parse the given data */
   const size_t length = self->byteStream->length(self->byteStream);
@@ -80,11 +80,11 @@ bool Reciever_unpack(RecieverHandle self){
   return true;
 }
 
-IUnpackerHandle Reciever_getIUnpacker(RecieverHandle self){
+IUnpackerHandle Receiver_getIUnpacker(ReceiverHandle self){
   return &self->iUnpacker;
 }
 
-void Reciever_destroy(RecieverHandle self){
+void Receiver_destroy(ReceiverHandle self){
   free(self);
   self = NULL;
 }

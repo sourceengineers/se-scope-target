@@ -8,7 +8,7 @@
 *******************************************************************************/
 
 #include <Scope/Scope.h>
-#include <Communication/Reciever.h>
+#include <Communication/Receiver.h>
 #include <MsgpackParser/MsgpackUnpacker.h>
 #include <MsgpackParser/MsgpackPacker.h>
 #include <Communication/Sender.h>
@@ -40,7 +40,7 @@ typedef struct __ScopePrivateData
 
   /* Recieving part */
   MsgpackUnpackerHandle msgpackUnpacker;
-  RecieverHandle reciever;
+  ReceiverHandle receiver;
 
   /* Sending part */
   MsgpackPackerHandle msgpackPacker;
@@ -159,9 +159,9 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
                                self->trigger,
                                &self->iScope);
 
-  /* Create the unpacker and reciever */
+  /* Create the unpacker and receiver */
   self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
-  self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker),
+  self->receiver = Receiver_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker),
                                    ByteStream_getByteStream(self->inputStream),
                                    communicationValidator,
                                    self->sender);
@@ -171,7 +171,7 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
                                                self->channels, 
                                                self->numberOfChannels,
                                                self->trigger,
-                                               Reciever_getIUnpacker(self->reciever));
+                                               Receiver_getIUnpacker(self->receiver));
 
   return self;
 }
@@ -187,7 +187,7 @@ void Scope_destroy(ScopeHandle self){
   Trigger_destroy(self->trigger);
   CommandFactory_destroy(self->commandFactory);
   MsgpackUnpacker_destroy(self->msgpackUnpacker);
-  Reciever_destroy(self->reciever);
+  Receiver_destroy(self->receiver);
   ByteStream_destroy(self->inputStream);
   ByteStream_destroy(self->outputStream);
   MsgpackPacker_destroy(self->msgpackPacker);
@@ -200,11 +200,11 @@ void Scope_destroy(ScopeHandle self){
 
 void Scope_command(ScopeHandle self){
 
-  if(Reciever_unpack(self->reciever) == false){
+  if(Receiver_unpack(self->receiver) == false){
     return;
   }
 
-  IUnpackerHandle unpacker = Reciever_getIUnpacker(self->reciever);
+  IUnpackerHandle unpacker = Receiver_getIUnpacker(self->receiver);
 
   size_t numberOfCommands = unpacker->getNumberOfCommands(unpacker);
   ICommandHandle commands[numberOfCommands];

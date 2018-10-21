@@ -1,16 +1,16 @@
 /*!*****************************************************************************
- * @file         Reciever.h
+ * @file         Receiver.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the Reciever.
+ * @brief        Implementation of the Receiver.
  *
- *               Custom functions like "Reciever_unpack()" will have to be defined in a next step. These will have to
+ *               Custom functions like "Receiver_unpack()" will have to be defined in a next step. These will have to
  *               include options to check the communication specific fields, like checksums and so on.
  *
- *               The reciever will have to be renamed to reciever.
+ *               The receiver will have to be renamed to receiver.
  * 
  ******************************************************************************/
  
@@ -30,23 +30,23 @@ static const size_t MAX_COMMAND_LENGTH = 30;
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __RecieverPrivateData* RecieverHandle;
+typedef struct __ReceiverPrivateData* ReceiverHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the reciever */
-RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator,
+/* Constructor: Creates a new instance of the receiver */
+ReceiverHandle Receiver_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator,
                                SenderHandle sender);
 
 /* Returns the IUnpacker interface */
-IUnpackerHandle Reciever_getIUnpacker(RecieverHandle self);
+IUnpackerHandle Receiver_getIUnpacker(ReceiverHandle self);
 
 /* Unpacks the data in the inputstream */
-bool Reciever_unpack(RecieverHandle self);
+bool Receiver_unpack(ReceiverHandle self);
 
-/* Deconstructor: Deletes the instance of the reciever */
-void Reciever_destroy(RecieverHandle self);
+/* Deconstructor: Deletes the instance of the receiver */
+void Receiver_destroy(ReceiverHandle self);
 
 
 #endif

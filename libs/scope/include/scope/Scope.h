@@ -17,7 +17,7 @@
 #include <Scope/IScope.h>
 
 #include <Command/CommandFactory.h>
-#include <Communication/Reciever.h>
+#include <Communication/Receiver.h>
 
 #include <GeneralPurpose/ByteStream.h>
 
@@ -41,7 +41,7 @@ void Scope_destroy(ScopeHandle self);
  * After parsing, the commands will be executed */
 void Scope_command(ScopeHandle self);
 
-/* Returns the input stream which feeds data into the Reciever */
+/* Returns the input stream which feeds data into the Receiver */
 IByteStreamHandle Scope_getInputStream(ScopeHandle self);
 
 /* Returns the output stream, with data fed by the sender */

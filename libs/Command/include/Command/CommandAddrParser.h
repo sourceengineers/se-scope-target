@@ -14,7 +14,7 @@
 #define COMMANDADDRPARSER_H_
 
 #include <Command/ICommand.h>
-#include <Communication/Reciever.h>
+#include <Communication/Receiver.h>
 #include <Command/CommandAddr.h>
 
 /******************************************************************************

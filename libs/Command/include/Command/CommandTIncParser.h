@@ -14,7 +14,7 @@
 #define COMMANDTINCPARSER_H_
 
 #include <Command/ICommand.h>
-#include <Communication/Reciever.h>
+#include <Communication/Receiver.h>
 #include <Command/CommandTInc.h>
 
 /******************************************************************************

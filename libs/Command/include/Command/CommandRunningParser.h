@@ -14,7 +14,7 @@
 #define COMMANDRUNNINGPARSER_H_
 
 #include <Command/ICommand.h>
-#include <Communication/Reciever.h>
+#include <Communication/Receiver.h>
 #include <Command/CommandRunning.h>
 
 /******************************************************************************

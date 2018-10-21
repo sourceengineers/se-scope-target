@@ -20,7 +20,7 @@
 #ifndef COMMANDRUNNING_H_
 #define COMMANDRUNNING_H_
 
-#include <Communication/Reciever.h>
+#include <Communication/Receiver.h>
 #include <Scope/Channel.h>
 #include <Command/ICommand.h>
 
