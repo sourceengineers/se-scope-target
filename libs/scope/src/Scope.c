@@ -68,7 +68,7 @@ static void iScopePoll(IScopeHandle self, uint32_t timeStamp){
 
 static void iScopeSetTimeIncrement(IScopeHandle self, uint32_t timeIncrement){
   ScopeHandle scope = (ScopeHandle) self->implementer;
-  scope->timeIncrement = timeIncrement;
+  Scope_configureTimestampIncrement(scope, timeIncrement);
 }
 
 static void iScopeTransmit(IScopeHandle self){
@@ -253,10 +253,67 @@ void Scope_poll(ScopeHandle self, uint32_t timeStamp){
     Channel_poll(self->channels[i]);
   }
 
-  Trigger_run(self->trigger, timeStamp);
+  Trigger_run(self->trigger, prepareTimeStamp);
 }
 
-void Scope_packMessage(ScopeHandle self){
+void Scope_transmitData(ScopeHandle self){
   Sender_scopeData(self->sender);
   Trigger_release(self->trigger);
+}
+
+void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* pollAddress, DATA_TYPES type){
+
+  if(channelId >= self->numberOfChannels){
+    return;
+  }
+
+  Channel_setPollAddress(self->channels[channelId], pollAddress, type);
+}
+
+void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, uint32_t channelId){
+
+  if(channelId >= self->numberOfChannels){
+    return;
+  }
+
+  TriggerConfiguration triggerConf = {
+          .level = level,
+          .edge = edge,
+          .mode = mode,
+          .channelId = channelId,
+          .stream = *Channel_getTriggerDataStream(self->channels[channelId])
+  };
+
+  Trigger_configure(self->trigger, triggerConf);
+}
+
+void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrement){
+  self->timeIncrement = timstampIncrement;
+}
+
+void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId){
+
+  if(channelId >= self->numberOfChannels){
+    return;
+  }
+
+  Channel_setStateRunning(self->channels[channelId]);
+}
+
+void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
+
+  if(channelId >= self->numberOfChannels){
+    return;
+  }
+
+  Channel_setStateStopped(self->channels[channelId]);
+}
+
+
+void Scope_announceWatchAddresses(ScopeHandle self, uint32_t channelId){
+
+}
+
+void Scope_setWatchAddresses(ScopeHandle self, uint32_t channelId){
+
 }

@@ -107,7 +107,7 @@ void transmit(IByteStreamHandle stream){
   Msgpack_printObjFromByte(data, length);
 }
 
-TEST(Scope, test_all)
+TEST(Scope, test_msgpack)
 {
 
   const size_t maxLength = 230;
@@ -163,7 +163,7 @@ TEST(Scope, test_all)
     Scope_poll(scope, j);
   }
 
-  Scope_packMessage(scope);
+  Scope_transmitData(scope);
 
 
   /* Test ev_poll twice */
@@ -185,4 +185,36 @@ TEST(Scope, test_all)
   inputStream->write(inputStream, faultyMessage, faultyMessageLength);
   Scope_command(scope);
 
+}
+
+TEST(Scope, test_compile_time)
+{
+
+  ScopeHandle scope = Scope_create(200, 2, UART,  TIMESTAMP_AUTOMATIC, transmit);
+
+  const size_t lengthOfValues = 5;
+  const float floatValues[lengthOfValues] = {0.0f,1.1f,2.2f,3.3f,4.4f};
+  const uint32_t intValues[lengthOfValues] = {0,1,2,3,4};
+
+  float floatAddr;
+  uint32_t intAddr;
+
+  Scope_configureChannel(scope, 0, &floatAddr, FLOAT);
+  Scope_configureChannel(scope, 1, &intAddr, UINT32);
+
+  Scope_setChannelRunning(scope, 0);
+  Scope_setChannelRunning(scope, 1);
+
+  Scope_configureTimestampIncrement(scope, 20);
+
+  Scope_configureTrigger(scope, 2.1f, TRIGGER_EDGE_POSITIVE,TRIGGER_NORMAL,1);
+
+  for (int i = 0; i < lengthOfValues; ++i) {
+    floatAddr = floatValues[i];
+    intAddr = intValues[i];
+
+    Scope_poll(scope, NULL);
+  }
+
+  Scope_transmitData(scope);
 }

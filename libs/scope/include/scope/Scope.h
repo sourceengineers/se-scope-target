@@ -50,9 +50,39 @@ IByteStreamHandle Scope_getInputStream(ScopeHandle self);
 IByteStreamHandle Scope_getOutputStream(ScopeHandle self);
 
 /* Packs all the necessary data into a package ready to be sent */
-void Scope_packMessage(ScopeHandle self);
+void Scope_transmitData(ScopeHandle self);
 
 /* Polls data from all channels */
 void Scope_poll(ScopeHandle self, uint32_t timeStamp);
+
+/* Configures the channel with the given id, with the wanted address */
+/* If the id exceeds the maximum amount of channels, the function will return without doing anything */
+void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* pollAddress, DATA_TYPES type);
+
+/* Configurates the trigger with the gives values
+ * level: can be any float value
+ * edge: This can be either TRIGGER_EDGE_NEGATIVE or TRIGGER_EDGE_POSITIVE
+ * mode: Chooses the trigger mode. Can be either: TRIGGER_CONTINUOUS, TRIGGER_NORMAL or TRIGGER_ONESHOT
+ * channelId: The id which should be watched by the trigger
+ *
+ * If the id exceeds the maximum amount of channels, the function will return without doing anything
+ * */
+void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, uint32_t channelId);
+
+/* Sets the timestamp increment
+ * If the timestamp increment mode is set to manual, this will not have any effect */
+void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrement);
+
+/* Sets the channel with the given index to running */
+void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId);
+
+/* Sets the channel with the given index to stopped */
+void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
+
+/* Sends all configured watch addresses to the host */
+void Scope_announceWatchAddresses(ScopeHandle self, uint32_t channelId);
+
+/* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
+void Scope_setWatchAddresses(ScopeHandle self, uint32_t channelId);
 
 #endif
