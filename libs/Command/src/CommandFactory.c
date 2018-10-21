@@ -38,15 +38,15 @@ typedef struct __CommandFactoryPrivateData
 ******************************************************************************/
 CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
                                            ChannelHandle* channels, 
-                                           size_t ammountOfChannels,
+                                           size_t amountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker){
 
   CommandFactoryHandle self = malloc(sizeof(CommandFactoryPrivateData));
   /* Initialize commands */
-  self->commandRunning = CommandRunning_create(channels, ammountOfChannels);
+  self->commandRunning = CommandRunning_create(channels, amountOfChannels);
   self->commandPoll = CommandPoll_create(iScope);
-  self->commandAddr = CommandAddr_create(channels, ammountOfChannels);
+  self->commandAddr = CommandAddr_create(channels, amountOfChannels);
   self->commandTInc = CommandTInc_create(iScope);
   self->commandTrans = CommandTrans_create(iScope);
   self->commandTrigger = CommandTrigger_create(trigger);
@@ -60,7 +60,7 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
   self->commandTIncParser = CommandTIncParser_create(CommandTInc_getICommand(self->commandTInc), unpacker);
 
   self->commandTriggerParser = CommandTriggerParser_create(CommandTrigger_getICommand(self->commandTrigger), unpacker,
-                                                           channels, ammountOfChannels);
+                                                           channels, amountOfChannels);
 
   self->commandPollParser = CommandPollParser_create(CommandPoll_getICommand(self->commandPoll), unpacker);
 

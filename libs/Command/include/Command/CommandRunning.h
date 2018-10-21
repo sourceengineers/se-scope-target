@@ -40,7 +40,7 @@ typedef struct __CommandRunningPrivateData* CommandRunningHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandRunningHandle CommandRunning_create(ChannelHandle* channels, size_t ammountOfChannels);
+CommandRunningHandle CommandRunning_create(ChannelHandle* channels, size_t amountOfChannels);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandRunning_destroy(CommandRunningHandle self);

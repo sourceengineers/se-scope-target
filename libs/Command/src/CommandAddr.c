@@ -22,7 +22,7 @@ typedef struct __CommandAddrPrivateData
   
   CommandAddrConf config;
   
-  size_t ammountOfChannels;
+  size_t amountOfChannels;
   ChannelHandle* channels;
   
 } CommandAddrPrivateData ;
@@ -56,13 +56,13 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   CommandAddrConf newConfig = *(CommandAddrConf*) attr;
   
   /* Safety checks */
-  if(newConfig.numberOfChangedChannels > commandAddr->ammountOfChannels){
+  if(newConfig.numberOfChangedChannels > commandAddr->amountOfChannels){
     return;
   }
   
   /* Check that no id is bigger than the maximum ammount of channels */
   for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
-    if(newConfig.changedChannels[i] > commandAddr->ammountOfChannels){
+    if(newConfig.changedChannels[i] > commandAddr->amountOfChannels){
       return;
     }
     if(newConfig.newAddresses[i] == NULL){
@@ -80,17 +80,17 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
 }
 
 /* Public functions */
-CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t ammountOfChannels){
+CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t amountOfChannels){
 
   CommandAddrHandle self = malloc(sizeof(CommandAddrPrivateData));
-  self->config.newAddresses = malloc(sizeof(void*) * ammountOfChannels);
-  self->config.changedChannels = malloc(sizeof(int) * ammountOfChannels);
-  self->config.types = malloc(sizeof(DATA_TYPES) * ammountOfChannels);
+  self->config.newAddresses = malloc(sizeof(void*) * amountOfChannels);
+  self->config.changedChannels = malloc(sizeof(int) * amountOfChannels);
+  self->config.types = malloc(sizeof(DATA_TYPES) * amountOfChannels);
   
   self->config.numberOfChangedChannels = 0;
 
   self->channels = channels;
-  self->ammountOfChannels = ammountOfChannels;
+  self->amountOfChannels = amountOfChannels;
   
   self->iCommand.implementer = self;
   self->iCommand.run = &run;

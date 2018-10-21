@@ -19,7 +19,7 @@ static const char* commandName = "cf_running";
 typedef struct __CommandRunningPrivateData
 {
   ICommand iCommand;
-  size_t ammountOfChannels;
+  size_t amountOfChannels;
   CommandRunningConf config;
   ChannelHandle* channels;
   
@@ -49,12 +49,12 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   CommandRunningConf newConfig = *(CommandRunningConf*) attr;
   
   /* Safety checks */
-  if(newConfig.numberOfChangedChannels > commandRunning->ammountOfChannels){
+  if(newConfig.numberOfChangedChannels > commandRunning->amountOfChannels){
     return;
   }
   
   for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
-    if(newConfig.changedChannels[i] > commandRunning->ammountOfChannels){
+    if(newConfig.changedChannels[i] > commandRunning->amountOfChannels){
       return;
     }
     if(newConfig.newStates[i] != CHANNEL_STOPPED 
@@ -81,14 +81,14 @@ static const char* getCommandName(ICommandHandle self){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t ammountOfChannels){
+CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t amountOfChannels){
 
   CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));
-  self->config.newStates = malloc(sizeof(CHANNEL_STATES) * ammountOfChannels);
-  self->config.changedChannels = malloc(sizeof(int) * ammountOfChannels);
+  self->config.newStates = malloc(sizeof(CHANNEL_STATES) * amountOfChannels);
+  self->config.changedChannels = malloc(sizeof(int) * amountOfChannels);
   self->config.numberOfChangedChannels = 0;
   self->channels = channels;
-  self->ammountOfChannels = ammountOfChannels;
+  self->amountOfChannels = amountOfChannels;
   
   self->iCommand.implementer = self;
   self->iCommand.run = &run;

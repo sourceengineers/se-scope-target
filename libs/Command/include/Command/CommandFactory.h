@@ -40,7 +40,7 @@ typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
 /* Constructor: Creates a new instance of the factory */
 CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
                                            ChannelHandle* channels, 
-                                           size_t ammountOfChannels,
+                                           size_t amountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker);
                                            

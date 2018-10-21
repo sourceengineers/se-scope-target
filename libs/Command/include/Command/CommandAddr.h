@@ -44,7 +44,7 @@ typedef struct __CommandAddrPrivateData* CommandAddrHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandAddrHandle CommandAddr_create(ChannelHandle* channels, const size_t ammountOfChannels);
+CommandAddrHandle CommandAddr_create(ChannelHandle* channels, const size_t amountOfChannels);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandAddr_destroy(CommandAddrHandle self);
