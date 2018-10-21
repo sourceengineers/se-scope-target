@@ -324,7 +324,6 @@ static void constructBase(MsgpackPackerHandle self){
 
 static void constructPayloadMap(MsgpackPackerHandle self){
 
-
   /* Construct sc_data and flow_ctrl */
   msgpack_pack_map(&self->pkPayload, self->payloadFields);
 }
@@ -332,6 +331,10 @@ static void constructPayloadMap(MsgpackPackerHandle self){
 static void constructScDataMap(MsgpackPackerHandle self){
 
   /* sc_data map */
+  if(self->scDataFields <= 0){
+    return;
+  }
+
   msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_SC_DATA));
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_SC_DATA, strlen(KEYWORD_SC_DATA));
   msgpack_pack_map(&self->pkPayload, self->scDataFields);
