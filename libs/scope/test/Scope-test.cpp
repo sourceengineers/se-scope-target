@@ -110,7 +110,7 @@ TEST(Scope, test_all)
   }
   printf("\n");
 
-  ScopeHandle scope = Scope_create(100,2, ETHERNET, TIMESTAMP_MANUAL);
+  ScopeHandle scope = Scope_create(100,2, ETHERNET, TIMESTAMP_MANUAL, NULL);
 
   IByteStreamHandle inputStream = Scope_getInputStream(scope);
   IByteStreamHandle outputStream = Scope_getOutputStream(scope);

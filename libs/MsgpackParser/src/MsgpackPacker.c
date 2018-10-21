@@ -355,6 +355,8 @@ static void packData(IPackerHandle iPacker){
 
   packTrigger(self);
 
+  packFlowControl(self);
+
   constructBase(self);
 
   self->byteStream->flush(self->byteStream);
@@ -407,6 +409,7 @@ MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t ma
   self->iPacker.prepareTimeIncrement = &prepareTimeIncrement;
   self->iPacker.prepareTimestamp = &prepareTimestamp;
   self->iPacker.prepareTrigger = &prepareTrigger;
+  self->iPacker.getByteStream = &getByteStream;
 
   msgpack_sbuffer_init(&self->sbuf);
   msgpack_packer_init(&self->pk, &self->sbuf, msgpack_sbuffer_write);

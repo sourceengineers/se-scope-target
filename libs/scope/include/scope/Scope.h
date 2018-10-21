@@ -31,7 +31,9 @@ typedef enum {TIMESTAMP_AUTOMATIC, TIMESTAMP_MANUAL} TIMESTAMPING_MODE;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE comType, TIMESTAMPING_MODE timestampingMode);
+ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE comType,
+                         TIMESTAMPING_MODE timestampingMode,
+                         ScopeTransmitCallback transmitCallback);
 
 /* Deconstructor: Deletes the instance of the channel */
 void Scope_destroy(ScopeHandle self);
@@ -52,8 +54,5 @@ void Scope_packMessage(ScopeHandle self);
 
 /* Polls data from all channels */
 void Scope_poll(ScopeHandle self, uint32_t timeStamp);
-
-/* Temporary function to test the functionality of the scope, before the output arlgorithmes exists */
-ChannelHandle Scope_test(ScopeHandle self, int index);
 
 #endif

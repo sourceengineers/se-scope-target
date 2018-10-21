@@ -114,7 +114,9 @@ static IFloatStreamHandle getTimestamp(IScopeHandle self){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE comType, TIMESTAMPING_MODE timestampingMode){
+ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE comType,
+                         TIMESTAMPING_MODE timestampingMode,
+                         ScopeTransmitCallback transmitCallback){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
   self->currentTimestamp = 0;
@@ -167,9 +169,9 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
                                              ByteStream_getByteStream(self->outputStream),
                                              communicationValidator);
   self->sender = Sender_create(MsgpackPacker_getIPacker(self->msgpackPacker), self->channels, self->numberOfChannels,
-                               comType,
                                self->trigger,
-                               &self->iScope);
+                               &self->iScope,
+                               transmitCallback);
 
   /* Create the unpacker and receiver */
   self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
@@ -255,10 +257,6 @@ void Scope_poll(ScopeHandle self, uint32_t timeStamp){
 }
 
 void Scope_packMessage(ScopeHandle self){
-  Sender_pack(self->sender);
+  Sender_scopeData(self->sender);
   Trigger_release(self->trigger);
-}
-
-ChannelHandle Scope_test(ScopeHandle self, int index){
-  return self->channels[index];
 }

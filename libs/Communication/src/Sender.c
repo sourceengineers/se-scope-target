@@ -22,6 +22,8 @@ typedef struct __SenderPrivateData
   size_t numberOfChannels;
   ChannelHandle* channels;
 
+  ScopeTransmitCallback transmitCallback;
+
 } SenderPrivateData ;
 
 /******************************************************************************
@@ -32,9 +34,9 @@ typedef struct __SenderPrivateData
  Public functions
 ******************************************************************************/
 SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t numberOfChannels,
-                           COM_TYPE comType,
                            TriggerHandle trigger,
-                           IScopeHandle scope){
+                           IScopeHandle scope,
+                           ScopeTransmitCallback transmitCallback){
 
   SenderHandle self = (SenderHandle) malloc(sizeof(SenderPrivateData));
 
@@ -45,15 +47,19 @@ SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const 
   self->channels = channels;
   self->numberOfChannels = numberOfChannels;
 
+  self->transmitCallback = transmitCallback;
+
   return self;
 }
 
 void Sender_flowControl(SenderHandle self, const char* flowControl){
   self->packer->prepareFlowControl(self->packer, flowControl);
   self->packer->pack(self->packer);
+
+  Sender_transmit(self);
 }
 
-void Sender_pack(SenderHandle self){
+void Sender_scopeData(SenderHandle self){
 
   for (size_t i = 0; i < self->numberOfChannels; ++i) {
     if(Channel_isRunning(self->channels[i]) == true){
@@ -70,13 +76,25 @@ void Sender_pack(SenderHandle self){
   IFloatStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
   self->packer->prepareTimestamp(self->packer, scopeTimestamp);
 
-  const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
-  self->packer->prepareTimeIncrement(self->packer, timeIncrement);
+  if(self->scope->transmitTimestampInc(self->scope) == true){
+    const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
+    self->packer->prepareTimeIncrement(self->packer, timeIncrement);
+  }
 
   self->packer->pack(self->packer);
+
+  Sender_transmit(self);
 }
 
-bool Sender_transmit(SenderHandle self);
+bool Sender_transmit(SenderHandle self){
+
+  if(self->transmitCallback == NULL){
+    return false;
+  }
+
+  IByteStreamHandle stream = self->packer->getByteStream(self->packer);
+  self->transmitCallback(stream);
+}
 
 void Sender_destroy(SenderHandle self){
   free(self);
