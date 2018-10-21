@@ -379,6 +379,7 @@ static void reset(IPackerHandle iPacker){
   self->channelsArePrepared = false;
   self->timestampIsPrepared = false;
   self->flowControlIsPrepared = false;
+  self->numberOfChannelsToSend = 0;
 }
 
 static IByteStreamHandle getByteStream(IPackerHandle iPacker){
