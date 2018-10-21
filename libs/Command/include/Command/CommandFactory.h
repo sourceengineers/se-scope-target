@@ -27,7 +27,7 @@
 #include <Command/CommandTIncParser.h>
 #include <Command/CommandTriggerParser.h>
 
-#include <Scope/Scope.h>
+#include <Scope/IScope.h>
 
 /******************************************************************************
  Define class handle data
