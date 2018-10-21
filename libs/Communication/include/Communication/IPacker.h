@@ -46,7 +46,7 @@ typedef struct IPackerStruct {
   void (*prepareTrigger)(IPackerHandle iPacker, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);
   void (*prepareFlowControl)(IPackerHandle iPacker, const char* flowcontrol);
 
-  ByteStreamHandle (*getByteStream)(IPackerHandle iPacker);
+  IByteStreamHandle (*getByteStream)(IPackerHandle iPacker);
 
   void (*reset)(IPackerHandle iPacker);
 } IPacker ;
