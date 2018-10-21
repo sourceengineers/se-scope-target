@@ -28,8 +28,9 @@ typedef struct IScopeStruct* IScopeHandle;
 typedef struct IScopeStruct {
   void* implementer;
   void (*poll)(IScopeHandle self, uint32_t timeStamp);
-  void (*trans)(IScopeHandle self);
+  void (*transmit)(IScopeHandle self);
   void (*setTimeIncrement)(IScopeHandle self, uint32_t timeIncrement);
+  bool (*transmitTimestampInc)(IScopeHandle self);
   uint32_t (*getTimeIncrement)(IScopeHandle self);
   IFloatStreamHandle (*getTimestamp)(IScopeHandle self);
 } IScope ;

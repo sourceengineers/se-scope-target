@@ -95,6 +95,18 @@ static uint32_t getTimeIncrement(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
   return scope->timeIncrement;
 }
+
+static bool transmitTimestampInc(IScopeHandle self){
+  ScopeHandle scope = (ScopeHandle) self->implementer;
+
+  if(scope->timestampingMode == TIMESTAMP_AUTOMATIC){
+    return true;
+  } else if(scope->timestampingMode == TIMESTAMP_MANUAL) {
+    return false;
+  }
+  return true;
+}
+
 static IFloatStreamHandle getTimestamp(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
   return FloatRingBuffer_getFloatStream(scope->timeStamp);
