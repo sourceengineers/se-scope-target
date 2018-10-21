@@ -12,6 +12,7 @@
 #include <MsgpackParser/MsgpackUnpacker.h>
 #include <MsgpackParser/MsgpackPacker.h>
 #include <Communication/Sender.h>
+#include <CommunicationFactory.h>
 
 /******************************************************************************
  Define private data
@@ -34,6 +35,9 @@ typedef struct __ScopePrivateData
   TIMESTAMPING_MODE timestampingMode;
   uint32_t currentTimestamp;
 
+  /* Communication validators */
+  CommunicationFactoryHandle communicationFactory;
+
   /* Recieving part */
   MsgpackUnpackerHandle msgpackUnpacker;
   RecieverHandle reciever;
@@ -51,7 +55,7 @@ typedef struct __ScopePrivateData
 /* Fetches all commands from the Parser */
 static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands);
 
-/* Excecutes all fetched commands */
+/* Executes all fetched commands */
 static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 
 /******************************************************************************
@@ -103,7 +107,7 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
   self->currentTimestamp = 0;
-  self->timeIncrement = 0;
+  self->timeIncrement = 1;
   self->timestampingMode = timestampingMode;
 
   self->iScope.implementer = self;
@@ -140,13 +144,20 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
   /* Create Trigger */
   self->trigger = Trigger_create();
 
+  /* Communication section */
+  /* Create validators */
+  self->communicationFactory = CommunicationFactory_create();
+  IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
+
   /* Creates the unpacking communication */
   self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
-  self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker), comType,
-                                   ByteStream_getByteStream(self->inputStream));
+  self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker),
+                                   ByteStream_getByteStream(self->inputStream),
+                                   communicationValidator);
 
   self->msgpackPacker = MsgpackPacker_create(outputBufferSize, self->numberOfChannels,
-                                             ByteStream_getByteStream(self->outputStream));
+                                             ByteStream_getByteStream(self->outputStream),
+                                             communicationValidator);
   self->sender = Sender_create(MsgpackPacker_getIPacker(self->msgpackPacker), self->channels, self->numberOfChannels,
                                comType,
                                self->trigger,
@@ -178,6 +189,7 @@ void Scope_destroy(ScopeHandle self){
   ByteStream_destroy(self->outputStream);
   MsgpackPacker_destroy(self->msgpackPacker);
   Sender_destroy(self->sender);
+  CommunicationFactory_destroy(self->communicationFactory);
 
   free(self);
   self = NULL;

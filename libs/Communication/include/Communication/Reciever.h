@@ -19,8 +19,9 @@
 
 #include <unistd.h>
 #include <Communication/IUnpacker.h>
-#include <Communication/CommunicationTypes.h>
+#include <Communication/ComTypes.h>
 #include <GeneralPurpose/IByteStream.h>
+#include <Communication/IComValidator.h>
 
 static const size_t MAX_FIELD_LENGTH = 30;
 static const size_t MAX_COMMAND_LENGTH = 30;
@@ -34,7 +35,7 @@ typedef struct __RecieverPrivateData* RecieverHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the reciever */
-RecieverHandle Reciever_create(IUnpackerHandle iReciever, COM_TYPE comType, IByteStreamHandle byteStream);
+RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator);
 
 /* Returns the IUnpacker interface */
 IUnpackerHandle Reciever_getIUnpacker(RecieverHandle self);

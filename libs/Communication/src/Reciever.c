@@ -17,43 +17,25 @@
 typedef struct __RecieverPrivateData
 {
   IUnpacker iUnpacker;
-  COM_TYPE comType;
   IByteStreamHandle byteStream;
+  IComValidatorHandle validator;
 
 } RecieverPrivateData ;
-
-/* Prototype for strategy */
-static bool (*checkTransportValidity)(RecieverHandle self);
-
-/* Implementation of the Ethernet strategy */
-static bool checkTransportEthernet(RecieverHandle self);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static bool checkTransportEthernet(RecieverHandle self){
-  return true;
-}
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, COM_TYPE comType, IByteStreamHandle byteStream){
+RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator){
 
   RecieverHandle self = malloc(sizeof(RecieverPrivateData));
 
   self->iUnpacker = *iUnpacker;
-  self->comType = comType;
   self->byteStream = byteStream;
-
-  switch(comType){
-    case ETHERNET:
-      checkTransportValidity = &checkTransportEthernet;
-      break;
-
-    default:
-      checkTransportValidity = &checkTransportEthernet;
-  }
+  self->validator =  validator;
 
   return self;
 }
@@ -69,10 +51,23 @@ bool Reciever_unpack(RecieverHandle self){
     return false;
   }
 
-  /* Check if checksum and such are valid */
-  bool transportIsValid = checkTransportValidity(self);
-  if(transportIsValid == false){
-    return false;
+  /* Check if checks are valid */
+  if(self->validator->checkPresentInProtocol(self->validator) == true){
+
+    const size_t lengthOfCheck = self->iUnpacker.getLengthOfCheck(&self->iUnpacker);
+    const size_t lengthOfBytesToCheck = self->iUnpacker.getLengthOfBytesToCheck(&self->iUnpacker);
+
+    uint8_t check[lengthOfCheck];
+    uint8_t bytesToCheck[lengthOfBytesToCheck];
+
+    self->iUnpacker.getCheck(&self->iUnpacker, check);
+    self->iUnpacker.getBytesToCheck(&self->iUnpacker, bytesToCheck);
+
+    bool transportIsValid = self->validator->validateCheck(self->validator, (const uint8_t*) check, lengthOfCheck,
+                                                           (const uint8_t*) bytesToCheck, lengthOfBytesToCheck);
+    if(transportIsValid == false){
+      return false;
+    }
   }
 
   /* Accept the new data as new commands */

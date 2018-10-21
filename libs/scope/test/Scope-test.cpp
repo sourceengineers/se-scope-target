@@ -82,7 +82,7 @@ TEST(Scope, test_all)
 
   char addrBytesTwo[5];
   copyByte(addrBytesTwo, &addrTwo);
-  printf("Addres one: %02x\n", addrBytesTwo);
+  printf("Addres two: %02x\n", addrBytesTwo);
 
 
   int len = 0;
@@ -110,7 +110,7 @@ TEST(Scope, test_all)
   }
   printf("\n");
 
-  ScopeHandle scope = Scope_create(100,2,ETHERNET, TIMESTAMP_MANUAL);
+  ScopeHandle scope = Scope_create(100,2, ETHERNET, TIMESTAMP_MANUAL);
 
   IByteStreamHandle inputStream = Scope_getInputStream(scope);
   IByteStreamHandle outputStream = Scope_getOutputStream(scope);
@@ -135,4 +135,9 @@ TEST(Scope, test_all)
   printf("Parsed data: ");
   Msgpack_printObjFromByte(outputData, length);
 
+  printf("\nAs bytes: ");
+  for(int i = 0; i < length; i++){
+    printf("%02x ",outputData[i]);
+  }
+  printf("\n");
 }

@@ -14,6 +14,6 @@
 #define COMMUNICATIONTYPES_H_
 
 /* Defines possible communication types */
-typedef enum {ETHERNET} COM_TYPE;
+typedef enum {ETHERNET, UART} COM_TYPE;
 
 #endif
