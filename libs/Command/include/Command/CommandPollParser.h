@@ -10,8 +10,8 @@
  *
  ******************************************************************************/
 
-#ifndef COMMANDPollPARSER_H_
-#define COMMANDPollPARSER_H_
+#ifndef COMMANDPOLLPARSER_H_
+#define COMMANDPOLLPARSER_H_
 
 #include <Command/ICommand.h>
 #include <Communication/Reciever.h>

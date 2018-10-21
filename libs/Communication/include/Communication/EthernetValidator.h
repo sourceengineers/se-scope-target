@@ -13,8 +13,8 @@
  * 
  ******************************************************************************/
  
-#ifndef EthernetValidator_H_
-#define EthernetValidator_H_
+#ifndef ETHERNETVALIDATOR_H_
+#define ETHERNETVALIDATOR_H_
 
 #include <Communication/IComValidator.h>
 #include <Communication/CommunicationCommons.h>

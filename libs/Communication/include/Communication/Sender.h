@@ -14,8 +14,8 @@
  * 
  ******************************************************************************/
  
-#ifndef Sender_H_
-#define Sender_H_
+#ifndef SENDER_H_
+#define SENDER_H_
 
 #include <unistd.h>
 #include <Communication/IPacker.h>

@@ -20,8 +20,8 @@
  *
  *****************************************************************************************************************************************/
 
-#ifndef IPacker_H_
-#define IPacker_H_
+#ifndef IPACKER_H_
+#define IPACKER_H_
 
 #include <stdlib.h>
 #include <stdbool.h>

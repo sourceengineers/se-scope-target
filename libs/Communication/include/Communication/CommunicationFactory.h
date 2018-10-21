@@ -9,8 +9,8 @@
  *
  ******************************************************************************/ 
  
-#ifndef CommunicationFactory_H_
-#define CommunicationFactory_H_
+#ifndef COMMUNICATIONFACTORY_H_
+#define COMMUNICATIONFACTORY_H_
 
 #include <Communication/EthernetValidator.h>
 #include <Communication/IComValidator.h>

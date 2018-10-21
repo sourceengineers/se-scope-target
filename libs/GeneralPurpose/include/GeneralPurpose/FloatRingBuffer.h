@@ -10,8 +10,8 @@
  *                stream interface.
  ******************************************************************************/
  
-#ifndef FloatRingBuffer_H_
-#define FloatRingBuffer_H_
+#ifndef FLOATRINGBUFFER_H_
+#define FLOATRINGBUFFER_H_
 
 #include <GeneralPurpose/IFloatStream.h>
 #include <unistd.h>

@@ -17,8 +17,8 @@
  *
  *****************************************************************************************************************************************/
 
-#ifndef IFloatStream_H_
-#define IFloatStream_H_
+#ifndef IFLOATSTREAM_H_
+#define IFLOATSTREAM_H_
 
 #include <unistd.h>
 #include <stdint.h>

@@ -9,8 +9,8 @@
  * 
  ******************************************************************************/
  
-#ifndef UartValidator_H_
-#define UartValidator_H_
+#ifndef UARTVALIDATOR_H_
+#define UARTVALIDATOR_H_
 
 #include <Communication/IComValidator.h>
 #include <Communication/CommunicationCommons.h>

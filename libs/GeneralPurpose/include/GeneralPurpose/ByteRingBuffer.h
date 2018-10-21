@@ -10,8 +10,8 @@
  *                stream interface.
  ******************************************************************************/
  
-#ifndef ByteRingBuffer_H_
-#define ByteRingBuffer_H_
+#ifndef BYTERINGBUFFER_H_
+#define BYTERINGBUFFER_H_
 
 #include <GeneralPurpose/IByteStream.h>
 #include <unistd.h>
