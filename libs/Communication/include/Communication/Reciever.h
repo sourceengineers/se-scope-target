@@ -19,9 +19,10 @@
 
 #include <unistd.h>
 #include <Communication/IUnpacker.h>
-#include <Communication/ComTypes.h>
+#include <Communication/CommunicationCommons.h>
 #include <GeneralPurpose/IByteStream.h>
 #include <Communication/IComValidator.h>
+#include <Communication/Sender.h>
 
 static const size_t MAX_FIELD_LENGTH = 30;
 static const size_t MAX_COMMAND_LENGTH = 30;

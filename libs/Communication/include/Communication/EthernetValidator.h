@@ -17,7 +17,7 @@
 #define EthernetValidator_H_
 
 #include <Communication/IComValidator.h>
-#include <Communication/ComTypes.h>
+#include <Communication/CommunicationCommons.h>
 
 /******************************************************************************
  Define class handle data

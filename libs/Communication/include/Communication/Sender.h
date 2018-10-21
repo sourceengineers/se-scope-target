@@ -19,7 +19,7 @@
 
 #include <unistd.h>
 #include <Communication/IPacker.h>
-#include <Communication/ComTypes.h>
+#include <Communication/CommunicationCommons.h>
 #include <GeneralPurpose/IByteStream.h>
 #include <Scope/Channel.h>
 #include <Scope/Trigger.h>
@@ -44,6 +44,9 @@ void Sender_pack(SenderHandle self);
 
 /* Transmits a data package */
 bool Sender_transmit(SenderHandle self);
+
+/* Prepares a msgpack packages, containing a ack or nak */
+void Sender_flowControl(SenderHandle self, const char* flowControl);
 
 /* Deconstructor: Deletes the instance of the Sender */
 void Sender_destroy(SenderHandle self);

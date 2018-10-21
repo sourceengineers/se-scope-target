@@ -8,7 +8,7 @@
  *****************************************************************************************************************************************/
 
 #include <Communication/IComValidator.h>
-#include <Communication/ComTypes.h>
+#include <Communication/CommunicationCommons.h>
 #include <Communication/UartValidator.h>
 
 /******************************************************************************
