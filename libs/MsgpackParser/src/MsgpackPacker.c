@@ -323,15 +323,13 @@ static void constructBase(MsgpackPackerHandle self){
     msgpack_pack_nil(&self->pk);
   }
 
-  msgpack_pack_bin(&self->pk, self->sbufPayload.size);
-  msgpack_pack_bin_body(&self->pk, self->sbufPayload.data, self->sbufPayload.size);
+  /* Construct payload map */
+  msgpack_pack_str(&self->pk, strlen(KEYWORD_PAYLOAD));
+  msgpack_pack_str_body(&self->pk, KEYWORD_PAYLOAD, strlen(KEYWORD_PAYLOAD));
 }
 
 static void constructPayloadMap(MsgpackPackerHandle self){
 
-  /* Construct payload map */
-  msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_PAYLOAD));
-  msgpack_pack_str_body(&self->pkPayload, KEYWORD_PAYLOAD, strlen(KEYWORD_PAYLOAD));
 
   /* Construct sc_data and flow_ctrl */
   msgpack_pack_map(&self->pkPayload, self->payloadFields);
@@ -367,6 +365,7 @@ static void packData(IPackerHandle iPacker){
 
   self->byteStream->flush(self->byteStream);
   self->byteStream->write(self->byteStream, (const uint8_t*) self->sbuf.data, self->sbuf.size);
+  self->byteStream->write(self->byteStream, (const uint8_t*) self->sbufPayload.data, self->sbufPayload.size);
 
   iPacker->reset(iPacker);
 }
