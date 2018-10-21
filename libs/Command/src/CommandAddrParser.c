@@ -78,7 +78,7 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
 
     /* Only start parsing if the field was found, and its not a data type field */
     if(foundField == true && strstr(nameOfField, "_type") == NULL){
-      channelIds[i] = atoi(nameOfField) - 1;
+      channelIds[i] = atoi(nameOfField);
 
       newAddresses[i] = (void*) (uint32_t) self->iUnpacker->getIntFromCommand(self->iUnpacker, self->commandName, nameOfField);
 

@@ -53,7 +53,7 @@ void CommandRunningParser_configure(CommandRunningParserHandle self){
 
     bool foundField = self->iUnpacker->getNameOfField(self->iUnpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
     if(foundField == true){
-      channelIds[i] = atoi(nameOfField) - 1;
+      channelIds[i] = atoi(nameOfField);
       bool newState = self->iUnpacker->getBoolFromCommand(self->iUnpacker, self->commandName, nameOfField);
       if(newState == true){
         newStates[i] = CHANNEL_RUNNING;

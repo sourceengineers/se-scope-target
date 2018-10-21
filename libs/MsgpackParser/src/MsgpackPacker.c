@@ -197,7 +197,7 @@ static void packChannel(MsgpackPackerHandle self){
   for (size_t i = 0; i < self->numberOfChannelsToSend; ++i) {
 
     char id[10];
-    sprintf(id, "%d", self->channelIds[i] + 1);
+    sprintf(id, "%d", self->channelIds[i]);
 
     msgpack_pack_str(&self->pkPayload, strlen(id));
     msgpack_pack_str_body(&self->pkPayload, id, strlen(id));
@@ -276,7 +276,7 @@ static void packTrigger(MsgpackPackerHandle self){
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_TGR_CL_ID, strlen(KEYWORD_TGR_CL_ID));
 
   char id[10];
-  sprintf(id, "%d", self->activeChannelId + 1);
+  sprintf(id, "%d", self->activeChannelId);
 
   msgpack_pack_str(&self->pkPayload, strlen(id));
   msgpack_pack_str_body(&self->pkPayload, id, strlen(id));
