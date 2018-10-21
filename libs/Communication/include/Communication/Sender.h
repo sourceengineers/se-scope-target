@@ -23,7 +23,7 @@
 #include <GeneralPurpose/IByteStream.h>
 #include <Scope/Channel.h>
 #include <Scope/Trigger.h>
-#include <Scope/Scope.h>
+#include <Scope/IScope.h>
 
 /******************************************************************************
  Define class handle data
