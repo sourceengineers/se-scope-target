@@ -149,12 +149,8 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
   self->communicationFactory = CommunicationFactory_create();
   IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
 
-  /* Creates the unpacking communication */
-  self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
-  self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker),
-                                   ByteStream_getByteStream(self->inputStream),
-                                   communicationValidator);
 
+  /* Create the sender and packer */
   self->msgpackPacker = MsgpackPacker_create(outputBufferSize, self->numberOfChannels,
                                              ByteStream_getByteStream(self->outputStream),
                                              communicationValidator);
@@ -162,6 +158,13 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
                                comType,
                                self->trigger,
                                &self->iScope);
+
+  /* Create the unpacker and reciever */
+  self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
+  self->reciever = Reciever_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker),
+                                   ByteStream_getByteStream(self->inputStream),
+                                   communicationValidator,
+                                   self->sender);
 
   /* Create command factory */
   self->commandFactory = CommandFactory_create(&self->iScope, 

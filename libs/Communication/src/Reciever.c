@@ -19,6 +19,7 @@ typedef struct __RecieverPrivateData
   IUnpacker iUnpacker;
   IByteStreamHandle byteStream;
   IComValidatorHandle validator;
+  SenderHandle sender;
 
 } RecieverPrivateData ;
 
@@ -29,13 +30,15 @@ typedef struct __RecieverPrivateData
 /******************************************************************************
  Public functions
 ******************************************************************************/
-RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator){
+RecieverHandle Reciever_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator,
+                               SenderHandle sender){
 
   RecieverHandle self = malloc(sizeof(RecieverPrivateData));
 
   self->iUnpacker = *iUnpacker;
   self->byteStream = byteStream;
   self->validator =  validator;
+  self->sender = sender;
 
   return self;
 }
@@ -66,10 +69,12 @@ bool Reciever_unpack(RecieverHandle self){
     bool transportIsValid = self->validator->validateCheck(self->validator, (const uint8_t*) check, lengthOfCheck,
                                                            (const uint8_t*) bytesToCheck, lengthOfBytesToCheck);
     if(transportIsValid == false){
+      Sender_flowControl(self->sender, FLOWCONTROL_NAK);
       return false;
     }
   }
 
+  Sender_flowControl(self->sender, FLOWCONTROL_ACK);
   /* Accept the new data as new commands */
   self->iUnpacker.activateNewMessage(&self->iUnpacker);
   self->byteStream->flush(self->byteStream);

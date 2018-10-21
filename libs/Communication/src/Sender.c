@@ -31,7 +31,6 @@ typedef struct __SenderPrivateData
 /******************************************************************************
  Public functions
 ******************************************************************************/
-/* Constructor: Creates a new instance of the Sender */
 SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t numberOfChannels,
                            COM_TYPE comType,
                            TriggerHandle trigger,
@@ -49,7 +48,11 @@ SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const 
   return self;
 }
 
-/* Prepares a data package with channel and trigger data */
+void Sender_flowControl(SenderHandle self, const char* flowControl){
+  self->packer->prepareFlowControl(self->packer, flowControl);
+  self->packer->pack(self->packer);
+}
+
 void Sender_pack(SenderHandle self){
 
   for (size_t i = 0; i < self->numberOfChannels; ++i) {
@@ -73,10 +76,8 @@ void Sender_pack(SenderHandle self){
   self->packer->pack(self->packer);
 }
 
-/* Transmits a data package */
 bool Sender_transmit(SenderHandle self);
 
-/* Deconstructor: Deletes the instance of the Sender */
 void Sender_destroy(SenderHandle self){
   free(self);
   self = NULL;
