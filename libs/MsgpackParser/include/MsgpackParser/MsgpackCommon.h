@@ -17,5 +17,7 @@
 
 void Msgpack_printObjFromByte(const uint8_t* data, const size_t length);
 
+void Msgpack_printAsBytes(const uint8_t* data, const size_t length);
+
 
 #endif

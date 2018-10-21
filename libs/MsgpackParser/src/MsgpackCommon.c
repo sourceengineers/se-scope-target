@@ -26,3 +26,11 @@ void Msgpack_printObjFromByte(const uint8_t* data, const size_t length){
   /* print the deserialized object. */
   msgpack_object_print(stdout, deserialized);
 }
+
+void Msgpack_printAsBytes(const uint8_t* data, const size_t length){
+  printf("\n");
+  for(int i = 0; i < length; i++){
+    printf("%02x ",data[i]);
+  }
+  printf("\n");
+}
