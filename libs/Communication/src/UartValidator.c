@@ -52,7 +52,7 @@ static const bool validateCheck(IComValidatorHandle self, const uint8_t* check, 
 
   uint8_t localCheck[CHECKSUM_BYTE_LENGTH];
 
-  generate(check, bytesToCheck, lengthOfBytesToCheck);
+  generate(localCheck, bytesToCheck, lengthOfBytesToCheck);
 
   for (int i = 0; i < CHECKSUM_BYTE_LENGTH; ++i) {
     if(localCheck[i] != check[i]){
