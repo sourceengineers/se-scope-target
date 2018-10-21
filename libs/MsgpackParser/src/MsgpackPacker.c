@@ -178,12 +178,6 @@ static void prepareFlowControl(IPackerHandle iPacker, const char* flowControl){
   self->payloadFields += 1;
 }
 
-static void prepareTransportData(IPackerHandle iPacker){
-  MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
-
-  self->transportDataIsPrepared = false;
-}
-
 static void pack(IPackerHandle iPacker){
   MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
 
@@ -412,7 +406,6 @@ MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t ma
   self->iPacker.prepareFlowControl = &prepareFlowControl;
   self->iPacker.prepareTimeIncrement = &prepareTimeIncrement;
   self->iPacker.prepareTimestamp = &prepareTimestamp;
-  self->iPacker.prepareTransportData = &prepareTransportData;
   self->iPacker.prepareTrigger = &prepareTrigger;
 
   msgpack_sbuffer_init(&self->sbuf);

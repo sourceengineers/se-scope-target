@@ -34,7 +34,7 @@ typedef struct IByteStreamStruct* IByteStreamHandle;
 ******************************************************************************/
 typedef struct IByteStreamStruct {
   void* implementer;
-  void (*open)(IByteStreamHandle self, uint8_t* stream);
+  void (*open)(IByteStreamHandle bytestream, uint8_t* data, const size_t capacity);
   bool (*byteIsReady)(IByteStreamHandle self);
   const uint8_t (*readByte)(IByteStreamHandle self);
   size_t (*length)(IByteStreamHandle self);

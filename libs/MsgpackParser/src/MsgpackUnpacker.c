@@ -245,7 +245,7 @@ static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key){
   return (parentObj.via.map.ptr+offset)->val;
 }
 
-static int getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* commandName, const char* fieldName){
+static uint32_t getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* commandName, const char* fieldName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);
@@ -259,7 +259,7 @@ static int getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* command
     return 0;
   }
 
-  return obj.via.i64;
+  return (uint32_t) obj.via.i64;
 }
 
 static float getFloatFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName){
