@@ -50,6 +50,8 @@ typedef struct __ScopePrivateData
   ByteStreamHandle inputStream;
   ByteStreamHandle outputStream;
 
+  AddressStorageHandle addressStorage;
+
 } ScopePrivateData ;
 
 /* Fetches all commands from the Parser */
@@ -64,6 +66,11 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 static void iScopePoll(IScopeHandle self, uint32_t timeStamp){
   ScopeHandle scope = (ScopeHandle) self->implementer;
   Scope_poll(scope, timeStamp);
+}
+
+static void iScopeAnnounce(IScopeHandle self){
+  ScopeHandle scope = (ScopeHandle) self->implementer;
+  Scope_announceWatchAddresses(scope);
 }
 
 static void iScopeSetTimeIncrement(IScopeHandle self, uint32_t timeIncrement){
@@ -114,8 +121,11 @@ static IFloatStreamHandle getTimestamp(IScopeHandle self){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE comType,
-                         TIMESTAMPING_MODE timestampingMode,
+ScopeHandle Scope_create(const size_t channelSize,
+                         const size_t numberOfChannels,
+                         const size_t maxNumberOfAddresses,
+                         const COM_TYPE comType,
+                         const TIMESTAMPING_MODE timestampingMode,
                          ScopeTransmitCallback transmitCallback){
 
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
@@ -130,6 +140,7 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
   self->iScope.getTimeIncrement = &getTimeIncrement;
   self->iScope.getTimestamp = &getTimestamp;
   self->iScope.transmitTimestampInc = &transmitTimestampInc;
+  self->iScope.announce = &iScopeAnnounce;
 
   /* Calculates size needed for the output communication buffer */
   /* communicationBufferSize = (numberOfChannels + timestampBuffer) * channelSize + constantProtocolSize */
@@ -138,6 +149,8 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
   /* Each channel uses max. 50 bytes of data in the input protocol. Everything not dependent on the channels
    * will be of constant size */
   const size_t inputBufferSize = numberOfChannels * 50 + 400;
+
+  self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
 
   /* Create input and output streams */
   self->inputStream = ByteStream_create(inputBufferSize);
@@ -163,15 +176,15 @@ ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE c
   self->communicationFactory = CommunicationFactory_create();
   IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
 
-
   /* Create the sender and packer */
-  self->msgpackPacker = MsgpackPacker_create(outputBufferSize, self->numberOfChannels,
+  self->msgpackPacker = MsgpackPacker_create(outputBufferSize, self->numberOfChannels, maxNumberOfAddresses,
                                              ByteStream_getByteStream(self->outputStream),
                                              communicationValidator);
   self->sender = Sender_create(MsgpackPacker_getIPacker(self->msgpackPacker), self->channels, self->numberOfChannels,
                                self->trigger,
                                &self->iScope,
-                               transmitCallback);
+                               transmitCallback,
+                               self->addressStorage);
 
   /* Create the unpacker and receiver */
   self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
@@ -207,6 +220,7 @@ void Scope_destroy(ScopeHandle self){
   MsgpackPacker_destroy(self->msgpackPacker);
   Sender_destroy(self->sender);
   CommunicationFactory_destroy(self->communicationFactory);
+  AddressStorage_destroy(self->addressStorage);
 
   free(self);
   self = NULL;
@@ -253,11 +267,12 @@ void Scope_poll(ScopeHandle self, uint32_t timeStamp){
     Channel_poll(self->channels[i]);
   }
 
-  Trigger_run(self->trigger, prepareTimeStamp);
+  Trigger_run(self->trigger, timeStamp);
 }
 
 void Scope_transmitData(ScopeHandle self){
   Sender_scopeData(self->sender);
+  Sender_transmit(self->sender);
   Trigger_release(self->trigger);
 }
 
@@ -310,10 +325,13 @@ void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
 }
 
 
-void Scope_announceWatchAddresses(ScopeHandle self, uint32_t channelId){
-
+void Scope_announceWatchAddresses(ScopeHandle self){
+  Sender_addressAnnouncement(self->sender);
+  Sender_transmit(self->sender);
 }
 
-void Scope_setWatchAddresses(ScopeHandle self, uint32_t channelId){
-
+void Scope_setWatchAddresses(ScopeHandle self, const char* name, const void* address,
+                             const DATA_TYPES type,
+                             const uint32_t addressId){
+  AddressStorage_setWatchAddress(self->addressStorage, name, address, type, addressId);
 }

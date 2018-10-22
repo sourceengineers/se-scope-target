@@ -26,6 +26,7 @@
 #include <Command/CommandRunningParser.h>
 #include <Command/CommandTIncParser.h>
 #include <Command/CommandTriggerParser.h>
+#include <Command/CommandAnnounce.h>
 
 #include <Scope/IScope.h>
 

@@ -20,6 +20,7 @@ static const char* KEYWORD_PAYLOAD = "payload";
 static const char* KEYWORD_TRANSPORT = "transport";
 static const char* KEYWORD_SC_DATA = "sc_data";
 static const char* KEYWORD_PLACEHOLDER = "...";
+static const char* KEYWORD_ANNOUNCE = "sc_announce";
 static const char* KEYWORD_FLOW_CTRL = "flow_ctrl";
 static const char* KEYWORD_CL_DATA = "cl_data";
 static const char* KEYWORD_T_STMP = "t_stmp";
@@ -41,7 +42,17 @@ typedef struct __MsgpackPackerPrivateData
   msgpack_sbuffer sbuf; /* buffer */
   msgpack_packer pk;    /* packer */
 
-  /* Packer and buffer for payload
+  /* Data for the Announce address feature */
+  size_t maxAddressesToAnnounce;
+  char** namesOfAddresses;
+  char** typesOfAddresses;
+  uint32_t* addresses;
+  uint32_t numberOfAddressesToAnnounce;
+  bool addressesArePrepared;
+
+
+
+    /* Packer and buffer for payload
    * This is used, so the needed data can be fed to the IComValidator interface
    * without having to pack and unpack the data */
   IComValidatorHandle validator;
@@ -90,8 +101,18 @@ typedef struct __MsgpackPackerPrivateData
 static void incrementPayloadField(MsgpackPackerHandle self){
 
   if((self->channelsArePrepared == false) && (self->triggerIsPrepared == false) &&
-          (self->timestampIsPrepared == false) && (self->timestampIncrementIsPrepared == false)){
+          (self->timestampIsPrepared == false) && (self->timestampIncrementIsPrepared == false) &&
+          (self->addressesArePrepared == false)){
     self->payloadFields += 1;
+  }
+}
+
+static void incrementScDataField(MsgpackPackerHandle self){
+
+  if((self->channelsArePrepared == false) && (self->triggerIsPrepared == false) &&
+     (self->timestampIsPrepared == false) && (self->timestampIncrementIsPrepared == false) &&
+     (self->addressesArePrepared == false)){
+    self->scDataFields += 1;
   }
 }
 
@@ -175,13 +196,30 @@ static void prepareFlowControl(IPackerHandle iPacker, const char* flowControl){
 
   copyString(self->flowcontrol, flowControl, strlen(flowControl));
   self->flowControlIsPrepared = true;
+  self->scDataFields += 1;
   self->payloadFields += 1;
+
 }
 
-static void pack(IPackerHandle iPacker){
+void prepareAddressAnnouncement(IPackerHandle iPacker, const char* name, const char* type, const uint32_t address){
   MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
 
-  self->flowControlIsPrepared = false;
+  if(self->numberOfAddressesToAnnounce >= self->maxAddressesToAnnounce){
+    return;
+  }
+
+  self->addresses[self->numberOfAddressesToAnnounce] = address;
+  self->namesOfAddresses[self->numberOfAddressesToAnnounce] = (char*) name;
+  self->typesOfAddresses[self->numberOfAddressesToAnnounce] = (char*) type;
+
+  self->numberOfAddressesToAnnounce++;
+  incrementPayloadField(self);
+
+  if(self->addressesArePrepared == false){
+    self->scDataFields += 1;
+  }
+
+  self->addressesArePrepared = true;
 }
 
 static void packChannel(MsgpackPackerHandle self){
@@ -296,6 +334,30 @@ static void packFlowControl(MsgpackPackerHandle self){
   msgpack_pack_str_body(&self->pkPayload, self->flowcontrol, strlen(self->flowcontrol));
 }
 
+static void packAddresses(MsgpackPackerHandle self){
+
+  if(self->addressesArePrepared == false){
+    return;
+  }
+
+  msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_ANNOUNCE));
+  msgpack_pack_str_body(&self->pkPayload, KEYWORD_ANNOUNCE, strlen(KEYWORD_ANNOUNCE));
+  msgpack_pack_map(&self->pkPayload, self->numberOfAddressesToAnnounce);
+
+  for (size_t i = 0; i < self->numberOfAddressesToAnnounce; ++i) {
+
+    msgpack_pack_str(&self->pkPayload, strlen(self->namesOfAddresses[i]));
+    msgpack_pack_str_body(&self->pkPayload, self->namesOfAddresses[i], strlen(self->namesOfAddresses[i]));
+
+    msgpack_pack_array(&self->pkPayload, 2);
+    msgpack_pack_uint32(&self->pkPayload, self->addresses[i]);
+    msgpack_pack_str(&self->pkPayload, strlen(self->typesOfAddresses[i]));
+    msgpack_pack_str_body(&self->pkPayload, self->typesOfAddresses[i], strlen(self->typesOfAddresses[i]));
+  }
+
+  self->addressesArePrepared = false;
+}
+
 static void constructBase(MsgpackPackerHandle self){
 
   msgpack_pack_map(&self->pk, 2);
@@ -358,6 +420,8 @@ static void packData(IPackerHandle iPacker){
 
   packTrigger(self);
 
+  packAddresses(self);
+
   packFlowControl(self);
 
   constructBase(self);
@@ -380,6 +444,8 @@ static void reset(IPackerHandle iPacker){
   self->timestampIsPrepared = false;
   self->flowControlIsPrepared = false;
   self->numberOfChannelsToSend = 0;
+  self->addressesArePrepared = false;
+  self->numberOfAddressesToAnnounce = 0;
 }
 
 static IByteStreamHandle getByteStream(IPackerHandle iPacker){
@@ -390,8 +456,9 @@ static IByteStreamHandle getByteStream(IPackerHandle iPacker){
  Public functions
 ******************************************************************************/
 MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t maxNumberOfChannels,
-                                          IByteStreamHandle byteStream,
-                                          IComValidatorHandle validator){
+                                         const size_t maxAddressesToAnnounce,
+                                         IByteStreamHandle byteStream,
+                                         IComValidatorHandle validator){
 
   MsgpackPackerHandle self = (MsgpackPackerHandle) malloc(sizeof(MsgpackPackerPrivateData));
 
@@ -401,6 +468,10 @@ MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t ma
   self->validator = validator;
   self->numberOfChannelsToSend = 0;
   self->maxNumberOfChannels = maxNumberOfChannels;
+  self->maxAddressesToAnnounce = maxAddressesToAnnounce;
+  self->addresses = malloc(sizeof(uint32_t) * maxAddressesToAnnounce);
+  self->namesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
+  self->typesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
 
   self->scDataFields = 0;
   self->payloadFields = 0;
@@ -414,6 +485,7 @@ MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t ma
   self->iPacker.prepareTimestamp = &prepareTimestamp;
   self->iPacker.prepareTrigger = &prepareTrigger;
   self->iPacker.getByteStream = &getByteStream;
+  self->iPacker.prepareAddressAnnouncement = &prepareAddressAnnouncement;
 
   msgpack_sbuffer_init(&self->sbuf);
   msgpack_packer_init(&self->pk, &self->sbuf, msgpack_sbuffer_write);
@@ -427,6 +499,13 @@ MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t ma
 }
 
 void MsgpackPacker_destroy(MsgpackPackerHandle self){
+
+  free(self->addresses);
+  self->addresses = NULL;
+  free(self->namesOfAddresses);
+  self->namesOfAddresses = NULL;
+  free(self->typesOfAddresses);
+  self->typesOfAddresses = NULL;
   free(self->floatStreams);
   self->floatStreams = NULL;
   free(self->channelIds);

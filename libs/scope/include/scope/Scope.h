@@ -31,8 +31,11 @@ typedef enum {TIMESTAMP_AUTOMATIC, TIMESTAMP_MANUAL} TIMESTAMPING_MODE;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-ScopeHandle Scope_create(size_t channelSize, size_t numberOfChannels, COM_TYPE comType,
-                         TIMESTAMPING_MODE timestampingMode,
+ScopeHandle Scope_create(const size_t channelSize,
+                         const size_t numberOfChannels,
+                         const size_t maxNumberOfAddresses,
+                         const COM_TYPE comType,
+                         const TIMESTAMPING_MODE timestampingMode,
                          ScopeTransmitCallback transmitCallback);
 
 /* Deconstructor: Deletes the instance of the channel */
@@ -80,9 +83,11 @@ void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId);
 void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
 
 /* Sends all configured watch addresses to the host */
-void Scope_announceWatchAddresses(ScopeHandle self, uint32_t channelId);
+void Scope_announceWatchAddresses(ScopeHandle self);
 
 /* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
-void Scope_setWatchAddresses(ScopeHandle self, uint32_t channelId);
+void Scope_setWatchAddresses(ScopeHandle self, const char* name, const void* address,
+                             const DATA_TYPES type,
+                             const uint32_t addressId);
 
 #endif

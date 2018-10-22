@@ -22,6 +22,8 @@ typedef struct __SenderPrivateData
   size_t numberOfChannels;
   ChannelHandle* channels;
 
+  AddressStorageHandle addressStorage;
+
   ScopeTransmitCallback transmitCallback;
 
 } SenderPrivateData ;
@@ -36,13 +38,15 @@ typedef struct __SenderPrivateData
 SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t numberOfChannels,
                            TriggerHandle trigger,
                            IScopeHandle scope,
-                           ScopeTransmitCallback transmitCallback){
+                           ScopeTransmitCallback transmitCallback,
+                           AddressStorageHandle addressStorage){
 
   SenderHandle self = (SenderHandle) malloc(sizeof(SenderPrivateData));
 
   self->packer = packer;
   self->trigger = trigger;
   self->scope = scope;
+  self->addressStorage = addressStorage;
 
   self->channels = channels;
   self->numberOfChannels = numberOfChannels;
@@ -55,8 +59,19 @@ SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const 
 void Sender_flowControl(SenderHandle self, const char* flowControl){
   self->packer->prepareFlowControl(self->packer, flowControl);
   self->packer->pack(self->packer);
+}
 
-  Sender_transmit(self);
+void Sender_addressAnnouncement(SenderHandle self){
+
+  const size_t maxAddresses = AddressStorage_getMaxAmountOfAddresses(self->addressStorage);
+
+  for (uint32_t i = 0; i < maxAddresses; ++i) {
+    AddressDefinition* addr = AddressStorage_getAddressToTransmit(self->addressStorage, i);
+    if(addr->hasToBeSent == true){
+      self->packer->prepareAddressAnnouncement(self->packer, addr->name, getDataTypeName(addr->type), addr->address);
+    }
+  }
+  self->packer->pack(self->packer);
 }
 
 void Sender_scopeData(SenderHandle self){
@@ -82,8 +97,6 @@ void Sender_scopeData(SenderHandle self){
   }
 
   self->packer->pack(self->packer);
-
-  Sender_transmit(self);
 }
 
 bool Sender_transmit(SenderHandle self){
@@ -94,6 +107,8 @@ bool Sender_transmit(SenderHandle self){
 
   IByteStreamHandle stream = self->packer->getByteStream(self->packer);
   self->transmitCallback(stream);
+
+  return true;
 }
 
 void Sender_destroy(SenderHandle self){

@@ -29,6 +29,7 @@ typedef struct IScopeStruct {
   void* implementer;
   void (*poll)(IScopeHandle self, uint32_t timeStamp);
   void (*transmit)(IScopeHandle self);
+  void (*announce)(IScopeHandle self);
   void (*setTimeIncrement)(IScopeHandle self, uint32_t timeIncrement);
   bool (*transmitTimestampInc)(IScopeHandle self);
   uint32_t (*getTimeIncrement)(IScopeHandle self);

@@ -15,6 +15,7 @@
 #include <msgpack.h>
 #include <Communication/IPacker.h>
 #include <Communication/IComValidator.h>
+#include <Scope/AddressStorage.h>
 
 /******************************************************************************
  Define class handle data
@@ -26,6 +27,7 @@ typedef struct __MsgpackPackerPrivateData* MsgpackPackerHandle;
 ******************************************************************************/
 /* Constructor: Creates a new instance of the msgpack Packer */
 MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t maxNumberOfChannels,
+                                         const size_t maxAddressesToAnnounce,
                                          IByteStreamHandle byteStream,
                                          IComValidatorHandle validator);
 
