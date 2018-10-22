@@ -49,7 +49,10 @@ bool Receiver_unpack(ReceiverHandle self){
   uint8_t data[length];
   self->byteStream->read(self->byteStream, data, length);
   bool parsingIsValid = self->iUnpacker.unpack(&self->iUnpacker, (const char*) data, length);
+
   if(parsingIsValid == false){
+    Sender_flowControl(self->sender, FLOWCONTROL_NAK);
+    Sender_transmit(self->sender);
     return false;
   }
 
@@ -69,11 +72,13 @@ bool Receiver_unpack(ReceiverHandle self){
                                                            (const uint8_t*) bytesToCheck, lengthOfBytesToCheck);
     if(transportIsValid == false){
       Sender_flowControl(self->sender, FLOWCONTROL_NAK);
+      Sender_transmit(self->sender);
       return false;
     }
   }
 
   Sender_flowControl(self->sender, FLOWCONTROL_ACK);
+  Sender_transmit(self->sender);
   /* Accept the new data as new commands */
   self->iUnpacker.activateNewMessage(&self->iUnpacker);
   self->byteStream->flush(self->byteStream);
