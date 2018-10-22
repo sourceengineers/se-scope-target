@@ -24,6 +24,7 @@
 #include <Scope/Channel.h>
 #include <Scope/Trigger.h>
 #include <Scope/IScope.h>
+#include <Scope/AddressStorage.h>
 
 /******************************************************************************
  Define class handle data
@@ -39,7 +40,8 @@ typedef void(*ScopeTransmitCallback)(IByteStreamHandle stream);
 SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t numberOfChannels,
                            TriggerHandle trigger,
                            IScopeHandle scope,
-                           ScopeTransmitCallback transmitCallback);
+                           ScopeTransmitCallback transmitCallback,
+                           AddressStorageHandle addressStorage);
 
 /* Prepares a data package with channel and trigger data */
 void Sender_scopeData(SenderHandle self);
@@ -49,6 +51,9 @@ bool Sender_transmit(SenderHandle self);
 
 /* Prepares a msgpack packages, containing a ack or nak */
 void Sender_flowControl(SenderHandle self, const char* flowControl);
+
+/* Transmits all addresses which are registered to be sent */
+void Sender_addressAnnouncement(SenderHandle self);
 
 /* Deconstructor: Deletes the instance of the Sender */
 void Sender_destroy(SenderHandle self);
