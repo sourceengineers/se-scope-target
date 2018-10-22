@@ -84,7 +84,36 @@ static msgpack_object getCommandMap(msgpack_object parentObj){
   return obj;
 }
 
-static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_t length){
+static bool messageSeemsValid(msgpack_unpacked und) {
+
+  if(und.data.type != MSGPACK_OBJECT_MAP){
+    return false;
+  }
+
+  if(und.data.via.map.ptr->key.type != MSGPACK_OBJECT_STR){
+    return false;
+  }
+
+  const char* firstKey = und.data.via.map.ptr->key.via.str.ptr;
+
+  if((strncmp(firstKey, "payload", 7) != 0) && (strncmp(firstKey, "transport", 9) != 0)){
+    return false;
+  }
+
+  const char* secondKey = (und.data.via.map.ptr+1)->key.via.str.ptr;
+
+  if((strncmp(secondKey, "payload", 7) != 0) && (strncmp(secondKey, "transport", 9) != 0)){
+    return false;
+  }
+
+  if(getCommandMap(und.data).type == MSGPACK_OBJECT_NIL){
+    return false;
+  }
+
+  return true;
+}
+
+  static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_t length){
 
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
@@ -104,9 +133,8 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
   switch(self->ret) {
     case MSGPACK_UNPACK_SUCCESS:
     {
-
       /* Additional test to check if the data was processed correctly */
-      if(self->und.data.type == MSGPACK_OBJECT_MAP && getCommandMap(self->und.data).type != MSGPACK_OBJECT_NIL){
+      if(messageSeemsValid(self->und) == true){
 
         msgpack_object obj = getCommandMap(self->und.data);
 
@@ -121,7 +149,6 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
 
         return true;
       }
-
       return false;
       break;
     }

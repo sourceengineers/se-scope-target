@@ -36,6 +36,11 @@ static void run(ICommandHandle self){
   /* Set the polling address of the channels */
   for (size_t i = 0; i < commandAddr->config.numberOfChangedChannels; i++) {
     const int idChangingChannel = commandAddr->config.changedChannels[i];
+
+    if(idChangingChannel >= commandAddr->amountOfChannels){
+      return;
+    }
+
     ChannelHandle changingChannel = commandAddr->channels[idChangingChannel];
     const DATA_TYPES newType = commandAddr->config.types[i];
     void* newAddress = commandAddr->config.newAddresses[i];

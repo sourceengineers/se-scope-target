@@ -33,6 +33,11 @@ static void run(ICommandHandle self){
   
   for (size_t i = 0; i < commandRunning->config.numberOfChangedChannels; i++) {
     const int idOfChannelChanged = commandRunning->config.changedChannels[i];
+
+    if(idOfChannelChanged >= commandRunning->amountOfChannels){
+      return;
+    }
+
     ChannelHandle changingChannel = commandRunning->channels[idOfChannelChanged];
     
     if(commandRunning->config.newStates[i] == CHANNEL_RUNNING){
