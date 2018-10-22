@@ -13,12 +13,19 @@
 #ifndef DATATYPES_H_
 #define DATATYPES_H_
 
-static const char* UINT8_NAME = "UINT8";
-static const char* UINT16_NAME = "UINT16";
-static const char* UINT32_NAME = "UINT32";
-static const char* FLOAT_NAME = "FLOAT";
+#define UINT8_NAME "UINT8"
+#define UINT16_NAME "UINT16"
+#define UINT32_NAME "UINT32"
+#define UINT64_NAME "UINT64"
+#define FLOAT_NAME "FLOAT"
+#define DOUBLE_NAME "DOUBLE"
+
+static const char* DATA_TYPE_NAMES[6] = {UINT8_NAME, UINT16_NAME, UINT32_NAME, UINT64_NAME, FLOAT_NAME, DOUBLE_NAME};
 
 typedef enum {UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE} DATA_TYPES;
+
+
+#define getDataTypeName(type) DATA_TYPE_NAMES[type]
 
 
 #endif
