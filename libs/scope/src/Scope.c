@@ -81,6 +81,7 @@ static void iScopeSetTimeIncrement(IScopeHandle self, uint32_t timeIncrement){
 static void iScopeTransmit(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
   Sender_scopeData(scope->sender);
+  Sender_transmit(scope->sender);
 }
 
 static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
