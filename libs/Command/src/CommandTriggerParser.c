@@ -80,29 +80,32 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
 
   const size_t maxStringSize = 20;
 
-  /* Get the correct data stream */
-  uint32_t channelId = self->iUnpacker->getIntFromCommand(self->iUnpacker, (const char*) self->commandName,
-                                                     (const char*) "cl_id") - 1;
+  CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = (char*) "cl_id",
+                                             .isInArray = false, .arrayIndex = 0 };
 
-  if(channelId > self->numberOfChannels){
+  /* Get the correct data stream */
+  uint32_t channelId = self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
+
+  if(channelId >= self->numberOfChannels){
     channelId = 0;
   }
+
   IFloatStream stream = *Channel_getTriggerDataStream(self->channels[channelId]);
 
   /* Get the trigger level */
-  const float level =  self->iUnpacker->getFloatFromCommand(self->iUnpacker, (const char*) self->commandName,
-                                                          (const char*) "level");
+  information.fieldName = (char*) "level";
+  const float level =  self->iUnpacker->getFloatFromCommand(self->iUnpacker, &information);
 
   /* Get the trigger mode */
   char triggerModeToParse[maxStringSize];
-  self->iUnpacker->getStringFromCommand(self->iUnpacker, (const char*) self->commandName,
-                                     (const char*) "mode", triggerModeToParse, maxStringSize);
+  information.fieldName = (char*) "mode";
+  self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, triggerModeToParse, maxStringSize);
   TRIGGER_MODE mode = parserStringToTriggerMode(triggerModeToParse, maxStringSize);
 
   /* Get the trigger edge */
   char edgeToParser[maxStringSize];
-  self->iUnpacker->getStringFromCommand(self->iUnpacker, (const char*) self->commandName,
-                                        (const char*) "edge", edgeToParser, maxStringSize);
+  information.fieldName = (char*) "edge";
+  self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, edgeToParser, maxStringSize);
   int edge = parserStringToEdge(triggerModeToParse, maxStringSize);
 
   TriggerConfiguration conf = {.level = level, .mode = mode, .stream = stream, .edge = edge, .channelId = channelId};

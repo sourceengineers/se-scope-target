@@ -77,16 +77,18 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
     bool foundField = self->iUnpacker->getNameOfField(self->iUnpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
 
     /* Only start parsing if the field was found, and its not a data type field */
-    if(foundField == true && strstr(nameOfField, "_type") == NULL){
+    if(foundField == true ){
       channelIds[i] = atoi(nameOfField);
 
-      newAddresses[i] = (void*) (uint32_t) self->iUnpacker->getIntFromCommand(self->iUnpacker, self->commandName, nameOfField);
+      CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = nameOfField,
+                                                 .isInArray = true, .arrayIndex = 0 };
 
-      char dataTypeKey[10];
-      strncpy(dataTypeKey, nameOfField, 10);
-      strncat(dataTypeKey, "_type", 10);
+      newAddresses[i] = (void*) (uint32_t) self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
+
+
       char requestedDataType[20];
-      self->iUnpacker->getStringFromCommand(self->iUnpacker, self->commandName, dataTypeKey, requestedDataType, 20);
+      information.arrayIndex = 1;
+      self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, requestedDataType, 20);
       types[i] = parseStringToDataType(requestedDataType, 20);
     }
   }
@@ -94,7 +96,7 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
   CommandAddrConf conf = {.newAddresses = newAddresses, \
                           .changedChannels = channelIds, \
                           .types = types, \
-                          .numberOfChangedChannels = numberOfFields / 2};
+                          .numberOfChangedChannels = numberOfFields};
 
 
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &conf);

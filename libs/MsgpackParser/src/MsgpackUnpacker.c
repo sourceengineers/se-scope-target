@@ -65,6 +65,10 @@ static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key);
 /* Returns msgpack_object matching the the key */
 static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key);
 
+/* Returns the requested object in a array if the isInArray flag is set.
+ * If not, the original object will be returned */
+static msgpack_object getArrayObject(msgpack_object parentObj, CommandFetchingInformation* information);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -82,6 +86,19 @@ static msgpack_object getCommandMap(msgpack_object parentObj){
   msgpackObjectSanityTest(obj);
 
   return obj;
+}
+
+static msgpack_object getArrayObject(msgpack_object parentObj, CommandFetchingInformation* information){
+
+  if(information->isInArray == false || parentObj.type != MSGPACK_OBJECT_ARRAY){
+    return parentObj;
+  }
+
+  if(information->arrayIndex >= parentObj.via.array.size){
+    return parentObj;
+  }
+
+  return *(parentObj.via.array.ptr + information->arrayIndex);
 }
 
 static bool messageSeemsValid(msgpack_unpacked und) {
@@ -272,14 +289,15 @@ static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key){
   return (parentObj.via.map.ptr+offset)->val;
 }
 
-static uint32_t getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* commandName, const char* fieldName){
+static uint32_t getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
-  msgpack_object obj = getCmdObj(self, commandName);
+  msgpack_object obj = getCmdObj(self, information->commandName);
 
   if((msgpackObjIsMap(obj) == true)){
-      obj = getFieldFromCommand(obj, fieldName);
+      obj = getFieldFromCommand(obj, information->fieldName);
   }
+  obj = getArrayObject(obj, information);
 
   /* Return 0 if the object is not integer */
   if ((obj.type != MSGPACK_OBJECT_NEGATIVE_INTEGER) && (obj.type != MSGPACK_OBJECT_POSITIVE_INTEGER)){
@@ -289,17 +307,19 @@ static uint32_t getIntFromCommand(IUnpackerHandle iUnpackHandler, const char* co
   return (uint32_t) obj.via.i64;
 }
 
-static float getFloatFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName){
+static float getFloatFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
-  msgpack_object obj = getCmdObj(self, commandName);
+  msgpack_object obj = getCmdObj(self, information->commandName);
+  obj = getArrayObject(obj, information);
 
   /* Return zero if the object isn't the right type */
   if(msgpackObjIsMap(obj) == false){
     return 0.0f;
   }
 
-  obj = getFieldFromCommand(obj, fieldName);
+  obj = getFieldFromCommand(obj, information->fieldName);
+  obj = getArrayObject(obj, information);
 
   /* Return zero if the object isn't the right type */
   if((obj.type != MSGPACK_OBJECT_FLOAT) && (obj.type != MSGPACK_OBJECT_FLOAT32) && (obj.type != MSGPACK_OBJECT_FLOAT64)){
@@ -309,17 +329,18 @@ static float getFloatFromCommand(IUnpackerHandle iUnpackHandler,const char* comm
   return (float) obj.via.f64;
 }
 
-static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName){
+static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
-  msgpack_object obj = getCmdObj(self, commandName);
+  msgpack_object obj = getCmdObj(self, information->commandName);
 
   /* Return false if the object isn't the right type */
   if(msgpackObjIsMap(obj) == false){
     return false;
   }
 
-  obj = getFieldFromCommand(obj, fieldName);
+  obj = getFieldFromCommand(obj, information->fieldName);
+  obj = getArrayObject(obj, information);
 
   /* Return false if the object isn't the right type */
   if(obj.type != MSGPACK_OBJECT_BOOLEAN){
@@ -329,20 +350,21 @@ static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler,const char* comman
   return obj.via.boolean;
 }
 
-static void getStringFromCommand(IUnpackerHandle iUnpackHandler,const char* commandName, const char* fieldName,
+static void getStringFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information,
                                  char* targetStr,
                                  const int maxLenght){
 
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
-  msgpack_object obj = getCmdObj(self, commandName);
+  msgpack_object obj = getCmdObj(self, information->commandName);
 
   /* Return false if the object isn't the right type */
   if(msgpackObjIsMap(obj) == false) {
     return;
   }
 
-  obj = getFieldFromCommand(obj, fieldName);
+  obj = getFieldFromCommand(obj, information->fieldName);
+  obj = getArrayObject(obj, information);
 
   /* Return false if the object isn't the right type */
   if(obj.type != MSGPACK_OBJECT_STR) {

@@ -38,8 +38,10 @@ void CommandPollParser_configure(CommandPollParserHandle self){
     return;
   }
 
-  const uint32_t timestamp = self->iUnpacker->getIntFromCommand(self->iUnpacker, (const char*) self->commandName,
-                                                        (const char*) "");
+  CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = (char*) "",
+                                             .isInArray = false, .arrayIndex = 0 };
+
+  const uint32_t timestamp = self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
 
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &timestamp);
 }

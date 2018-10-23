@@ -39,6 +39,13 @@
 ******************************************************************************/
 typedef struct IUnpackerStruct* IUnpackerHandle;
 
+typedef struct {
+    char* commandName;
+    char* fieldName;
+    bool isInArray;
+    size_t arrayIndex;
+} CommandFetchingInformation;
+
 /******************************************************************************
  Define interface
 ******************************************************************************/
@@ -54,10 +61,10 @@ typedef struct IUnpackerStruct {
   bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
 
   /* Functions to fetch the data from commands */
-  uint32_t (*getIntFromCommand)(IUnpackerHandle iUnpacker, const char* commandName, const char* fieldName);
-  float (*getFloatFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName);
-  bool (*getBoolFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName);
-  void (*getStringFromCommand)(IUnpackerHandle iUnpacker,const char* commandName, const char* fieldName, char* targetStr, const int maxLenght);
+  uint32_t (*getIntFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
+  float (*getFloatFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
+  bool (*getBoolFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
+  void (*getStringFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information, char* targetStr, const int maxLenght);
 
   /* Functions to help the communication validators */
   size_t (*getLengthOfCheck)(IUnpackerHandle iUnpackHandler);

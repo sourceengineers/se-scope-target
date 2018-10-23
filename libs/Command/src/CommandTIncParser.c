@@ -38,8 +38,10 @@ void CommandTIncParser_configure(CommandTIncParserHandle self){
     return;
   }
 
-  const int timeIncrement = self->iUnpacker->getIntFromCommand(self->iUnpacker, (const char*) self->commandName,
-                                                        (const char*) "");
+  CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = (char*) "",
+                                             .isInArray = false, .arrayIndex = 0 };
+
+  const int timeIncrement = self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
 
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &timeIncrement);
 }
