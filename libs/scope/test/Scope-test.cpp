@@ -18,7 +18,7 @@ using namespace std;
 				"0":
  */
 
-const char partOne[] = "\x82\xa9\x74\x72\x61\x6e\x73\x70\x6f\x72\x74\xc0\xa7\x70\x61\x79\x6c\x6f\x61\x64\x81\xa6\x73\x63\x5f\x63\x6d\x64\x84\xa7\x63\x66\x5f\x61\x64\x64\x72\x84\xa1\x30";
+const char partOne[] = "\x82\xa9\x74\x72\x61\x6e\x73\x70\x6f\x72\x74\xc0\xa7\x70\x61\x79\x6c\x6f\x61\x64\x81\xa6\x73\x63\x5f\x63\x6d\x64\x84\xa7\x63\x66\x5f\x61\x64\x64\x72\x82\xa1\x30\x92";
 
 /* Middle of message */
 /*
@@ -26,7 +26,7 @@ const char partOne[] = "\x82\xa9\x74\x72\x61\x6e\x73\x70\x6f\x72\x74\xc0\xa7\x70
         "0_type" : "FLOAT",
 				"1":
 */
-const char partTwo[] =  "\xa1\x31";
+const char partTwo[] =  "\xa5\x46\x4c\x4f\x41\x54\xa1\x31\x92";
 
 
 /* End of message */
@@ -48,7 +48,7 @@ const char partTwo[] =  "\xa1\x31";
 	}
 }
 */
-const char partThree[] = "\xa6\x30\x5f\x74\x79\x70\x65\xa5\x46\x4c\x4f\x41\x54\xa6\x31\x5f\x74\x79\x70\x65\xa5\x55\x49\x4e\x54\x38\xa6\x63\x66\x5f\x74\x67\x72\x84\xa5\x63\x6c\x5f\x69\x64\x01\xa4\x6d\x6f\x64\x65\xa6\x4e\x6f\x72\x6d\x61\x6c\xa5\x6c\x65\x76\x65\x6c\xcb\x40\x04\x00\x00\x00\x00\x00\x00\xa4\x65\x64\x67\x65\xc3\xaa\x63\x66\x5f\x72\x75\x6e\x6e\x69\x6e\x67\x82\xa1\x31\xc3\xa1\x32\xc3\xa8\x63\x66\x5f\x74\x5f\x69\x6e\x63\x0a";
+const char partThree[] = "\xa6\x55\x49\x4e\x54\x33\x32\xa6\x63\x66\x5f\x74\x67\x72\x84\xa5\x63\x6c\x5f\x69\x64\x01\xa4\x6d\x6f\x64\x65\xa6\x4e\x6f\x72\x6d\x61\x6c\xa5\x6c\x65\x76\x65\x6c\xcb\x40\x04\x00\x00\x00\x00\x00\x00\xa4\x65\x64\x67\x65\xc3\xaa\x63\x66\x5f\x72\x75\x6e\x6e\x69\x6e\x67\x82\xa1\x30\xc3\xa1\x31\xc3\xa8\x63\x66\x5f\x74\x5f\x69\x6e\x63\x0a";
 
 const char intPrefix[] = "\xce";
 
@@ -93,13 +93,15 @@ void copyByte(char* data, void* addr){
 
 void transmit(IByteStreamHandle stream){
 
+  printf("\n");
+
   const size_t length = stream->length(stream);
 
   uint8_t data[length];
 
   stream->read(stream, data, length);
 
-  Msgpack_printAsBytes(data, length);
+  //Msgpack_printAsBytes(data, length);
   Msgpack_printObjFromByte(data, length);
 }
 
@@ -127,22 +129,24 @@ TEST(Scope, test_msgpack)
 
   int len = 0;
 
-  memcpy( data, partOne, 40);
-  len = 40;
+  memcpy( data, partOne, 41);
+  len = 41;
   memcpy( data + len, intPrefix, 1);
   len += 1;
   memcpy(data + len, addrBytesOne, 4);
   len += 4;
-  memcpy(data + len, partTwo, 2);
-  len += 2;
+  memcpy(data + len, partTwo, 9);
+  len += 9;
   memcpy( data + len, intPrefix, 1);
   len += 1;
   memcpy( data + len, addrBytesTwo, 4);
   len += 4;
-  memcpy(data + len, partThree, 102);
-  len += 102;
+  memcpy(data + len, partThree, 83);
+  len += 83;
 
   data[len] = '\0';
+
+  Msgpack_printObjFromByte(data, len);
 
   ScopeHandle scope = Scope_create(100, 2, 0, ETHERNET, TIMESTAMP_MANUAL, transmit);
 
@@ -161,8 +165,7 @@ TEST(Scope, test_msgpack)
 
   Scope_transmitData(scope);
 
-
-  /* Test ev_poll twice */
+  // Test ev_poll twice
   testVarFloat = testDataFloat[5];
   testVarInt = testDataInt[5];
   inputStream->write(inputStream, ev_poll, ev_pollLength);
@@ -173,11 +176,11 @@ TEST(Scope, test_msgpack)
   inputStream->write(inputStream, ev_poll, ev_pollLength);
   Scope_command(scope);
 
-  /* Test ev_trans */
+  // Test ev_trans
   inputStream->write(inputStream, ev_trans, ev_transLength);
   Scope_command(scope);
 
-  /* Test faulty message */
+  // Test faulty message
   inputStream->write(inputStream, faultyMessage, faultyMessageLength);
   Scope_command(scope);
 
