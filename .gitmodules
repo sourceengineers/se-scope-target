@@ -1,6 +1,6 @@
-[submodule "libs/gtest"]
-	path = libs/gtest
+[submodule "3party/gtest"]
+	path = 3party/gtest
 	url = https://github.com/google/googletest.git
-[submodule "libs/msgpackc"]
-	path = libs/msgpackc
+[submodule "3party/msgpackc"]
+	path = 3party/msgpackc
 	url = https://github.com/msgpack/msgpack-c.git

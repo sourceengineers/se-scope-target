@@ -24,51 +24,51 @@ endif()
 
 # Set the Project name
 set(PROJECT_NAME
-    iot-scope-target
+    Gemmi
 )
 set(PROJECT_SOURCE_DIR
     src
 )
-set(PROJECT_SOURCE
-    ${PROJECT_SOURCE_DIR}/main.c
+set(PROJECT_DEPENDENCIES_DIR
+    3party
+)
+set(PROJECT_DEPENDENCIES
+  msgpackc
 )
 set(PROJECT_LIBRARIES_DIR
-    libs
+    include/Scope
 )
-
-#######################################################################################################################
-## Custom Libraries
-#######################################################################################################################
-# Set the used libraries here !!!!!!!!!!!!!!!!!!!!!!!!!!!
-set(PROJECT_LIBRARIES
-    Scope
-    GeneralPurpose
-    Communication
-    Command
-    MsgpackParser
-    msgpackc
+set(PROJECT_TEST_DIR
+    test
 )
 
 project(${PROJECT_NAME})
+#######################################################################################################################
+## Find all needed files
+#######################################################################################################################
+file( GLOB_RECURSE PROJECT_SOURCE "${PROJECT_SOURCE_DIR}/*.c" )
 
 ################################################################################
 # GTest 
 ################################################################################
 enable_testing()
 set(BUILD_GMOCK OFF)
-add_subdirectory(libs/gtest)
-set(gtest_SOURCE_DIR libs/gtest/googletest)
+add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
+set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
+add_subdirectory(test)
+
+################################################################################
+# include dirs 
+################################################################################
+include_directories(3party/msgpackc/include)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+include_directories(${PROJECT_LIBRARIES_DIR})
 
-################################################################################
-# Project 
-################################################################################
+add_library(${PROJECT_NAME} ${PROJECT_SOURCE})
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCE})
-
-foreach(LIBRARY ${PROJECT_LIBRARIES})
-    add_subdirectory(${PROJECT_LIBRARIES_DIR}/${LIBRARY})
-endforeach(LIBRARY)
+foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})
+    add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/${DEPENDENCY})
+endforeach(DEPENDENCY)
 
 message("\nLink " ${PROJECT_NAME} " to libraries: " ${PROJECT_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})

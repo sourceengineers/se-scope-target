@@ -1,0 +1,121 @@
+/*!****************************************************************************************************************************************
+ * @file         CommandRunning.c
+ *
+ * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+ *
+ * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ *
+ *****************************************************************************************************************************************/
+
+#include <Scope/Command/CommandRunning.h>
+
+/******************************************************************************
+ Define private data
+******************************************************************************/
+/* Name of the command */
+static const char* commandName = "cf_running";
+
+/* Class data */
+typedef struct __CommandRunningPrivateData
+{
+  ICommand iCommand;
+  size_t amountOfChannels;
+  CommandRunningConf config;
+  ChannelHandle* channels;
+  
+} CommandRunningPrivateData ;
+
+/******************************************************************************
+ Private functions
+******************************************************************************/
+static void run(ICommandHandle self){
+  CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
+  
+  for (size_t i = 0; i < commandRunning->config.numberOfChangedChannels; i++) {
+    const int idOfChannelChanged = commandRunning->config.changedChannels[i];
+
+    if(idOfChannelChanged >= commandRunning->amountOfChannels){
+      return;
+    }
+
+    ChannelHandle changingChannel = commandRunning->channels[idOfChannelChanged];
+    
+    if(commandRunning->config.newStates[i] == CHANNEL_RUNNING){
+      Channel_setStateRunning(changingChannel);
+    } else if(commandRunning->config.newStates[i] == CHANNEL_STOPPED) {
+      Channel_setStateStopped(changingChannel);
+    }
+  }
+}
+
+static void setCommandAttribute(ICommandHandle self, void* attr){
+  CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
+
+  CommandRunningConf newConfig = *(CommandRunningConf*) attr;
+  
+  /* Safety checks */
+  if(newConfig.numberOfChangedChannels > commandRunning->amountOfChannels){
+    return;
+  }
+  
+  for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
+    if(newConfig.changedChannels[i] > commandRunning->amountOfChannels){
+      return;
+    }
+    if(newConfig.newStates[i] != CHANNEL_STOPPED 
+      && newConfig.newStates[i] != CHANNEL_RUNNING){
+      return;
+    }
+  }
+  
+  /* Copy data to command */
+  commandRunning->config.numberOfChangedChannels = newConfig.numberOfChangedChannels;
+  for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
+    commandRunning->config.changedChannels[i] = newConfig.changedChannels[i]; 
+    commandRunning->config.newStates[i] = newConfig.newStates[i];
+  }
+}
+
+
+static const char* getCommandName(ICommandHandle self){
+  CommandRunningHandle commandAddr = (CommandRunningHandle) self->implementer;
+
+  return CommandRunning_getName(commandAddr);
+}
+
+/******************************************************************************
+ Public functions
+******************************************************************************/
+CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t amountOfChannels){
+
+  CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));
+  self->config.newStates = malloc(sizeof(CHANNEL_STATES) * amountOfChannels);
+  self->config.changedChannels = malloc(sizeof(int) * amountOfChannels);
+  self->config.numberOfChangedChannels = 0;
+  self->channels = channels;
+  self->amountOfChannels = amountOfChannels;
+  
+  self->iCommand.implementer = self;
+  self->iCommand.run = &run;
+  self->iCommand.setCommandAttribute = &setCommandAttribute;
+  self->iCommand.getCommandName = &getCommandName;
+
+  return self;
+}
+
+ICommandHandle CommandRunning_getICommand(CommandRunningHandle self){
+  return &self->iCommand;
+}
+
+const char* CommandRunning_getName(CommandRunningHandle self){
+  return commandName;
+}
+
+void CommandRunning_destroy(CommandRunningHandle self){
+  free(self->config.newStates);
+  self->config.newStates = NULL;
+  free(self->config.changedChannels);
+  self->config.changedChannels = NULL;
+  free(self);
+  self = NULL;
+}
