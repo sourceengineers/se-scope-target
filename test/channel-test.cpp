@@ -2,8 +2,10 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include "Channel.h"
+    #include <Scope/Channel.h>
 }
+
+using namespace std;
 
 TEST(Channel, test_polling)
 {
