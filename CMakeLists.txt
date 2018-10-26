@@ -92,8 +92,10 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
 if(ADD_EXAMPLES)
   file( GLOB_RECURSE EXAMPLE_SOURCES "${PROJECT_EXAMPLES_DIR}/*/CMakeLists.txt")
   message("-- Examples will be added")
-  get_filename_component(EXAMPLE_SUB_DIRS ${EXAMPLE_SOURCES} DIRECTORY)
-  add_subdirectory(${EXAMPLE_SUB_DIRS}) 
+  foreach(EXAMPLE ${EXAMPLE_SOURCES})
+      get_filename_component(EXAMPLE_SUB_DIRS ${EXAMPLE} DIRECTORY)
+      add_subdirectory(${EXAMPLE_SUB_DIRS})
+  endforeach(EXAMPLE)
 endif()
 ################################################################################
 # Install project 
