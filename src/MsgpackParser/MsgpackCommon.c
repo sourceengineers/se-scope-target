@@ -12,7 +12,7 @@
 #include <msgpack.h>
 #include <string.h>
 
-void Msgpack_printObjFromByte(const uint8_t* data, const size_t length){
+void Msgpack_printObjFromByte(FILE *file, const uint8_t* data, const size_t length){
 
   msgpack_zone mempool;
   msgpack_object deserialized;
@@ -24,13 +24,13 @@ void Msgpack_printObjFromByte(const uint8_t* data, const size_t length){
   msgpack_unpack((const char*) data, length, NULL, &mempool, &deserialized);
 
   /* print the deserialized object. */
-  msgpack_object_print(stdout, deserialized);
+  msgpack_object_print(file, deserialized);
 }
 
-void Msgpack_printAsBytes(const uint8_t* data, const size_t length){
+void Msgpack_printAsBytes(FILE *file, const uint8_t* data, const size_t length){
   printf("\n");
   for(int i = 0; i < length; i++){
-    printf("%02x ",data[i]);
+    fprintf(file, "%02x ",data[i]);
   }
   printf("\n");
 }

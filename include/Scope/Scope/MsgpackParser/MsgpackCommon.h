@@ -15,9 +15,9 @@
 #include <msgpack.h>
 
 
-void Msgpack_printObjFromByte(const uint8_t* data, const size_t length);
+void Msgpack_printObjFromByte(FILE *file, const uint8_t* data, const size_t length);
 
-void Msgpack_printAsBytes(const uint8_t* data, const size_t length);
+void Msgpack_printAsBytes(FILE *file, const uint8_t* data, const size_t length);
 
 
 #endif

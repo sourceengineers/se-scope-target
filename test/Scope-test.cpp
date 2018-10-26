@@ -102,7 +102,7 @@ void transmit(IByteStreamHandle stream){
   stream->read(stream, data, length);
 
   //Msgpack_printAsBytes(data, length);
-  Msgpack_printObjFromByte(data, length);
+  Msgpack_printObjFromByte(stdout, data, length);
 }
 
 TEST(Scope, test_msgpack)
@@ -146,7 +146,7 @@ TEST(Scope, test_msgpack)
 
   data[len] = '\0';
 
-  Msgpack_printObjFromByte(data, len);
+  Msgpack_printObjFromByte(stdout, data, len);
 
   ScopeHandle scope = Scope_create(100, 2, 0, ETHERNET, TIMESTAMP_MANUAL, transmit);
 
@@ -212,7 +212,7 @@ TEST(Scope, test_compile_time)
     floatAddr = floatValues[i];
     intAddr = intValues[i];
 
-    Scope_poll(scope, NULL);
+    Scope_poll(scope, 0);
   }
 
   Scope_transmitData(scope);
