@@ -155,7 +155,12 @@ size_t FloatRingBuffer_freeData(FloatRingBufferHandle self){
 }
 
 size_t FloatRingBuffer_usedData(FloatRingBufferHandle self){
-  return (size_t) (self->head - self->tail) % self->capacity;
+
+  const size_t absSize = (self->head >= self->tail) ?
+                            (self->head - self->tail) % self->capacity :
+                            (self->tail - self->head) % self->capacity;
+
+  return absSize % self->capacity;
 }
 
 void FloatRingBuffer_clear(FloatRingBufferHandle self){

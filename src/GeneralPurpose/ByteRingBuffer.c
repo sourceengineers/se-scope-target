@@ -156,7 +156,11 @@ size_t ByteRingBuffer_freeData(ByteRingBufferHandle self){
 }
 
 size_t ByteRingBuffer_usedData(ByteRingBufferHandle self){
-  return (size_t) (self->head - self->tail) % self->capacity;
+  const size_t absSize = (self->head >= self->tail) ?
+                         (self->head - self->tail) % self->capacity :
+                         (self->tail - self->head) % self->capacity;
+
+  return absSize % self->capacity;
 }
 
 void ByteRingBuffer_clear(ByteRingBufferHandle self){
