@@ -2,18 +2,6 @@ cmake_minimum_required(VERSION 3.0.0)
 
 set (CMAKE_CXX_STANDARD 11)
 
-set(ARCHITECTURE_32BIT ON)
-
-set(CMAKE_BUILD_TYPE DEBUG)
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
-
-if(ARCHITECTURE_32BIT)
-    set(CMAKE_C_FLAGS -m32)
-    set(CMAKE_CXX_FLAGS -m32)
-    set(MSGPACK_32BIT ON)
-endif()
-
 # How to build:
 # mkdir build 
 # cd build
@@ -26,6 +14,29 @@ endif()
 set(PROJECT_NAME
     Gemmi
 )
+
+project(${PROJECT_NAME})
+
+################################################################################
+# Set options
+################################################################################
+#set(CMAKE_C_COMPILER gcc)
+#set(CMAKE_CXX_COMPILER g++)
+
+set(ARCHITECTURE_32BIT ON)
+
+set(CMAKE_BUILD_TYPE DEBUG)
+
+if(ARCHITECTURE_32BIT)
+    message("-- 32Bit Architecture flag is on")
+    set(CMAKE_C_FLAGS -m32)
+    set(CMAKE_CXX_FLAGS -m32)
+    set(MSGPACK_32BIT ON)
+endif()
+
+################################################################################
+# Set options
+################################################################################
 set(PROJECT_SOURCE_DIR
     src
 )
@@ -35,18 +46,17 @@ set(PROJECT_DEPENDENCIES_DIR
 set(PROJECT_DEPENDENCIES
   msgpackc
 )
-set(PROJECT_LIBRARIES_DIR
+set(PROJECT_INCLUDE_DIR
     include/Scope
 )
 set(PROJECT_TEST_DIR
     test
 )
-
-project(${PROJECT_NAME})
 #######################################################################################################################
 ## Find all needed files
 #######################################################################################################################
 file( GLOB_RECURSE PROJECT_SOURCE "${PROJECT_SOURCE_DIR}/*.c" )
+file( GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h" )
 
 ################################################################################
 # GTest 
@@ -58,17 +68,24 @@ set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
 add_subdirectory(test)
 
 ################################################################################
-# include dirs 
+# Include dirs and link libraries
 ################################################################################
-include_directories(3party/msgpackc/include)
+include_directories(${PROJECT_DEPENDENCIES_DIR}/msgpackc/include)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-include_directories(${PROJECT_LIBRARIES_DIR})
+include_directories(${PROJECT_INCLUDE_DIR})
 
-add_library(${PROJECT_NAME} ${PROJECT_SOURCE})
+add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
 
 foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})
     add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/${DEPENDENCY})
 endforeach(DEPENDENCY)
 
-message("\nLink " ${PROJECT_NAME} " to libraries: " ${PROJECT_LIBRARIES})
+#message("\nLink " ${PROJECT_NAME} " to libraries: " ${PROJECT_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+
+################################################################################
+# Install project 
+################################################################################
+message("-- Project will be installed to: ${CMAKE_INSTALL_PREFIX}")
+install( DIRECTORY "${PROJECT_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include" )
+install( TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/libs/" COMPONENT library )
