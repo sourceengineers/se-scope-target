@@ -167,11 +167,13 @@ static bool messageSeemsValid(msgpack_unpacked und) {
         return true;
       }
       return false;
-      break;
     }
+
     case MSGPACK_UNPACK_PARSE_ERROR:
       return false;
-      break;
+
+    default:
+      return false;
   }
   return false;
 }
