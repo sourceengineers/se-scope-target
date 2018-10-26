@@ -155,7 +155,7 @@ size_t FloatRingBuffer_freeData(FloatRingBufferHandle self){
 }
 
 size_t FloatRingBuffer_usedData(FloatRingBufferHandle self){
-  return (size_t) (self->head - self->tail);
+  return (size_t) (self->head - self->tail) % self->capacity;
 }
 
 void FloatRingBuffer_clear(FloatRingBufferHandle self){

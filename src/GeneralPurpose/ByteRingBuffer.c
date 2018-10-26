@@ -156,7 +156,7 @@ size_t ByteRingBuffer_freeData(ByteRingBufferHandle self){
 }
 
 size_t ByteRingBuffer_usedData(ByteRingBufferHandle self){
-  return (size_t) (self->head - self->tail);
+  return (size_t) (self->head - self->tail) % self->capacity;
 }
 
 void ByteRingBuffer_clear(ByteRingBufferHandle self){

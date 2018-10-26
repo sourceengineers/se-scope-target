@@ -145,7 +145,7 @@ ScopeHandle Scope_create(const size_t channelSize,
 
   /* Calculates size needed for the output communication buffer */
   /* communicationBufferSize = (numberOfChannels + timestampBuffer) * channelSize + constantProtocolSize */
-  const size_t outputBufferSize = (numberOfChannels + 1) * channelSize + 200;
+  const size_t outputBufferSize = (numberOfChannels + 1) * channelSize * 10 + 200;
   /* The input buffer is not dependent of the buffer sizes, but on how many channels are in use */
   /* Each channel uses max. 50 bytes of data in the input protocol. Everything not dependent on the channels
    * will be of constant size */
