@@ -229,6 +229,13 @@ void Scope_destroy(ScopeHandle self){
 
 void Scope_command(ScopeHandle self){
 
+  IByteStreamHandle stream;
+  stream = ByteStream_getByteStream(self->inputStream);
+
+  if(stream->length(stream) <= 0){
+    return;
+  }
+
   if(Receiver_unpack(self->receiver) == false){
     return;
   }
@@ -268,7 +275,7 @@ void Scope_poll(ScopeHandle self, uint32_t timeStamp){
     Channel_poll(self->channels[i]);
   }
 
-  Trigger_run(self->trigger, timeStamp);
+  Trigger_run(self->trigger, prepareTimeStamp);
 }
 
 void Scope_transmitData(ScopeHandle self){
