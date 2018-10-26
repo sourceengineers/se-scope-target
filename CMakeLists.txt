@@ -43,6 +43,9 @@ set(PROJECT_SOURCE_DIR
 set(PROJECT_DEPENDENCIES_DIR
     3party
 )
+set(PROJECT_EXAMPLES_DIR
+    examples
+)
 set(PROJECT_DEPENDENCIES
   msgpackc
 )
@@ -83,6 +86,15 @@ endforeach(DEPENDENCY)
 #message("\nLink " ${PROJECT_NAME} " to libraries: " ${PROJECT_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
 
+################################################################################
+# Add examples
+################################################################################
+if(ADD_EXAMPLES)
+  file( GLOB_RECURSE EXAMPLE_SOURCES "${PROJECT_EXAMPLES_DIR}/*/CMakeLists.txt")
+  message("-- Examples will be added")
+  get_filename_component(EXAMPLE_SUB_DIRS ${EXAMPLE_SOURCES} DIRECTORY)
+  add_subdirectory(${EXAMPLE_SUB_DIRS}) 
+endif()
 ################################################################################
 # Install project 
 ################################################################################
