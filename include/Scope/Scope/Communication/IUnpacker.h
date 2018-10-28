@@ -32,7 +32,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include <unistd.h>
+#include <stdint.h>
 
 /******************************************************************************
  Define interface handle data
@@ -74,4 +74,3 @@ typedef struct IUnpackerStruct {
 } IUnpacker ;
 
 #endif
-
