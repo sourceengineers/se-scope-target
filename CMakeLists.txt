@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0.0)
 set (CMAKE_CXX_STANDARD 11)
 
 # How to build:
-# mkdir build 
+# mkdir build
 # cd build
 # Pick the right configuration:
 # Debug: cmake -DCMAKE_BUILD_TYPE=Debug ..
@@ -12,7 +12,7 @@ set (CMAKE_CXX_STANDARD 11)
 
 # Set the Project name
 set(PROJECT_NAME
-    Gemmi
+    gemmi
 )
 
 project(${PROJECT_NAME})
@@ -27,12 +27,26 @@ set(ARCHITECTURE_32BIT ON)
 
 set(CMAKE_BUILD_TYPE DEBUG)
 
-if(ARCHITECTURE_32BIT)
-    message("-- 32Bit Architecture flag is on")
+if(ARCHITECTURE STREQUAL "X64")
+    message("-- x64 architecture is on")
     set(CMAKE_C_FLAGS -m32)
     set(CMAKE_CXX_FLAGS -m32)
     set(MSGPACK_32BIT ON)
+
+elseif(ARCHITECTURE STREQUAL "EMBEDDED")
+    # Setoptions so msgpack will compile
+    set(MSGPACK_BUILD_EXAMPLES OFF)
+    set(MSGPACK_BOOST OFF)
+    set(MSGPACK_ENABLE_SHARED OFF)
+    set(BUILD_SHARED_LIBS OFF)
+
+    set(GEMMI_TESTING OFF)
+    set(GEMMI_BUILD_EXAMPLES OFF)
+    message("-- ARM architecture is on")
+#    set(MSGPACK_32BIT ON)
 endif()
+
+
 
 ################################################################################
 # Set options
@@ -62,19 +76,20 @@ file( GLOB_RECURSE PROJECT_SOURCE "${PROJECT_SOURCE_DIR}/*.c" )
 file( GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h" )
 
 ################################################################################
-# GTest 
+# GTest
 ################################################################################
-enable_testing()
-set(BUILD_GMOCK OFF)
-add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
-set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
-add_subdirectory(test)
-
+if(GEMMI_TESTING)
+  enable_GEMMI_TESTING()
+  set(BUILD_GMOCK OFF)
+  add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
+  set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
+  add_subdirectory(test)
+  include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+endif()
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
 include_directories(${PROJECT_DEPENDENCIES_DIR}/msgpackc/include)
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 include_directories(${PROJECT_INCLUDE_DIR})
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
@@ -89,7 +104,7 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
 ################################################################################
 # Add examples
 ################################################################################
-if(ADD_EXAMPLES)
+if(GEMMI_BUILD_EXAMPLES)
   file( GLOB_RECURSE EXAMPLE_SOURCES "${PROJECT_EXAMPLES_DIR}/*/CMakeLists.txt")
   message("-- Examples will be added")
   foreach(EXAMPLE ${EXAMPLE_SOURCES})
@@ -98,8 +113,8 @@ if(ADD_EXAMPLES)
   endforeach(EXAMPLE)
 endif()
 ################################################################################
-# Install project 
+# Install project
 ################################################################################
 message("-- Project will be installed to: ${CMAKE_INSTALL_PREFIX}")
 install( DIRECTORY "${PROJECT_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include" )
-install( TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/libs/" COMPONENT library )
+install( TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library )
