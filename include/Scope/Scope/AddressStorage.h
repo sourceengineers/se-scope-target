@@ -6,9 +6,9 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  * @brief        Impelments the channels, which will be attached to the scope
- * 
+ *
  ******************************************************************************/
- 
+
 #ifndef ADDRESSSTORAGE_H_
 #define ADDRESSSTORAGE_H_
 
@@ -22,7 +22,7 @@
 ******************************************************************************/
 typedef struct __AddressStoragePrivateData* AddressStorageHandle;
 
-static const size_t maxAddrNameLength = 30;
+#define maxAddrNameLength 30
 
 typedef struct {
     char name[maxAddrNameLength];
@@ -32,7 +32,7 @@ typedef struct {
 } AddressDefinition;
 
 /******************************************************************************
- Public functions 
+ Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
 AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses);

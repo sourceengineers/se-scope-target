@@ -118,8 +118,8 @@ TEST(Scope, test_msgpack)
 
   uint8_t data[maxLength];
 
-  uint32_t  addrOne = __builtin_bswap32((uint32_t) &testVarFloat);
-  uint32_t  addrTwo = __builtin_bswap32((uint32_t) &testVarInt);
+  uint32_t  addrOne = __builtin_bswap32((uint32_t) ((uint32_t*) &testVarFloat));
+  uint32_t  addrTwo = __builtin_bswap32((uint32_t) ((uint32_t*)&testVarInt));
 
   char addrBytesOne[5];
   copyByte(addrBytesOne, &addrOne);

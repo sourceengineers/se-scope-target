@@ -34,9 +34,9 @@ static void streamGetData(IFloatStreamHandle iFloatStream, float* data, const si
 TEST(Trigger, test_normal)
 {
   IFloatStream stream = *FloatStream_getFloatStream(FloatStream_create(4));
-  
+
   TriggerHandle trigger = Trigger_create();
-  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .stream = stream, .mode = TRIGGER_NORMAL, .channelId = 1};
+  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_NORMAL, .stream = stream, .channelId = 1};
 
   stream.flush(&stream);
   stream.writeData(&stream, 1.1f);
@@ -57,7 +57,7 @@ TEST(Trigger, test_normal)
   stream.writeData(&stream, 1.1f);
   conf.level = 3.3f;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
+  isTriggered = Trigger_run(trigger, 1);
   ASSERT_EQ(isTriggered, false);
 
   stream.flush(&stream);
@@ -66,8 +66,8 @@ TEST(Trigger, test_normal)
   conf.level = 3.3f;
   conf.edge = TRIGGER_EDGE_NEGATIVE;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
-  ASSERT_EQ(isTriggered, true);    
+  isTriggered = Trigger_run(trigger, 1);
+  ASSERT_EQ(isTriggered, true);
 
   stream.flush(&stream);
   stream.writeData(&stream, 5.5f);
@@ -75,8 +75,8 @@ TEST(Trigger, test_normal)
   conf.level = 6.6f;
   conf.edge = TRIGGER_EDGE_NEGATIVE;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
-  ASSERT_EQ(isTriggered, false);  
+  isTriggered = Trigger_run(trigger, 1);
+  ASSERT_EQ(isTriggered, false);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -84,8 +84,8 @@ TEST(Trigger, test_normal)
   conf.level = -4.4f;
   conf.edge = TRIGGER_EDGE_NEGATIVE;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
-  ASSERT_EQ(isTriggered, false);  
+  isTriggered = Trigger_run(trigger, 1);
+  ASSERT_EQ(isTriggered, false);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -93,7 +93,7 @@ TEST(Trigger, test_normal)
   conf.level = -4.4f;
   conf.edge = TRIGGER_EDGE_POSITIVE;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
+  isTriggered = Trigger_run(trigger, 1);
   ASSERT_EQ(isTriggered, true);
 
   stream.flush(&stream);
@@ -102,8 +102,8 @@ TEST(Trigger, test_normal)
   conf.level = -4.4f;
   conf.edge = TRIGGER_EDGE_POSITIVE;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
-  ASSERT_EQ(isTriggered, true);  
+  isTriggered = Trigger_run(trigger, 1);
+  ASSERT_EQ(isTriggered, true);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -111,8 +111,8 @@ TEST(Trigger, test_normal)
   conf.level = -6.6f;
   conf.edge = TRIGGER_EDGE_POSITIVE;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
-  ASSERT_EQ(isTriggered, false);  
+  isTriggered = Trigger_run(trigger, 1);
+  ASSERT_EQ(isTriggered, false);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -120,7 +120,7 @@ TEST(Trigger, test_normal)
   conf.level = 3.3f;
   conf.edge = TRIGGER_EDGE_POSITIVE;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
+  isTriggered = Trigger_run(trigger, 1);
   ASSERT_EQ(isTriggered, true);
 
   stream.flush(&stream);
@@ -129,8 +129,8 @@ TEST(Trigger, test_normal)
   conf.level = -3.3f;
   conf.edge = TRIGGER_EDGE_POSITIVE;
   Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);  
-  ASSERT_EQ(isTriggered, true);  
+  isTriggered = Trigger_run(trigger, 1);
+  ASSERT_EQ(isTriggered, true);
 }
 
 TEST(Trigger, test_continuous)
@@ -138,12 +138,12 @@ TEST(Trigger, test_continuous)
   IFloatStream stream;
   stream.length = &streamGetSize;
   stream.read = &streamGetData;
-  
+
   TriggerHandle trigger = Trigger_create();
-  TriggerConfiguration conf = {.stream = stream, .mode = TRIGGER_CONTINUOUS};
-  
+  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_CONTINUOUS, .stream = stream, .channelId = 1};
+
   bool isTriggered = Trigger_run(trigger, 1);
 
-  ASSERT_EQ(isTriggered, false);  
+  ASSERT_EQ(isTriggered, false);
 
 }

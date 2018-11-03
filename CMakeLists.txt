@@ -18,26 +18,22 @@ set(PROJECT_NAME
 ################################################################################
 # Set options
 ################################################################################
-#set(CMAKE_C_COMPILER gcc)
-#set(CMAKE_CXX_COMPILER g++)
-
-set(ARCHITECTURE_32BIT ON)
 
 set(CMAKE_BUILD_TYPE DEBUG)
 
 if(ARCHITECTURE STREQUAL "X86")
     message("-- x86 architecture is on")
-    set(CMAKE_C_FLAGS -m32)
-    set(CMAKE_CXX_FLAGS -m32)
     set(CMAKE_C_COMPILER /usr/bin/clang)
     set(CMAKE_CXX_COMPILER /usr/bin/clang++)
-    
+    set(CMAKE_C_FLAGS -m32)
+    set(CMAKE_CXX_FLAGS "-m32 -fpermissive")
+
     set(MSGPACK_32BIT ON)
     set(GEMMI_TESTING ON)
-    
+
     set(MSGPACK_ENABLE_SHARED OFF)
     set(BUILD_SHARED_LIBS OFF)
-    
+
     set(GEMMI_BUILD_EXAMPLES ON)
 
 elseif(ARCHITECTURE STREQUAL "EMBEDDED")
