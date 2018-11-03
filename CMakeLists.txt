@@ -15,8 +15,6 @@ set(PROJECT_NAME
     gemmi
 )
 
-project(${PROJECT_NAME})
-
 ################################################################################
 # Set options
 ################################################################################
@@ -27,26 +25,35 @@ set(ARCHITECTURE_32BIT ON)
 
 set(CMAKE_BUILD_TYPE DEBUG)
 
-if(ARCHITECTURE STREQUAL "X64")
-    message("-- x64 architecture is on")
+if(ARCHITECTURE STREQUAL "X86")
+    message("-- x86 architecture is on")
     set(CMAKE_C_FLAGS -m32)
     set(CMAKE_CXX_FLAGS -m32)
+    set(CMAKE_C_COMPILER /usr/bin/clang)
+    set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+    
     set(MSGPACK_32BIT ON)
+    set(GEMMI_TESTING ON)
+    
+    set(MSGPACK_ENABLE_SHARED OFF)
+    set(BUILD_SHARED_LIBS OFF)
+    
+    set(GEMMI_BUILD_EXAMPLES ON)
 
 elseif(ARCHITECTURE STREQUAL "EMBEDDED")
+    message("-- ARM architecture is on")
     # Setoptions so msgpack will compile
     set(MSGPACK_BUILD_EXAMPLES OFF)
     set(MSGPACK_BOOST OFF)
     set(MSGPACK_ENABLE_SHARED OFF)
     set(BUILD_SHARED_LIBS OFF)
-
     set(GEMMI_TESTING OFF)
     set(GEMMI_BUILD_EXAMPLES OFF)
-    message("-- ARM architecture is on")
 #    set(MSGPACK_32BIT ON)
 endif()
 
 
+project(${PROJECT_NAME})
 
 ################################################################################
 # Set options
@@ -79,8 +86,8 @@ file( GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h" )
 # GTest
 ################################################################################
 if(GEMMI_TESTING)
-  enable_GEMMI_TESTING()
-  set(BUILD_GMOCK OFF)
+  enable_testing()
+  set(BUILD_GMOCK ON)
   add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
   set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
   add_subdirectory(test)
