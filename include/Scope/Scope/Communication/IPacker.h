@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <Scope/Channel.h>
 #include <Scope/GeneralPurpose/ByteStream.h>
+#include <Scope/GeneralPurpose/IIntStream.h>
 
 /******************************************************************************
  Define interface handle data
@@ -42,7 +43,7 @@ typedef struct IPackerStruct {
 
   void (*prepareChannel)(IPackerHandle iPacker, IFloatStreamHandle stream, const uint32_t channelId);
   void (*prepareTimeIncrement)(IPackerHandle iPacker, const uint32_t timeIncrement);
-  void (*prepareTimestamp)(IPackerHandle iPacker, IFloatStreamHandle timestamp);
+  void (*prepareTimestamp)(IPackerHandle iPacker, IIntStreamHandle timestamp);
   void (*prepareTrigger)(IPackerHandle iPacker, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);
   void (*prepareFlowControl)(IPackerHandle iPacker, const char* flowcontrol);
   void (*prepareAddressAnnouncement)(IPackerHandle iPacker, const char* name, const char* type, const uint32_t address);

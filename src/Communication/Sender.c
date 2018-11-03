@@ -88,7 +88,7 @@ void Sender_scopeData(SenderHandle self){
 
   self->packer->prepareTrigger(self->packer, isTriggered, channelId, triggerTimestamp);
 
-  IFloatStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
+  IIntStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
   self->packer->prepareTimestamp(self->packer, scopeTimestamp);
 
   if(self->scope->transmitTimestampInc(self->scope) == true){

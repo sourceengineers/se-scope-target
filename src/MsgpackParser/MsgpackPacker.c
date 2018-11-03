@@ -79,7 +79,7 @@ typedef struct __MsgpackPackerPrivateData
 
   /* Timestamp preparation data */
   bool timestampIsPrepared;
-  IFloatStreamHandle currentTimestamp;
+  IIntStreamHandle currentTimestamp;
 
   /* Timestamp increment preparation data */
   bool timestampIncrementIsPrepared;
@@ -154,7 +154,7 @@ static void prepareTimeIncrement(IPackerHandle iPacker, const uint32_t timeIncre
   self->timestampIncrementIsPrepared = true;
 }
 
-static void prepareTimestamp(IPackerHandle iPacker, IFloatStreamHandle timestamp){
+static void prepareTimestamp(IPackerHandle iPacker, IIntStreamHandle timestamp){
   MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
 
   if(self->timestampIsPrepared == true){
@@ -265,11 +265,11 @@ static void packTimestamp(MsgpackPackerHandle self){
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_T_STMP, strlen(KEYWORD_T_STMP));
 
   const size_t dataLength = self->currentTimestamp->length(self->currentTimestamp);
-  float data[dataLength];
+  uint32_t data[dataLength];
 
   self->currentTimestamp->read(self->currentTimestamp, data, dataLength);
   msgpack_pack_array(&self->pkPayload, dataLength);
-  for (int i = 0; i < dataLength; ++i) {  
+  for (int i = 0; i < dataLength; ++i) {
     msgpack_pack_uint32(&self->pkPayload, (uint32_t) data[i]);
   }
 

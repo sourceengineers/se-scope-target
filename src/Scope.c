@@ -13,6 +13,7 @@
 #include <Scope/MsgpackParser/MsgpackPacker.h>
 #include <Scope/Communication/Sender.h>
 #include <Scope/Communication/CommunicationFactory.h>
+#include <Scope/GeneralPurpose/IntRingBuffer.h>
 
 /******************************************************************************
  Define private data
@@ -31,7 +32,7 @@ typedef struct __ScopePrivateData
 
   /* Timestamping data */
   uint32_t timeIncrement;
-  FloatRingBufferHandle timeStamp;
+  IntRingBufferHandle timeStamp;
   TIMESTAMPING_MODE timestampingMode;
   uint32_t currentTimestamp;
 
@@ -115,9 +116,9 @@ static bool transmitTimestampInc(IScopeHandle self){
   return true;
 }
 
-static IFloatStreamHandle getTimestamp(IScopeHandle self){
+static IIntStreamHandle getTimestamp(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
-  return FloatRingBuffer_getFloatStream(scope->timeStamp);
+  return IntRingBuffer_getIntStream(scope->timeStamp);
 }
 /******************************************************************************
  Public functions
@@ -161,14 +162,14 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
   self->buffers = malloc(sizeof(FloatRingBufferHandle) * numberOfChannels);
   self->numberOfChannels = numberOfChannels;
-  
+
   for (size_t i = 0; i < numberOfChannels; i++) {
     self->buffers[i] = FloatRingBuffer_create(channelSize);
     self->channels[i] = Channel_create(self->buffers[i]);
   }
   self->timeStampBuffer = FloatRingBuffer_create(channelSize);
-  self->timeStamp = FloatRingBuffer_create(channelSize);
-  
+  self->timeStamp = IntRingBuffer_create(channelSize);
+
   /* Create Trigger */
   self->trigger = Trigger_create();
 
@@ -195,8 +196,8 @@ ScopeHandle Scope_create(const size_t channelSize,
                                    self->sender);
 
   /* Create command factory */
-  self->commandFactory = CommandFactory_create(&self->iScope, 
-                                               self->channels, 
+  self->commandFactory = CommandFactory_create(&self->iScope,
+                                               self->channels,
                                                self->numberOfChannels,
                                                self->trigger,
                                                Receiver_getIUnpacker(self->receiver));
@@ -268,8 +269,7 @@ void Scope_poll(ScopeHandle self, uint32_t timeStamp){
     prepareTimeStamp = timeStamp;
   }
 
-  const float timestampToCast = (float) prepareTimeStamp;
-  FloatRingBuffer_write(self->timeStamp, &timestampToCast, 1);
+  IntRingBuffer_write(self->timeStamp, &prepareTimeStamp, 1);
 
   for (size_t i = 0; i < self->numberOfChannels; i++) {
     Channel_poll(self->channels[i]);

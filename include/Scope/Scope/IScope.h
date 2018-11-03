@@ -8,14 +8,14 @@
  * @brief        Interface for functions which will be used by the commands.
  *               This interface will not be visible for parts outside of the
  *               scope
- * 
+ *
  ******************************************************************************/
- 
+
 #ifndef ISCOPE_H_
 #define ISCOPE_H_
 
 #include <stdint.h>
-#include <Scope/GeneralPurpose/IFloatStream.h>
+#include <Scope/GeneralPurpose/IIntStream.h>
 
 /******************************************************************************
  Define interface handle data
@@ -33,7 +33,7 @@ typedef struct IScopeStruct {
   void (*setTimeIncrement)(IScopeHandle self, uint32_t timeIncrement);
   bool (*transmitTimestampInc)(IScopeHandle self);
   uint32_t (*getTimeIncrement)(IScopeHandle self);
-  IFloatStreamHandle (*getTimestamp)(IScopeHandle self);
+  IIntStreamHandle (*getTimestamp)(IScopeHandle self);
 } IScope ;
 
 #endif
