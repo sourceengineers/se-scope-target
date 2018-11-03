@@ -269,14 +269,8 @@ static void packTimestamp(MsgpackPackerHandle self){
 
   self->currentTimestamp->read(self->currentTimestamp, data, dataLength);
   msgpack_pack_array(&self->pkPayload, dataLength);
-  for (int i = 0; i < dataLength; ++i) {
-
-    if((int) data[i] == -1){
-      msgpack_pack_int32(&self->pkPayload, (uint32_t) data[i]);
-    } else {
-      msgpack_pack_uint32(&self->pkPayload, (uint32_t) data[i]);
-    }
-
+  for (int i = 0; i < dataLength; ++i) {  
+    msgpack_pack_uint32(&self->pkPayload, (uint32_t) data[i]);
   }
 
 }
