@@ -241,8 +241,8 @@ TEST(Scope, test_announce)
   const float testVarFloat = 4.4f;
   const uint32_t testVarInt = 5;
 
-  Scope_setWatchAddresses(scope, "TestVarFloat", &testVarFloat, FLOAT, 0);
-  Scope_setWatchAddresses(scope, "TestVarInt", &testVarInt, UINT32 , 1);
+  Scope_setAnnounceAddresses(scope, "TestVarFloat", &testVarFloat, FLOAT, 0);
+  Scope_setAnnounceAddresses(scope, "TestVarInt", &testVarInt, UINT32 , 1);
 
   Scope_announceWatchAddresses(scope);
 

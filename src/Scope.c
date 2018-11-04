@@ -338,8 +338,8 @@ void Scope_announceWatchAddresses(ScopeHandle self){
   Sender_transmit(self->sender);
 }
 
-void Scope_setWatchAddresses(ScopeHandle self, const char* name, const void* address,
+void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
                              const uint32_t addressId){
-  AddressStorage_setWatchAddress(self->addressStorage, name, address, type, addressId);
+  AddressStorage_setAnnounceAddress(self->addressStorage, name, address, type, addressId);
 }

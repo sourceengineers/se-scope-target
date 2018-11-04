@@ -86,7 +86,7 @@ void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
 void Scope_announceWatchAddresses(ScopeHandle self);
 
 /* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
-void Scope_setWatchAddresses(ScopeHandle self, const char* name, const void* address,
+void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
                              const uint32_t addressId);
 

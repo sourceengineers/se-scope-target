@@ -59,9 +59,9 @@ int main(int argc, char *argv[] ){
   float var2;
   uint32_t var3;
 
-  Scope_setWatchAddresses(scope,(const char*) "VAR1", &var1, UINT8, 0);
-  Scope_setWatchAddresses(scope,(const char*) "VAR2", &var2, FLOAT, 1);
-  Scope_setWatchAddresses(scope,(const char*) "VAR3", &var3, UINT32, 2);
+  Scope_setAnnounceAddresses(scope,(const char*) "VAR1", &var1, UINT8, 0);
+  Scope_setAnnounceAddresses(scope,(const char*) "VAR2", &var2, FLOAT, 1);
+  Scope_setAnnounceAddresses(scope,(const char*) "VAR3", &var3, UINT32, 2);
 
   Scope_announceWatchAddresses(scope);
 

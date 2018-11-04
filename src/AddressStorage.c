@@ -64,7 +64,7 @@ void AddressStorage_flagAddressesAsSend(AddressStorageHandle self){
   }
 }
 
-void AddressStorage_setWatchAddress(AddressStorageHandle self, const char* name, const void* address,
+void AddressStorage_setAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
                                     const DATA_TYPES type,
                                     const uint32_t addressId){
 

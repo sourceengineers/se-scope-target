@@ -39,7 +39,7 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses);
 
 /* Sets a new definition of a address. If the addressId is bigger than the maximum amount of elements,
  * the function will return without doing anything */
-void AddressStorage_setWatchAddress(AddressStorageHandle self, const char* name, const void* address,
+void AddressStorage_setAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
                                     const DATA_TYPES type,
                                     const uint32_t addressId);
 
