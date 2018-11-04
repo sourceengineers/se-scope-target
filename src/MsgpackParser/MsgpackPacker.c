@@ -270,7 +270,11 @@ static void packTimestamp(MsgpackPackerHandle self){
   self->currentTimestamp->read(self->currentTimestamp, data, dataLength);
   msgpack_pack_array(&self->pkPayload, dataLength);
   for (int i = 0; i < dataLength; ++i) {
+#if (ARCH_SIZE_32)
     msgpack_pack_uint32(&self->pkPayload, (gemmi_uint) data[i]);
+#else
+    msgpack_pack_uint64(&self->pkPayload, (gemmi_uint) data[i]);
+#endif
   }
 
 }
@@ -283,7 +287,12 @@ static void packTimestampIncrement(MsgpackPackerHandle self){
 
   msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_T_INC));
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_T_INC, strlen(KEYWORD_T_INC));
-  msgpack_pack_int32(&self->pkPayload, self->timestampIncrement);
+
+#if (ARCH_SIZE_32)
+  msgpack_pack_uint32(&self->pkPayload, self->timestampIncrement);
+#else
+  msgpack_pack_uint64(&self->pkPayload, self->timestampIncrement);
+#endif
 }
 
 static void packTrigger(MsgpackPackerHandle self){
@@ -308,7 +317,12 @@ static void packTrigger(MsgpackPackerHandle self){
 
   msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_TGR_CL_DATA_IND));
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_TGR_CL_DATA_IND, strlen(KEYWORD_TGR_CL_DATA_IND));
-  msgpack_pack_int32(&self->pkPayload, self->triggerTimestamp);
+
+#if (ARCH_SIZE_32)
+  msgpack_pack_uint32(&self->pkPayload, self->triggerTimestamp);
+#else
+  msgpack_pack_uint64(&self->pkPayload, self->triggerTimestamp);
+#endif
 
   msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_TGR_CL_ID));
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_TGR_CL_ID, strlen(KEYWORD_TGR_CL_ID));
@@ -350,7 +364,13 @@ static void packAddresses(MsgpackPackerHandle self){
     msgpack_pack_str_body(&self->pkPayload, self->namesOfAddresses[i], strlen(self->namesOfAddresses[i]));
 
     msgpack_pack_array(&self->pkPayload, 2);
+
+#if (ARCH_SIZE_32)
     msgpack_pack_uint32(&self->pkPayload, self->addresses[i]);
+#else
+    msgpack_pack_uint64(&self->pkPayload, self->addresses[i]);
+#endif
+
     msgpack_pack_str(&self->pkPayload, strlen(self->typesOfAddresses[i]));
     msgpack_pack_str_body(&self->pkPayload, self->typesOfAddresses[i], strlen(self->typesOfAddresses[i]));
   }
