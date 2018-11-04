@@ -99,7 +99,7 @@ static void setState(ChannelHandle self, CHANNEL_STATES state){
 ChannelHandle Channel_create(FloatRingBufferHandle buffer){
 
   ChannelHandle self = malloc(sizeof(ChannelPrivateData));
-  self->stream = FloatStream_getFloatStream(FloatStream_create(4));
+  self->stream = FloatStream_getIFloatStream(FloatStream_create(4));
 
   /* Set private variables */
   self->state = CHANNEL_INIT;

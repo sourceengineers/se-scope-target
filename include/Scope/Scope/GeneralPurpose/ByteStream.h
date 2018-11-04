@@ -14,7 +14,7 @@
 #ifndef BYTESTREAM_H_
 #define BYTESTREAM_H_
 
-#include <Scope/GeneralPurpose/IFloatStream.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -35,7 +35,27 @@ ByteStreamHandle ByteStream_create(size_t capacity);
 void ByteStream_destroy(ByteStreamHandle self);
 
 /* Returns the IByteStream interface */
-IByteStreamHandle ByteStream_getByteStream(ByteStreamHandle self);
+IByteStreamHandle ByteStream_getIByteStream(ByteStreamHandle self);
 
+/* Flushes the stream */
+void ByteStream_flush(ByteStreamHandle self);
+
+/* Returns the amount of data currently pending in the stream */
+size_t ByteStream_length(ByteStreamHandle self);
+
+/* Writes "length" amount of data into the stream */
+void ByteStream_write(ByteStreamHandle self, const uint8_t* data, const size_t length);
+
+/* Writes one single data point into the stream */
+void ByteStream_writeByte(ByteStreamHandle self, const uint8_t data);
+
+/* Reads "length" amount of data from the stream and writes it into "data" */
+void ByteStream_read(ByteStreamHandle self, uint8_t* data, const size_t length);
+
+/* Returns one single data point */
+uint8_t ByteStream_readByte(ByteStreamHandle self);
+
+/* Returns of a data point is ready to be read or not */
+bool ByteStream_byteIsReady(ByteStreamHandle self);
 
 #endif

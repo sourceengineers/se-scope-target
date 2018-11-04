@@ -35,7 +35,27 @@ FloatStreamHandle FloatStream_create(size_t capacity);
 void FloatStream_destroy(FloatStreamHandle self);
 
 /* Returns the IFloatStream interface */
-IFloatStreamHandle FloatStream_getFloatStream(FloatStreamHandle self);
+IFloatStreamHandle FloatStream_getIFloatStream(FloatStreamHandle self);
 
+/* Flushes the stream */
+void FloatStream_flush(FloatStreamHandle self);
+
+/* Returns the amount of data currently pending in the stream */
+size_t FloatStream_length(FloatStreamHandle self);
+
+/* Writes "length" amount of data into the stream */
+void FloatStream_write(FloatStreamHandle self, const float* data, const size_t length);
+
+/* Writes one single data point into the stream */
+void FloatStream_writeData(FloatStreamHandle self, const float data);
+
+/* Reads "length" amount of data from the stream and writes it into "data" */
+void FloatStream_read(FloatStreamHandle self, float* data, const size_t length);
+
+/* Returns one single data point */
+float FloatStream_readData(FloatStreamHandle self);
+
+/* Returns of a data point is ready to be read or not */
+bool FloatStream_dataIsReady(FloatStreamHandle self);
 
 #endif

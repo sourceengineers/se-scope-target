@@ -39,9 +39,35 @@ void ByteStream_destroy(ByteStreamHandle self){
   self = NULL;
 }
 
-IByteStreamHandle ByteStream_getByteStream(ByteStreamHandle self){
+IByteStreamHandle ByteStream_getIByteStream(ByteStreamHandle self){
   return ByteRingBuffer_getByteStream(self->buffer);
 }
 
+void ByteStream_flush(ByteStreamHandle self){
+  self->iByteStream.flush(&self->iByteStream);
+}
 
+size_t ByteStream_length(ByteStreamHandle self){
+  return self->iByteStream.length(&self->iByteStream);
+}
+
+void ByteStream_write(ByteStreamHandle self, const uint8_t* data, const size_t length){
+  self->iByteStream.write(&self->iByteStream, data, length);
+}
+
+void ByteStream_writeByte(ByteStreamHandle self, const uint8_t data){
+  self->iByteStream.writeByte(&self->iByteStream, data);
+}
+
+void ByteStream_read(ByteStreamHandle self, uint8_t* data, const size_t length){
+  self->iByteStream.read(&self->iByteStream, data, length);
+}
+
+uint8_t ByteStream_readData(ByteStreamHandle self){
+  return self->iByteStream.readByte(&self->iByteStream);
+}
+
+bool ByteStream_dataIsReady(ByteStreamHandle self){
+  return self->iByteStream.byteIsReady(&self->iByteStream);
+}
 

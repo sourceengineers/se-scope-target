@@ -180,7 +180,7 @@ ScopeHandle Scope_create(const size_t channelSize,
 
   /* Create the sender and packer */
   self->msgpackPacker = MsgpackPacker_create(outputBufferSize, self->numberOfChannels, maxNumberOfAddresses,
-                                             ByteStream_getByteStream(self->outputStream),
+                                             ByteStream_getIByteStream(self->outputStream),
                                              communicationValidator);
   self->sender = Sender_create(MsgpackPacker_getIPacker(self->msgpackPacker), self->channels, self->numberOfChannels,
                                self->trigger,
@@ -191,7 +191,7 @@ ScopeHandle Scope_create(const size_t channelSize,
   /* Create the unpacker and receiver */
   self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
   self->receiver = Receiver_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker),
-                                   ByteStream_getByteStream(self->inputStream),
+                                   ByteStream_getIByteStream(self->inputStream),
                                    communicationValidator,
                                    self->sender);
 
@@ -230,10 +230,7 @@ void Scope_destroy(ScopeHandle self){
 
 void Scope_command(ScopeHandle self){
 
-  IByteStreamHandle stream;
-  stream = ByteStream_getByteStream(self->inputStream);
-
-  if(stream->length(stream) <= 0){
+  if(ByteStream_length(self->inputStream) <= 0){
     return;
   }
 
@@ -251,11 +248,11 @@ void Scope_command(ScopeHandle self){
 }
 
 IByteStreamHandle Scope_getInputStream(ScopeHandle self){
-  return ByteStream_getByteStream(self->inputStream);
+  return ByteStream_getIByteStream(self->inputStream);
 }
 
 IByteStreamHandle Scope_getOutputStream(ScopeHandle self){
-  return ByteStream_getByteStream(self->outputStream);
+  return ByteStream_getIByteStream(self->outputStream);
 }
 
 void Scope_poll(ScopeHandle self, uint32_t timeStamp){

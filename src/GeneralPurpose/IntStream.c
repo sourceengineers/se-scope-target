@@ -39,6 +39,34 @@ void IntStream_destroy(IntStreamHandle self){
   self = NULL;
 }
 
-IIntStreamHandle IntStream_getIntStream(IntStreamHandle self){
+IIntStreamHandle IntStream_getIIntStream(IntStreamHandle self){
   return IntRingBuffer_getIntStream(self->buffer);
+}
+
+void IntStream_flush(IntStreamHandle self){
+  self->iIntStream.flush(&self->iIntStream);
+}
+
+size_t IntStream_length(IntStreamHandle self){
+  return self->iIntStream.length(&self->iIntStream);
+}
+
+void IntStream_write(IntStreamHandle self, const uint32_t* data, const size_t length){
+  self->iIntStream.write(&self->iIntStream, data, length);
+}
+
+void IntStream_writeData(IntStreamHandle self, const uint32_t data){
+  self->iIntStream.writeData(&self->iIntStream, data);
+}
+
+void IntStream_read(IntStreamHandle self, uint32_t* data, const size_t length){
+  self->iIntStream.read(&self->iIntStream, data, length);
+}
+
+uint32_t IntStream_readData(IntStreamHandle self){
+  return self->iIntStream.readData(&self->iIntStream);
+}
+
+bool IntStream_dataIsReady(IntStreamHandle self){
+  return self->iIntStream.dataIsReady(&self->iIntStream);
 }

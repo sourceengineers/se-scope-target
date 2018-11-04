@@ -10,7 +10,7 @@ using namespace std;
 
 TEST(CommandTrigger, test_command)
 {
-  IFloatStream stream = *FloatStream_getFloatStream(FloatStream_create(4));
+  IFloatStream stream = *FloatStream_getIFloatStream(FloatStream_create(4));
 
   TriggerHandle trigger = Trigger_create();
   TriggerConfiguration conf = {.level = 4.4f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_NORMAL, .stream = stream, .channelId = 0};
