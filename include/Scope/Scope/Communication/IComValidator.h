@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define interface handle data

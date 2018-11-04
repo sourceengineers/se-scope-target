@@ -15,15 +15,15 @@
 /* Class data */
 typedef struct __IntRingBufferPrivateData
 {
-  uint32_t* data;
-  uint32_t* head;
-  uint32_t* tail;
+  gemmi_uint* data;
+  gemmi_uint* head;
+  gemmi_uint* tail;
   size_t capacity;
   IIntStream stream;
 } IntRingBufferPrivateData ;
 
 /* Returns the next index of the given index */
-static uint32_t* nextIndex(IntRingBufferHandle self, uint32_t* index);
+static gemmi_uint* nextIndex(IntRingBufferHandle self, gemmi_uint* index);
 
 /* Increments the tail index */
 static bool incTail(IntRingBufferHandle self);
@@ -34,7 +34,7 @@ static bool incHead(IntRingBufferHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void openStream(IIntStreamHandle uint32_tstream, uint32_t* data, const size_t capacity){
+static void openStream(IIntStreamHandle gemmi_uintstream, gemmi_uint* data, const size_t capacity){
   return;
 }
 
@@ -48,16 +48,16 @@ static bool dataIsReady(IIntStreamHandle stream){
   }
 }
 
-static const uint32_t readData(IIntStreamHandle stream){
+static const gemmi_uint readData(IIntStreamHandle stream){
   IntRingBufferHandle self = (IntRingBufferHandle) stream->implementer;
 
-  uint32_t data;
+  gemmi_uint data;
   IntRingBuffer_read(self, &data, 1);
 
   return data;
 }
 
-static void readAll(IIntStreamHandle stream, uint32_t* data, const size_t length){
+static void readAll(IIntStreamHandle stream, gemmi_uint* data, const size_t length){
   IntRingBufferHandle self = (IntRingBufferHandle) stream->implementer;
 
   IntRingBuffer_read(self, data, length);
@@ -69,13 +69,13 @@ static size_t streamLength(IIntStreamHandle stream){
   return IntRingBuffer_usedData(self);
 }
 
-static void writeData(IIntStreamHandle stream, const uint32_t data){
+static void writeData(IIntStreamHandle stream, const gemmi_uint data){
   IntRingBufferHandle self = (IntRingBufferHandle) stream->implementer;
 
   IntRingBuffer_write(self, &data, 1);
 }
 
-static void writeAll(IIntStreamHandle stream, const uint32_t* data, const size_t length){
+static void writeAll(IIntStreamHandle stream, const gemmi_uint* data, const size_t length){
   IntRingBufferHandle self = (IntRingBufferHandle) stream->implementer;
 
   IntRingBuffer_write(self, data, length);
@@ -90,8 +90,8 @@ static void flush(IIntStreamHandle stream){
   IntRingBuffer_clear(self);
 }
 
-static uint32_t* nextIndex(IntRingBufferHandle self, uint32_t* index){
-  const uint32_t positionRelative = ((index + 1) - self->data);
+static gemmi_uint* nextIndex(IntRingBufferHandle self, gemmi_uint* index){
+  const gemmi_uint positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
 }
 
@@ -131,7 +131,7 @@ IntRingBufferHandle IntRingBuffer_create(size_t capacity){
   self->stream.flush = flush;
 
   self->capacity = capacity + 1;
-  self->data = malloc(sizeof(uint32_t) * self->capacity);
+  self->data = malloc(sizeof(gemmi_uint) * self->capacity);
 
   self->tail = self->data;
   self->head = self->data;
@@ -168,7 +168,7 @@ void IntRingBuffer_clear(IntRingBufferHandle self){
   self->tail = self->data;
 }
 
-ssize_t IntRingBuffer_write(IntRingBufferHandle self, const uint32_t* data, const size_t length){
+ssize_t IntRingBuffer_write(IntRingBufferHandle self, const gemmi_uint* data, const size_t length){
 
   if(length > IntRingBuffer_freeData(self)){
     return -1;
@@ -186,7 +186,7 @@ ssize_t IntRingBuffer_write(IntRingBufferHandle self, const uint32_t* data, cons
   return i;
 }
 
-ssize_t IntRingBuffer_read(IntRingBufferHandle self, uint32_t* data, const size_t length){
+ssize_t IntRingBuffer_read(IntRingBufferHandle self, gemmi_uint* data, const size_t length){
 
   if(length > IntRingBuffer_usedData(self)){
     return -1;

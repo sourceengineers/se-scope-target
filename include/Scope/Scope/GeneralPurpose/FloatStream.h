@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <Scope/GeneralPurpose/IFloatStream.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

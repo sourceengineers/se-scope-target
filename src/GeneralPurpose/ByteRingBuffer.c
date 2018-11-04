@@ -92,7 +92,7 @@ static void flush(IByteStreamHandle stream){
 }
 
 static uint8_t* nextIndex(ByteRingBufferHandle self, uint8_t* index){
-  const uint32_t positionRelative = ((index + 1) - self->data);
+  const gemmi_uint positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
 }
 

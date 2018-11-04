@@ -22,6 +22,7 @@
 #define TRIGGER_H_
 
 #include <Scope/Channel.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Constants to represent the different edges on which the trigger can be 
    configured */
@@ -37,7 +38,7 @@ typedef struct {
  int edge;
  TRIGGER_MODE mode;
  IFloatStream stream;
- uint32_t channelId;
+ gemmi_uint channelId;
 } TriggerConfiguration ;
 
 
@@ -47,7 +48,7 @@ typedef struct {
 typedef struct __TriggerPrivateData* TriggerHandle;
 
 /* Typedef for a function pointer, to easier handle the strategies */
-typedef bool (*TriggerStrategy)(TriggerHandle self, const uint32_t index);
+typedef bool (*TriggerStrategy)(TriggerHandle self, const gemmi_uint index);
 
 /******************************************************************************
 Public functions 
@@ -62,7 +63,7 @@ void Trigger_destroy(TriggerHandle self);
 bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf);
 
 /* Returns the triggered index */
-uint32_t Trigger_getTriggerIndex(TriggerHandle self);
+gemmi_uint Trigger_getTriggerIndex(TriggerHandle self);
 
 /* Returns if the trigger is triggered or not */
 bool Trigger_isTriggered(TriggerHandle self);
@@ -71,9 +72,9 @@ bool Trigger_isTriggered(TriggerHandle self);
 void Trigger_release(TriggerHandle self);
 
 /* Returns the id of the channel which is currently active */
-uint32_t Trigger_getChannelId(TriggerHandle self);
+gemmi_uint Trigger_getChannelId(TriggerHandle self);
 
 /* Function which calls the currently chosen trigger strategy */
-bool Trigger_run(TriggerHandle self, const uint32_t timstamp);
+bool Trigger_run(TriggerHandle self, const gemmi_uint timstamp);
 
 #endif

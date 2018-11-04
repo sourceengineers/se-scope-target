@@ -16,6 +16,7 @@
 #include <Scope/Command/ICommand.h>
 #include <Scope/Communication/Receiver.h>
 #include <Scope/Command/CommandRunning.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

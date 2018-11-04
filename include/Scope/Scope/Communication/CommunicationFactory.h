@@ -14,6 +14,7 @@
 
 #include <Scope/Communication/EthernetValidator.h>
 #include <Scope/Communication/IComValidator.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

@@ -14,6 +14,7 @@
 
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Indication for the trigger data */
 const int CHANNEL_CURRENT_DATA = 0;

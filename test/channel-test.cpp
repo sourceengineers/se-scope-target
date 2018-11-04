@@ -77,11 +77,11 @@ TEST(Channel, test_data_types)
   answer = stream->readData(stream);
   EXPECT_EQ((uint16_t) answer, 12);
   
-  uint32_t uint32Data = 12;  
+  gemmi_uint uint32Data = 12;
   Channel_setPollAddress(channel, &uint32Data, UINT32);
   Channel_poll(channel);
   answer = stream->readData(stream);
-  EXPECT_EQ((uint32_t) answer, 12);
+  EXPECT_EQ((gemmi_uint) answer, 12);
 
 /*  uint64_t uint64Data = 12;
   Channel_setPollAddress(channel, &uint64Data, UINT64);

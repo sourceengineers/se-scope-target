@@ -23,6 +23,7 @@
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Communication/IComValidator.h>
 #include <Scope/Communication/Sender.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 const size_t MAX_FIELD_LENGTH = 30;
 const size_t MAX_COMMAND_LENGTH = 30;

@@ -41,7 +41,7 @@ void CommandPollParser_configure(CommandPollParserHandle self){
   CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = (char*) "",
                                              .isInArray = false, .arrayIndex = 0 };
 
-  const uint32_t timestamp = self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
+  const gemmi_uint timestamp = self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
 
   self->iCommand->setCommandAttribute(self->iCommand, (void*) &timestamp);
 }

@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include <Scope/GeneralPurpose/IIntStream.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define interface handle data
@@ -27,12 +28,12 @@ typedef struct IScopeStruct* IScopeHandle;
 ******************************************************************************/
 typedef struct IScopeStruct {
   void* implementer;
-  void (*poll)(IScopeHandle self, uint32_t timeStamp);
+  void (*poll)(IScopeHandle self, gemmi_uint timeStamp);
   void (*transmit)(IScopeHandle self);
   void (*announce)(IScopeHandle self);
-  void (*setTimeIncrement)(IScopeHandle self, uint32_t timeIncrement);
+  void (*setTimeIncrement)(IScopeHandle self, gemmi_uint timeIncrement);
   bool (*transmitTimestampInc)(IScopeHandle self);
-  uint32_t (*getTimeIncrement)(IScopeHandle self);
+  gemmi_uint (*getTimeIncrement)(IScopeHandle self);
   IIntStreamHandle (*getTimestamp)(IScopeHandle self);
 } IScope ;
 

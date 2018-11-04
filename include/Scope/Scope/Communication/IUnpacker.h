@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define interface handle data
@@ -61,7 +62,7 @@ typedef struct IUnpackerStruct {
   bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
 
   /* Functions to fetch the data from commands */
-  uint32_t (*getIntFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
+  gemmi_uint (*getIntFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
   float (*getFloatFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
   bool (*getBoolFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
   void (*getStringFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information, char* targetStr, const int maxLenght);

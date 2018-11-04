@@ -30,6 +30,7 @@
 #include <Scope/Command/CommandPollParser.h>
 
 #include <Scope/IScope.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

@@ -36,6 +36,8 @@ static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t m
     return UINT16;
   } else if(strncmp(dataTypeName, UINT32_NAME, maxLength) == 0){
     return UINT32;
+  } else if(strncmp(dataTypeName, UINT64_NAME, maxLength) == 0){
+    return UINT64;
   } else if(strncmp(dataTypeName, FLOAT_NAME, maxLength) == 0){
     return FLOAT;
   }
@@ -83,7 +85,7 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
       CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = nameOfField,
                                                  .isInArray = true, .arrayIndex = 0 };
 
-      newAddresses[i] = (void*) (uint32_t) self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
+      newAddresses[i] = (void*) (gemmi_uint) self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
 
 
       char requestedDataType[20];

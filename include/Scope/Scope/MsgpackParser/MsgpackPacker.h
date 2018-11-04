@@ -16,6 +16,7 @@
 #include <Scope/Communication/IPacker.h>
 #include <Scope/Communication/IComValidator.h>
 #include <Scope/AddressStorage.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

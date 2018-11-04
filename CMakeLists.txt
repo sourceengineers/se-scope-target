@@ -22,9 +22,13 @@ set(PROJECT_NAME
 set(CMAKE_BUILD_TYPE DEBUG)
 
 if(ARCHITECTURE STREQUAL "X86")
+
+    # This option is used if the tests should be executed on a host machine,
+    # supporting 32 Bit architectures. This is useful since the micro controllers
+    # will probably run on 32 bit, but there are only few operating systems support this option
     message("-- x86 architecture is on")
-    set(CMAKE_C_COMPILER /usr/bin/clang)
-    set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+    set(CMAKE_C_COMPILER /usr/bin/gcc)
+    set(CMAKE_CXX_COMPILER /usr/bin/gcc++)
     set(CMAKE_C_FLAGS -m32)
     set(CMAKE_CXX_FLAGS "-m32 -fpermissive")
 
@@ -36,16 +40,44 @@ if(ARCHITECTURE STREQUAL "X86")
 
     set(GEMMI_BUILD_EXAMPLES ON)
 
+    # Inform the compiler to compile for 32 bit code
+    add_definitions(-DARCH_SIZE_32=1)
+
+elseif(ARCHITECTURE STREQUAL "X64")
+
+    # X64 Host machines should be able to run tests as well as examples
+    message("-- x64 architecture is on")
+    set(CMAKE_C_COMPILER /usr/bin/clang)
+    set(CMAKE_CXX_COMPILER /usr/bin/clang++)
+
+    set(MSGPACK_32BIT ON)
+    set(GEMMI_TESTING ON)
+
+    set(MSGPACK_ENABLE_SHARED ON)
+    set(BUILD_SHARED_LIBS ON)
+
+    # Inform the compiler to compile for 64 bit code
+    add_definitions(-DARCH_SIZE_32=0)
+
+    set(CMAKE_MACOSX_RPATH 1)
+
 elseif(ARCHITECTURE STREQUAL "EMBEDDED")
     message("-- ARM architecture is on")
-    # Setoptions so msgpack will compile
+
+    # Setoptions so msgpack will compile correctly
     set(MSGPACK_BUILD_EXAMPLES OFF)
     set(MSGPACK_BOOST OFF)
     set(MSGPACK_ENABLE_SHARED OFF)
     set(BUILD_SHARED_LIBS OFF)
+
+    # Disable testing and examples because they will not run on the
+    # host with a embedded compiler anyway
     set(GEMMI_TESTING OFF)
     set(GEMMI_BUILD_EXAMPLES OFF)
-#    set(MSGPACK_32BIT ON)
+
+    # Inform the compiler to compile for 32 bit code
+    add_definitions(-DARCH_SIZE_32=1)
+
 endif()
 
 

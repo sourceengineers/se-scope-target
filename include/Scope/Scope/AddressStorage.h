@@ -16,6 +16,7 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data
@@ -27,7 +28,7 @@ typedef struct __AddressStoragePrivateData* AddressStorageHandle;
 typedef struct {
     char name[maxAddrNameLength];
     DATA_TYPES type;
-    uint32_t address;
+    gemmi_uint address;
     bool hasToBeSent;
 } AddressDefinition;
 
@@ -41,13 +42,13 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses);
  * the function will return without doing anything */
 void AddressStorage_setAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
                                     const DATA_TYPES type,
-                                    const uint32_t addressId);
+                                    const gemmi_uint addressId);
 
 /* Returns how many addresses can be configured at maximum */
 const size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self);
 
 /* Returns a pointer to a address */
-AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const uint32_t addressId);
+AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const gemmi_uint addressId);
 
 /* Flags all Addresses as send */
 void AddressStorage_flagAddressesAsSend(AddressStorageHandle self);

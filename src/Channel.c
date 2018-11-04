@@ -42,38 +42,40 @@ static void setState(ChannelHandle self, CHANNEL_STATES state);
 ******************************************************************************/
 static float castDataToFloat(ChannelHandle self){
 
-  uint32_t transportData32;
+  gemmi_uint transportAddr;
 
   float data;
 
   switch (self->pollDataType) {
     case UINT8:
-      transportData32 = *((uint32_t*)self->pollAddress);
-      data = ((uint8_t)*((uint8_t*)&transportData32));
+      transportAddr = *((gemmi_uint*)self->pollAddress);
+      data = ((uint8_t)*((uint8_t*)&transportAddr));
       break;
     case UINT16:
-      transportData32 = *((uint32_t*)self->pollAddress);
-      data = ((uint16_t)*((uint16_t*)&transportData32));
+      transportAddr = *((gemmi_uint*)self->pollAddress);
+      data = ((uint16_t)*((uint16_t*)&transportAddr));
       break;
     case UINT32:
-      transportData32 = *((uint32_t*)self->pollAddress);
-      data = ((uint32_t)*((uint32_t*)&transportData32));
+      transportAddr = *((gemmi_uint*)self->pollAddress);
+      data = ((uint32_t)*((uint32_t*)&transportAddr));
       break;
     case FLOAT:
-      transportData32 = *((uint32_t *)self->pollAddress);
-      data = ((float)*((float*)&transportData32));
+      transportAddr = *((gemmi_uint *)self->pollAddress);
+      data = ((float)*((float*)&transportAddr));
       break;
-/*    case DOUBLE:
-      transportData32 = *((uint32_t*)self->pollAddress);
-      data = ((double)*((double*)&transportData32));
-      break;
+#if !(ARCH_SIZE_32)
     case UINT64:
-      transportData32 = *((uint32_t*)self->pollAddress);
-      data = ((uint64_t)*((uint64_t*)&transportData32));
+      transportAddr = *((gemmi_uint*)self->pollAddress);
+      data = ((uint64_t)*((uint64_t*)&transportAddr));
+      break;
+#endif
+/*    case DOUBLE:
+      transportAddr = *((gemmi_uint*)self->pollAddress);
+      data = ((double)*((double*)&transportAddr));
       break;*/
     default:
-      transportData32 = *((uint32_t*)self->pollAddress);
-      data = ((float)*((float*)&transportData32));
+      transportAddr = *((gemmi_uint*)self->pollAddress);
+      data = ((float)*((float*)&transportAddr));
       break;
   }
   return data;

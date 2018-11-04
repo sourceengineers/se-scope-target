@@ -28,6 +28,7 @@
 #include <Scope/Channel.h>
 #include <Scope/GeneralPurpose/ByteStream.h>
 #include <Scope/GeneralPurpose/IIntStream.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define interface handle data
@@ -41,12 +42,12 @@ typedef struct IPackerStruct {
   void* implementer;
   void (*pack)(IPackerHandle iPacker);
 
-  void (*prepareChannel)(IPackerHandle iPacker, IFloatStreamHandle stream, const uint32_t channelId);
-  void (*prepareTimeIncrement)(IPackerHandle iPacker, const uint32_t timeIncrement);
+  void (*prepareChannel)(IPackerHandle iPacker, IFloatStreamHandle stream, const gemmi_uint channelId);
+  void (*prepareTimeIncrement)(IPackerHandle iPacker, const gemmi_uint timeIncrement);
   void (*prepareTimestamp)(IPackerHandle iPacker, IIntStreamHandle timestamp);
-  void (*prepareTrigger)(IPackerHandle iPacker, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);
+  void (*prepareTrigger)(IPackerHandle iPacker, const bool isTriggered, const gemmi_uint channelId, const gemmi_uint timestamp);
   void (*prepareFlowControl)(IPackerHandle iPacker, const char* flowcontrol);
-  void (*prepareAddressAnnouncement)(IPackerHandle iPacker, const char* name, const char* type, const uint32_t address);
+  void (*prepareAddressAnnouncement)(IPackerHandle iPacker, const char* name, const char* type, const gemmi_uint address);
 
   IByteStreamHandle (*getByteStream)(IPackerHandle iPacker);
 

@@ -26,6 +26,7 @@
 
 #include <Scope/Channel.h>
 #include <Scope/Command/ICommand.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Definition of the configuration struct */
 typedef struct {

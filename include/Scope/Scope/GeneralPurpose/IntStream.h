@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data
@@ -43,16 +44,16 @@ void IntStream_flush(IntStreamHandle self);
 size_t IntStream_length(IntStreamHandle self);
 
 /* Writes "length" amount of data into the stream */
-void IntStream_write(IntStreamHandle self, const uint32_t* data, const size_t length);
+void IntStream_write(IntStreamHandle self, const gemmi_uint* data, const size_t length);
 
 /* Writes one single data point into the stream */
-void IntStream_writeData(IntStreamHandle self, const uint32_t data);
+void IntStream_writeData(IntStreamHandle self, const gemmi_uint data);
 
 /* Reads "length" amount of data from the stream and writes it into "data" */
-void IntStream_read(IntStreamHandle self, uint32_t* data, const size_t length);
+void IntStream_read(IntStreamHandle self, gemmi_uint* data, const size_t length);
 
 /* Returns one single data point */
-uint32_t IntStream_readData(IntStreamHandle self);
+gemmi_uint IntStream_readData(IntStreamHandle self);
 
 /* Returns of a data point is ready to be read or not */
 bool IntStream_dataIsReady(IntStreamHandle self);

@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define interface handle data

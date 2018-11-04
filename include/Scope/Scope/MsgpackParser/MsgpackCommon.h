@@ -13,6 +13,7 @@
 #define MSGPACKCOMMON_H_
 
 #include <msgpack.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 
 void Msgpack_printObjFromByte(FILE *file, const uint8_t* data, const size_t length);

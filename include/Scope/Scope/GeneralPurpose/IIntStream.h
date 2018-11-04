@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define interface handle data
@@ -34,13 +35,13 @@ typedef struct IIntStreamStruct* IIntStreamHandle;
 ******************************************************************************/
 typedef struct IIntStreamStruct {
     void* implementer;
-    void (*open)(IIntStreamHandle self, uint32_t* stream, const size_t capacity);
+    void (*open)(IIntStreamHandle self, gemmi_uint* stream, const size_t capacity);
     bool (*dataIsReady)(IIntStreamHandle self);
-    const uint32_t (*readData)(IIntStreamHandle self);
+    const gemmi_uint (*readData)(IIntStreamHandle self);
     size_t (*length)(IIntStreamHandle self);
-    void (*read)(IIntStreamHandle self, uint32_t* data, const size_t length);
-    void (*writeData)(IIntStreamHandle self, const uint32_t data);
-    void (*write)(IIntStreamHandle self, const uint32_t* data, const size_t length);
+    void (*read)(IIntStreamHandle self, gemmi_uint* data, const size_t length);
+    void (*writeData)(IIntStreamHandle self, const gemmi_uint data);
+    void (*write)(IIntStreamHandle self, const gemmi_uint* data, const size_t length);
     void (*close)(IIntStreamHandle self);
     void (*flush)(IIntStreamHandle self);
 } IIntStream ;

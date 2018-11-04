@@ -14,6 +14,7 @@
 
 #include <msgpack.h>
 #include <Scope/Communication/IUnpacker.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

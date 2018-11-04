@@ -291,7 +291,7 @@ static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key){
   return (parentObj.via.map.ptr+offset)->val;
 }
 
-static uint32_t getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
+static gemmi_uint getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, information->commandName);
@@ -306,7 +306,7 @@ static uint32_t getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchin
     return 0;
   }
 
-  return (uint32_t) obj.via.i64;
+  return (gemmi_uint) obj.via.i64;
 }
 
 static float getFloatFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){

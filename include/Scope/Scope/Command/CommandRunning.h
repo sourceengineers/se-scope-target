@@ -23,6 +23,7 @@
 #include <Scope/Communication/Receiver.h>
 #include <Scope/Channel.h>
 #include <Scope/Command/ICommand.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Struct used to help the command configure the channels */
 typedef struct {

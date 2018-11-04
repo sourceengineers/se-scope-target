@@ -46,8 +46,8 @@ typedef struct __MsgpackPackerPrivateData
   size_t maxAddressesToAnnounce;
   char** namesOfAddresses;
   char** typesOfAddresses;
-  uint32_t* addresses;
-  uint32_t numberOfAddressesToAnnounce;
+  gemmi_uint* addresses;
+  gemmi_uint numberOfAddressesToAnnounce;
   bool addressesArePrepared;
 
 
@@ -59,8 +59,8 @@ typedef struct __MsgpackPackerPrivateData
   msgpack_sbuffer sbufPayload;
   msgpack_packer pkPayload;
 
-  uint32_t scDataFields;
-  uint32_t payloadFields;
+  gemmi_uint scDataFields;
+  gemmi_uint payloadFields;
 
   IByteStreamHandle byteStream;
 
@@ -68,13 +68,13 @@ typedef struct __MsgpackPackerPrivateData
   /* Channel preparation data */
   bool channelsArePrepared;
   size_t numberOfChannelsToSend;
-  uint32_t* channelIds;
+  gemmi_uint* channelIds;
 
   /* Trigger preparation data */
   bool triggerIsPrepared;
   bool isTriggered;
-  uint32_t triggerTimestamp;
-  uint32_t activeChannelId;
+  gemmi_uint triggerTimestamp;
+  gemmi_uint activeChannelId;
   IFloatStreamHandle* floatStreams;
 
   /* Timestamp preparation data */
@@ -83,7 +83,7 @@ typedef struct __MsgpackPackerPrivateData
 
   /* Timestamp increment preparation data */
   bool timestampIncrementIsPrepared;
-  uint32_t timestampIncrement;
+  gemmi_uint timestampIncrement;
 
   /* Flow Control preparation data */
   bool flowControlIsPrepared;
@@ -116,7 +116,7 @@ static void incrementScDataField(MsgpackPackerHandle self){
   }
 }
 
-static void prepareChannel(IPackerHandle iPacker, IFloatStreamHandle stream, const uint32_t channelId){
+static void prepareChannel(IPackerHandle iPacker, IFloatStreamHandle stream, const gemmi_uint channelId){
   MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
 
   if(channelId >= self->maxNumberOfChannels){
@@ -141,7 +141,7 @@ static void prepareChannel(IPackerHandle iPacker, IFloatStreamHandle stream, con
   self->channelsArePrepared = true;
 }
 
-static void prepareTimeIncrement(IPackerHandle iPacker, const uint32_t timeIncrement){
+static void prepareTimeIncrement(IPackerHandle iPacker, const gemmi_uint timeIncrement){
   MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
 
   if(self->timestampIncrementIsPrepared == true){
@@ -167,7 +167,7 @@ static void prepareTimestamp(IPackerHandle iPacker, IIntStreamHandle timestamp){
   self->timestampIsPrepared = true;
 }
 
-static void prepareTrigger(IPackerHandle iPacker, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp){
+static void prepareTrigger(IPackerHandle iPacker, const bool isTriggered, const gemmi_uint channelId, const gemmi_uint timestamp){
   MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
 
   if(self->triggerIsPrepared == true){
@@ -201,7 +201,7 @@ static void prepareFlowControl(IPackerHandle iPacker, const char* flowControl){
 
 }
 
-void prepareAddressAnnouncement(IPackerHandle iPacker, const char* name, const char* type, const uint32_t address){
+void prepareAddressAnnouncement(IPackerHandle iPacker, const char* name, const char* type, const gemmi_uint address){
   MsgpackPackerHandle self = (MsgpackPackerHandle) iPacker->implementer;
 
   if(self->numberOfAddressesToAnnounce >= self->maxAddressesToAnnounce){
@@ -265,12 +265,12 @@ static void packTimestamp(MsgpackPackerHandle self){
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_T_STMP, strlen(KEYWORD_T_STMP));
 
   const size_t dataLength = self->currentTimestamp->length(self->currentTimestamp);
-  uint32_t data[dataLength];
+  gemmi_uint data[dataLength];
 
   self->currentTimestamp->read(self->currentTimestamp, data, dataLength);
   msgpack_pack_array(&self->pkPayload, dataLength);
   for (int i = 0; i < dataLength; ++i) {
-    msgpack_pack_uint32(&self->pkPayload, (uint32_t) data[i]);
+    msgpack_pack_uint32(&self->pkPayload, (gemmi_uint) data[i]);
   }
 
 }
@@ -463,13 +463,13 @@ MsgpackPackerHandle MsgpackPacker_create(const size_t msgLength, const size_t ma
   MsgpackPackerHandle self = (MsgpackPackerHandle) malloc(sizeof(MsgpackPackerPrivateData));
 
   self->floatStreams = malloc(sizeof(IFloatStreamHandle) * maxNumberOfChannels);
-  self->channelIds = malloc(sizeof(uint32_t) * maxNumberOfChannels);
+  self->channelIds = malloc(sizeof(gemmi_uint) * maxNumberOfChannels);
   self->byteStream = byteStream;
   self->validator = validator;
   self->numberOfChannelsToSend = 0;
   self->maxNumberOfChannels = maxNumberOfChannels;
   self->maxAddressesToAnnounce = maxAddressesToAnnounce;
-  self->addresses = malloc(sizeof(uint32_t) * maxAddressesToAnnounce);
+  self->addresses = malloc(sizeof(gemmi_uint) * maxAddressesToAnnounce);
   self->namesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
   self->typesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
 

@@ -31,7 +31,7 @@ const char partTwo[] =  "\xa5\x46\x4c\x4f\x41\x54\xa1\x31\x92";
 
 /* End of message */
 /*
-				"1_type": "UINT32_T"
+				"1_type": "gemmi_uint"
 			},
 			"cf_tgr": {
 				"cl_id": 1,
@@ -111,15 +111,15 @@ TEST(Scope, test_msgpack)
   const size_t maxLength = 230;
 
   const float testDataFloat[7] = {1.1f,2.2f,3.3f,4.4f,5.5f,6.6f,7.7f};
-  const uint32_t testDataInt[7] = {10,11,12,13,14,15,16};
+  const gemmi_uint testDataInt[7] = {10,11,12,13,14,15,16};
 
   volatile float testVarFloat;
-  volatile uint32_t testVarInt;
+  volatile gemmi_uint testVarInt;
 
   uint8_t data[maxLength];
 
-  uint32_t  addrOne = __builtin_bswap32((uint32_t) ((uint32_t*) &testVarFloat));
-  uint32_t  addrTwo = __builtin_bswap32((uint32_t) ((uint32_t*)&testVarInt));
+  gemmi_uint  addrOne = __builtin_bswap32((gemmi_uint) ((gemmi_uint*) &testVarFloat));
+  gemmi_uint  addrTwo = __builtin_bswap32((gemmi_uint) ((gemmi_uint*)&testVarInt));
 
   char addrBytesOne[5];
   copyByte(addrBytesOne, &addrOne);
@@ -156,7 +156,7 @@ TEST(Scope, test_msgpack)
 
   Scope_command(scope);
 
-  for (uint32_t j = 0; j < 5; ++j) {
+  for (gemmi_uint j = 0; j < 5; ++j) {
     testVarFloat = testDataFloat[j];
     testVarInt = testDataInt[j];
 
@@ -193,10 +193,10 @@ TEST(Scope, test_compile_time)
 
   const size_t lengthOfValues = 5;
   const float floatValues[lengthOfValues] = {0.0f,1.1f,2.2f,3.3f,4.4f};
-  const uint32_t intValues[lengthOfValues] = {0,1,2,3,4};
+  const gemmi_uint intValues[lengthOfValues] = {0,1,2,3,4};
 
   float floatAddr;
-  uint32_t intAddr;
+  gemmi_uint intAddr;
 
   Scope_configureChannel(scope, 0, &floatAddr, FLOAT);
   Scope_configureChannel(scope, 1, &intAddr, UINT32);
@@ -239,7 +239,7 @@ TEST(Scope, test_announce)
   ScopeHandle scope = Scope_create(500, 0, 2, ETHERNET,  TIMESTAMP_AUTOMATIC, transmit);
 
   const float testVarFloat = 4.4f;
-  const uint32_t testVarInt = 5;
+  const gemmi_uint testVarInt = 5;
 
   Scope_setAnnounceAddresses(scope, "TestVarFloat", &testVarFloat, FLOAT, 0);
   Scope_setAnnounceAddresses(scope, "TestVarInt", &testVarInt, UINT32 , 1);

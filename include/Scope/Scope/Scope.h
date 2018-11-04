@@ -20,6 +20,7 @@
 #include <Scope/Communication/Receiver.h>
 
 #include <Scope/GeneralPurpose/ByteStream.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data
@@ -56,7 +57,7 @@ IByteStreamHandle Scope_getOutputStream(ScopeHandle self);
 void Scope_transmitData(ScopeHandle self);
 
 /* Polls data from all channels */
-void Scope_poll(ScopeHandle self, uint32_t timeStamp);
+void Scope_poll(ScopeHandle self, gemmi_uint timeStamp);
 
 /* Configures the channel with the given id, with the wanted address */
 /* If the id exceeds the maximum amount of channels, the function will return without doing anything */
@@ -70,17 +71,17 @@ void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* poll
  *
  * If the id exceeds the maximum amount of channels, the function will return without doing anything
  * */
-void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, uint32_t channelId);
+void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, gemmi_uint channelId);
 
 /* Sets the timestamp increment
  * If the timestamp increment mode is set to manual, this will not have any effect */
-void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrement);
+void Scope_configureTimestampIncrement(ScopeHandle self, gemmi_uint timstampIncrement);
 
 /* Sets the channel with the given index to running */
-void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId);
+void Scope_setChannelRunning(ScopeHandle self, gemmi_uint channelId);
 
 /* Sets the channel with the given index to stopped */
-void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
+void Scope_setChannelStopped(ScopeHandle self, gemmi_uint channelId);
 
 /* Sends all configured watch addresses to the host */
 void Scope_announceWatchAddresses(ScopeHandle self);
@@ -88,6 +89,6 @@ void Scope_announceWatchAddresses(ScopeHandle self);
 /* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
 void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
-                             const uint32_t addressId);
+                             const gemmi_uint addressId);
 
 #endif

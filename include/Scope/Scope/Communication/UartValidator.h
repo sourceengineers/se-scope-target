@@ -15,6 +15,7 @@
 #include <Scope/Communication/IComValidator.h>
 #include <Scope/Communication/CommunicationCommons.h>
 #include <Scope/Communication/IComValidator.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

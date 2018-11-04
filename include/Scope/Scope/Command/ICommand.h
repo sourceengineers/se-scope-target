@@ -18,6 +18,7 @@
 #define ICOMMAND_H_
 
 #include <stdlib.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define interface handle data
