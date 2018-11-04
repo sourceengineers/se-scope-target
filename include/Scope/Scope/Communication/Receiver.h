@@ -25,8 +25,8 @@
 #include <Scope/Communication/Sender.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
-const size_t MAX_FIELD_LENGTH = 30;
-const size_t MAX_COMMAND_LENGTH = 30;
+static size_t const MAX_FIELD_LENGTH = 30;
+static size_t const MAX_COMMAND_LENGTH = 30;
 
 /******************************************************************************
  Define class handle data

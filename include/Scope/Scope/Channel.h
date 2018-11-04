@@ -17,8 +17,8 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Indication for the trigger data */
-const int CHANNEL_CURRENT_DATA = 0;
-const int CHANNEL_OLD_DATA = 1;
+static int const CHANNEL_CURRENT_DATA = 0;
+static int const CHANNEL_OLD_DATA = 1;
 
 /* Channels States */
 typedef enum {CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;

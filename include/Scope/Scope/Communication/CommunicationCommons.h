@@ -13,8 +13,8 @@
 #ifndef COMMUNICATIONTYPES_H_
 #define COMMUNICATIONTYPES_H_
 
-const char* FLOWCONTROL_ACK = "ACK";
-const char* FLOWCONTROL_NAK = "NAK";
+static char* const FLOWCONTROL_ACK = "ACK";
+static char* const FLOWCONTROL_NAK = "NAK";
 
 /* Defines possible communication types */
 typedef enum {ETHERNET, UART} COM_TYPE;
