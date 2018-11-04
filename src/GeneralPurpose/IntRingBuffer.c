@@ -147,11 +147,11 @@ void IntRingBuffer_destroy(IntRingBufferHandle self){
 }
 
 size_t IntRingBuffer_getCapacity(IntRingBufferHandle self){
-  return self->capacity;
+  return self->capacity - 1;
 }
 
 size_t IntRingBuffer_freeData(IntRingBufferHandle self){
-  return (size_t) (self->capacity - (IntRingBuffer_usedData(self)));
+  return (size_t) (self->capacity - (IntRingBuffer_usedData(self))) - 1;
 }
 
 size_t IntRingBuffer_usedData(IntRingBufferHandle self){

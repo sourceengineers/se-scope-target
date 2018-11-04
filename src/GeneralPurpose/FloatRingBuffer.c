@@ -147,11 +147,11 @@ void FloatRingBuffer_destroy(FloatRingBufferHandle self){
 }
 
 size_t FloatRingBuffer_getCapacity(FloatRingBufferHandle self){
-  return self->capacity;
+  return self->capacity - 1;
 }
 
 size_t FloatRingBuffer_freeData(FloatRingBufferHandle self){
-  return (size_t) (self->capacity - (FloatRingBuffer_usedData(self)));
+  return (size_t) (self->capacity - (FloatRingBuffer_usedData(self))) - 1;
 }
 
 size_t FloatRingBuffer_usedData(FloatRingBufferHandle self){

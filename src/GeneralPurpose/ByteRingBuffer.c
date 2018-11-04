@@ -148,11 +148,11 @@ void ByteRingBuffer_destroy(ByteRingBufferHandle self){
 }
 
 size_t ByteRingBuffer_getCapacity(ByteRingBufferHandle self){
-  return self->capacity;
+  return self->capacity - 1;
 }
 
 size_t ByteRingBuffer_freeData(ByteRingBufferHandle self){
-  return (size_t) (self->capacity - (ByteRingBuffer_usedData(self)));
+  return (size_t) (self->capacity - (ByteRingBuffer_usedData(self))) - 1;
 }
 
 size_t ByteRingBuffer_usedData(ByteRingBufferHandle self){
