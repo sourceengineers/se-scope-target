@@ -21,7 +21,8 @@
 #define FLOAT_NAME "FLOAT"
 #define DOUBLE_NAME "DOUBLE"
 
-static char* const DATA_TYPE_NAMES[6] = {UINT8_NAME, UINT16_NAME, UINT32_NAME, UINT64_NAME, FLOAT_NAME, DOUBLE_NAME};
+/* Define list of names for easy access, matching the DATA_TYPES enum entries */
+const char* DATA_TYPE_NAMES[6] = {UINT8_NAME, UINT16_NAME, UINT32_NAME, UINT64_NAME, FLOAT_NAME, DOUBLE_NAME};
 
 /* Define dataypes themselves */
 typedef enum {UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE} DATA_TYPES;
