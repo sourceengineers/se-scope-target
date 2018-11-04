@@ -91,7 +91,7 @@ static void flush(IFloatStreamHandle stream){
 }
 
 static float* nextIndex(FloatRingBufferHandle self, float* index){
-  const long positionRelative = ((index + 1) - self->data);
+  const uint32_t positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
 }
 
@@ -132,7 +132,7 @@ FloatRingBufferHandle FloatRingBuffer_create(size_t capacity){
 
   self->capacity = capacity + 1;
   self->data = malloc(sizeof(float) * self->capacity);
-  
+
   self->tail = self->data;
   self->head = self->data;
 
@@ -155,10 +155,9 @@ size_t FloatRingBuffer_freeData(FloatRingBufferHandle self){
 }
 
 size_t FloatRingBuffer_usedData(FloatRingBufferHandle self){
-
   const size_t absSize = (self->head >= self->tail) ?
-                            (self->head - self->tail) % self->capacity :
-                            (self->tail - self->head) % self->capacity;
+                            (self->head - self->tail) :
+                            (self->capacity - (self->tail - self->head));
 
   return absSize % self->capacity;
 }

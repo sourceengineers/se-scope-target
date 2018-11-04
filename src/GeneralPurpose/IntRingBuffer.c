@@ -91,7 +91,7 @@ static void flush(IIntStreamHandle stream){
 }
 
 static uint32_t* nextIndex(IntRingBufferHandle self, uint32_t* index){
-  const long positionRelative = ((index + 1) - self->data);
+  const uint32_t positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
 }
 
@@ -157,8 +157,8 @@ size_t IntRingBuffer_freeData(IntRingBufferHandle self){
 size_t IntRingBuffer_usedData(IntRingBufferHandle self){
 
   const size_t absSize = (self->head >= self->tail) ?
-                            (self->head - self->tail) % self->capacity :
-                            (self->tail - self->head) % self->capacity;
+                            (self->head - self->tail) :
+                            (self->capacity - (self->tail - self->head));
 
   return absSize % self->capacity;
 }

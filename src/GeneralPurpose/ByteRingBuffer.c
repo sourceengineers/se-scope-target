@@ -92,7 +92,7 @@ static void flush(IByteStreamHandle stream){
 }
 
 static uint8_t* nextIndex(ByteRingBufferHandle self, uint8_t* index){
-  const long positionRelative = ((index + 1) - self->data);
+  const uint32_t positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
 }
 
@@ -133,7 +133,7 @@ ByteRingBufferHandle ByteRingBuffer_create(size_t capacity){
 
   self->capacity = capacity + 1;
   self->data = malloc(sizeof(uint8_t) * self->capacity);
-  
+
   self->tail = self->data;
   self->head = self->data;
 
@@ -156,9 +156,10 @@ size_t ByteRingBuffer_freeData(ByteRingBufferHandle self){
 }
 
 size_t ByteRingBuffer_usedData(ByteRingBufferHandle self){
+  
   const size_t absSize = (self->head >= self->tail) ?
-                         (self->head - self->tail) % self->capacity :
-                         (self->tail - self->head) % self->capacity;
+                            (self->head - self->tail) :
+                            (self->capacity - (self->tail - self->head));
 
   return absSize % self->capacity;
 }
