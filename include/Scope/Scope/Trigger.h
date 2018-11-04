@@ -26,8 +26,8 @@
 
 /* Constants to represent the different edges on which the trigger can be 
    configured */
-const int TRIGGER_EDGE_POSITIVE = 1;
-const int TRIGGER_EDGE_NEGATIVE = -1;
+static const int TRIGGER_EDGE_POSITIVE = 1;
+static const int TRIGGER_EDGE_NEGATIVE = -1;
 
 /* Enum to represent different trigger types */
 typedef enum {TRIGGER_NORMAL, TRIGGER_CONTINUOUS, TRIGGER_ONESHOT} TRIGGER_MODE;
