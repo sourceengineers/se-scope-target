@@ -24,8 +24,8 @@
 #include <Scope/Communication/IComValidator.h>
 #include <Scope/Communication/Sender.h>
 
-static const size_t MAX_FIELD_LENGTH = 30;
-static const size_t MAX_COMMAND_LENGTH = 30;
+const size_t MAX_FIELD_LENGTH = 30;
+const size_t MAX_COMMAND_LENGTH = 30;
 
 /******************************************************************************
  Define class handle data
