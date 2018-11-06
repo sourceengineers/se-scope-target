@@ -30,6 +30,7 @@ ByteStreamHandle ByteStream_create(size_t capacity){
   ByteStreamHandle self = (ByteStreamHandle) malloc(sizeof(ByteStreamPrivateData));
 
   self->buffer = ByteRingBuffer_create(capacity);
+  self->iByteStream = *ByteRingBuffer_getIByteStream(self->buffer);
 
   return self;
 }
@@ -40,7 +41,7 @@ void ByteStream_destroy(ByteStreamHandle self){
 }
 
 IByteStreamHandle ByteStream_getIByteStream(ByteStreamHandle self){
-  return ByteRingBuffer_getByteStream(self->buffer);
+  return ByteRingBuffer_getIByteStream(self->buffer);
 }
 
 void ByteStream_flush(ByteStreamHandle self){

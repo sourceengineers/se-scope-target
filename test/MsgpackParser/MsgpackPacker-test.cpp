@@ -24,7 +24,7 @@ TEST(msgpack_packer, pack_test)
 
   for (int i = 0; i < 3; ++i) {
     ringbuffers[i] = FloatRingBuffer_create(100);
-    streams[i] = FloatRingBuffer_getFloatStream(ringbuffers[i]);
+    streams[i] = FloatRingBuffer_getIFloatStream(ringbuffers[i]);
     const float writeData[5] = {1.5f, 2.0f, 432.0f, 32.0f, 45.0f};
     FloatRingBuffer_write(ringbuffers[i], writeData, 5);
   }

@@ -94,7 +94,7 @@ TEST(FloatRingBuffer, test_stream_interface)
   FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
   ssize_t responce = FloatRingBuffer_write(buffer, shortTestVector, shortVectorLength);
   
-  IFloatStreamHandle stream = FloatRingBuffer_getFloatStream(buffer);
+  IFloatStreamHandle stream = FloatRingBuffer_getIFloatStream(buffer);
   const size_t size = stream->length(stream);
   
   ASSERT_EQ(size, 6);

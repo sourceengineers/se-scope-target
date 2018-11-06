@@ -30,6 +30,7 @@ IntStreamHandle IntStream_create(size_t capacity){
   IntStreamHandle self = (IntStreamHandle) malloc(sizeof(IntStreamPrivateData));
 
   self->buffer = IntRingBuffer_create(capacity);
+  self->iIntStream = *IntRingBuffer_getIntStream(self->buffer);
 
   return self;
 }

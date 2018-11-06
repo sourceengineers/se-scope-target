@@ -58,7 +58,7 @@ ssize_t ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, con
 ssize_t ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size_t length);
 
 /* Returns the IByteStream interface */
-IByteStreamHandle ByteRingBuffer_getByteStream(ByteRingBufferHandle self);
+IByteStreamHandle ByteRingBuffer_getIByteStream(ByteRingBufferHandle self);
 
 
 #endif

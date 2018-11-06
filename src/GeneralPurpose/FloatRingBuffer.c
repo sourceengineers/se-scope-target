@@ -203,6 +203,6 @@ ssize_t FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size
   return i;
 }
 
-IFloatStreamHandle FloatRingBuffer_getFloatStream(FloatRingBufferHandle self){
+IFloatStreamHandle FloatRingBuffer_getIFloatStream(FloatRingBufferHandle self){
   return &self->stream;
 }

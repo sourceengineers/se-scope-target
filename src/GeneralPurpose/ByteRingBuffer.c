@@ -205,6 +205,6 @@ ssize_t ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size
   return i;
 }
 
-IByteStreamHandle ByteRingBuffer_getByteStream(ByteRingBufferHandle self){
+IByteStreamHandle ByteRingBuffer_getIByteStream(ByteRingBufferHandle self){
   return &self->stream;
 }

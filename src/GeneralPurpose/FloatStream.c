@@ -30,6 +30,7 @@ FloatStreamHandle FloatStream_create(size_t capacity){
   FloatStreamHandle self = (FloatStreamHandle) malloc(sizeof(FloatStreamPrivateData));
 
   self->buffer = FloatRingBuffer_create(capacity);
+  self->iFloatStream = *FloatRingBuffer_getIFloatStream(self->buffer);
 
   return self;
 }
@@ -40,7 +41,7 @@ void FloatStream_destroy(FloatStreamHandle self){
 }
 
 IFloatStreamHandle FloatStream_getIFloatStream(FloatStreamHandle self){
-  return FloatRingBuffer_getFloatStream(self->buffer);
+  return FloatRingBuffer_getIFloatStream(self->buffer);
 }
 
 void FloatStream_flush(FloatStreamHandle self){
