@@ -130,7 +130,7 @@ static bool messageSeemsValid(msgpack_unpacked und) {
   return true;
 }
 
-  static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_t length){
+static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_t length){
 
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
