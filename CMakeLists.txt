@@ -50,11 +50,8 @@ elseif(ARCHITECTURE STREQUAL "X64")
     set(CMAKE_C_COMPILER /usr/bin/clang)
     set(CMAKE_CXX_COMPILER /usr/bin/clang++)
 
-    set(MSGPACK_32BIT ON)
+    set(GEMMI_BUILD_EXAMPLES ON)
     set(GEMMI_TESTING ON)
-
-    set(MSGPACK_ENABLE_SHARED ON)
-    set(BUILD_SHARED_LIBS ON)
 
     # Inform the compiler to compile for 64 bit code
     add_definitions(-DARCH_SIZE_32=0)
