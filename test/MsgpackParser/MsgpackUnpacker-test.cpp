@@ -217,8 +217,6 @@ TEST(msgpack_unpacker, test_errors)
   }
 
   EXPECT_EQ(result, false);
-  level = parser->getFloatFromCommand(parser, &information);
-  EXPECT_EQ(level, 2.5f);
 
   if((result = parser->unpack(parser, faultyData, strLength))){
     parser->activateNewMessage(parser);
