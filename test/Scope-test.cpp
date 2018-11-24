@@ -105,7 +105,7 @@ void transmit(IByteStreamHandle stream){
   Msgpack_printObjFromByte(stdout, data, length);
 }
 
-TEST(Scope, test_msgpack)
+/*TEST(Scope, test_msgpack)
 {
 
   const size_t maxLength = 230;
@@ -183,8 +183,7 @@ TEST(Scope, test_msgpack)
   // Test faulty message
   inputStream->write(inputStream, faultyMessage, faultyMessageLength);
   Scope_command(scope);
-
-}
+}*/
 
 TEST(Scope, test_compile_time)
 {
@@ -233,7 +232,7 @@ TEST(Scope, test_compile_time)
 const uint8_t* ev_announce = (const uint8_t*) "\x82\xa9\x74\x72\x61\x6e\x73\x70\x6f\x72\x74\xc0\xa7\x70\x61\x79\x6c\x6f\x61\x64\x81\xa6\x73\x63\x5f\x63\x6d\x64\x81\xab\x65\x76\x5f\x61\x6e\x6e\x6f\x75\x6e\x63\x65\xa0";
 const size_t ev_announceLength = 42;
 
-TEST(Scope, test_announce)
+/*TEST(Scope, test_announce)
 {
 
   ScopeHandle scope = Scope_create(500, 0, 2, ETHERNET,  TIMESTAMP_AUTOMATIC, transmit);
@@ -252,3 +251,4 @@ TEST(Scope, test_announce)
 
   Scope_command(scope);
 }
+*/
