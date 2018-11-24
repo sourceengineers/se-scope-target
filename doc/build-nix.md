@@ -24,6 +24,14 @@ make
 sudo make install
 ```
 The library will now be installed to /usr/local/lib und /usr/local/include
+### Tests
+If you want to run tests, you have to set the cmake GEMMI_TESTING flag to ON. And afterwards run the ctest.
+```
+...
+cmake -DARCHITECTURE=X64 -DGEMMI_TESTING=ON ..
+make
+ctest -VV
+``` 
 ## Build for embedded
 Building the library for embedded systems a bit more complicated, since a specific toolchain has to be specified.
 The following procedure has to be followed.

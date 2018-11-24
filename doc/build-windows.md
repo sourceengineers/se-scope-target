@@ -21,6 +21,14 @@ mkdir iot-scope-target/build && cd iot-scope-target/build
 cmake -G"MinGW Makefiles" -DARCHITECTURE=X64 ..
 mingw64-make install
 ```
+### Tests
+If you want to run tests, you have to set the cmake GEMMI_TESTING flag to ON. And afterwards run the ctest.
+```
+...
+cmake -DARCHITECTURE=X64 -DGEMMI_TESTING=ON ..
+make
+ctest -VV
+``` 
 ## Build for embedded
 Building the library for embedded systems a bit more complicated, since a specific toolchain has to be specified.
 The following procedure has to be followed.
