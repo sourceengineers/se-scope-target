@@ -1,0 +1,5 @@
+# Keil build instructions
+Since Keil is widely used in the embedded space, a keil project file will be added to the repository, so it doesn't have to be produces through cmake.
+# Setup 
+- Download the project through git. 
+- Import the project into Keil and use it as a library or compile it
