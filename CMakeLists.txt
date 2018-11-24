@@ -94,6 +94,7 @@ set(PROJECT_EXAMPLES_DIR
 )
 set(PROJECT_DEPENDENCIES
   msgpackc
+  jsmn
 )
 set(PROJECT_INCLUDE_DIR
     include/Scope
