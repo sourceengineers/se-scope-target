@@ -175,5 +175,5 @@ ssize_t Channel_poll(ChannelHandle self){
 }
 
 IFloatStreamHandle Channel_getRingBufferFloatStream(ChannelHandle self){
-  return FloatRingBuffer_getFloatStream(self->buffer);
+  return FloatRingBuffer_getIFloatStream(self->buffer);
 }

@@ -44,6 +44,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   bool isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, false);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, 1.1f);
@@ -52,6 +53,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, true);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, 5.5f);
@@ -60,6 +62,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, false);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, 5.5f);
@@ -69,6 +72,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, true);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, 5.5f);
@@ -78,6 +82,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, false);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -87,6 +92,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, false);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -96,6 +102,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, true);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -105,6 +112,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, true);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -114,6 +122,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, false);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -123,6 +132,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, true);
+  Trigger_release(trigger);
 
   stream.flush(&stream);
   stream.writeData(&stream, -5.5f);
@@ -132,6 +142,7 @@ TEST(Trigger, test_normal)
   Trigger_configure(trigger, conf);
   isTriggered = Trigger_run(trigger, 1);
   EXPECT_EQ(isTriggered, true);
+  Trigger_release(trigger);
 }
 
 TEST(Trigger, test_continuous)
@@ -146,5 +157,6 @@ TEST(Trigger, test_continuous)
   bool isTriggered = Trigger_run(trigger, 1);
 
   EXPECT_EQ(isTriggered, false);
+  Trigger_release(trigger);
 
 }

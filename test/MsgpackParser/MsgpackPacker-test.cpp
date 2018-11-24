@@ -9,12 +9,22 @@ extern "C" {
 using namespace testing;
 using namespace std;
 
+
+IComValidator validator;
+
+
+const bool checkPresentInProtocol(IComValidatorHandle self){
+  return false;
+}
+
 TEST(msgpack_packer, pack_test)
 {
 
 /*  IByteStreamHandle byteStream = ByteStream_getIByteStream(ByteStream_create(200));
 
-  MsgpackPackerHandle packer = MsgpackPacker_create(200, 2, 0, byteStream, NULL);
+  validator.checkPresentInProtocol = &checkPresentInProtocol;
+
+  MsgpackPackerHandle packer = MsgpackPacker_create(200, 2, 0, byteStream, &validator);
   IPackerHandle iPacker = MsgpackPacker_getIPacker(packer);
 
   FloatRingBufferHandle ringbuffers[2];
@@ -24,7 +34,7 @@ TEST(msgpack_packer, pack_test)
 
   for (int i = 0; i < 3; ++i) {
     ringbuffers[i] = FloatRingBuffer_create(100);
-    streams[i] = FloatRingBuffer_getFloatStream(ringbuffers[i]);
+    streams[i] = FloatRingBuffer_getIFloatStream(ringbuffers[i]);
     const float writeData[5] = {1.5f, 2.0f, 432.0f, 32.0f, 45.0f};
     FloatRingBuffer_write(ringbuffers[i], writeData, 5);
   }

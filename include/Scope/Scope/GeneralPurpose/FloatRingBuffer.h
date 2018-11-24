@@ -58,7 +58,7 @@ ssize_t FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, con
 ssize_t FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length);
 
 /* Returns the IFloatStream interface */
-IFloatStreamHandle FloatRingBuffer_getFloatStream(FloatRingBufferHandle self);
+IFloatStreamHandle FloatRingBuffer_getIFloatStream(FloatRingBufferHandle self);
 
 
 #endif
