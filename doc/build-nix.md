@@ -19,7 +19,7 @@ Once the dependencies are installed, download the repo to what ever folder and r
 ```bash
 git clone --recurse-submodules -j8 https://bitbucket.org/sourceengineers/iot-scope-target.git
 mkdir iot-scope-target/build && cd iot-scope-target/build 
-cmake .. -DARCHITECTURE=X64
+cmake -DARCHITECTURE=X64 ..
 make
 sudo make install
 ```
@@ -34,7 +34,7 @@ The following procedure has to be followed.
 ```bash
 git clone --recurse-submodules -j8 https://bitbucket.org/sourceengineers/iot-scope-target.git
 mkdir iot-scope-target/build && cd iot-scope-target/build 
-cmake .. -DARCHITECTURE=EMBEDDED -DCMAKE_TOOLCHAIN_FILE=TOOLCHAIN_FILE_PATH -DCMAKE_CXX_FLAGS="COMPILER_FLAGS"
+cmake -DARCHITECTURE=EMBEDDED -DCMAKE_TOOLCHAIN_FILE=TOOLCHAIN_FILE_PATH -DCMAKE_C_FLAGS="COMPILER_FLAGS" ..
 make
 sudo make install
 ```
