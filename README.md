@@ -45,7 +45,7 @@ There are a few configurations that have to be set on the target side.
 | -- | -- | -- |
 | comType | ETHERNET / UART | Adjusts the scope for the specified communication interface. This mainly affects data in the transport field |
 | protType | JSON / MSGPACK | Adjusts the scope for the specified protocol |
-| timestampingMode | TIMESTAMP_AUTOMATIC / TIMESTAMP_MANUAL | Configures the protocol to either timestamp automatically, or manually |
+| timestampingMode | TIMESTAMP_AUTOMATIC / TIMESTAMP_MANUAL | Configures the protocol to either timestamp automatically, or manually. In the manual mode, the index passed to the ev_poll command will be used. In the automatic mode, the scope will timestamp itself, according to configured timestamp increment. |
 
 If a transmitCallback function is supplied, the scope will be able to send messages to the host automatically. 
 This callback has to be a function in the form of:
@@ -73,11 +73,11 @@ Scope_announceWatchAddresses(scope);
 | Param | Values | Description |
 | -- | -- | -- |
 | type | UINT8 / UINT16 / UINT32 / FLOAT | Registers what type of address should be announce. |
-| addresId | int | Tells the scope on which index it should safe the address. This index can not exceed the maxNumberOfAddresses |
+| addressId | int | Tells the scope on which index it should save the address. This index can not exceed the maxNumberOfAddresses |
 
 ## Commands
 It is possible to control the scope entirely through commands send by the host. 
-The see what commands are available and what their function is, check the [protocol](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md) description.
+To see all available commands are and their functions, check the [protocol](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md) description.
 For this to work, the Scope_command() function has to be used.
 
 Alternatively, every command has a corresponding function defined in Scope.h. For a detailed description of the corresponding functions check this [page](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/command-api.md).
