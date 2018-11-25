@@ -18,6 +18,9 @@ For detailed instructions, take a look at the doc folder and pick the documentat
 ## IDE's
 - [Keil](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-keil)
 # Usage
+The following chapter explains all the functions, which are only available on the target itself and cannot be controller through a command. These functions have to be present at compile time if the functionality should be present. 
+
+Out of these functions, Scope_create() is the only one needed. The other two are optionally.
 ## Initialisation
 Generate the scope. 
 ```c
@@ -54,12 +57,53 @@ The watch addresses can be defined during compile time, and tell the host, what 
 This can be useful if the variables are not static.
 
 ```c
+
+/*void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
+                             const DATA_TYPES type,
+                             const gemmi_uint addressId);*/
+
+/* Registers the addresses */
 uint8_t var;
 Scope_setAnnounceAddresses(scope,(const char*) "NAME_OF_VAR", &var, UINT8, 0);
 
-
+/* Announces the addresses to the host. This only works if the transmitCallback is set correctly */
+Scope_announceWatchAddresses(scope);
 ```
 
+| Param | Values | Description |
+| -- | -- | -- |
+| type | UINT8 / UINT16 / UINT32 / FLOAT | Registers what type of address should be announce. |
+| addresId | int | Tells the scope on which index it should safe the address. This index can not exceed the maxNumberOfAddresses |
+
+## Commands
+It is possible to control the scope entirely through commands send by the host. 
+The see what commands are available and what their function is, check the [protocol](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md) description.
+For this to work, the Scope_command() function has to be used.
+
+Alternatively, every command has a corresponding function defined in Scope.h. These functions will later be explained in more depth in a dedicated wiki page.
+### Command execution
+If commands should be sent to the scope, the Scope_command() function has to be used.
+This function reads the data from the input stream and interprets it. Meaning, the data has to be received, written into the input stream and afterwards, Scope_command(scope) can be called.
+
+```c
+IByteStreamHandle input_stream = Scope_getInputStream(scope);
+
+/* Feed data in to the stream. Through what ever communication interface needed.
+    As example through scanf: */
+char data[100];
+scanf(&data);
+
+input_stream->write(input_stream, data, 100);
+
+/* After the data is written to the stream, the command function can be executed */
+Scope_command(scope);
+```
 # Protocol
+The host and the target are communicating through a custom defined protocol. 
+The specification can be checked, in the dedicated [documentation](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md).
+This protocol will be parsed in what ever protocol is chosen to be sent between host and target.
 # Desktop client
+A desktop client which is able to control the target and display the data, is currently under work.
+For the moment, the developer tools in tools have to be used to communicate with the target have to be used. These will be extended before the work at the desktop client continue.
+The progress of the client can be tracked in its respective [repo](https://bitbucket.org/sourceengineers/iot-scope/src/schuepbs/).
 # License
