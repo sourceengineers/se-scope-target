@@ -1,43 +1,27 @@
 cmake_minimum_required(VERSION 3.0.0)
-
 set (CMAKE_CXX_STANDARD 11)
-
-# How to build:
-# mkdir build
-# cd build
-# Pick the right configuration:
-# Debug: cmake -DCMAKE_BUILD_TYPE=Debug ..
-# Release: cmake -DCMAKE_BUILD_TYPE=Release ..
-# make
 
 # Set the Project name
 set(PROJECT_NAME
     gemmi
 )
-
 ################################################################################
 # Set options
 ################################################################################
-
-set(CMAKE_BUILD_TYPE DEBUG)
-
 if(ARCHITECTURE STREQUAL "X86")
 
     # This option is used if the tests should be executed on a host machine,
     # supporting 32 Bit architectures. This is useful since the micro controllers
     # will probably run on 32 bit, but there are only few operating systems support this option
     message("-- x86 architecture is on")
-    set(CMAKE_C_COMPILER /usr/bin/gcc)
-    set(CMAKE_CXX_COMPILER /usr/bin/gcc++)
     set(CMAKE_C_FLAGS -m32)
     set(CMAKE_CXX_FLAGS "-m32 -fpermissive")
 
-    set(MSGPACK_32BIT ON)
+    option(MSGPACK_32BIT ON)
+    option(MSGPACK_ENABLE_SHARED OFF)
+    option(BUILD_SHARED_LIBS OFF)
+
     set(GEMMI_TESTING ON)
-
-    set(MSGPACK_ENABLE_SHARED OFF)
-    set(BUILD_SHARED_LIBS OFF)
-
     set(GEMMI_BUILD_EXAMPLES ON)
 
     # Inform the compiler to compile for 32 bit code
@@ -47,8 +31,6 @@ elseif(ARCHITECTURE STREQUAL "X64")
 
     # X64 Host machines should be able to run tests as well as examples
     message("-- x64 architecture is on")
-    set(CMAKE_C_COMPILER /usr/bin/clang)
-    set(CMAKE_CXX_COMPILER /usr/bin/clang++)
 
     set(GEMMI_BUILD_EXAMPLES ON)
     set(GEMMI_TESTING ON)
@@ -59,17 +41,17 @@ elseif(ARCHITECTURE STREQUAL "X64")
     set(CMAKE_MACOSX_RPATH 1)
 
 elseif(ARCHITECTURE STREQUAL "EMBEDDED")
-    message("-- ARM architecture is on")
+    message("-- EMBEDDED architecture is on")
 
     # Setoptions so msgpack will compile correctly
-    set(MSGPACK_BUILD_EXAMPLES OFF)
-    set(MSGPACK_32BIT ON)
-    set(MSGPACK_CXX11 OFF)
-    set(MSGPACK_BOOST OFF)
-    set(MSGPACK_ENABLE_SHARED OFF)
-    set(MSGPACK_ENABLE_STATIC ON)
-    set(BUILD_SHARED_LIBS OFF)
-    set(MSGPACK_ENABLE_CXX OFF)
+    option(MSGPACK_BUILD_EXAMPLES OFF)
+    option(MSGPACK_32BIT ON)
+    option(MSGPACK_CXX11 OFF)
+    option(MSGPACK_BOOST OFF)
+    option(MSGPACK_ENABLE_SHARED OFF)
+    option(MSGPACK_ENABLE_STATIC ON)
+    option(BUILD_SHARED_LIBS OFF)
+    option(MSGPACK_ENABLE_CXX OFF)
 
     # Disable testing and examples because they will not run on the
     # host with a embedded compiler anyway
@@ -80,7 +62,6 @@ elseif(ARCHITECTURE STREQUAL "EMBEDDED")
     add_definitions(-DARCH_SIZE_32=1)
 
 endif()
-
 
 project(${PROJECT_NAME})
 
@@ -110,7 +91,6 @@ set(PROJECT_TEST_DIR
 #######################################################################################################################
 file( GLOB_RECURSE PROJECT_SOURCE "${PROJECT_SOURCE_DIR}/*.c" )
 file( GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h" )
-
 ################################################################################
 # GTest
 ################################################################################
@@ -134,9 +114,7 @@ foreach(DEPENDENCY ${PROJECT_DEPENDENCIES})
     add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/${DEPENDENCY})
 endforeach(DEPENDENCY)
 
-#message("\nLink " ${PROJECT_NAME} " to libraries: " ${PROJECT_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
-
 ################################################################################
 # Add examples
 ################################################################################
