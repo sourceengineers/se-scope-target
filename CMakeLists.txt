@@ -63,9 +63,13 @@ elseif(ARCHITECTURE STREQUAL "EMBEDDED")
 
     # Setoptions so msgpack will compile correctly
     set(MSGPACK_BUILD_EXAMPLES OFF)
+    set(MSGPACK_32BIT ON)
+    set(MSGPACK_CXX11 OFF)
     set(MSGPACK_BOOST OFF)
     set(MSGPACK_ENABLE_SHARED OFF)
+    set(MSGPACK_ENABLE_STATIC ON)
     set(BUILD_SHARED_LIBS OFF)
+    set(MSGPACK_ENABLE_CXX OFF)
 
     # Disable testing and examples because they will not run on the
     # host with a embedded compiler anyway
