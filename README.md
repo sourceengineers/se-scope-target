@@ -80,7 +80,7 @@ It is possible to control the scope entirely through commands send by the host.
 The see what commands are available and what their function is, check the [protocol](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md) description.
 For this to work, the Scope_command() function has to be used.
 
-Alternatively, every command has a corresponding function defined in Scope.h. These functions will later be explained in more depth in a dedicated wiki page.
+Alternatively, every command has a corresponding function defined in Scope.h. For a detailed description of the corresponding functions check this [page](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/command-api.md).
 ### Command execution
 If commands should be sent to the scope, the Scope_command() function has to be used.
 This function reads the data from the input stream and interprets it. Meaning, the data has to be received, written into the input stream and afterwards, Scope_command(scope) can be called.
