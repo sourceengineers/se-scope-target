@@ -16,7 +16,7 @@ For detailed instructions, take a look at the doc folder and pick the documentat
 - [\*nix systems](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-nix.md)
 - [Windows](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-windows.md)
 ## IDE's
-- [Keil](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-keil)
+- [IDE's](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-ide.md)
 # Usage
 The Scope can either be controlled through a number of commands, which are sent to the target, or by corresponding functions on the target itself.
 
