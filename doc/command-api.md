@@ -24,7 +24,7 @@ This function works only if the transmitCallback is properly implemented. This i
 # ev_announce
 ```c
 /* Sends all configured watch addresses to the host */
-void Scope_announceWatchAddresses(ScopeHandle self);
+void Scope_announceAddresses(ScopeHandle self);
 ```
 # cf_addr
 ```c

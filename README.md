@@ -68,7 +68,7 @@ uint8_t var;
 Scope_setAnnounceAddresses(scope,(const char*) "NAME_OF_VAR", &var, UINT8, 0);
 
 /* Announces the addresses to the host. This only works if the transmitCallback is set correctly */
-Scope_announceWatchAddresses(scope);
+Scope_announceAddresses(scope);
 ```
 
 | Param | Values | Description |

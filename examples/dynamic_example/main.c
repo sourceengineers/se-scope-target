@@ -63,7 +63,7 @@ int main(int argc, char *argv[] ){
   Scope_setAnnounceAddresses(scope,(const char*) "VAR2", &var2, FLOAT, 1);
   Scope_setAnnounceAddresses(scope,(const char*) "VAR3", &var3, UINT32, 2);
 
-  Scope_announceWatchAddresses(scope);
+  Scope_announceAddresses(scope);
 
   while (1) {
 

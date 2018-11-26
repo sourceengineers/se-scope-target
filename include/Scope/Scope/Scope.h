@@ -84,7 +84,7 @@ void Scope_setChannelRunning(ScopeHandle self, gemmi_uint channelId);
 void Scope_setChannelStopped(ScopeHandle self, gemmi_uint channelId);
 
 /* Sends all configured watch addresses to the host */
-void Scope_announceWatchAddresses(ScopeHandle self);
+void Scope_announceAddresses(ScopeHandle self);
 
 /* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
 void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,

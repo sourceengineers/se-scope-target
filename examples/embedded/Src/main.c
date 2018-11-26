@@ -138,7 +138,7 @@ int main(void)
   Scope_setAnnounceAddresses(scope, "INT_VALUE", &intVar, UINT32, 0);
   Scope_setAnnounceAddresses(scope, "FLOAT_VALUE", &floatVar, FLOAT, 1);
 
-  Scope_announceWatchAddresses(scope);
+  Scope_announceAddresses(scope);
 
 
 
