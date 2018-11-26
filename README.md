@@ -18,7 +18,9 @@ For detailed instructions, take a look at the doc folder and pick the documentat
 ## IDE's
 - [Keil](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-keil)
 # Usage
-The following chapter explains all the functions, which are only available on the target itself and cannot be controller through a command. These functions have to be present at compile time if the functionality should be present. 
+The Scope can either be controlled through a number of commands, which are sent to the target, or by corresponding functions on the target itself.
+
+The following chapter explains all the functions, which are available on the target itself and cannot be controlled through a command.
 
 Out of these functions, Scope_create() is the only one needed. The other two are optionally.
 ## Initialisation
