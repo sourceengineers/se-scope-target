@@ -5,9 +5,8 @@ It helps tracking values of multiple addresses for a variation of communication 
 The target can be configured with the help of multiple pre defined commands, and sends data of the tracked addresses to the host computer. Through that, the data can be plotted on the host computer. This enables a type of debugging, which helps you determine the project actually does what it should and not just if its crashing or not.
 # Building
 The library is build upon cmake, and is therefore able to be compiled on pretty much anything.
-For some more common embedded IDE's, the project contains already predefined project files. 
+Additionally there is a release package which contains the sources, to be included into what ever IDE and project is used.
 
-If the IDE is not yet supported, then the library has to be build with cmake.
 If the library is to be compiled with cmake, the process is slightly different if the host system is a Windows or \*nix system. 
 
 For detailed instructions, take a look at the doc folder and pick the documentation for what ever operating system the library is build on, or for what ever IDE is used.
