@@ -96,7 +96,9 @@ static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandH
 
 static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
   for (size_t i = 0; i < numberOfCommands; ++i) {
-    commands[i]->run(commands[i]);
+    if(commands[i] != NULL){
+      commands[i]->run(commands[i]);  
+    }
   }
 }
 

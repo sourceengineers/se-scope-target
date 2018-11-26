@@ -29,6 +29,7 @@ static const char* KEYWORD_TGR = "tgr";
 static const char* KEYWORD_TGR_FOUND = "found";
 static const char* KEYWORD_TGR_CL_DATA_IND = "cl_data_ind";
 static const char* KEYWORD_TGR_CL_ID = "cl_id";
+static const char* KEYWORD_NUMBER_OF_CHANNELS = "cl_amount";
 
 /******************************************************************************
  Define private data
@@ -356,7 +357,7 @@ static void packAddresses(MsgpackPackerHandle self){
 
   msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_ANNOUNCE));
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_ANNOUNCE, strlen(KEYWORD_ANNOUNCE));
-  msgpack_pack_map(&self->pkPayload, self->numberOfAddressesToAnnounce);
+  msgpack_pack_map(&self->pkPayload, self->numberOfAddressesToAnnounce + 1);
 
   for (size_t i = 0; i < self->numberOfAddressesToAnnounce; ++i) {
 
@@ -374,6 +375,15 @@ static void packAddresses(MsgpackPackerHandle self){
     msgpack_pack_str(&self->pkPayload, strlen(self->typesOfAddresses[i]));
     msgpack_pack_str_body(&self->pkPayload, self->typesOfAddresses[i], strlen(self->typesOfAddresses[i]));
   }
+
+  msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_NUMBER_OF_CHANNELS));
+  msgpack_pack_str_body(&self->pkPayload, KEYWORD_NUMBER_OF_CHANNELS, strlen(KEYWORD_NUMBER_OF_CHANNELS));
+  
+  #if (ARCH_SIZE_32)
+      msgpack_pack_uint32(&self->pkPayload, self->maxNumberOfChannels);
+  #else
+      msgpack_pack_uint64(&self->pkPayload, self->maxNumberOfChannels);
+  #endif
 
   self->addressesArePrepared = false;
 }
