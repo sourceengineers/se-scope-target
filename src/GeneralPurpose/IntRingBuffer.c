@@ -168,7 +168,7 @@ void IntRingBuffer_clear(IntRingBufferHandle self){
   self->tail = self->data;
 }
 
-ssize_t IntRingBuffer_write(IntRingBufferHandle self, const gemmi_uint* data, const size_t length){
+int IntRingBuffer_write(IntRingBufferHandle self, const gemmi_uint* data, const size_t length){
 
   if(length > IntRingBuffer_freeData(self)){
     return -1;
@@ -186,7 +186,7 @@ ssize_t IntRingBuffer_write(IntRingBufferHandle self, const gemmi_uint* data, co
   return i;
 }
 
-ssize_t IntRingBuffer_read(IntRingBufferHandle self, gemmi_uint* data, const size_t length){
+int IntRingBuffer_read(IntRingBufferHandle self, gemmi_uint* data, const size_t length){
 
   if(length > IntRingBuffer_usedData(self)){
     return -1;

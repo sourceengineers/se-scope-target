@@ -58,7 +58,7 @@ typedef struct IUnpackerStruct {
   /* Functions to fetch commands and fields */
   const size_t (*getNumberOfCommands)(IUnpackerHandle iUnpacker);
   bool (*getNameOfCommand)(IUnpackerHandle iUnpacker, char* name, const int maxLenght, const int index);
-  ssize_t (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
+  int (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
   bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
 
   /* Functions to fetch the data from commands */

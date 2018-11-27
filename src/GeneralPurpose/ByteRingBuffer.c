@@ -169,7 +169,7 @@ void ByteRingBuffer_clear(ByteRingBufferHandle self){
   self->tail = self->data;
 }
 
-ssize_t ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, const size_t length){
+int ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, const size_t length){
 
   if(length > ByteRingBuffer_freeData(self)){
     return -1;
@@ -187,7 +187,7 @@ ssize_t ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, con
   return i;
 }
 
-ssize_t ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size_t length){
+int ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size_t length){
 
   if(length > ByteRingBuffer_usedData(self)){
     return -1;

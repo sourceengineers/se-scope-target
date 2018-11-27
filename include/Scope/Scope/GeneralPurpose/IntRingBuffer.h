@@ -50,13 +50,13 @@ size_t IntRingBuffer_usedData(IntRingBufferHandle self);
 
 /* Writes the data in to the buffer. The amount of written data will be returned.
    If the write operation would let the buffer overflow, a -1 will be returned.*/
-ssize_t IntRingBuffer_write(IntRingBufferHandle self, const gemmi_uint* data, const size_t length);
+int IntRingBuffer_write(IntRingBufferHandle self, const gemmi_uint* data, const size_t length);
 
 /* Reads newest data and writes them in the passed foat array
    The amount of safed data points will be returned.
    if the length is smaller than the amount of data to be read, the function
    will return -1 */
-ssize_t IntRingBuffer_read(IntRingBufferHandle self, gemmi_uint* data, const size_t length);
+int IntRingBuffer_read(IntRingBufferHandle self, gemmi_uint* data, const size_t length);
 
 /* Returns the IIntStream interface */
 IIntStreamHandle IntRingBuffer_getIntStream(IntRingBufferHandle self);
