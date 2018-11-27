@@ -48,7 +48,7 @@ static bool dataIsReady(IFloatStreamHandle stream){
   }
 }
 
-static const float readData(IFloatStreamHandle stream){
+static float readData(IFloatStreamHandle stream){
   FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
 
   float data;

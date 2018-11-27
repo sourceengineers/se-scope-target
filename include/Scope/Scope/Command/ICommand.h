@@ -32,7 +32,7 @@ typedef struct ICommandStruct {
   void* implementer;
   void (*run)(ICommandHandle self);
   void(*setCommandAttribute)(ICommandHandle self, void* attr);
-  const char*(*getCommandName)(ICommandHandle self);
+  char*(*getCommandName)(ICommandHandle self);
 } ICommand ;
 
 #endif

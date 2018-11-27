@@ -13,7 +13,7 @@
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static const char* commandName = "cf_t_inc";
+static char* commandName = "cf_t_inc";
 
 /* Class data */
 typedef struct __CommandTIncPrivateData
@@ -37,7 +37,7 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   commandTInc->timeIncrement = *(int*) attr;
 }
 
-static const char* getCommandName(ICommandHandle self){
+static char* getCommandName(ICommandHandle self){
   CommandTIncHandle commandAddr = (CommandTIncHandle) self->implementer;
 
   return CommandTInc_getName(commandAddr);
@@ -64,7 +64,7 @@ ICommandHandle CommandTInc_getICommand(CommandTIncHandle self){
   return &self->iCommand;
 }
 
-const char* CommandTInc_getName(CommandTIncHandle self){
+char* CommandTInc_getName(CommandTIncHandle self){
   return commandName;
 }
 

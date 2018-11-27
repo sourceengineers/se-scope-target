@@ -49,7 +49,7 @@ static bool dataIsReady(IByteStreamHandle stream){
   }
 }
 
-static const uint8_t readData(IByteStreamHandle stream){
+static uint8_t readData(IByteStreamHandle stream){
   ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
 
   uint8_t data;

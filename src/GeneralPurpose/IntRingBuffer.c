@@ -48,7 +48,7 @@ static bool dataIsReady(IIntStreamHandle stream){
   }
 }
 
-static const gemmi_uint readData(IIntStreamHandle stream){
+static gemmi_uint readData(IIntStreamHandle stream){
   IntRingBufferHandle self = (IntRingBufferHandle) stream->implementer;
 
   gemmi_uint data;

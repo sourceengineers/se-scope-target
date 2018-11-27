@@ -54,7 +54,7 @@ void CommandAddr_destroy(CommandAddrHandle self);
 ICommandHandle CommandAddr_getICommand(CommandAddrHandle self);
 
 /* Returns the name of the command */
-const char* CommandAddr_getName(CommandAddrHandle self);
+char* CommandAddr_getName(CommandAddrHandle self);
 
 
 #endif
