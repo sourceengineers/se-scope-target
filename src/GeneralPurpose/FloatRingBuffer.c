@@ -48,7 +48,7 @@ static bool dataIsReady(IFloatStreamHandle stream){
   }
 }
 
-static const float readData(IFloatStreamHandle stream){
+static float readData(IFloatStreamHandle stream){
   FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
 
   float data;
@@ -167,7 +167,7 @@ void FloatRingBuffer_clear(FloatRingBufferHandle self){
   self->tail = self->data;
 }
 
-ssize_t FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const size_t length){
+int FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const size_t length){
 
   if(length > FloatRingBuffer_freeData(self)){
     return -1;
@@ -185,7 +185,7 @@ ssize_t FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, con
   return i;
 }
 
-ssize_t FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length){
+int FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length){
 
   if(length > FloatRingBuffer_usedData(self)){
     return -1;

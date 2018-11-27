@@ -177,7 +177,7 @@ const size_t ev_announceLength = 42;
   Scope_setAnnounceAddresses(scope, "TestVarFloat", &testVarFloat, FLOAT, 0);
   Scope_setAnnounceAddresses(scope, "TestVarInt", &testVarInt, UINT32 , 1);
 
-  Scope_announceWatchAddresses(scope);
+  Scope_announceAddresses(scope);
 
   IByteStreamHandle stream = Scope_getInputStream(scope);
 

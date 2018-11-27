@@ -13,7 +13,7 @@
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static const char* commandName = "cf_tgr";
+static char* commandName = "cf_tgr";
 
 /* Class data */
 typedef struct __CommandTriggerPrivateData
@@ -41,7 +41,7 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   commandTrigger->config = newConfig;
 }
 
-static const char* getCommandName(ICommandHandle self){
+static char* getCommandName(ICommandHandle self){
   CommandTriggerHandle commandAddr = (CommandTriggerHandle) self->implementer;
 
   return CommandTrigger_getName(commandAddr);
@@ -67,7 +67,7 @@ ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self){
   return &self->iCommand;
 }
 
-const char* CommandTrigger_getName(CommandTriggerHandle self){
+char* CommandTrigger_getName(CommandTriggerHandle self){
   return commandName;
 }
 

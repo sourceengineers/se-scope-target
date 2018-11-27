@@ -36,7 +36,7 @@ void CommandTrigger_destroy(CommandTriggerHandle self);
 ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self);
 
 /* Returns the name of the command */
-const char* CommandTrigger_getName(CommandTriggerHandle self);
+char* CommandTrigger_getName(CommandTriggerHandle self);
 
 
 #endif

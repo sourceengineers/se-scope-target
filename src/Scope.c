@@ -71,7 +71,7 @@ static void iScopePoll(IScopeHandle self, gemmi_uint timeStamp){
 
 static void iScopeAnnounce(IScopeHandle self){
   ScopeHandle scope = (ScopeHandle) self->implementer;
-  Scope_announceWatchAddresses(scope);
+  Scope_announceAddresses(scope);
 }
 
 static void iScopeSetTimeIncrement(IScopeHandle self, gemmi_uint timeIncrement){
@@ -96,7 +96,9 @@ static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandH
 
 static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
   for (size_t i = 0; i < numberOfCommands; ++i) {
-    commands[i]->run(commands[i]);
+    if(commands[i] != NULL){
+      commands[i]->run(commands[i]);  
+    }
   }
 }
 
@@ -330,7 +332,7 @@ void Scope_setChannelStopped(ScopeHandle self, gemmi_uint channelId){
 }
 
 
-void Scope_announceWatchAddresses(ScopeHandle self){
+void Scope_announceAddresses(ScopeHandle self){
   Sender_addressAnnouncement(self->sender);
   Sender_transmit(self->sender);
 }

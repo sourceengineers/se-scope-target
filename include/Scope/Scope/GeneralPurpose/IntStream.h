@@ -15,7 +15,8 @@
 #define INTSTREAM_H_
 
 #include <Scope/GeneralPurpose/IIntStream.h>
-#include <unistd.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <Scope/GeneralPurpose/DataTypes.h>

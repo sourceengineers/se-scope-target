@@ -163,7 +163,7 @@ IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self){
   return self->stream;
 }
 
-ssize_t Channel_poll(ChannelHandle self){
+int Channel_poll(ChannelHandle self){
   if(Channel_getState(self) == CHANNEL_RUNNING){
     const float polledData = castDataToFloat(self);
     prepareTriggerData(self, polledData);

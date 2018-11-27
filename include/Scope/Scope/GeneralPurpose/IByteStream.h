@@ -20,7 +20,7 @@
 #ifndef IByteStream_H_
 #define IByteStream_H_
 
-#include <unistd.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
@@ -37,7 +37,7 @@ typedef struct IByteStreamStruct {
   void* implementer;
   void (*open)(IByteStreamHandle bytestream, uint8_t* data, const size_t capacity);
   bool (*byteIsReady)(IByteStreamHandle self);
-  const uint8_t (*readByte)(IByteStreamHandle self);
+  uint8_t (*readByte)(IByteStreamHandle self);
   size_t (*length)(IByteStreamHandle self);
   void (*read)(IByteStreamHandle self, uint8_t* data, const size_t length);
   void (*writeByte)(IByteStreamHandle self, const uint8_t data);

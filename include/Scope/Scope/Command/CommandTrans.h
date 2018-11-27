@@ -36,7 +36,7 @@ void CommandTrans_destroy(CommandTransHandle self);
 ICommandHandle CommandTrans_getICommand(CommandTransHandle self);
 
 /* Returns the name of the command */
-const char* CommandTrans_getName(CommandTransHandle self);
+char* CommandTrans_getName(CommandTransHandle self);
 
 
 #endif

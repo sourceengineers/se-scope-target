@@ -38,7 +38,7 @@ void CommandTInc_destroy(CommandTIncHandle self);
 ICommandHandle CommandTInc_getICommand(CommandTIncHandle self);
 
 /* Returns the name of the command */
-const char* CommandTInc_getName(CommandTIncHandle self);
+char* CommandTInc_getName(CommandTIncHandle self);
 
 
 #endif
