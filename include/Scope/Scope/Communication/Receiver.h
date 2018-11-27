@@ -17,7 +17,8 @@
 #ifndef RECIEVER_H_
 #define RECIEVER_H_
 
-#include <unistd.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <Scope/Communication/IUnpacker.h>
 #include <Scope/Communication/CommunicationCommons.h>
 #include <Scope/GeneralPurpose/IByteStream.h>

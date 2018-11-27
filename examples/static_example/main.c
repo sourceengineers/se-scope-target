@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <Gemmi.h>
-#include <unistd.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <Scope/MsgpackParser/MsgpackCommon.h>
 

@@ -20,7 +20,7 @@
 #ifndef IByteStream_H_
 #define IByteStream_H_
 
-#include <unistd.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <Scope/GeneralPurpose/DataTypes.h>

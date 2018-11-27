@@ -20,8 +20,8 @@
 #ifndef IFLOATSTREAM_H_
 #define IFLOATSTREAM_H_
 
-#include <unistd.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
