@@ -25,11 +25,11 @@ typedef struct __JsonUnpackerPrivateData* JsonUnpackerHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the json unpacker */
-JsonUnpackerHandle MsgpackUnpacker_create(const size_t msgLength);
+JsonUnpackerHandle JsonUnpacker_create(const size_t msgLength);
 
 /* Destroys the instance of the json unpacker */
-void MsgpackUnpacker_destroy(MsgpackUnpackerHandle self);
+void JsonUnpacker_destroy(JsonUnpackerHandle self);
 
 /* Returns the IUnpacker interface */
-IUnpackerHandle MsgpackUnpacker_getIUnpacker(MsgpackUnpackerHandle self);
+IUnpackerHandle JsonUnpacker_getIUnpacker(JsonUnpackerHandle self);
 #endif
