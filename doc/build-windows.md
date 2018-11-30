@@ -6,6 +6,7 @@ The rest of this description will explain how to use cmake and MinGW to compile 
 - You will need to install [MinGW](http://mingw.org/wiki/Install_MinGW) for either 32 or 64 bit, depending on what architecture you want to compile the library. Make sure that you installed the "mingw-make.exe" through the mingw installer, or CMake will not be able to generate a makefile.
 - [CMake](https://cmake.org/download/)
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Python](https://www.python.org/)
 
 Make sure that the path to the MinGW-make.exe as well as the one to cmake.exe are set up correctly.
 
