@@ -3,26 +3,30 @@ import time
 import os
 import sys
 import msgpack
+from data_printer import DataPrinter
+
+
+printer = DataPrinter(100);
 
 def printAndParse(ans):
     if len(ans) > 0:
-        #if ans[-6:-1] is "\0\0\0\0\0":
         ans = ans[0:-5]
         sys.stdout.write("\nAnswer: ")
 
         for x in ans:
             sys.stdout.write(x.encode("hex") + " ")
 
-#        print("\nTranslated: ")
         parsed = msgpack.unpackb(ans)
         print("")
         print(parsed)
+        printer(parsed);
 
 
 def main():
     serialFile = os.path.abspath(sys.argv[1])
-    outputFile = os.path.abspath(sys.argv[3])
     inputFile = os.path.abspath(sys.argv[2])
+    outputFile = os.path.abspath(sys.argv[3])
+    
     ser = serial.Serial(serialFile, 115200, timeout=0.5)
 
     while True:
