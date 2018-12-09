@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import collections
+from collections import ChainMap, deque
 import sys
 import json
 import matplotlib.pyplot as plt
@@ -31,7 +31,7 @@ class DataPrinter:
 
             if ((channel_name in self.data_collection) == False):
                 print("Creating new map entry");
-                self.data_collection[channel_name] = collections.deque(maxlen=self.maxlen);
+                self.data_collection[channel_name] = deque(maxlen=self.maxlen);
 
             for y in range(0, len(channel_data)):
                 self.data_collection[channel_name].append(channel_data[y]);

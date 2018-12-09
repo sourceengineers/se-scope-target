@@ -6,7 +6,7 @@ import sys
 import msgpack
 from data_printer import DataPrinter
 import json
-import collections
+from collections import Mapping, Iterable 
 from six import string_types
 
 printer = DataPrinter(100);
@@ -18,23 +18,24 @@ def convert(data):
     except AttributeError:
         pass
 
-    if isinstance(data, collections.Mapping):
+    if isinstance(data, Mapping):
         return dict(map(convert, data.items()))
-    elif isinstance(data, collections.Iterable):
+    elif isinstance(data, Iterable):
         return type(data)(map(convert, data))
     else:
         return data
 
 def printAndParse(ans):
     if len(ans) > 0:
-        ans = ans[0:-5]
-        sys.stdout.write("\nAnswer: ")
+        ans = ans[0:-5];
+        sys.stdout.write("\nAnswer: ");
 
-        parsed = msgpack.unpackb(ans)
+        parsed = msgpack.unpackb(ans);
         converted = convert(parsed);
         json_data = json.dumps(converted);
-        print(json_data)
+        print(json_data);
         printer.plot_data(json_data);
+        return json_data;
 
 def main():
     serialFile = os.path.abspath(sys.argv[1])
@@ -56,10 +57,11 @@ def main():
 
         answer = ser.read_until(b'\0\0\0\0\0')
         printAndParse(answer)
-        with open(outputFile, "r+b") as o:
+        with open(outputFile, "r+") as o:
             answer = ser.read_until(b'\0\0\0\0\0')
-            o.write(answer)
-            printAndParse(answer)
+            parsed = printAndParse(answer)
+            if isinstance(parsed, str):
+                o.write(parsed)
 
         ser.flushInput()
         ser.flushOutput()
