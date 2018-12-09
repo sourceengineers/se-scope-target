@@ -8,11 +8,13 @@ class DataPrinter:
 
     def __init__(self, length):
         self.maxlen = length;
-        self.data_collection = collections.ChainMap()
-        self.timestamp = collections.deque(maxlen=self.maxlen)
+        self.data_collection = ChainMap()
+        self.timestamp = deque(maxlen=self.maxlen)
         self.f = plt.figure()
         self.ax = self.f.gca()
         self.f.show()
+        plt.ion()
+        plt.show()
 
     def plot_data(self, json_data):
         data = json.loads(json_data)
@@ -40,3 +42,4 @@ class DataPrinter:
                 self.ax.plot(list(self.timestamp), list(self.data_collection[channel_name]), '-')
 
         self.f.canvas.draw()
+        plt.pause(0.001)
