@@ -197,9 +197,7 @@ static void prepareFlowControl(IPackerHandle iPacker, const char* flowControl){
 
   copyString(self->flowcontrol, flowControl, strlen(flowControl));
   self->flowControlIsPrepared = true;
-  self->scDataFields += 1;
   self->payloadFields += 1;
-
 }
 
 void prepareAddressAnnouncement(IPackerHandle iPacker, const char* name, const char* type, const gemmi_uint address){
@@ -338,7 +336,7 @@ static void packTrigger(MsgpackPackerHandle self){
 
 static void packFlowControl(MsgpackPackerHandle self){
 
-  if(self->flowControlIsPrepared == false){
+  if((self->flowControlIsPrepared == false) || (self->payloadFields <= 0)){
     return;
   }
 
@@ -347,6 +345,8 @@ static void packFlowControl(MsgpackPackerHandle self){
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_FLOW_CTRL, strlen(KEYWORD_FLOW_CTRL));
   msgpack_pack_str(&self->pkPayload, strlen(self->flowcontrol));
   msgpack_pack_str_body(&self->pkPayload, self->flowcontrol, strlen(self->flowcontrol));
+
+  self->payloadFields -= 1;
 }
 
 static void packAddresses(MsgpackPackerHandle self){
@@ -430,6 +430,7 @@ static void constructScDataMap(MsgpackPackerHandle self){
   msgpack_pack_str(&self->pkPayload, strlen(KEYWORD_SC_DATA));
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_SC_DATA, strlen(KEYWORD_SC_DATA));
   msgpack_pack_map(&self->pkPayload, self->scDataFields);
+  self->payloadFields -= 1;
 }
 
 static void packData(IPackerHandle iPacker){
@@ -439,6 +440,8 @@ static void packData(IPackerHandle iPacker){
   msgpack_sbuffer_clear(&self->sbufPayload);
 
   constructPayloadMap(self);
+
+  packFlowControl(self);
 
   constructScDataMap(self);
 
@@ -451,8 +454,6 @@ static void packData(IPackerHandle iPacker){
   packTrigger(self);
 
   packAddresses(self);
-
-  packFlowControl(self);
 
   constructBase(self);
 
