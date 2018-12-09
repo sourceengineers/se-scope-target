@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import serial
 import time
 import os
@@ -63,6 +64,14 @@ def main():
         ser.flushInput()
         ser.flushOutput()
 
-
 if __name__ == "__main__":
+    
+    if ((len(sys.argv) < 3) or (sys.argv[1]=="--help")):
+        print(
+        """Opens a connection to a Serial device and transmits the commands in "INPUT_FILE" to the device.
+            The received data will be written to the "OUTPUT_FILE". 
+            If the received data is a cl_data package, the data will be plotted.
+        Usage: ./uart_msgpack_tester.py SERIAL_FILE INPUT_FILE OUTPUT_FILE""") 
+        sys.exit();
+    
     main()
