@@ -27,20 +27,23 @@ def convert(data):
 
 def printAndParse(ans):
     if len(ans) > 0:
-        ans = ans[0:-5];
-        sys.stdout.write("\nAnswer: ");
-
-        parsed = msgpack.unpackb(ans);
-        converted = convert(parsed);
-        json_data = json.dumps(converted);
-        print(json_data);
-        printer.plot_data(json_data);
-        return json_data;
+        sys.stdout.write("\nAnswer: ");    
+        ans = ans[0:-9];
+        if isinstance(ans, str):
+            parsed = msgpack.unpackb(ans);
+            converted = convert(parsed);
+            json_data = json.dumps(converted);
+            print(json_data);
+            printer.plot_data(json_data);
+            
+            with open(outputFile, "a+") as o:
+                parsed = printAndParse(json_data)
+                if isinstance(parsed, str):
+                    o.write(parsed)
+                    
+                    return json_data;
 
 def main():
-    serialFile = os.path.abspath(sys.argv[1])
-    inputFile = os.path.abspath(sys.argv[2])
-    outputFile = os.path.abspath(sys.argv[3])
 
     ser = serial.Serial(serialFile, 115200, timeout=1)
 
@@ -53,18 +56,15 @@ def main():
                 ser.write(command)
 
         open(inputFile, "wb")
-        time.sleep(0.01)
 
-        answer = ser.read_until(b'\0\0\0\0\0')
+        answer = ser.read_until(b'\0\0\0\0\0STOP')
         printAndParse(answer)
-        with open(outputFile, "r+") as o:
-            answer = ser.read_until(b'\0\0\0\0\0')
-            parsed = printAndParse(answer)
-            if isinstance(parsed, str):
-                o.write(parsed)
+    #    data = json.loads(parsed)
 
         ser.flushInput()
         ser.flushOutput()
+        time.sleep(0.01)
+
 
 if __name__ == "__main__":
     
@@ -76,4 +76,7 @@ if __name__ == "__main__":
         Usage: ./uart_msgpack_tester.py SERIAL_FILE INPUT_FILE OUTPUT_FILE""") 
         sys.exit();
     
+    serialFile = os.path.abspath(sys.argv[1])
+    inputFile = os.path.abspath(sys.argv[2])
+    outputFile = os.path.abspath(sys.argv[3])
     main()
