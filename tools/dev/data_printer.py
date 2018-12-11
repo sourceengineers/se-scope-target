@@ -19,8 +19,10 @@ class DataPrinter:
     def plot_data(self, json_data):
         data = json.loads(json_data)
 
-        if ("cl_data" in data["payload"]["sc_data"]) == False:
-                    return;
+        if ("sc_data" in data["payload"]) == False:
+            return;
+        if ("cl_data" in data["payload"]["sc_data"])== False:
+            return;
 
         timestamp_tmp = data["payload"]["sc_data"]["t_stmp"];
         for x in range(0, len(timestamp_tmp)):
