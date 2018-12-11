@@ -17,6 +17,7 @@ class DataPrinter:
         plt.show()
 
     def plot_data(self, json_data):
+        plt.cla()
         data = json.loads(json_data)
 
         if ("sc_data" in data["payload"]) == False:
