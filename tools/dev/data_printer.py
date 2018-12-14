@@ -16,8 +16,9 @@ class DataPrinter:
         plt.ion()
         plt.show()
 
-    def plot_data(self, json_data):
+    def plot_data(self, json_data, name_maping):
         plt.cla()
+
         data = json.loads(json_data)
 
         if ("sc_data" in data["payload"]) == False:
@@ -42,7 +43,9 @@ class DataPrinter:
                 self.data_collection[channel_name].append(channel_data[y]);
 
             if (len(list(self.timestamp)) == len(list(self.data_collection[channel_name]))):
-                self.ax.plot(list(self.timestamp), list(self.data_collection[channel_name]), '-')
+                self.ax.plot(list(self.timestamp), list(self.data_collection[channel_name]), '-', label = name_maping[channel_name])
 
         self.f.canvas.draw()
+        handles, labels = self.ax.get_legend_handles_labels()
+        self.ax.legend(handles, labels)
         plt.pause(0.001)

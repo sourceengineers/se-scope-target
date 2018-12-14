@@ -8,6 +8,8 @@ from data_printer import DataPrinter
 import json
 from collections import Mapping, Iterable
 from six import string_types
+import yaml
+
 
 printer = DataPrinter(100);
 
@@ -50,7 +52,15 @@ def printAndParse(ans):
 
 def main():
 
-    ser = serial.Serial(serialFile, 115200, timeout=0.5)
+
+    with open(conf_file, 'r') as f:
+            yaml_parser = yaml.load(f)
+            baudrate = yaml_parser["Serial"]["Baudrate"];
+            timeout = yaml_parser["Serial"]["Timeout"];
+            serial_file = yaml_parser["Serial"]["File"];
+            legend = yaml_parser["Legend"];
+
+    ser = serial.Serial(serial_file, baudrate, timeout=timeout)
     ser.flushInput()
     ser.flushOutput()
 
@@ -65,8 +75,13 @@ def main():
         open(inputFile, "wb")
 
         time.sleep(0.1)
+        
+        with open(conf_file, 'r') as f:
+                yaml_parser = yaml.load(f)
+                legend = yaml_parser["Legend"];
+                
         answer = ser.read_until(b"\0\0\0\0\0STOP")
-        printAndParse(answer)
+        printAndParse(answer, legend)
 
     #    ser.flushInput()
     #    ser.flushOutput()
@@ -82,7 +97,7 @@ if __name__ == "__main__":
         Usage: ./uart_msgpack_tester.py SERIAL_FILE INPUT_FILE OUTPUT_FILE""")
         sys.exit();
 
-    serialFile = os.path.abspath(sys.argv[1])
+    conf_file = os.path.abspath(sys.argv[1])
     inputFile = os.path.abspath(sys.argv[2])
     outputFile = os.path.abspath(sys.argv[3])
     main()
