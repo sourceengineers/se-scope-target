@@ -43,9 +43,10 @@ class DataPrinter:
                 self.data_collection[channel_name].append(channel_data[y]);
 
             if (len(list(self.timestamp)) == len(list(self.data_collection[channel_name]))):
-                self.ax.plot(list(self.timestamp), list(self.data_collection[channel_name]), '-', label = name_maping[channel_name])
-
+                label = name_maping[channel_name]; 
+                self.ax.plot(list(self.timestamp), list(self.data_collection[channel_name]), '-', label = label)				
+        self.ax.grid(linestyle='-', linewidth=1)
         self.f.canvas.draw()
         handles, labels = self.ax.get_legend_handles_labels()
-        self.ax.legend(handles, labels)
+        self.ax.legend(handles, labels, loc='upper right')
         plt.pause(0.001)
