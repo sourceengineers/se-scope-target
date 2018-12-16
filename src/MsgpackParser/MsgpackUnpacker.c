@@ -215,7 +215,7 @@ static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *
   return (parentObj.via.map.ptr+offset)->val;
 }
 
-static const size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
+static size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   return self->numberOfCommands;
