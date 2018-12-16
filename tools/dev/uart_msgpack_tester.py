@@ -10,8 +10,7 @@ from collections import Mapping, Iterable
 from six import string_types
 import yaml
 
-
-printer = DataPrinter(100);
+printer = DataPrinter(1000);
 
 # Function needed to convert the dict, containing byte strings, to normal strings
 def convert(data):
@@ -42,7 +41,10 @@ def printAndParse(ans):
         sys.stdout.write("\nAnswer: ");
         json_data = json.dumps(converted);
         print(json_data);
-        printer.plot_data(json_data);
+        with open(conf_file, 'r') as f:
+               yaml_parser = yaml.load(f)
+               legend = yaml_parser["Legend"];
+               printer.plot_data(json_data, legend);
 
         with open(outputFile, "a+") as o:
             if isinstance(parsed, str):
@@ -73,19 +75,9 @@ def main():
                 ser.write(command)
 
         open(inputFile, "wb")
-
         time.sleep(0.1)
-        
-        with open(conf_file, 'r') as f:
-                yaml_parser = yaml.load(f)
-                legend = yaml_parser["Legend"];
-                
         answer = ser.read_until(b"\0\0\0\0\0STOP")
-        printAndParse(answer, legend)
-
-    #    ser.flushInput()
-    #    ser.flushOutput()
-
+        printAndParse(answer)
 
 if __name__ == "__main__":
 
