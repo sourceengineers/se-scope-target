@@ -22,3 +22,4 @@ static const char* KEYWORD_TGR = "tgr";
 static const char* KEYWORD_TGR_FOUND = "found";
 static const char* KEYWORD_TGR_CL_DATA_IND = "cl_data_ind";
 static const char* KEYWORD_TGR_CL_ID = "cl_id";
+static const char* KEYWORD_NUMBER_OF_CHANNELS = "cl_amount";
