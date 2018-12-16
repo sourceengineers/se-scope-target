@@ -4,5 +4,5 @@ Serial:
   Timeout: 0.5
   
 Legend:
-  cl_id_0: "Name1"
-  cl_id_1: "Name2"
+  "0": "Name1"
+  "1": "Name2"
