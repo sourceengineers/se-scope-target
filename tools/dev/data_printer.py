@@ -15,6 +15,8 @@ class DataPrinter:
         self.f.show()
         plt.ion()
         plt.show()
+        self.tgr_x = 0;
+        self.tgr_y = 0;
 
     def plot_data(self, json_data, name_maping):
         plt.cla()
@@ -45,6 +47,15 @@ class DataPrinter:
             if (len(list(self.timestamp)) == len(list(self.data_collection[channel_name]))):
                 label = name_maping[channel_name]; 
                 self.ax.plot(list(self.timestamp), list(self.data_collection[channel_name]), '-', label = label)				
+        if(data["payload"]["sc_data"]["tgr"]["found"] == True):
+            self.tgr_x = data["payload"]["sc_data"]["tgr"]["cl_data_ind"]
+            index_y = timestamp_tmp.index(self.tgr_x)
+            tgr_channel = data["payload"]["sc_data"]["tgr"]["cl_id"]
+            self.tgr_y = data["payload"]["sc_data"]["cl_data"][tgr_channel][index_y]
+        
+        if(self.tgr_y != 0 and self.tgr_x != 0):
+            self.ax.plot(self.tgr_x, self.tgr_y, 'rx')
+    
         self.ax.grid(linestyle='-', linewidth=1)
         self.f.canvas.draw()
         handles, labels = self.ax.get_legend_handles_labels()

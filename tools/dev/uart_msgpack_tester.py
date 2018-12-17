@@ -10,7 +10,7 @@ from collections import Mapping, Iterable
 from six import string_types
 import yaml
 
-printer = DataPrinter(1000);
+printer = DataPrinter(200);
 
 # Function needed to convert the dict, containing byte strings, to normal strings
 def convert(data):
@@ -60,7 +60,6 @@ def main():
             baudrate = yaml_parser["Serial"]["Baudrate"];
             timeout = yaml_parser["Serial"]["Timeout"];
             serial_file = yaml_parser["Serial"]["File"];
-            legend = yaml_parser["Legend"];
 
     ser = serial.Serial(serial_file, baudrate, timeout=timeout)
     ser.flushInput()
