@@ -25,15 +25,15 @@ typedef struct __CommandTriggerParserPrivateData
 } CommandTriggerParserPrivateData ;
 
 /* Parses the given string into the correct trigger mode. Default is continious */
-static TRIGGER_MODE parserStringToTriggerMode(const char* triggerModeString, size_t maxStringSize);
+static TRIGGER_MODE parseStringToTriggerMode(const char* triggerModeString, size_t maxStringSize);
 
 /* Parses the given string into a trigger edge. Default is rising edge */
-static int parserStringToEdge(const char* triggerModeString, size_t maxStringSize);
+static int parseStringToEdge(const char* triggerModeString, size_t maxStringSize);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static TRIGGER_MODE parserStringToTriggerMode(const char* triggerModeString, size_t maxStringSize){
+static TRIGGER_MODE parseStringToTriggerMode(const char* triggerModeString, size_t maxStringSize){
 
   if(strncmp(triggerModeString, "Continous", maxStringSize) == 0){
     return TRIGGER_CONTINUOUS;
@@ -46,11 +46,11 @@ static TRIGGER_MODE parserStringToTriggerMode(const char* triggerModeString, siz
   return TRIGGER_CONTINUOUS;
 }
 
-static int parserStringToEdge(const char* triggerModeString, size_t maxStringSize){
+static int parseStringToEdge(const char* edgeToParse, size_t maxStringSize){
 
-  if(strncmp(triggerModeString, "rising", maxStringSize) == 0){
+  if(strncmp(edgeToParse, "rising", maxStringSize) == 0){
     return TRIGGER_EDGE_POSITIVE;
-  } else if(strncmp(triggerModeString, "falling", maxStringSize) == 0){
+  } else if(strncmp(edgeToParse, "falling", maxStringSize) == 0){
     return TRIGGER_EDGE_NEGATIVE;
   }
 
@@ -100,13 +100,13 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
   char triggerModeToParse[maxStringSize];
   information.fieldName = (char*) "mode";
   self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, triggerModeToParse, maxStringSize);
-  TRIGGER_MODE mode = parserStringToTriggerMode(triggerModeToParse, maxStringSize);
+  TRIGGER_MODE mode = parseStringToTriggerMode(triggerModeToParse, maxStringSize);
 
   /* Get the trigger edge */
-  char edgeToParser[maxStringSize];
+  char edgeToParse[maxStringSize];
   information.fieldName = (char*) "edge";
-  self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, edgeToParser, maxStringSize);
-  int edge = parserStringToEdge(triggerModeToParse, maxStringSize);
+  self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, edgeToParse, maxStringSize);
+  int edge = parseStringToEdge(edgeToParse, maxStringSize);
 
   TriggerConfiguration conf = {.level = level, .mode = mode, .stream = stream, .edge = edge, .channelId = channelId};
 
