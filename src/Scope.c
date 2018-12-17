@@ -23,7 +23,6 @@ typedef struct __ScopePrivateData
 {
   size_t numberOfChannels;
   ChannelHandle* channels;
-  FloatRingBufferHandle timeStampBuffer;
   FloatRingBufferHandle* buffers;
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
@@ -67,6 +66,11 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 static void iScopePoll(IScopeHandle self, gemmi_uint timeStamp){
   ScopeHandle scope = (ScopeHandle) self->implementer;
   Scope_poll(scope, timeStamp);
+}
+
+static void iScopeClear(IScopeHandle self){
+  ScopeHandle scope = (ScopeHandle) self->implementer;
+  Scope_clear(scope);
 }
 
 static void iScopeAnnounce(IScopeHandle self){
@@ -145,9 +149,9 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->iScope.getTimestamp = &getTimestamp;
   self->iScope.transmitTimestampInc = &transmitTimestampInc;
   self->iScope.announce = &iScopeAnnounce;
+  self->iScope.clear = &iScopeClear;
 
-  /* Calculates size needed for the output communication buffer */
-  /* communicationBufferSize = (numberOfChannels + timestampBuffer) * channelSize + constantProtocolSize */
+    /* Calculates size needed for the output communication buffer */
   const size_t outputBufferSize = (numberOfChannels + 1) * channelSize * 10 + 200;
   /* The input buffer is not dependent of the buffer sizes, but on how many channels are in use */
   /* Each channel uses max. 50 bytes of data in the input protocol. Everything not dependent on the channels
@@ -169,7 +173,6 @@ ScopeHandle Scope_create(const size_t channelSize,
     self->buffers[i] = FloatRingBuffer_create(channelSize);
     self->channels[i] = Channel_create(self->buffers[i]);
   }
-  self->timeStampBuffer = FloatRingBuffer_create(channelSize);
   self->timeStamp = IntRingBuffer_create(channelSize);
 
   /* Create Trigger */
@@ -213,7 +216,6 @@ void Scope_destroy(ScopeHandle self){
     FloatRingBuffer_destroy(self->buffers[i]);
     Channel_destroy(self->channels[i]);
   }
-  FloatRingBuffer_destroy(self->timeStampBuffer);
 
   Trigger_destroy(self->trigger);
   CommandFactory_destroy(self->commandFactory);
@@ -331,10 +333,17 @@ void Scope_setChannelStopped(ScopeHandle self, gemmi_uint channelId){
   Channel_setStateStopped(self->channels[channelId]);
 }
 
-
 void Scope_announceAddresses(ScopeHandle self){
   Sender_addressAnnouncement(self->sender);
   Sender_transmit(self->sender);
+}
+
+void Scope_clear(ScopeHandle self){
+  for (size_t i = 0; i < self->numberOfChannels; i++) {
+    Channel_clear(self->channels[i]);
+  }
+  IntRingBuffer_clear(self->timeStamp);
+  self->currentTimestamp = 0;
 }
 
 void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,

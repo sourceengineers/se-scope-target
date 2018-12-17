@@ -51,3 +51,8 @@ void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGG
 void Scope_configureTimestampIncrement(ScopeHandle self, gemmi_uint timstampIncrement);
 ```
 The Scope_configureTimestampIncrement does only have a affect on the scope timestamping mode is set to TIMESTAMP_AUTOMATIC
+# ev_clear
+```c
+/* Clears the timestamp and all the channels */
+void Scope_clear(ScopeHandle self);
+```

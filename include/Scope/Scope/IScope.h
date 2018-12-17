@@ -35,6 +35,7 @@ typedef struct IScopeStruct {
   bool (*transmitTimestampInc)(IScopeHandle self);
   gemmi_uint (*getTimeIncrement)(IScopeHandle self);
   IIntStreamHandle (*getTimestamp)(IScopeHandle self);
+  void (*clear)(IScopeHandle self);
 } IScope ;
 
 #endif

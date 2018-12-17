@@ -174,6 +174,10 @@ ssize_t Channel_poll(ChannelHandle self){
   }
 }
 
+void Channel_clear(ChannelHandle self){
+  FloatRingBuffer_clear(self->buffer);
+}
+
 IFloatStreamHandle Channel_getRingBufferFloatStream(ChannelHandle self){
   return FloatRingBuffer_getIFloatStream(self->buffer);
 }

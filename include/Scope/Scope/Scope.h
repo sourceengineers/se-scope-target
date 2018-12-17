@@ -91,4 +91,8 @@ void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* 
                              const DATA_TYPES type,
                              const gemmi_uint addressId);
 
+/* Clears the data in the channels, as well as the timestamp buffer */
+void Scope_clear(ScopeHandle self);
+
+
 #endif

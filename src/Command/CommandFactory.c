@@ -19,6 +19,7 @@ typedef struct __CommandFactoryPrivateData
   CommandRunningHandle commandRunning;
   CommandPollHandle commandPoll;
   CommandAddrHandle commandAddr;
+  CommandClearHandle commandClear;
   CommandTIncHandle commandTInc;
   CommandTransHandle commandTrans;
   CommandTriggerHandle commandTrigger;
@@ -51,6 +52,7 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
   self->commandTrans = CommandTrans_create(iScope);
   self->commandTrigger = CommandTrigger_create(trigger);
   self->commandAnnounce = CommandAnnounce_create(iScope);
+  self->commandClear = CommandClear_create(iScope);
 
   /* Initialize needed command parser
    * Not all commands need parser, which is why there are less parser as commands */
@@ -95,6 +97,9 @@ ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char*
 
   } else if(strcmp(command, CommandAnnounce_getName(self->commandAnnounce)) == 0){
     return CommandAnnounce_getICommand(self->commandAnnounce);
+
+  } else if(strcmp(command, CommandClear_getName(self->commandClear)) == 0){
+    return CommandClear_getICommand(self->commandClear);
   }
   
   return NULL;
@@ -109,6 +114,7 @@ void CommandFactory_destroy(CommandFactoryHandle self){
   CommandTrans_destroy(self->commandTrans);
   CommandTrigger_destroy(self->commandTrigger);
   CommandAnnounce_destroy(self->commandAnnounce);
+  CommandClear_destroy(self->commandClear);
 
   CommandRunningParser_destroy(self->commandRunningParser);
   CommandAddrParser_destroy(self->commandAddrParser);

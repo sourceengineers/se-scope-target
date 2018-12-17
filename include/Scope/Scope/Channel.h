@@ -71,4 +71,7 @@ IFloatStreamHandle Channel_getRingBufferFloatStream(ChannelHandle self);
    written */
 IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self);
 
+/* Clears the data in the channel */
+void Channel_clear(ChannelHandle self);
+
 #endif

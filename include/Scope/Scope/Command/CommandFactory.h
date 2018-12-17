@@ -28,6 +28,7 @@
 #include <Scope/Command/CommandTriggerParser.h>
 #include <Scope/Command/CommandAnnounce.h>
 #include <Scope/Command/CommandPollParser.h>
+#include <Scope/Command/CommandClear.h>
 
 #include <Scope/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
