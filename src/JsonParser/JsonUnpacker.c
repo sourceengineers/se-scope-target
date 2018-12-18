@@ -55,7 +55,12 @@ static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t *tok, si
         }
 
         foundNextTokens++;
-        startPosition = (&self->storageTokens[i]+1)->end + 2;
+
+        /* The next field starts with one character shifted more, if its a string field,
+         * because of the used " of the string. */
+        size_t positionOffset = (&self->storageTokens[i]+1)->type == JSMN_STRING ? 3 : 2;
+
+        startPosition = (&self->storageTokens[i]+1)->end + positionOffset;
       }
   }
 
@@ -93,7 +98,7 @@ static jsmntok_t* getValueFromArray(JsonUnpackerHandle self, jsmntok_t* array, s
     return NULL;
   }
 
-  return getElementInObject(self, array+1, index);
+  return array + 1 + index;
 }
 
 static jsmntok_t* getField(JsonUnpackerHandle self, jsmntok_t* command, const char* fieldName){
@@ -149,7 +154,6 @@ static jsmntok_t* getCommand(JsonUnpackerHandle self, const char* commandName){
   if(tok->type != JSMN_OBJECT){
     return false;
   }
-
 
   for (int i = 0; i < self->numberOfCommands; ++i) {
 
@@ -292,6 +296,10 @@ static gemmi_uint getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetch
     return 0;
   }
 
+  if(field->type != JSMN_PRIMITIVE){
+    return 0;
+  }
+
   char value[20];
   copyString(value, self->storageString + field->start, field->end - field->start);
 
@@ -312,6 +320,10 @@ static float getFloatFromCommand(IUnpackerHandle iUnpackHandler, CommandFetching
     return 0;
   }
 
+  if(field->type != JSMN_PRIMITIVE){
+    return 0;
+  }
+
   char value[20];
   copyString(value, self->storageString + field->start, field->end - field->start);
 
@@ -329,6 +341,10 @@ static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingIn
   if(information->isInArray == true && field->type == JSMN_ARRAY){
     field = getValueFromArray(self, field, information->arrayIndex);
   } else if(information->isInArray ^ (field->type == JSMN_ARRAY)) {
+    return false;
+  }
+
+  if(field->type != JSMN_STRING){
     return false;
   }
 
@@ -356,7 +372,11 @@ static void getStringFromCommand(IUnpackerHandle iUnpackHandler, CommandFetching
     return;
   }
 
-  copyString(targetStr, self->storageString + field->start, field->end - field->start);
+  if(field->type != JSMN_STRING){
+    return;
+  }
+
+  copyString(targetStr, self->storageString + field->start,(size_t) field->end - field->start);
 
 }
 
@@ -368,18 +388,50 @@ static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandNa
 
 static size_t getLengthOfCheck(IUnpackerHandle iUnpackHandler){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+
+  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "transport", self->msgLength);
+
+  if((tok+1)->type != JSMN_STRING){
+    return 0;
+  }
+
+  return (size_t)(tok+1)->end - (tok+1)->start;
 }
 
 static size_t getLengthOfBytesToCheck(IUnpackerHandle iUnpackHandler){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+
+  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "payload", self->msgLength);
+
+  if((tok+1)->type != JSMN_OBJECT){
+    return 0;
+  }
+
+  return (size_t)(tok+1)->end - (tok+1)->start;
 }
 
 static void getBytesToCheck(IUnpackerHandle iUnpackHandler, uint8_t* data){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "payload", self->msgLength);
+
+  if((tok+1)->type != JSMN_OBJECT){
+    return;
+  }
+
+  strncpy((char*)data, self->inputString + (tok+1)->start, (size_t)(tok+1)->end - (tok+1)->start);
 }
 
 static void getCheck(IUnpackerHandle iUnpackHandler, uint8_t* checkData){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+
+  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "transport", self->msgLength);
+
+  if((tok+1)->type != JSMN_STRING){
+    return;
+  }
+
+  strncpy((char*)checkData, self->inputString + (tok+1)->start, (size_t)(tok+1)->end - (tok+1)->start);
+  checkData[(size_t)(tok+1)->end - (tok+1)->start] = '\0';
 }
 
 static int getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){

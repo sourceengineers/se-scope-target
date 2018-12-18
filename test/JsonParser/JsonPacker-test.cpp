@@ -82,8 +82,65 @@ TEST(json_packer, values_from_commands)
 
   info.fieldName = (char*)"level";
 
-
-  float fdata = unpacker->getIntFromCommand(unpacker, &info);
+  float fdata = unpacker->getFloatFromCommand(unpacker, &info);
   EXPECT_EQ(1.75, fdata);
+
+  char mode[20];
+  info.fieldName = (char*)"mode";
+  unpacker->getStringFromCommand(unpacker, &info, mode, 20);
+  EXPECT_STREQ(mode, "Continous");
+
+}
+
+TEST(json_packer, values_from_array)
+{
+  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+
+  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
+
+  unpacker->activateNewMessage(unpacker);
+
+  CommandFetchingInformation info = {
+          .commandName = (char*) "cf_addr",
+          .fieldName = (char*)"cl_id_1",
+          .isInArray = true,
+          .arrayIndex = 0
+  };
+
+  int data = unpacker->getIntFromCommand(unpacker, &info);
+  EXPECT_EQ(111, data);
+
+  info.fieldName = (char*)"cl_id_2";
+  info.arrayIndex = 1;
+
+  char dataType[20];
+  unpacker->getStringFromCommand(unpacker, &info, dataType, 20);
+  EXPECT_STREQ(dataType, "UINT16");
+
+}
+
+TEST(json_packer, transport_field)
+{
+  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+
+  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
+
+  unpacker->activateNewMessage(unpacker);
+
+  size_t lengthCheck = unpacker->getLengthOfCheck(unpacker);
+  EXPECT_EQ(lengthCheck, 3);
+
+  size_t lengthOfDataToCheck = unpacker->getLengthOfBytesToCheck(unpacker);
+  EXPECT_EQ(lengthOfDataToCheck, 215);
+
+  uint8_t dataToCheck[300];
+  unpacker->getBytesToCheck(unpacker, dataToCheck);
+
+  EXPECT_STREQ((char*) dataToCheck, "{\"sc_cmd\": {\"ev_announce\": null,\"ev_trans\": null,\"cf_addr\": {\"cl_id_1\": [111, \"UINT8\"],\"cl_id_2\": [222,\"UINT16\"],\"cl_id_3\": [333,\"FLOAT\"]},\"cf_tgr\": {\"cl_id\": 15,\"mode\": \"Continous\",\"level\": 1.75,\"edge\": \"fallig\"}}}");
+
+  uint8_t checkData[30];
+  unpacker->getCheck(unpacker, checkData);
+
+  EXPECT_STREQ((char*) checkData, "...");
 
 }
