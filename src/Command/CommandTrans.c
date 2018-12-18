@@ -13,7 +13,7 @@
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static const char* commandName = "ev_trans";
+static char* commandName = "ev_trans";
 
 /* Class data */
 typedef struct __CommandTransPrivateData
@@ -35,7 +35,7 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   return;
 }
 
-static const char* getCommandName(ICommandHandle self){
+static char* getCommandName(ICommandHandle self){
   CommandTransHandle commandAddr = (CommandTransHandle) self->implementer;
 
   return CommandTrans_getName(commandAddr);
@@ -61,7 +61,7 @@ ICommandHandle CommandTrans_getICommand(CommandTransHandle self){
   return &self->iCommand;
 }
 
-const char* CommandTrans_getName(CommandTransHandle self){
+char* CommandTrans_getName(CommandTransHandle self){
   return commandName;
 }
 

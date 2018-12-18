@@ -45,7 +45,7 @@ void AddressStorage_setAnnounceAddress(AddressStorageHandle self, const char* na
                                     const gemmi_uint addressId);
 
 /* Returns how many addresses can be configured at maximum */
-const size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self);
+size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self);
 
 /* Returns a pointer to a address */
 AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const gemmi_uint addressId);

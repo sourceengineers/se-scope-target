@@ -17,7 +17,8 @@
 #ifndef SENDER_H_
 #define SENDER_H_
 
-#include <unistd.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <Scope/Communication/IPacker.h>
 #include <Scope/Communication/CommunicationCommons.h>
 #include <Scope/GeneralPurpose/IByteStream.h>

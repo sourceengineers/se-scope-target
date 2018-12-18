@@ -14,22 +14,7 @@
 #include <stdio.h>
 #include <Scope/GeneralPurpose/Memory.h>
 #include <Scope/MsgpackParser/MsgpackCommon.h>
-
-
-static const char* KEYWORD_PAYLOAD = "payload";
-static const char* KEYWORD_TRANSPORT = "transport";
-static const char* KEYWORD_SC_DATA = "sc_data";
-static const char* KEYWORD_PLACEHOLDER = "...";
-static const char* KEYWORD_ANNOUNCE = "sc_announce";
-static const char* KEYWORD_FLOW_CTRL = "flow_ctrl";
-static const char* KEYWORD_CL_DATA = "cl_data";
-static const char* KEYWORD_T_STMP = "t_stmp";
-static const char* KEYWORD_T_INC = "t_inc";
-static const char* KEYWORD_TGR = "tgr";
-static const char* KEYWORD_TGR_FOUND = "found";
-static const char* KEYWORD_TGR_CL_DATA_IND = "cl_data_ind";
-static const char* KEYWORD_TGR_CL_ID = "cl_id";
-static const char* KEYWORD_NUMBER_OF_CHANNELS = "cl_amount";
+#include <Scope/Communication/Keywords.h>
 
 /******************************************************************************
  Define private data
@@ -234,7 +219,7 @@ static void packChannel(MsgpackPackerHandle self){
   for (size_t i = 0; i < self->numberOfChannelsToSend; ++i) {
 
     char id[10];
-    sprintf(id, "%d", self->channelIds[i]);
+    sprintf(id, "%u", self->channelIds[i]);
 
     msgpack_pack_str(&self->pkPayload, strlen(id));
     msgpack_pack_str_body(&self->pkPayload, id, strlen(id));
@@ -327,7 +312,7 @@ static void packTrigger(MsgpackPackerHandle self){
   msgpack_pack_str_body(&self->pkPayload, KEYWORD_TGR_CL_ID, strlen(KEYWORD_TGR_CL_ID));
 
   char id[10];
-  sprintf(id, "%d", self->activeChannelId);
+  sprintf(id, "%u", self->activeChannelId);
 
   msgpack_pack_str(&self->pkPayload, strlen(id));
   msgpack_pack_str_body(&self->pkPayload, id, strlen(id));

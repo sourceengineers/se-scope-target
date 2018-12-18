@@ -13,7 +13,7 @@
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static const char* commandName = "ev_poll";
+static char* commandName = "ev_poll";
 
 /* Class data */
 typedef struct __CommandPollPrivateData
@@ -29,7 +29,7 @@ typedef struct __CommandPollPrivateData
 static void run(ICommandHandle self);
 
 /* Implementation of the getCommandName command, which will be passed into the interface */
-static const char* getCommandName(ICommandHandle self);
+static char* getCommandName(ICommandHandle self);
 
 /* Implementation of the setCommandAttribute command, which will be passed into the interface */
 static void setCommandAttribute(ICommandHandle self, void* attr);
@@ -48,7 +48,7 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   commandPoll->nextTimeStamp = *(gemmi_uint*) attr;
 }
 
-static const char* getCommandName(ICommandHandle self){
+static char* getCommandName(ICommandHandle self){
   CommandPollHandle commandAddr = (CommandPollHandle) self->implementer;
 
   return CommandPoll_getName(commandAddr);
@@ -76,7 +76,7 @@ ICommandHandle CommandPoll_getICommand(CommandPollHandle self){
   return &self->iCommand;
 }
 
-const char* CommandPoll_getName(CommandPollHandle self){
+char* CommandPoll_getName(CommandPollHandle self){
   return commandName;
 }
 

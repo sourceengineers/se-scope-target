@@ -24,12 +24,12 @@ typedef struct __EthernetValidatorPrivateData
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static const bool validateCheck(IComValidatorHandle self, const uint8_t* check, const size_t lengthOfCheck,
+static bool validateCheck(IComValidatorHandle self, const uint8_t* check, const size_t lengthOfCheck,
                             const uint8_t* bytesToCheck, const size_t lengthOfBytesToCheck){
   return true;
 }
 
-static const size_t getCheckLength(IComValidatorHandle self){
+static size_t getCheckLength(IComValidatorHandle self){
   return 0;
 }
 
@@ -37,7 +37,7 @@ static void createCheck(IComValidatorHandle self, uint8_t* checksum, const uint8
   return;
 }
 
-static const bool checkPresentInProtocol(IComValidatorHandle self){
+static bool checkPresentInProtocol(IComValidatorHandle self){
   return false;
 }
 /******************************************************************************

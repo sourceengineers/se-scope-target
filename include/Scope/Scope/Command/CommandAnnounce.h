@@ -36,7 +36,7 @@ void CommandAnnounce_destroy(CommandAnnounceHandle self);
 ICommandHandle CommandAnnounce_getICommand(CommandAnnounceHandle self);
 
 /* Returns the name of the command */
-const char* CommandAnnounce_getName(CommandAnnounceHandle self);
+char* CommandAnnounce_getName(CommandAnnounceHandle self);
 
 
 #endif

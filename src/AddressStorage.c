@@ -49,7 +49,7 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses){
   return self;
 }
 
-const size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self){
+size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self){
   return self->maxAmountOfAddresses;
 }
 

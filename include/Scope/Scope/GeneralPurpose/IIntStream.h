@@ -20,8 +20,8 @@
 #ifndef IINTSTREAM_H_
 #define IINTSTREAM_H_
 
-#include <unistd.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
@@ -37,7 +37,7 @@ typedef struct IIntStreamStruct {
     void* implementer;
     void (*open)(IIntStreamHandle self, gemmi_uint* stream, const size_t capacity);
     bool (*dataIsReady)(IIntStreamHandle self);
-    const gemmi_uint (*readData)(IIntStreamHandle self);
+    gemmi_uint (*readData)(IIntStreamHandle self);
     size_t (*length)(IIntStreamHandle self);
     void (*read)(IIntStreamHandle self, gemmi_uint* data, const size_t length);
     void (*writeData)(IIntStreamHandle self, const gemmi_uint data);

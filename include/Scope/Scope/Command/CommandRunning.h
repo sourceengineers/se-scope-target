@@ -50,7 +50,7 @@ void CommandRunning_destroy(CommandRunningHandle self);
 ICommandHandle CommandRunning_getICommand(CommandRunningHandle self);
 
 /* Returns the name of the command */
-const char* CommandRunning_getName(CommandRunningHandle self);
+char* CommandRunning_getName(CommandRunningHandle self);
 
 
 #endif

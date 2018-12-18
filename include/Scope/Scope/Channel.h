@@ -62,7 +62,7 @@ bool Channel_isRunning(ChannelHandle self);
    Returns the responce of the buffer->write() functions 
    Will be written data point in a success case and a -1 if something went 
    wrong */
-ssize_t Channel_poll(ChannelHandle self);
+int Channel_poll(ChannelHandle self);
 
 /* Returns the FloatStream of the buffer, so data can be read */
 IFloatStreamHandle Channel_getRingBufferFloatStream(ChannelHandle self);
