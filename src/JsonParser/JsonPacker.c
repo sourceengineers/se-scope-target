@@ -423,7 +423,7 @@ static void reset(IPackerHandle iPacker){
 
 static IByteStreamHandle getByteStream(IPackerHandle iPacker){
   JsonPackerHandle self = (JsonPackerHandle) iPacker->implementer;
-  return ByteStream_getIByteStream(self->byteStream);
+  return self->byteStream;
 }
 /******************************************************************************
  Public functions
