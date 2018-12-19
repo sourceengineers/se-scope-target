@@ -94,7 +94,7 @@ static jsmntok_t* getValueFromArray(JsonUnpackerHandle self, jsmntok_t* array, s
     return NULL;
   }
 
-  if(array->size <= index){
+  if(array->size < index){
     return NULL;
   }
 
@@ -197,6 +197,8 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
 
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
 
+  jsmn_init(&self->parser);
+
   if(jsmn_parse(&self->parser, data, strlen(data), self->inputTokens, self->msgLength) < 0){
     return false;
   }
@@ -288,6 +290,10 @@ static gemmi_uint getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetch
   jsmntok_t* field = getCommand(self, information->commandName);
   field = getField(self, field, information->fieldName);
 
+  if(field == NULL){
+    return 0;
+  }
+
   /* If the field is supposed to be in a array, fetch the value */
   /* If the field is supposed to be in a array, but the token isn't in a array or vice versa, return 0 */
   if(information->isInArray == true && field->type == JSMN_ARRAY){
@@ -311,6 +317,10 @@ static float getFloatFromCommand(IUnpackerHandle iUnpackHandler, CommandFetching
 
   jsmntok_t* field = getCommand(self, information->commandName);
   field = getField(self, field, information->fieldName);
+
+  if(field == NULL){
+    return 0;
+  }
 
   /* If the field is supposed to be in a array, fetch the value */
   /* If the field is supposed to be in a array, but the token isn't in a array or vice versa, return 0 */
@@ -336,6 +346,10 @@ static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingIn
   jsmntok_t* field = getCommand(self, information->commandName);
   field = getField(self, field, information->fieldName);
 
+  if(field == NULL){
+    return false;
+  }
+
   /* If the field is supposed to be in a array, fetch the value */
   /* If the field is supposed to be in a array, but the token isn't in a array or vice versa, return 0 */
   if(information->isInArray == true && field->type == JSMN_ARRAY){
@@ -360,9 +374,12 @@ static void getStringFromCommand(IUnpackerHandle iUnpackHandler, CommandFetching
 
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
 
-
   jsmntok_t* field = getCommand(self, information->commandName);
   field = getField(self, field, information->fieldName);
+
+  if(field == NULL){
+    return;
+  }
 
   /* If the field is supposed to be in a array, fetch the value */
   /* If the field is supposed to be in a array, but the token isn't in a array or vice versa, return 0 */
@@ -384,6 +401,7 @@ static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandNa
                            const int maxLenght,
                            const int index){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  return false;
 }
 
 static size_t getLengthOfCheck(IUnpackerHandle iUnpackHandler){

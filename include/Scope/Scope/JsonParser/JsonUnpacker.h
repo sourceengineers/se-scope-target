@@ -9,8 +9,8 @@
  *
  *****************************************************************************************************************************************/
 
-#ifndef JSONPACKER_H_
-#define JSONPACKER_H_
+#ifndef JSONUNPACKER_H_
+#define JSONUNPACKER_H_
 
 #include <jsmn.h>
 #include <Scope/Communication/IUnpacker.h>

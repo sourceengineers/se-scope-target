@@ -1,146 +1,81 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-    #include <Scope/JsonParser/JsonUnpacker.h>
+    #include <Scope/JsonParser/JsonPacker.h>
+    #include <Scope/GeneralPurpose/ByteStream.h>
+    #include <Scope/GeneralPurpose/IntStream.h>
+    #include <Scope/GeneralPurpose/FloatStream.h>
 }
 
 using namespace testing;
 using namespace std;
 
+IComValidator validator;
 
-static const char* data = (const char*) "{\"transport\": \"...\","
-                                          "\"payload\": {"
-                                            "\"sc_cmd\": {"
-                                              "\"ev_announce\": null,"
-                                              "\"ev_trans\": null,"
-                                              "\"cf_addr\": {"
-                                                "\"cl_id_1\": [111, \"UINT8\"],"
-                                                "\"cl_id_2\": [222,\"UINT16\"],"
-                                                "\"cl_id_3\": [333,\"FLOAT\"]"
-                                              "},"
-                                              "\"cf_tgr\": {"
-                                                "\"cl_id\": 15,"
-                                                "\"mode\": \"Continous\","
-                                                "\"level\": 1.75,"
-                                                "\"edge\": \"fallig\""
-                                              "}"
-                                            "}"
-                                          "}"
-                                        "}";
-
-TEST(json_packer, unpack_test)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
-
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
-
-  EXPECT_EQ(unpackSuccessful, true);
-  unpacker->activateNewMessage(unpacker);
-
-  int numberOfCommands = unpacker->getNumberOfCommands(unpacker);
-
-  EXPECT_EQ(numberOfCommands, 4);
+static bool validateCheck(IComValidatorHandle self, const uint8_t* check, const size_t lengthOfCheck,
+                      const uint8_t* bytesToCheck, const size_t lengthOfBytesToCheck){
+  return true;
 }
 
-TEST(json_packer, command_name)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
-
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
-
-  unpacker->activateNewMessage(unpacker);
-
-  char name[20];
-  unpacker->getNameOfCommand(unpacker, name, 20, 0);
-  EXPECT_STREQ(name, "ev_announce");
-  unpacker->getNameOfCommand(unpacker, name, 20, 1);
-  EXPECT_STREQ(name, "ev_trans");
-  unpacker->getNameOfCommand(unpacker, name, 20, 2);
-  EXPECT_STREQ(name, "cf_addr");
-  unpacker->getNameOfCommand(unpacker, name, 20, 3);
-  EXPECT_STREQ(name, "cf_tgr");
-
+static size_t getCheckLength(IComValidatorHandle self){
+  return 4;
 }
 
-TEST(json_packer, values_from_commands)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+static void createCheck(IComValidatorHandle self, uint8_t* checksum, const uint8_t* bytesToCheck, const size_t length){
 
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
-
-  unpacker->activateNewMessage(unpacker);
-
-  CommandFetchingInformation info = {
-      .commandName = (char*) "cf_tgr",
-      .fieldName = (char*)"cl_id",
-      .isInArray = false,
-      .arrayIndex = 0
-  };
-
-  int data = unpacker->getIntFromCommand(unpacker, &info);
-  EXPECT_EQ(15, data);
-
-  info.fieldName = (char*)"level";
-
-  float fdata = unpacker->getFloatFromCommand(unpacker, &info);
-  EXPECT_EQ(1.75, fdata);
-
-  char mode[20];
-  info.fieldName = (char*)"mode";
-  unpacker->getStringFromCommand(unpacker, &info, mode, 20);
-  EXPECT_STREQ(mode, "Continous");
-
+  for (int i = 0; i < length; ++i) {
+    checksum[i%4] += bytesToCheck[i];
+  }
 }
 
-TEST(json_packer, values_from_array)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
 
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
-
-  unpacker->activateNewMessage(unpacker);
-
-  CommandFetchingInformation info = {
-          .commandName = (char*) "cf_addr",
-          .fieldName = (char*)"cl_id_1",
-          .isInArray = true,
-          .arrayIndex = 0
-  };
-
-  int data = unpacker->getIntFromCommand(unpacker, &info);
-  EXPECT_EQ(111, data);
-
-  info.fieldName = (char*)"cl_id_2";
-  info.arrayIndex = 1;
-
-  char dataType[20];
-  unpacker->getStringFromCommand(unpacker, &info, dataType, 20);
-  EXPECT_STREQ(dataType, "UINT16");
-
+static bool checkPresentInProtocol(IComValidatorHandle self){
+  return true;
 }
 
-TEST(json_packer, transport_field)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
 
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
+TEST(json_packer, unpack_test){
 
-  unpacker->activateNewMessage(unpacker);
+  validator.validateCheck = &validateCheck;
+  validator.getCheckLength = &getCheckLength;
+  validator.createCheck = &createCheck;
+  validator.checkPresentInProtocol = &checkPresentInProtocol;
 
-  size_t lengthCheck = unpacker->getLengthOfCheck(unpacker);
-  EXPECT_EQ(lengthCheck, 3);
+  size_t channelSize = 400;
+  OutputBufferSizes sizes = JsonPacker_calculateBufferSizes(5, 10, channelSize);
 
-  size_t lengthOfDataToCheck = unpacker->getLengthOfBytesToCheck(unpacker);
-  EXPECT_EQ(lengthOfDataToCheck, 215);
+  IByteStreamHandle outputStream = ByteStream_getIByteStream(ByteStream_create(sizes.outputBufferSize));
 
-  uint8_t dataToCheck[300];
-  unpacker->getBytesToCheck(unpacker, dataToCheck);
+  IIntStreamHandle timestamp = IntStream_getIIntStream(IntStream_create(channelSize));
+  IFloatStreamHandle ch1 = FloatStream_getIFloatStream(FloatStream_create(channelSize));
+  IFloatStreamHandle ch2 = FloatStream_getIFloatStream(FloatStream_create(channelSize));
 
-  EXPECT_STREQ((char*) dataToCheck, "{\"sc_cmd\": {\"ev_announce\": null,\"ev_trans\": null,\"cf_addr\": {\"cl_id_1\": [111, \"UINT8\"],\"cl_id_2\": [222,\"UINT16\"],\"cl_id_3\": [333,\"FLOAT\"]},\"cf_tgr\": {\"cl_id\": 15,\"mode\": \"Continous\",\"level\": 1.75,\"edge\": \"fallig\"}}}");
+  IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(sizes, &validator, outputStream));
 
-  uint8_t checkData[30];
-  unpacker->getCheck(unpacker, checkData);
+  packer->prepareAddressAnnouncement(packer, "VAR_1", "UINT32", 11111);
+  packer->prepareAddressAnnouncement(packer, "VAR_2", "FLOAT", 22222);
 
-  EXPECT_STREQ((char*) checkData, "...");
+  packer->prepareTrigger(packer, true, 1, 100);
 
+  packer->prepareTimeIncrement(packer, 10);
+  packer->prepareFlowControl(packer, "ACK");
+
+  for (int i = 0; i < 5; ++i) {
+    timestamp->writeData(timestamp, i);
+    ch1->writeData(ch1, (float) i);
+    ch2->writeData(ch2, (float) i);
+  }
+
+  packer->prepareTimestamp(packer, timestamp);
+  packer->prepareChannel(packer, ch1, 0);
+  packer->prepareChannel(packer, ch2, 1);
+
+  packer->pack(packer);
+
+  size_t dataPending = outputStream->length(outputStream);
+  char data[dataPending];
+
+  outputStream->read(outputStream, (uint8_t*) data, dataPending);
+
+  printf("Output: %s", data);
 }
