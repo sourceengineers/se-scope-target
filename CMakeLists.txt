@@ -107,6 +107,7 @@ endif()
 # Include dirs and link libraries
 ################################################################################
 include_directories(${PROJECT_DEPENDENCIES_DIR}/msgpackc/include)
+include_directories(${PROJECT_DEPENDENCIES_DIR}/jsmn)
 include_directories(${PROJECT_INCLUDE_DIR})
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
@@ -131,5 +132,5 @@ endif()
 # Install project
 ################################################################################
 message("-- Project will be installed to: ${CMAKE_INSTALL_PREFIX}")
-install( DIRECTORY "${PROJECT_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include" )
 install( TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library )
+install( DIRECTORY "${PROJECT_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include" )
