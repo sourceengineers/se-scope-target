@@ -20,8 +20,8 @@
 #ifndef IFLOATSTREAM_H_
 #define IFLOATSTREAM_H_
 
-#include <unistd.h>
 #include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
@@ -37,7 +37,7 @@ typedef struct IFloatStreamStruct {
     void* implementer;
     void (*open)(IFloatStreamHandle self, float* stream, const size_t capacity);
     bool (*dataIsReady)(IFloatStreamHandle self);
-    const float (*readData)(IFloatStreamHandle self);
+    float (*readData)(IFloatStreamHandle self);
     size_t (*length)(IFloatStreamHandle self);
     void (*read)(IFloatStreamHandle self, float* data, const size_t length);
     void (*writeData)(IFloatStreamHandle self, const float data);

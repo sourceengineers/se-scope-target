@@ -9,8 +9,10 @@
 
 #include <Scope/Scope.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/MsgpackParser/MsgpackUnpacker.h>
-#include <Scope/MsgpackParser/MsgpackPacker.h>
+//#include <Scope/JsonParser/JsonUnpacker.h>
+//#include <Scope/JsonParser/JsonPacker.h>
+#include <Scope/JsonParser/JsonUnpacker.h>
+#include <Scope/JsonParser/JsonPacker.h>
 #include <Scope/Communication/Sender.h>
 #include <Scope/Communication/CommunicationFactory.h>
 #include <Scope/GeneralPurpose/IntRingBuffer.h>
@@ -39,11 +41,11 @@ typedef struct __ScopePrivateData
   CommunicationFactoryHandle communicationFactory;
 
   /* Recieving part */
-  MsgpackUnpackerHandle msgpackUnpacker;
+  JsonUnpackerHandle jsonUnpacker;
   ReceiverHandle receiver;
 
   /* Sending part */
-  MsgpackPackerHandle msgpackPacker;
+  JsonPackerHandle jsonPacker;
   SenderHandle sender;
 
   /* Streams */
@@ -160,9 +162,11 @@ ScopeHandle Scope_create(const size_t channelSize,
 
   self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
 
+  OutputBufferSizes sizes = JsonPacker_calculateBufferSizes(numberOfChannels, maxNumberOfAddresses, channelSize);
+
   /* Create input and output streams */
   self->inputStream = ByteStream_create(inputBufferSize);
-  self->outputStream = ByteStream_create(outputBufferSize);
+  self->outputStream = ByteStream_create(sizes.outputBufferSize);
 
   /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
@@ -183,19 +187,17 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->communicationFactory = CommunicationFactory_create();
   IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
 
-  /* Create the sender and packer */
-  self->msgpackPacker = MsgpackPacker_create(outputBufferSize, self->numberOfChannels, maxNumberOfAddresses,
-                                             ByteStream_getIByteStream(self->outputStream),
-                                             communicationValidator);
-  self->sender = Sender_create(MsgpackPacker_getIPacker(self->msgpackPacker), self->channels, self->numberOfChannels,
+  self->jsonPacker = JsonPacker_create(sizes, communicationValidator, self->outputStream);
+
+  self->sender = Sender_create(JsonPacker_getIPacker(self->jsonPacker), self->channels, self->numberOfChannels,
                                self->trigger,
                                &self->iScope,
                                transmitCallback,
                                self->addressStorage);
 
   /* Create the unpacker and receiver */
-  self->msgpackUnpacker = MsgpackUnpacker_create(inputBufferSize);
-  self->receiver = Receiver_create(MsgpackUnpacker_getIUnpacker(self->msgpackUnpacker),
+  self->jsonUnpacker = JsonUnpacker_create(inputBufferSize);
+  self->receiver = Receiver_create(JsonUnpacker_getIUnpacker(self->jsonUnpacker),
                                    ByteStream_getIByteStream(self->inputStream),
                                    communicationValidator,
                                    self->sender);
@@ -219,11 +221,11 @@ void Scope_destroy(ScopeHandle self){
 
   Trigger_destroy(self->trigger);
   CommandFactory_destroy(self->commandFactory);
-  MsgpackUnpacker_destroy(self->msgpackUnpacker);
+  JsonUnpacker_destroy(self->jsonUnpacker);
   Receiver_destroy(self->receiver);
   ByteStream_destroy(self->inputStream);
   ByteStream_destroy(self->outputStream);
-  MsgpackPacker_destroy(self->msgpackPacker);
+  JsonPacker_destroy(self->jsonPacker);
   Sender_destroy(self->sender);
   CommunicationFactory_destroy(self->communicationFactory);
   AddressStorage_destroy(self->addressStorage);

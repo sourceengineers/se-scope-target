@@ -4,3 +4,6 @@
 [submodule "3party/msgpackc"]
 	path = 3party/msgpackc
 	url = https://github.com/msgpack/msgpack-c.git
+[submodule "3party/jsmn/jsmn"]
+	path = 3party/jsmn/jsmn
+	url = https://github.com/zserge/jsmn.git

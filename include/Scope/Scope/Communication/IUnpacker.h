@@ -56,10 +56,8 @@ typedef struct IUnpackerStruct {
   void (*activateNewMessage)(IUnpackerHandle iUnpacker);
 
   /* Functions to fetch commands and fields */
-  const size_t (*getNumberOfCommands)(IUnpackerHandle iUnpacker);
+  size_t (*getNumberOfCommands)(IUnpackerHandle iUnpacker);
   bool (*getNameOfCommand)(IUnpackerHandle iUnpacker, char* name, const int maxLenght, const int index);
-  ssize_t (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
-  bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
 
   /* Functions to fetch the data from commands */
   gemmi_uint (*getIntFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
@@ -72,6 +70,12 @@ typedef struct IUnpackerStruct {
   size_t (*getLengthOfBytesToCheck)(IUnpackerHandle iUnpackHandler);
   void (*getBytesToCheck)(IUnpackerHandle iUnpackHandler, uint8_t* data);
   void (*getCheck)(IUnpackerHandle iUnpackHandler, uint8_t* checkData);
+
+  /* The following functions are likely not to be used, at will be obsolete.
+   * The commands have to know themselves how many and what kind of fields, they own */
+  int (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
+  bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
+
 } IUnpacker ;
 
 #endif

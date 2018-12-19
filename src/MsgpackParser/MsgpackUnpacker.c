@@ -60,7 +60,7 @@ static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *
 
 /* Matches the given key to a object on the child level of the gives parent object
     returns a integer indicating the position of the key in the object */
-static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key);
+static int matchKeyToIndex(msgpack_object parentObj, const char *key);
 
 /* Returns msgpack_object matching the the key */
 static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key);
@@ -203,7 +203,7 @@ static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *
     return parentObj;
   }
 
-  const ssize_t offset = matchKeyToIndex(parentObj, key);
+  const int offset = matchKeyToIndex(parentObj, key);
 
   /* Returns a empty object if no key could be matched */
   if(offset == -1){
@@ -215,13 +215,13 @@ static msgpack_object getFieldFromCommand(msgpack_object parentObj, const char *
   return (parentObj.via.map.ptr+offset)->val;
 }
 
-static const size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
+static size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   return self->numberOfCommands;
 }
 
-static ssize_t matchKeyToIndex(msgpack_object parentObj, const char *key){
+static int matchKeyToIndex(msgpack_object parentObj, const char *key){
 
   /* Returns an error the object is not a map */
   if(parentObj.type != MSGPACK_OBJECT_MAP){
@@ -281,7 +281,7 @@ static msgpack_object matchKeyToObj(msgpack_object parentObj, const char *key){
     return parentObj;
   }
 
-  const ssize_t offset = matchKeyToIndex(parentObj, key);
+  const int offset = matchKeyToIndex(parentObj, key);
 
   /* Return empty object if offset is negative */
   if(offset < 0){
@@ -450,7 +450,7 @@ static void getCheck(IUnpackerHandle iUnpackHandler, uint8_t* checkData){
   copyMemory((char*) checkData, transportObject.via.bin.ptr, transportObject.via.bin.size);
 }
 
-static ssize_t getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){
+static int getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){
   MsgpackUnpackerHandle self = (MsgpackUnpackerHandle) iUnpackHandler->implementer;
 
   msgpack_object obj = getCmdObj(self, commandName);

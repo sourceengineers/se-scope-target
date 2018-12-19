@@ -37,7 +37,7 @@ void CommandPoll_destroy(CommandPollHandle self);
 ICommandHandle CommandPoll_getICommand(CommandPollHandle self);
 
 /* Returns the name of the command */
-const char* CommandPoll_getName(CommandPollHandle self);
+char* CommandPoll_getName(CommandPollHandle self);
 
 
 #endif

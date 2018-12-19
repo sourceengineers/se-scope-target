@@ -14,7 +14,8 @@
 #define FLOATRINGBUFFER_H_
 
 #include <Scope/GeneralPurpose/IFloatStream.h>
-#include <unistd.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
@@ -49,13 +50,13 @@ size_t FloatRingBuffer_usedData(FloatRingBufferHandle self);
 
 /* Writes the data in to the buffer. The amount of written data will be returned.
    If the write operation would let the buffer overflow, a -1 will be returned.*/
-ssize_t FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const size_t length);
+int FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const size_t length);
 
 /* Reads newest data and writes them in the passed foat array
    The amount of safed data points will be returned.
    if the length is smaller than the amount of data to be read, the function
    will return -1 */
-ssize_t FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length);
+int FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length);
 
 /* Returns the IFloatStream interface */
 IFloatStreamHandle FloatRingBuffer_getIFloatStream(FloatRingBufferHandle self);

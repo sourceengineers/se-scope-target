@@ -31,11 +31,11 @@ typedef struct IComValidatorStruct* IComValidatorHandle;
 typedef struct IComValidatorStruct {
   void* implementer;
 
-  const bool (*validateCheck)(IComValidatorHandle self, const uint8_t* check, const size_t lengthOfCheck,
+  bool (*validateCheck)(IComValidatorHandle self, const uint8_t* check, const size_t lengthOfCheck,
                               const uint8_t* bytesToCheck, const size_t lengthOfBytesToCheck);
-  const size_t (*getCheckLength)(IComValidatorHandle self);
+  size_t (*getCheckLength)(IComValidatorHandle self);
   void (*createCheck)(IComValidatorHandle self, uint8_t* checksum, const uint8_t* bytesToCheck, const size_t length);
-  const bool (*checkPresentInProtocol)(IComValidatorHandle self);
+  bool (*checkPresentInProtocol)(IComValidatorHandle self);
 
 } IComValidator ;
 

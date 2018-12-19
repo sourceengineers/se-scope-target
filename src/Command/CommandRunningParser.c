@@ -38,7 +38,7 @@ void CommandRunningParser_configure(CommandRunningParserHandle self){
     return;
   }
 
-  ssize_t numberOfFields = self->iUnpacker->getNumberOfFields(self->iUnpacker, (const char*) self->commandName);
+  int numberOfFields = self->iUnpacker->getNumberOfFields(self->iUnpacker, (const char*) self->commandName);
 
   if(numberOfFields == -1){
     return;

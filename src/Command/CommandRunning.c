@@ -13,7 +13,7 @@
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static const char* commandName = "cf_running";
+static char* commandName = "cf_running";
 
 /* Class data */
 typedef struct __CommandRunningPrivateData
@@ -77,7 +77,7 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
 }
 
 
-static const char* getCommandName(ICommandHandle self){
+static char* getCommandName(ICommandHandle self){
   CommandRunningHandle commandAddr = (CommandRunningHandle) self->implementer;
 
   return CommandRunning_getName(commandAddr);
@@ -107,7 +107,7 @@ ICommandHandle CommandRunning_getICommand(CommandRunningHandle self){
   return &self->iCommand;
 }
 
-const char* CommandRunning_getName(CommandRunningHandle self){
+char* CommandRunning_getName(CommandRunningHandle self){
   return commandName;
 }
 

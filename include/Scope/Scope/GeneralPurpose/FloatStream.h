@@ -15,7 +15,8 @@
 #define FLOATSTREAM_H_
 
 #include <Scope/GeneralPurpose/IFloatStream.h>
-#include <unistd.h>
+#include <stdint.h>
+#include <stddef.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <Scope/GeneralPurpose/IFloatStream.h>
