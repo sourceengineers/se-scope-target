@@ -3,7 +3,6 @@ import serial
 import time
 import os
 import sys
-import msgpack
 from data_printer import DataPrinter
 import json
 from collections import Mapping, Iterable
@@ -28,18 +27,15 @@ def convert(data):
 
 def printAndParse(ans):
     if len(ans) > 0:
-        ans = ans[0:-9];
 
         try:
-            parsed = msgpack.unpackb(ans);
+            json_data = json.dumps(converted);
         except:
             sys.stdout.write("\nCouldn't parse: ");
             print(ans);
             return;
 
-        converted = convert(parsed);
         sys.stdout.write("\nAnswer: ");
-        json_data = json.dumps(converted);
         print(json_data);
         with open(conf_file, 'r') as f:
                yaml_parser = yaml.load(f)
@@ -66,16 +62,16 @@ def main():
     ser.flushOutput()
 
     while True:
-        with open(inputFile, "rb") as f:
+        with open(inputFile, "r") as f:
             if os.path.getsize(inputFile) > 0:
                 sys.stdout.write("\nCommand: ")
                 command = f.readline()
-                print(msgpack.unpackb(command))
+                print(command)
                 ser.write(command)
 
-        open(inputFile, "wb")
+        open(inputFile, "w")
         time.sleep(0.1)
-        answer = ser.read_until(b"\0\0\0\0\0STOP")
+        answer = ser.readline()
         printAndParse(answer)
 
 if __name__ == "__main__":
