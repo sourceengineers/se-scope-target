@@ -66,6 +66,7 @@ static bool bufferIsEmpty(const char* buffer);
 static void appendString(char* destination, const char* origin, const char* endWith);
 static void appendNumber(char* destination, gemmi_uint origin, const char* endWith);
 static void flushBuffer(char* buffer);
+static bool mergeObjects(char* destination, char* origin, bool commaIsNeeded);
 
 /******************************************************************************
  Private functions
@@ -80,6 +81,21 @@ inline static void appendString(char* destination, const char* origin, const cha
 
 inline static void flushBuffer(char* buffer){
   buffer[0] = '\0';
+}
+
+inline static bool mergeObjects(char* destination, char* origin, bool commaIsNeeded){
+
+  if(bufferIsEmpty(origin)){
+    return commaIsNeeded;
+  }
+
+  if(commaIsNeeded == true){
+    strcat(destination, ",");
+  }
+
+  strcat(destination, origin);
+  return true;
+
 }
 
 inline static void appendNumber(char* destination, gemmi_uint origin, const char* endWith){
@@ -326,15 +342,13 @@ static void constructPayloadMap(JsonPackerHandle self, char* payloadDataBuffer, 
     return;
   }
 
+  bool commaIsNeeded = false;
+
   flushBuffer(payloadDataBuffer);
   appendString(payloadDataBuffer, KEYWORD_PAYLOAD, ":{");
 
-  strcat(payloadDataBuffer, scDataBuffer);
-
-  if(!bufferIsEmpty(scDataBuffer)){
-    strcat(payloadDataBuffer, ",");
-  }
-  strcat(payloadDataBuffer, self->flowControlBuffer);
+  commaIsNeeded = mergeObjects(payloadDataBuffer, scDataBuffer, commaIsNeeded);
+  mergeObjects(payloadDataBuffer, self->flowControlBuffer, commaIsNeeded);
 
   strcat(payloadDataBuffer, "}");
 }
@@ -352,34 +366,17 @@ static void constructScDataMap(JsonPackerHandle self, char* scDataBuffer, size_t
     return;
   }
 
+  bool commaIsNeeded = false;
+
   flushBuffer(scDataBuffer);
   appendString(scDataBuffer, KEYWORD_SC_DATA, ":{");
 
   /* Merge all the pre packed sc data buffers together */
-  strcat(scDataBuffer, self->channelBuffer);
-
-  /* If more than one object is prepared, the objects have to be separated by , */
-  if(!bufferIsEmpty(self->channelBuffer)){
-    strcat(scDataBuffer, ",");
-  }
-  strcat(scDataBuffer, self->timestampBuffer);
-
-  if(!bufferIsEmpty(self->channelBuffer) || !bufferIsEmpty(self->timestampBuffer)){
-    strcat(scDataBuffer, ",");
-  }
-  strcat(scDataBuffer, self->tincBuffer);
-
-  if(!bufferIsEmpty(self->channelBuffer) || !bufferIsEmpty(self->timestampBuffer) || \
-      !bufferIsEmpty(self->tincBuffer)){
-    strcat(scDataBuffer, ",");
-  }
-  strcat(scDataBuffer, self->triggerBuffer);
-
-  if(!bufferIsEmpty(self->channelBuffer) || !bufferIsEmpty(self->timestampBuffer) || \
-      !bufferIsEmpty(self->tincBuffer) || !bufferIsEmpty(self->triggerBuffer)){
-    strcat(scDataBuffer, ",");
-  }
-  strcat(scDataBuffer, self->announcementBuffer);
+  commaIsNeeded = mergeObjects(scDataBuffer, self->channelBuffer, commaIsNeeded);
+  commaIsNeeded = mergeObjects(scDataBuffer, self->timestampBuffer, commaIsNeeded);
+  commaIsNeeded = mergeObjects(scDataBuffer, self->tincBuffer, commaIsNeeded);
+  commaIsNeeded = mergeObjects(scDataBuffer, self->triggerBuffer, commaIsNeeded);
+  mergeObjects(scDataBuffer, self->announcementBuffer, commaIsNeeded);
 
   strcat(scDataBuffer, "}");
 }
@@ -390,6 +387,10 @@ static void packData(IPackerHandle iPacker){
   char scDataBuffer[self->scopeDataBufferSize];
   char payloadBuffer[self->payloadBufferSize];
   char outputBuffer[self->outputBufferSize];
+
+  flushBuffer(scDataBuffer);
+  flushBuffer(payloadBuffer);
+  flushBuffer(outputBuffer);
 
   packChannel(self);
   packAddressAnnouncement(self);
@@ -413,12 +414,12 @@ static void reset(IPackerHandle iPacker){
   self->numberOfChannelsToSend = 0;
   self->numberOfAddressesToAnnounce = 0;
 
-  self->channelBuffer[0] = '\0';
-  self->timestampBuffer[0] = '\0';
-  self->announcementBuffer[0] = '\0';
-  self->flowControlBuffer[0] = '\0';
-  self->tincBuffer[0] = '\0';
-  self->triggerBuffer[0] = '\0';
+  flushBuffer(self->channelBuffer);
+  flushBuffer(self->timestampBuffer);
+  flushBuffer(self->announcementBuffer);
+  flushBuffer(self->flowControlBuffer);
+  flushBuffer(self->tincBuffer);
+  flushBuffer(self->triggerBuffer);
 }
 
 static IByteStreamHandle getByteStream(IPackerHandle iPacker){

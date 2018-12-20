@@ -187,7 +187,7 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->communicationFactory = CommunicationFactory_create();
   IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
 
-  self->jsonPacker = JsonPacker_create(sizes, communicationValidator, self->outputStream);
+  self->jsonPacker = JsonPacker_create(sizes, communicationValidator, ByteStream_getIByteStream(self->outputStream));
 
   self->sender = Sender_create(JsonPacker_getIPacker(self->jsonPacker), self->channels, self->numberOfChannels,
                                self->trigger,

@@ -78,7 +78,7 @@ set(PROJECT_EXAMPLES_DIR
     examples
 )
 set(PROJECT_DEPENDENCIES
- # msgpackc
+  msgpackc
   jsmn
 )
 set(PROJECT_INCLUDE_DIR

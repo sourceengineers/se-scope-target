@@ -12,7 +12,7 @@
 #ifndef JSONUNPACKER_H_
 #define JSONUNPACKER_H_
 
-#include <jsmn/jsmn.h>
+#include <jsmn.h>
 #include <Scope/Communication/IUnpacker.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
