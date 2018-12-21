@@ -14,16 +14,16 @@
 #include <Scope/Communication/Keywords.h>
 
 #if (ARCH_SIZE_32)
-#define maxLengthOfNumber = 11;
+#define maxLengthOfNumber 11
 #else
-#define maxLengthOfNumber = 21;
+#define maxLengthOfNumber 21
 #endif
 
 #define flowControlBufferSize 30
 #define tincBufferSize 30
 #define triggerBufferSize 60
 
-#define maxControlSignSpace = 30;
+#define maxControlSignSpace 30
 
 /******************************************************************************
  Define private data
