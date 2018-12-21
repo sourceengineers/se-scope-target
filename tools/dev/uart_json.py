@@ -27,9 +27,10 @@ def convert(data):
 
 def printAndParse(ans):
     if len(ans) > 0:
-
+        ans = ans[0:-1]
+        ans = ans.decode("utf-8")
         try:
-            json_data = json.dumps(converted);
+            json_data = json.loads(ans);
         except:
             sys.stdout.write("\nCouldn't parse: ");
             print(ans);
@@ -40,11 +41,11 @@ def printAndParse(ans):
         with open(conf_file, 'r') as f:
                yaml_parser = yaml.load(f)
                legend = yaml_parser["Legend"];
-               printer.plot_data(json_data, legend);
+               printer.plot_data(ans, legend);
 
         with open(outputFile, "a+") as o:
-            if isinstance(parsed, str):
-                o.write(parsed)
+            if isinstance(ans, str):
+                o.write(ans)
 
         return json_data;
 
@@ -66,12 +67,13 @@ def main():
             if os.path.getsize(inputFile) > 0:
                 sys.stdout.write("\nCommand: ")
                 command = f.readline()
+                command = str.encode(command)
                 print(command)
                 ser.write(command)
 
         open(inputFile, "w")
         time.sleep(0.1)
-        answer = ser.readline()
+        answer = ser.read_until(b'\0');
         printAndParse(answer)
 
 if __name__ == "__main__":
