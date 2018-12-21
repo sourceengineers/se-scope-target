@@ -400,7 +400,7 @@ static bool packChannelMap(JsonPackerHandle self){
 
   appendData(self->byteStream, "}", "");
 
-  return commaIsNeeded;
+  return true;
 }
 
 static bool packPayloadMap(JsonPackerHandle self){
@@ -484,6 +484,9 @@ static void reset(IPackerHandle iPacker){
 
   self->addressesReady = false;
   self->channelsReady = false;
+
+  self->numberOfAddressesToAnnounce = 0;
+  self->numberOfChannelsToSend = 0;
 
   for (int i = 0; i < self->maxNumberOfChannels; ++i) {
     self->floatStreams[i] = NULL;
