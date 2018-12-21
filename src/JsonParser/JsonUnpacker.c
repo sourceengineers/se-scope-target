@@ -401,7 +401,32 @@ static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandNa
                            const int maxLenght,
                            const int index){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
-  return false;
+
+  jsmntok_t* command = getCommand(self, commandName);
+
+  if(command == NULL){
+    return false;
+  }
+
+  command = command + 1;
+
+  if(command->type != JSMN_OBJECT){
+    return false;
+  }
+
+  jsmntok_t* field = getElementInObject(self, command + 1, index);
+
+  if(field == NULL){
+    return false;
+  }
+
+  if(field->type != JSMN_STRING){
+    return false;
+  }
+
+  copyString(fieldName, self->storageString + field->start,(size_t) field->end - field->start);
+
+  return true;
 }
 
 static size_t getLengthOfCheck(IUnpackerHandle iUnpackHandler){
@@ -454,17 +479,30 @@ static void getCheck(IUnpackerHandle iUnpackHandler, uint8_t* checkData){
 
 static int getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+
+  jsmntok_t* command = getCommand(self, commandName);
+
+  if(command == NULL){
+    return -1;
+  }
+
+  command = command + 1;
+
+  if(command->type != JSMN_OBJECT){
+    return -1;
+  }
+
+  return command->size;
 }
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-JsonUnpackerHandle JsonUnpacker_create(const size_t msgLength){
+JsonUnpackerHandle JsonUnpacker_create(){
   
   JsonUnpackerHandle self = (JsonUnpackerHandle) malloc(sizeof(JsonUnpackerPrivateData));
 
   self->numberOfCommands = 0;
- // self->msgLength = msgLength;
   self->iUnpacker.implementer = self;
   self->iUnpacker.unpack = &unpack;
   self->iUnpacker.getBoolFromCommand = &getBoolFromCommand;
