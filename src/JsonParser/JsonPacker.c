@@ -375,7 +375,17 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
   return true;
 }
 
+static bool channelMapIsEmpty(JsonPackerHandle self){
+
+  return (!self->channelsReady && !self->timestampReady && !self->tIncReady &&
+          !self->triggerReady && !self->addressesReady);
+}
+
 static bool packChannelMap(JsonPackerHandle self){
+
+  if(channelMapIsEmpty(self)){
+    return false;
+  }
 
   bool commaIsNeeded = false;
 
