@@ -30,7 +30,7 @@ static const char* data = (const char*) "{\"transport\": \"...\","
 
 TEST(json_unpacker, unpack_test)
 {
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create());
 
   bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
 
@@ -44,7 +44,7 @@ TEST(json_unpacker, unpack_test)
 
 TEST(json_unpacker, command_name)
 {
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create());
 
   bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
 
@@ -64,7 +64,7 @@ TEST(json_unpacker, command_name)
 
 TEST(json_unpacker, values_from_commands)
 {
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create());
 
   bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
 
@@ -90,11 +90,24 @@ TEST(json_unpacker, values_from_commands)
   unpacker->getStringFromCommand(unpacker, &info, mode, 20);
   EXPECT_STREQ(mode, "Continous");
 
+  int numberOfFields;
+  numberOfFields = unpacker->getNumberOfFields(unpacker, (const char*) "cf_addr");
+  EXPECT_EQ(numberOfFields, 3);
+
+  char nameOfField[30];
+  unpacker->getNameOfField(unpacker, (const char*) "cf_tgr", nameOfField, 30, 0);
+  EXPECT_STREQ(nameOfField, "cl_id");
+  unpacker->getNameOfField(unpacker, (const char*) "cf_tgr", nameOfField, 30, 1);
+  EXPECT_STREQ(nameOfField, "mode");
+  unpacker->getNameOfField(unpacker, (const char*) "cf_tgr", nameOfField, 30, 2);
+  EXPECT_STREQ(nameOfField, "level");
+  unpacker->getNameOfField(unpacker, (const char*) "cf_tgr", nameOfField, 30, 3);
+  EXPECT_STREQ(nameOfField, "edge");
 }
 
 TEST(json_unpacker, values_from_array)
 {
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create());
 
   bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
 
@@ -121,7 +134,7 @@ TEST(json_unpacker, values_from_array)
 
 TEST(json_unpacker, transport_field)
 {
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create());
 
   bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
 
@@ -189,7 +202,7 @@ static const char* notParsingData = (const char*) "\"transport\": \"...\","
 
 TEST(json_unpacker, edge_cases)
 {
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create());
 
   /* Check that faulty messages not get parsed */
   bool unpackSuccessful = unpacker->unpack(unpacker, notParsingData, strlen(notParsingData));
