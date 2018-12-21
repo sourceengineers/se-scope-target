@@ -33,72 +33,77 @@ typedef struct __JsonPackerPrivateData
 
   IPacker iPacker;
 
-  char* channelBuffer;
-  char* timestampBuffer;
-  char* announcementBuffer;
-  char flowControlBuffer[flowControlBufferSize];
-  char tincBuffer[tincBufferSize];
-  char triggerBuffer[triggerBufferSize];
-
-  size_t scopeDataBufferSize;
-  size_t payloadBufferSize;
-  size_t outputBufferSize;
-
   /* Data for the Announce address feature */
   size_t maxAddressesToAnnounce;
   char** namesOfAddresses;
   char** typesOfAddresses;
   gemmi_uint* addresses;
   gemmi_uint numberOfAddressesToAnnounce;
+  bool addressesReady;
 
   IComValidatorHandle validator;
 
   IByteStreamHandle byteStream;
 
   /* Channel preparation data */
-  bool channelsArePrepared;
+  bool channelsReady;
   size_t numberOfChannelsToSend;
   gemmi_uint* channelIds;
   IFloatStreamHandle* floatStreams;
+
+  /* Timestamp increment data */
+  bool tIncReady;
+  gemmi_uint timeIncrement;
+
+  /* Timestamp data */
+  bool timestampReady;
+  IIntStreamHandle timestamp;
+
+  /* Trigger data */
+  bool triggerReady;
+  bool isTriggered;
+  gemmi_uint channelId;
+  gemmi_uint triggerTimestamp;
+
+  /* Flow control data */
+  bool flowcontrolReady;
+  char flowcontrol[4];
+
 } JsonPackerPrivateData ;
 
-static bool bufferIsEmpty(const char* buffer);
-static void appendString(char* destination, const char* origin, const char* endWith);
-static void appendNumber(char* destination, gemmi_uint origin, const char* endWith);
+static void appendString(IByteStreamHandle destination, const char* origin, const char* endWith);
+static void appendNumber(IByteStreamHandle destination, gemmi_uint origin, const char* endWith);
 static void flushBuffer(char* buffer);
-static bool mergeObjects(char* destination, char* origin, bool commaIsNeeded);
+inline static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
 
-inline static void appendString(char* destination, const char* origin, const char* endWith){
-  strcat(destination, "\"");
-  strcat(destination, origin);
-  strcat(destination, "\"");
-  strcat(destination, endWith);
+inline static void appendString(IByteStreamHandle destination, const char* origin, const char* endWith){
+  destination->writeByte(destination, (uint8_t) "\"");
+  destination->write(destination, (uint8_t*) origin, strlen(origin));
+  destination->writeByte(destination, (uint8_t) "\"");
+  destination->write(destination, (uint8_t*) endWith, strlen(endWith));
+}
+
+inline static void appendData(IByteStreamHandle destination, const char* origin, const char* endWith){
+  destination->write(destination, (uint8_t*) origin, strlen(origin));
+  destination->write(destination, (uint8_t*) endWith, strlen(endWith));
 }
 
 inline static void flushBuffer(char* buffer){
   buffer[0] = '\0';
 }
 
-inline static bool mergeObjects(char* destination, char* origin, bool commaIsNeeded){
-
-  if(bufferIsEmpty(origin)){
-    return commaIsNeeded;
-  }
+inline static void addComma(IByteStreamHandle destination, bool commaIsNeeded){
 
   if(commaIsNeeded == true){
-    strcat(destination, ",");
+    appendData(destination, ",", "");
   }
-
-  strcat(destination, origin);
-  return true;
-
 }
 
-inline static void appendNumber(char* destination, gemmi_uint origin, const char* endWith){
+inline static void appendNumber(IByteStreamHandle destination, gemmi_uint origin, const char* endWith){
 
   char number[maxLengthOfNumber];
 
@@ -108,8 +113,8 @@ inline static void appendNumber(char* destination, gemmi_uint origin, const char
   sprintf(number, "%llu", origin);
 #endif
 
-  strcat(destination, number);
-  strcat(destination, endWith);
+  destination->write(destination, (uint8_t*) number, strlen(number));
+  destination->write(destination, (uint8_t*) endWith, strlen(endWith));
 }
 
 static void prepareChannel(IPackerHandle iPacker, IFloatStreamHandle stream, const gemmi_uint channelId){
@@ -128,65 +133,109 @@ static void prepareChannel(IPackerHandle iPacker, IFloatStreamHandle stream, con
 
   self->numberOfChannelsToSend++;
 
-  if(self->channelsArePrepared == true){
-    return;
-  }
-
-  self->channelsArePrepared = true;
+  self->channelsReady = true;
 }
 
 static void prepareTimeIncrement(IPackerHandle iPacker, const gemmi_uint timeIncrement){
   JsonPackerHandle self = (JsonPackerHandle) iPacker->implementer;
 
-  flushBuffer(self->tincBuffer);
-  appendString(self->tincBuffer, KEYWORD_T_INC, ":");
-  appendNumber(self->tincBuffer, timeIncrement, "");
+  self->tIncReady = true;
+  self->timeIncrement = timeIncrement;
+
+  appendString(self->byteStream, KEYWORD_T_INC, ":");
+  appendNumber(self->byteStream, timeIncrement, "");
 }
+
+static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded){
+
+  if(self->tIncReady == false){
+    return false;
+  }
+
+  addComma(self->byteStream, commaIsNeeded);
+  appendString(self->byteStream, KEYWORD_T_INC, ":");
+  appendNumber(self->byteStream, self->timeIncrement, "");
+
+  self->tIncReady = false;
+
+  return true;
+}
+
 
 static void prepareTimestamp(IPackerHandle iPacker, IIntStreamHandle timestamp){
   JsonPackerHandle self = (JsonPackerHandle) iPacker->implementer;
 
-  flushBuffer(self->timestampBuffer);
-  appendString(self->timestampBuffer, KEYWORD_T_STMP, ":[");
+  self->timestampReady = true;
+  self->timestamp = timestamp;
+}
 
-  const size_t dataLength = timestamp->length(timestamp);
+static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded){
+
+  if(self->timestampReady == false){
+    return false;
+  }
+
+  if(self->timestamp == NULL){
+    return false;
+  }
+
+  addComma(self->byteStream, commaIsNeeded);
+  appendString(self->byteStream, KEYWORD_T_STMP, ":[");
+
+  const size_t dataLength = self->timestamp->length(self->timestamp);
   gemmi_uint data[dataLength];
 
-  timestamp->read(timestamp, data, dataLength);
+  self->timestamp->read(self->timestamp, data, dataLength);
   for (int i = 0; i < dataLength; ++i) {
     if(i != 0){
-      strcat(self->timestampBuffer, ",");
+      appendData(self->byteStream, ",", "");
     }
 
-    appendNumber(self->timestampBuffer, data[i], "");
+    appendNumber(self->byteStream, data[i], "");
   }
-  strcat(self->timestampBuffer, "]");
+  appendData(self->byteStream, "]", "");
 
+  self->timestampReady = false;
+
+  return true;
 }
 
 static void prepareTrigger(IPackerHandle iPacker, const bool isTriggered, const gemmi_uint channelId, const gemmi_uint timestamp){
   JsonPackerHandle self = (JsonPackerHandle) iPacker->implementer;
 
-  flushBuffer(self->triggerBuffer);
+  self->triggerReady = true;
+  self->isTriggered = isTriggered;
+  self->channelId = channelId;
+  self->triggerTimestamp = timestamp;
+}
 
-  /* Prepare map */
-  appendString(self->triggerBuffer, KEYWORD_TGR, ":{");
+static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded){
 
-  appendString(self->triggerBuffer, KEYWORD_TGR_FOUND, ":");
-
-  if(isTriggered == true){
-    appendString(self->triggerBuffer, "true", ",");
-  } else {
-    appendString(self->triggerBuffer, "false", "}");
-    return;
+  if(self->triggerReady == false){
+    return false;
   }
 
-  appendString(self->triggerBuffer, KEYWORD_TGR_CL_DATA_IND, ":");
-  appendNumber(self->triggerBuffer, timestamp, ",");
+  addComma(self->byteStream, commaIsNeeded);
+  appendString(self->byteStream, KEYWORD_TGR, ":{");
 
-  appendString(self->triggerBuffer, KEYWORD_TGR_CL_ID, ":");
-  appendNumber(self->triggerBuffer, channelId, "}");
+  appendString(self->byteStream, KEYWORD_TGR_FOUND, ":");
 
+  if(self->isTriggered == true){
+    appendData(self->byteStream, "true", ",");
+
+    appendString(self->byteStream, KEYWORD_TGR_CL_DATA_IND, ":");
+    appendNumber(self->byteStream, self->triggerTimestamp, ",");
+
+    appendString(self->byteStream, KEYWORD_TGR_CL_ID, ":");
+    appendNumber(self->byteStream, self->channelId, "}");
+
+  } else {
+    appendData(self->byteStream, "false", "}");
+  }
+
+  self->triggerReady = false;
+
+  return true;
 }
 
 static void prepareFlowControl(IPackerHandle iPacker, const char* flowControl){
@@ -197,10 +246,25 @@ static void prepareFlowControl(IPackerHandle iPacker, const char* flowControl){
     return;
   }
 
-  flushBuffer(self->flowControlBuffer);
-  appendString(self->flowControlBuffer, KEYWORD_FLOW_CTRL, ":");
-  appendString(self->flowControlBuffer, flowControl, "");
+  self->flowcontrolReady = true;
+  strcpy(self->flowcontrol, flowControl);
 }
+
+static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded){
+
+  if(self->flowcontrolReady == false){
+    return false;
+  }
+
+  addComma(self->byteStream, commaIsNeeded);
+  appendString(self->byteStream, KEYWORD_FLOW_CTRL, ":");
+  appendString(self->byteStream, self->flowcontrol, "");
+
+  self->flowcontrolReady = false;
+
+  return true;
+}
+
 
 static void prepareAddressAnnouncement(IPackerHandle iPacker, const char* name, const char* type, const gemmi_uint address){
   JsonPackerHandle self = (JsonPackerHandle) iPacker->implementer;
@@ -217,209 +281,206 @@ static void prepareAddressAnnouncement(IPackerHandle iPacker, const char* name, 
 
 }
 
-void packAddressAnnouncement(JsonPackerHandle self){
+static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded){
 
-  if(self->numberOfAddressesToAnnounce == 0){
-    return;
+  if(self->addressesReady == false){
+    return false;
   }
 
-  flushBuffer(self->announcementBuffer);
+  if(self->numberOfAddressesToAnnounce == 0){
+    return false;
+  }
 
-  appendString(self->announcementBuffer, KEYWORD_ANNOUNCE, ":{");
+  addComma(self->byteStream, commaIsNeeded);
+  appendString(self->byteStream, KEYWORD_ANNOUNCE, ":{");
 
   for (size_t i = 0; i < self->numberOfAddressesToAnnounce; ++i) {
 
     if(i != 0){
-      strcat(self->announcementBuffer, ",");
+      appendData(self->byteStream, ",", "");
     }
 
-    appendString(self->announcementBuffer, self->namesOfAddresses[i], ":[");
-    appendNumber(self->announcementBuffer, self->addresses[i], ",");
+    appendString(self->byteStream, self->namesOfAddresses[i], ":[");
+    appendNumber(self->byteStream, self->addresses[i], ",");
 
-    appendString(self->announcementBuffer, self->typesOfAddresses[i], "");
-    strcat(self->announcementBuffer, "]");
+    appendString(self->byteStream, self->typesOfAddresses[i], "]");
   }
 
-  strcat(self->announcementBuffer, ",");
+  appendData(self->byteStream, ",", "");
 
-  appendString(self->announcementBuffer, KEYWORD_NUMBER_OF_CHANNELS, ":");
-  appendNumber(self->announcementBuffer, self->maxNumberOfChannels, "");
+  appendString(self->byteStream, KEYWORD_NUMBER_OF_CHANNELS, ":");
+  appendNumber(self->byteStream, self->maxNumberOfChannels, "");
 
-  strcat(self->announcementBuffer, "}");
+  appendData(self->byteStream, "}", "");
+
+  self->addressesReady = false;
+
+  return true;
 }
 
-static void packChannel(JsonPackerHandle self){
+static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
 
-  if(self->channelsArePrepared == false){
-    return;
+  if(self->channelsReady == false){
+    return false;
   }
 
-  flushBuffer(self->channelBuffer);
-  appendString(self->channelBuffer, KEYWORD_CL_DATA, ":{");
+  addComma(self->byteStream, commaIsNeeded);
+  appendString(self->byteStream, KEYWORD_CL_DATA, ":{");
 
   for (size_t i = 0; i < self->numberOfChannelsToSend; ++i) {
+    if(self->floatStreams[i] != NULL){
+      char id[maxLengthOfNumber];
+      sprintf(id, "%u", self->channelIds[i]);
 
-    char id[maxLengthOfNumber];
-    sprintf(id, "%u", self->channelIds[i]);
-
-    /* Add a , in front of the channel data in case it isn't the first one */
-    if(i != 0){
-      strcat(self->channelBuffer, ",");
-    }
-    appendString(self->channelBuffer, id, ":[");
-
-    const size_t dataLength = self->floatStreams[i]->length(self->floatStreams[i]);
-    float data[dataLength];
-
-    self->floatStreams[i]->read(self->floatStreams[i], data, dataLength);
-
-    for (int j = 0; j < dataLength; ++j) {
-      char formatedData[maxLengthOfNumber];
-
-      /* add a comma in front of the number, if it is not the first number in the array */
-      if(j != 0){
-        strcat(self->channelBuffer, ",");
+      /* Add a , in front of the channel data in case it isn't the first one */
+      if(i != 0){
+        appendData(self->byteStream, ",", "");
       }
+      appendData(self->byteStream, ":[", "");
 
-      sprintf(formatedData, "%f", data[j]);
-      strcat(self->channelBuffer, formatedData);
+      const size_t dataLength = self->floatStreams[i]->length(self->floatStreams[i]);
+      float data[dataLength];
+
+      self->floatStreams[i]->read(self->floatStreams[i], data, dataLength);
+
+      for (int j = 0; j < dataLength; ++j) {
+        char formatedData[maxLengthOfNumber];
+
+        /* add a comma in front of the number, if it is not the first number in the array */
+        if(j != 0){
+          appendData(self->byteStream, ",", "");
+        }
+
+        sprintf(formatedData, "%f", data[j]);
+        appendData(self->byteStream, formatedData, "");
+      }
     }
-    strcat(self->channelBuffer, "]");
+    appendData(self->byteStream, "]", "");
   }
 
-  strcat(self->channelBuffer, "}");
+  appendData(self->byteStream, "}", "");
 
-  self->channelsArePrepared = false;
+  self->channelsReady = false;
+
+  return true;
 }
 
-static void constructBase(JsonPackerHandle self, char* outputBuffer, size_t maxLengthOfBuffer, char* payloadDataBuffer){
+static bool packChannelMap(JsonPackerHandle self){
 
-  if((strlen(payloadDataBuffer) >= maxLengthOfBuffer) || (strlen(payloadDataBuffer) == 0)){
-    return;
+  bool commaIsNeeded = false;
+
+  appendString(self->byteStream, KEYWORD_SC_DATA, ":{");
+
+  /* Merge all the pre packed sc data buffers together */
+  commaIsNeeded = packChannel(self, commaIsNeeded);
+  commaIsNeeded = packChannel(self, commaIsNeeded);
+  commaIsNeeded = packTimestamp(self, commaIsNeeded);
+  commaIsNeeded = packTimeIncrement(self, commaIsNeeded);
+  commaIsNeeded = packTrigger(self, commaIsNeeded);
+  packAddressAnnouncement(self, commaIsNeeded);
+
+  appendData(self->byteStream, "}", "");
+
+  return commaIsNeeded;
+}
+
+static bool packPayloadMap(JsonPackerHandle self){
+
+  bool commaIsNeeded = false;
+
+  appendString(self->byteStream, KEYWORD_PAYLOAD, ":{");
+
+  commaIsNeeded = packChannelMap(self);
+  commaIsNeeded = packFlowControl(self, commaIsNeeded);
+
+  appendData(self->byteStream, "}", "");
+
+  return commaIsNeeded;
+}
+
+static void formatCheck(char* formatedCheck, uint8_t* check, size_t checkLength){
+  formatedCheck[0] = '\0';
+
+  /* format the check to be in a hex representation */
+  for (int i = 0; i < checkLength; ++i) {
+    char formatedByte[4];
+    sprintf(formatedByte, "%02X", check[i]);
+
+    if(i != checkLength - 1){
+      strcat(formatedByte, " ");
+    }
+
+    strcat(formatedCheck, formatedByte);
   }
+}
 
-  flushBuffer(outputBuffer);
-  strcat(outputBuffer, "{");
-  appendString(outputBuffer, KEYWORD_TRANSPORT, ":");
+static void packBase(JsonPackerHandle self){
 
   if(self->validator->checkPresentInProtocol(self->validator) == true){
     const size_t lengthCheck = self->validator->getCheckLength(self->validator);
     uint8_t check[lengthCheck];
     char formatedCheck[lengthCheck * 3 + 1];
-    formatedCheck[0] = '\0';
 
-    self->validator->createCheck(self->validator,check, (const uint8_t*) payloadDataBuffer, strlen(payloadDataBuffer));
 
-    /* format the check to be in a hex representation */
-    for (int i = 0; i < lengthCheck; ++i) {
-      char formatedByte[4];
-      sprintf(formatedByte, "%02X", check[i]);
+    /* To be able to generate the checksum, the payload map has to be prepacked */
+    packPayloadMap(self);
+    size_t payloadBufferSize = self->byteStream->length(self->byteStream);
+    uint8_t payloadBuffer[payloadBufferSize];
+    self->byteStream->read(self->byteStream, payloadBuffer, payloadBufferSize);
 
-      if(i != lengthCheck - 1){
-        strcat(formatedByte, " ");
-      }
+    self->validator->createCheck(self->validator, check, payloadBuffer, payloadBufferSize);
 
-      strcat(formatedCheck, formatedByte);
-    }
-    appendString(outputBuffer, formatedCheck, "");
+    formatCheck(formatedCheck, check, lengthCheck);
+
+
+    appendData(self->byteStream,  "{", "");
+    appendString(self->byteStream, KEYWORD_TRANSPORT, ":");
+    appendString(self->byteStream, formatedCheck, ",");
+    appendString(self->byteStream, (char*) payloadBuffer, "");
+
   } else {
-    strcat(outputBuffer, "null");
+
+    appendData(self->byteStream,  "{", "");
+    appendString(self->byteStream, KEYWORD_TRANSPORT, ":");
+    appendString(self->byteStream, "null", ",");
+
+    packPayloadMap(self);
   }
 
-  if(!bufferIsEmpty(payloadDataBuffer)) {
-    strcat(outputBuffer, ",");
-  }
-  strcat(outputBuffer, payloadDataBuffer);
-  strcat(outputBuffer, "}");
+  appendData(self->byteStream, "}", "");
+  self->byteStream->writeByte(self->byteStream,(uint8_t) '\0');
 
-}
-
-static void constructPayloadMap(JsonPackerHandle self, char* payloadDataBuffer, size_t maxLengthOfBuffer, char* scDataBuffer){
-
-  size_t expectedLength = strlen(scDataBuffer) + strlen(self->flowControlBuffer);
-
-  if((expectedLength >= maxLengthOfBuffer) || (expectedLength == 0)){
-    return;
-  }
-
-  bool commaIsNeeded = false;
-
-  flushBuffer(payloadDataBuffer);
-  appendString(payloadDataBuffer, KEYWORD_PAYLOAD, ":{");
-
-  commaIsNeeded = mergeObjects(payloadDataBuffer, scDataBuffer, commaIsNeeded);
-  mergeObjects(payloadDataBuffer, self->flowControlBuffer, commaIsNeeded);
-
-  strcat(payloadDataBuffer, "}");
-}
-
-inline static bool bufferIsEmpty(const char* buffer){
-  return buffer[0] == '\0';
-}
-
-static void constructScDataMap(JsonPackerHandle self, char* scDataBuffer, size_t maxLengthOfBuffer){
-
-  size_t expectedLength = strlen(self->announcementBuffer) + strlen(self->triggerBuffer) + strlen(self->timestampBuffer) \
-                          + strlen(self->channelBuffer) + strlen(self->tincBuffer);
-
-  if((expectedLength >= maxLengthOfBuffer) || (expectedLength == 0)){
-    return;
-  }
-
-  bool commaIsNeeded = false;
-
-  flushBuffer(scDataBuffer);
-  appendString(scDataBuffer, KEYWORD_SC_DATA, ":{");
-
-  /* Merge all the pre packed sc data buffers together */
-  commaIsNeeded = mergeObjects(scDataBuffer, self->channelBuffer, commaIsNeeded);
-  commaIsNeeded = mergeObjects(scDataBuffer, self->timestampBuffer, commaIsNeeded);
-  commaIsNeeded = mergeObjects(scDataBuffer, self->tincBuffer, commaIsNeeded);
-  commaIsNeeded = mergeObjects(scDataBuffer, self->triggerBuffer, commaIsNeeded);
-  mergeObjects(scDataBuffer, self->announcementBuffer, commaIsNeeded);
-
-  strcat(scDataBuffer, "}");
 }
 
 static void packData(IPackerHandle iPacker){
   JsonPackerHandle self = (JsonPackerHandle) iPacker->implementer;
 
-  char scDataBuffer[self->scopeDataBufferSize];
-  char payloadBuffer[self->payloadBufferSize];
-  char outputBuffer[self->outputBufferSize];
-
-  flushBuffer(scDataBuffer);
-  flushBuffer(payloadBuffer);
-  flushBuffer(outputBuffer);
-
-  packChannel(self);
-  packAddressAnnouncement(self);
-
-  constructScDataMap(self, scDataBuffer, self->scopeDataBufferSize);
-  constructPayloadMap(self, payloadBuffer, self->payloadBufferSize, scDataBuffer);
-  constructBase(self, outputBuffer, self->outputBufferSize, payloadBuffer);
-
   self->byteStream->flush(self->byteStream);
-  /* One additional byte has to be copied to make sure that the string terminator is copied too */
-  self->byteStream->write(self->byteStream, (const uint8_t*) outputBuffer, strlen(outputBuffer) + 1);
+
+  packBase(self);
 
   iPacker->reset(iPacker);
-
 }
 
 static void reset(IPackerHandle iPacker){
   JsonPackerHandle self = (JsonPackerHandle) iPacker->implementer;
 
-  self->channelsArePrepared = false;
-  self->numberOfChannelsToSend = 0;
-  self->numberOfAddressesToAnnounce = 0;
+  self->addressesReady = false;
+  self->channelsReady = false;
 
-  flushBuffer(self->channelBuffer);
-  flushBuffer(self->timestampBuffer);
-  flushBuffer(self->announcementBuffer);
-  flushBuffer(self->flowControlBuffer);
-  flushBuffer(self->tincBuffer);
-  flushBuffer(self->triggerBuffer);
+  for (int i = 0; i < self->maxNumberOfChannels; ++i) {
+    self->floatStreams[i] = NULL;
+  }
+
+  self->tIncReady = false;
+
+  self->timestampReady = false;
+  self->timestamp = NULL;
+
+  self->triggerReady = false;
+
+  self->flowcontrolReady = false;
+  flushBuffer(self->flowcontrol);
 }
 
 static IByteStreamHandle getByteStream(IPackerHandle iPacker){
@@ -429,29 +490,21 @@ static IByteStreamHandle getByteStream(IPackerHandle iPacker){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-JsonPackerHandle JsonPacker_create(OutputBufferSizes sizes,
+JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
                                    IComValidatorHandle validator,
                                    IByteStreamHandle byteStream){
 
   JsonPackerHandle self = (JsonPackerHandle) malloc(sizeof(JsonPackerPrivateData));
 
-  self->floatStreams = malloc(sizeof(IFloatStreamHandle) * sizes.maxNumberOfChannels);
-  self->channelIds = malloc(sizeof(gemmi_uint) * sizes.maxNumberOfChannels);
+  self->floatStreams = malloc(sizeof(IFloatStreamHandle) * maxNumberOfChannels);
+  self->channelIds = malloc(sizeof(gemmi_uint) * maxNumberOfChannels);
   self->validator = validator;
   self->numberOfChannelsToSend = 0;
-  self->maxNumberOfChannels = sizes.maxNumberOfChannels;
-  self->maxAddressesToAnnounce = sizes.maxAddressesToAnnounce;
-  self->addresses = malloc(sizeof(gemmi_uint) * sizes.maxAddressesToAnnounce);
-  self->namesOfAddresses = malloc(sizeof(char*) * sizes.maxAddressesToAnnounce);
-  self->typesOfAddresses = malloc(sizeof(char*) * sizes.maxAddressesToAnnounce);
-
-  self->channelBuffer = malloc(sizeof(char) * sizes.channelBufferSize);
-  self->timestampBuffer = malloc(sizeof(char) * sizes.timestampBufferSize);
-  self->announcementBuffer = malloc(sizeof(char) * sizes.announcementBufferSize);
-
-  self->scopeDataBufferSize = sizes.scopeDataBufferSize;
-  self->payloadBufferSize = sizes.payloadBufferSize;
-  self->outputBufferSize = sizes.outputBufferSize;
+  self->maxNumberOfChannels = maxNumberOfChannels;
+  self->maxAddressesToAnnounce = maxAddressesToAnnounce;
+  self->addresses = malloc(sizeof(gemmi_uint) * maxAddressesToAnnounce);
+  self->namesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
+  self->typesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
 
   self->byteStream = byteStream;
 
@@ -483,42 +536,31 @@ void JsonPacker_destroy(JsonPackerHandle self){
   self->floatStreams = NULL;
   free(self->channelIds);
   self->channelIds = NULL;
-  free(self->channelBuffer);
-  self->channelBuffer = NULL;
-  free(self->timestampBuffer);
-  self->timestampBuffer = NULL;
-  free(self->announcementBuffer);
-  self->announcementBuffer = NULL;
 
   free(self);
   self = NULL;
 }
 
-OutputBufferSizes JsonPacker_calculateBufferSizes(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
+size_t JsonPacker_calculateBufferSizes(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
                                             size_t sizeOfChannels){
 
-  OutputBufferSizes sizes;
-
-  sizes.maxAddressesToAnnounce = maxAddressesToAnnounce;
-  sizes.maxNumberOfChannels = maxNumberOfChannels;
-  sizes.sizeOfChannels = sizeOfChannels;
 
   /* The channel buffer needs enough space to print all data points. This allows for all channels to have numbers whith maxLengthOfNumber digits.
    * 20 bytes will be reserved for the over head
    * sizeOfChannels has to be added to allow space for the ,*/
-  sizes.channelBufferSize = sizeOfChannels * maxNumberOfChannels * maxLengthOfNumber + 20 + sizeOfChannels * 5;
+  size_t channelBufferSize = sizeOfChannels * maxNumberOfChannels * maxLengthOfNumber + 20 + sizeOfChannels * 5;
 
   /* The timestamp buffer needs enough space to print all data points.
    * Again approximately 20 bytes should be used for the overhead
    * sizeOfChannels has to be added to allow space for the ,*/
-  sizes.timestampBufferSize = sizeOfChannels * maxLengthOfNumber + sizeOfChannels + 20;
-  sizes.announcementBufferSize = (maxLengthOfNumber + maxAddrNameLength) * maxAddressesToAnnounce + 20 + maxLengthOfNumber * 5;
-  sizes.scopeDataBufferSize = sizes.announcementBufferSize + sizes.timestampBufferSize + sizes.channelBufferSize + 20 \
+  size_t timestampBufferSize = sizeOfChannels * maxLengthOfNumber + sizeOfChannels + 20;
+  size_t announcementBufferSize = (maxLengthOfNumber + maxAddrNameLength) * maxAddressesToAnnounce + 20 + maxLengthOfNumber * 5;
+  size_t scopeDataBufferSize = announcementBufferSize + timestampBufferSize + channelBufferSize + 20 \
                               + tincBufferSize + triggerBufferSize;
-  sizes.payloadBufferSize = sizes.scopeDataBufferSize + 30 + flowControlBufferSize ;
-  sizes.outputBufferSize = sizes.payloadBufferSize + 30;
+  size_t payloadBufferSize = scopeDataBufferSize + 30 + flowControlBufferSize ;
+  size_t outputBufferSize = payloadBufferSize + 30;
 
-  return sizes;
+  return outputBufferSize;
 
 }
 

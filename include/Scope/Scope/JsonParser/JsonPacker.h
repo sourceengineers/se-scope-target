@@ -22,23 +22,11 @@
 ******************************************************************************/
 typedef struct __JsonPackerPrivateData* JsonPackerHandle;
 
-typedef struct {
-    size_t maxNumberOfChannels;
-    size_t maxAddressesToAnnounce;
-    size_t sizeOfChannels;
-    size_t scopeDataBufferSize;
-    size_t payloadBufferSize;
-    size_t outputBufferSize;
-    size_t announcementBufferSize;
-    size_t channelBufferSize;
-    size_t timestampBufferSize;
-
-} OutputBufferSizes;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the msgpack Packer */
-JsonPackerHandle JsonPacker_create(OutputBufferSizes sizes,
+JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
                                    IComValidatorHandle validator,
                                    IByteStreamHandle byteStream);
 
@@ -47,7 +35,7 @@ void JsonPacker_destroy(JsonPackerHandle self);
 
 /* Calculates how much space the buffers need
  * This is used, so that the outbut byte buffer can be defined without having to be generated in the JsonPacker*/
-OutputBufferSizes JsonPacker_calculateBufferSizes(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce, size_t sizeOfChannels);
+size_t JsonPacker_calculateBufferSizes(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce, size_t sizeOfChannels);
 
 /* Returns the IPacker interface */
 IPackerHandle JsonPacker_getIPacker(JsonPackerHandle self);

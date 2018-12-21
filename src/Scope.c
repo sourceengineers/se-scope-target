@@ -153,8 +153,6 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->iScope.announce = &iScopeAnnounce;
   self->iScope.clear = &iScopeClear;
 
-    /* Calculates size needed for the output communication buffer */
-  const size_t outputBufferSize = (numberOfChannels + 1) * channelSize * 10 + 200;
   /* The input buffer is not dependent of the buffer sizes, but on how many channels are in use */
   /* Each channel uses max. 50 bytes of data in the input protocol. Everything not dependent on the channels
    * will be of constant size */
@@ -162,11 +160,11 @@ ScopeHandle Scope_create(const size_t channelSize,
 
   self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
 
-  OutputBufferSizes sizes = JsonPacker_calculateBufferSizes(numberOfChannels, maxNumberOfAddresses, channelSize);
+  size_t outputBufferSize = JsonPacker_calculateBufferSizes(numberOfChannels, maxNumberOfAddresses, channelSize);
 
   /* Create input and output streams */
   self->inputStream = ByteStream_create(inputBufferSize);
-  self->outputStream = ByteStream_create(sizes.outputBufferSize);
+  self->outputStream = ByteStream_create(outputBufferSize);
 
   /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
@@ -187,7 +185,8 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->communicationFactory = CommunicationFactory_create();
   IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
 
-  self->jsonPacker = JsonPacker_create(sizes, communicationValidator, ByteStream_getIByteStream(self->outputStream));
+  self->jsonPacker = JsonPacker_create(numberOfChannels, maxNumberOfAddresses, communicationValidator,
+          ByteStream_getIByteStream(self->outputStream));
 
   self->sender = Sender_create(JsonPacker_getIPacker(self->jsonPacker), self->channels, self->numberOfChannels,
                                self->trigger,

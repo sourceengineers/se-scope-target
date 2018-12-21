@@ -42,15 +42,15 @@ TEST(json_packer, unpack_test){
   validator.checkPresentInProtocol = &checkPresentInProtocol;
 
   size_t channelSize = 400;
-  OutputBufferSizes sizes = JsonPacker_calculateBufferSizes(5, 10, channelSize);
+  size_t sizes = JsonPacker_calculateBufferSizes(5, 10, channelSize);
 
-  IByteStreamHandle outputStream = ByteStream_getIByteStream(ByteStream_create(sizes.outputBufferSize));
+  IByteStreamHandle outputStream = ByteStream_getIByteStream(ByteStream_create(sizes));
 
   IIntStreamHandle timestamp = IntStream_getIIntStream(IntStream_create(channelSize));
   IFloatStreamHandle ch1 = FloatStream_getIFloatStream(FloatStream_create(channelSize));
   IFloatStreamHandle ch2 = FloatStream_getIFloatStream(FloatStream_create(channelSize));
 
-  IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(sizes, &validator, outputStream));
+  IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(5, 10, &validator, outputStream));
 
   packer->prepareAddressAnnouncement(packer, "VAR_1", "UINT32", 11111);
   packer->prepareAddressAnnouncement(packer, "VAR_2", "FLOAT", 22222);
