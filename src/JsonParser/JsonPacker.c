@@ -14,16 +14,16 @@
 #include <Scope/Communication/Keywords.h>
 
 #if (ARCH_SIZE_32)
-const size_t maxLengthOfNumber = 11;
+#define maxLengthOfNumber = 11;
 #else
-const size_t maxLengthOfNumber = 21;
+#define maxLengthOfNumber = 21;
 #endif
 
-const size_t flowControlBufferSize = 30;
-const size_t tincBufferSize = 30;
-const size_t triggerBufferSize = 40 + 2 * maxLengthOfNumber;
+#define flowControlBufferSize 30
+#define tincBufferSize 30
+#define triggerBufferSize 60
 
-const size_t maxControlSignSpace = 30;
+#define maxControlSignSpace = 30;
 
 /******************************************************************************
  Define private data
