@@ -13,7 +13,7 @@
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static const char* commandName = "ev_clear";
+static char* commandName = "ev_clear";
 
 /* Class data */
 typedef struct __CommandClearPrivateData
@@ -35,7 +35,7 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   return;
 }
 
-static const char* getCommandName(ICommandHandle self){
+static char* getCommandName(ICommandHandle self){
   CommandClearHandle commandAddr = (CommandClearHandle) self->implementer;
 
   return CommandClear_getName(commandAddr);
@@ -61,7 +61,7 @@ ICommandHandle CommandClear_getICommand(CommandClearHandle self){
   return &self->iCommand;
 }
 
-const char* CommandClear_getName(CommandClearHandle self){
+char* CommandClear_getName(CommandClearHandle self){
   return commandName;
 }
 
