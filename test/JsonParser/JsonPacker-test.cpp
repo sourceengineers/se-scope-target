@@ -77,7 +77,7 @@ TEST(json_packer, unpack_test){
 
   outputStream->read(outputStream, (uint8_t*) data, dataPending);
 
-  EXPECT_STREQ(data, "{\"transport\":null,\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[0.000000,1.000000,2.000000,3.000000,4.000000],\"1\":[0.000000,1.000000,2.000000,3.000000,4.000000]},\"t_stmp\":[0,1,2,3,4],\"t_inc\":10,\"tgr\":{\"found\":\"true\",\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"UINT32\"],\"VAR_2\":[22222,\"FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");
+  EXPECT_STREQ(data, "{\"transport\":null,\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[0.000000,1.000000,2.000000,3.000000,4.000000],\"1\":[0.000000,1.000000,2.000000,3.000000,4.000000]},\"t_stmp\":[0,1,2,3,4],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"UINT32\"],\"VAR_2\":[22222,\"FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");
 
   printf("Output: %s", data);
 }
