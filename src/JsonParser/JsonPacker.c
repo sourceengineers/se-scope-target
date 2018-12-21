@@ -21,7 +21,9 @@ const size_t maxLengthOfNumber = 21;
 
 const size_t flowControlBufferSize = 30;
 const size_t tincBufferSize = 30;
-const size_t triggerBufferSize = 60;
+const size_t triggerBufferSize = 40 + 2 * maxLengthOfNumber;
+
+const size_t maxControlSignSpace = 30;
 
 /******************************************************************************
  Define private data
@@ -548,16 +550,16 @@ size_t JsonPacker_calculateBufferSizes(size_t maxNumberOfChannels, size_t maxAdd
   /* The channel buffer needs enough space to print all data points. This allows for all channels to have numbers whith maxLengthOfNumber digits.
    * 20 bytes will be reserved for the over head
    * sizeOfChannels has to be added to allow space for the ,*/
-  size_t channelBufferSize = sizeOfChannels * maxNumberOfChannels * maxLengthOfNumber + 20 + sizeOfChannels * 5;
+  size_t channelBufferSize = ((maxLengthOfNumber + 1) * sizeOfChannels + maxControlSignSpace) * maxNumberOfChannels + maxControlSignSpace;
 
   /* The timestamp buffer needs enough space to print all data points.
    * Again approximately 20 bytes should be used for the overhead
    * sizeOfChannels has to be added to allow space for the ,*/
-  size_t timestampBufferSize = sizeOfChannels * maxLengthOfNumber + sizeOfChannels + 20;
-  size_t announcementBufferSize = (maxLengthOfNumber + maxAddrNameLength) * maxAddressesToAnnounce + 20 + maxLengthOfNumber * 5;
-  size_t scopeDataBufferSize = announcementBufferSize + timestampBufferSize + channelBufferSize + 20 \
+  size_t timestampBufferSize = ((maxLengthOfNumber + 1) * sizeOfChannels + maxControlSignSpace) ;
+  size_t announcementBufferSize = (maxLengthOfNumber + maxAddrNameLength) * maxAddressesToAnnounce + maxControlSignSpace + maxLengthOfNumber * 5;
+  size_t scopeDataBufferSize = announcementBufferSize + timestampBufferSize + channelBufferSize + maxControlSignSpace \
                               + tincBufferSize + triggerBufferSize;
-  size_t payloadBufferSize = scopeDataBufferSize + 30 + flowControlBufferSize ;
+  size_t payloadBufferSize = scopeDataBufferSize + maxControlSignSpace + flowControlBufferSize ;
   size_t outputBufferSize = payloadBufferSize + 30;
 
   return outputBufferSize;
