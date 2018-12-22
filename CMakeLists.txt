@@ -106,9 +106,10 @@ endif()
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
-include_directories(${PROJECT_DEPENDENCIES_DIR}/msgpackc/include)
-include_directories(${PROJECT_DEPENDENCIES_DIR}/jsmn)
-include_directories(${PROJECT_INCLUDE_DIR})
+include_directories("${PROJECT_DEPENDENCIES_DIR}/msgpackc/include"
+                    "${PROJECT_DEPENDENCIES_DIR}/jsmn"
+                    "${PROJECT_INCLUDE_DIR}")
+
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
 
