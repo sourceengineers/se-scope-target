@@ -9,8 +9,6 @@
 
 #include <Scope/Scope.h>
 #include <Scope/Communication/Receiver.h>
-//#include <Scope/JsonParser/JsonUnpacker.h>
-//#include <Scope/JsonParser/JsonPacker.h>
 #include <Scope/JsonParser/JsonUnpacker.h>
 #include <Scope/JsonParser/JsonPacker.h>
 #include <Scope/Communication/Sender.h>
@@ -103,7 +101,7 @@ static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandH
 static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
   for (size_t i = 0; i < numberOfCommands; ++i) {
     if(commands[i] != NULL){
-      commands[i]->run(commands[i]);  
+      commands[i]->run(commands[i]);
     }
   }
 }
@@ -153,14 +151,9 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->iScope.announce = &iScopeAnnounce;
   self->iScope.clear = &iScopeClear;
 
-  /* The input buffer is not dependent of the buffer sizes, but on how many channels are in use */
-  /* Each channel uses max. 50 bytes of data in the input protocol. Everything not dependent on the channels
-   * will be of constant size */
-  const size_t inputBufferSize = numberOfChannels * 50 + 400;
-
   self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
-
-  size_t outputBufferSize = JsonPacker_calculateBufferSizes(numberOfChannels, maxNumberOfAddresses, channelSize);
+  size_t outputBufferSize = JsonPacker_calculateBufferSize(numberOfChannels, maxNumberOfAddresses, channelSize);
+  size_t inputBufferSize = JsonUnpacker_calculateBufferSize();
 
   /* Create input and output streams */
   self->inputStream = ByteStream_create(inputBufferSize);
@@ -195,7 +188,7 @@ ScopeHandle Scope_create(const size_t channelSize,
                                self->addressStorage);
 
   /* Create the unpacker and receiver */
-  self->jsonUnpacker = JsonUnpacker_create(inputBufferSize);
+  self->jsonUnpacker = JsonUnpacker_create();
   self->receiver = Receiver_create(JsonUnpacker_getIUnpacker(self->jsonUnpacker),
                                    ByteStream_getIByteStream(self->inputStream),
                                    communicationValidator,

@@ -42,7 +42,7 @@ TEST(json_packer, unpack_test){
   validator.checkPresentInProtocol = &checkPresentInProtocol;
 
   size_t channelSize = 400;
-  size_t sizes = JsonPacker_calculateBufferSizes(5, 10, channelSize);
+  size_t sizes = JsonPacker_calculateBufferSize(5, 10, channelSize);
 
   IByteStreamHandle outputStream = ByteStream_getIByteStream(ByteStream_create(sizes));
 

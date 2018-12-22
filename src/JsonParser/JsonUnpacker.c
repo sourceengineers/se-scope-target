@@ -12,6 +12,9 @@
 #include <Scope/GeneralPurpose/Memory.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 
+#define INPUT_BUFFER_SIZE 500
+#define TOKEN_BUFFER_SIZE 100
+
 /******************************************************************************
  Define private data
 ******************************************************************************/
@@ -22,7 +25,6 @@ typedef struct __JsonUnpackerPrivateData
   IUnpacker iUnpacker;
 
   size_t numberOfCommands;
-  size_t msgLength;
 
   jsmn_parser parser;
   jsmntok_t* inputTokens;
@@ -46,7 +48,7 @@ static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t *tok, si
   gemmi_uint startPosition = tok->start;
   gemmi_uint foundNextTokens = 0;
 
-  for (int i = 0; i < self->msgLength - 1; ++i) {
+  for (int i = 0; i < TOKEN_BUFFER_SIZE - 1; ++i) {
 
       if(self->storageTokens[i].start == startPosition){
 
@@ -79,7 +81,7 @@ static jsmntok_t* getToken(const char *json, jsmntok_t *tok, const char *key, in
 }
 
 static jsmntok_t* getCommandField(JsonUnpackerHandle self){
-  jsmntok_t* tok = getToken(self->storageString, self->storageTokens, (const char*) "sc_cmd", self->msgLength);
+  jsmntok_t* tok = getToken(self->storageString, self->storageTokens, (const char*) "sc_cmd", TOKEN_BUFFER_SIZE);
 
   return tok+1;
 }
@@ -194,12 +196,15 @@ static bool jsoneq(const char *json, jsmntok_t *tok, const char *key) {
 }
 
 static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_t length){
-
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+
+  if(strnlen(data, INPUT_BUFFER_SIZE) >= INPUT_BUFFER_SIZE){
+    return false;
+  }
 
   jsmn_init(&self->parser);
 
-  if(jsmn_parse(&self->parser, data, strlen(data), self->inputTokens, self->msgLength) < 0){
+  if(jsmn_parse(&self->parser, data, strlen(data), self->inputTokens, TOKEN_BUFFER_SIZE) < 0){
     return false;
   }
 
@@ -207,13 +212,13 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
     return false;
   }
 
-  jsmntok_t* tok = getToken(data, self->inputTokens, (const char*) "payload", self->msgLength);
+  jsmntok_t* tok = getToken(data, self->inputTokens, (const char*) "payload", TOKEN_BUFFER_SIZE);
 
   if(tok == NULL){
     return false;
   }
 
-  tok = getToken(data, self->inputTokens, (const char*) "sc_cmd", self->msgLength);
+  tok = getToken(data, self->inputTokens, (const char*) "sc_cmd", TOKEN_BUFFER_SIZE);
 
   if(tok == NULL){
     return false;
@@ -234,7 +239,7 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
 static void activateNewMessage(IUnpackerHandle iUnpackHandler){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
 
-  memcpy(self->storageTokens, self->inputTokens, self->msgLength * sizeof(jsmntok_t));
+  memcpy(self->storageTokens, self->inputTokens, TOKEN_BUFFER_SIZE * sizeof(jsmntok_t));
   strcpy(self->storageString, self->inputString);
 
   jsmntok_t* tok = getCommandField(self);
@@ -358,7 +363,7 @@ static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingIn
     return false;
   }
 
-  if(field->type != JSMN_STRING){
+  if(field->type != JSMN_PRIMITIVE){
     return false;
   }
 
@@ -432,7 +437,7 @@ static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandNa
 static size_t getLengthOfCheck(IUnpackerHandle iUnpackHandler){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
 
-  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "transport", self->msgLength);
+  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "transport", TOKEN_BUFFER_SIZE);
 
   if((tok+1)->type != JSMN_STRING){
     return 0;
@@ -444,7 +449,7 @@ static size_t getLengthOfCheck(IUnpackerHandle iUnpackHandler){
 static size_t getLengthOfBytesToCheck(IUnpackerHandle iUnpackHandler){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
 
-  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "payload", self->msgLength);
+  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "payload", TOKEN_BUFFER_SIZE);
 
   if((tok+1)->type != JSMN_OBJECT){
     return 0;
@@ -455,7 +460,7 @@ static size_t getLengthOfBytesToCheck(IUnpackerHandle iUnpackHandler){
 
 static void getBytesToCheck(IUnpackerHandle iUnpackHandler, uint8_t* data){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
-  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "payload", self->msgLength);
+  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "payload", TOKEN_BUFFER_SIZE);
 
   if((tok+1)->type != JSMN_OBJECT){
     return;
@@ -467,7 +472,7 @@ static void getBytesToCheck(IUnpackerHandle iUnpackHandler, uint8_t* data){
 static void getCheck(IUnpackerHandle iUnpackHandler, uint8_t* checkData){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
 
-  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "transport", self->msgLength);
+  jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "transport", TOKEN_BUFFER_SIZE);
 
   if((tok+1)->type != JSMN_STRING){
     return;
@@ -499,7 +504,7 @@ static int getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* command
  Public functions
 ******************************************************************************/
 JsonUnpackerHandle JsonUnpacker_create(){
-  
+
   JsonUnpackerHandle self = (JsonUnpackerHandle) malloc(sizeof(JsonUnpackerPrivateData));
 
   self->numberOfCommands = 0;
@@ -519,13 +524,11 @@ JsonUnpackerHandle JsonUnpacker_create(){
   self->iUnpacker.getCheck = &getCheck;
   self->iUnpacker.getBytesToCheck = &getBytesToCheck;
 
-  self->msgLength = 100;
+  self->inputTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
+  self->storageTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
 
-  self->inputTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * self->msgLength);
-  self->storageTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * self->msgLength);
-
-  self->inputString = (char*) malloc(sizeof(char) * 500);
-  self->storageString = (char*) malloc(sizeof(char) * 500);
+  self->inputString = (char*) malloc(sizeof(char) * INPUT_BUFFER_SIZE);
+  self->storageString = (char*) malloc(sizeof(char) * INPUT_BUFFER_SIZE);
 
   jsmn_init(&self->parser);
 
@@ -539,4 +542,8 @@ void JsonUnpacker_destroy(JsonUnpackerHandle self){
 
 IUnpackerHandle JsonUnpacker_getIUnpacker(JsonUnpackerHandle self){
   return &self->iUnpacker;
+}
+
+size_t JsonUnpacker_calculateBufferSize(){
+  return INPUT_BUFFER_SIZE;
 }
