@@ -561,7 +561,7 @@ void JsonPacker_destroy(JsonPackerHandle self){
   self = NULL;
 }
 
-size_t JsonPacker_calculateBufferSizes(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
+size_t JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
                                             size_t sizeOfChannels){
 
 
