@@ -361,7 +361,9 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
           appendData(self->byteStream, ",", "");
         }
 
-        sprintf(formatedData, "%f", data[j]);
+        /* gcvt is used instead of sprintf, since sprintf for float is not supported by some
+         * (Especially embedded) platforms */
+        gcvt(data[j], maxLengthOfNumber, formatedData);
         appendData(self->byteStream, formatedData, "");
       }
     }
