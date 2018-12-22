@@ -62,8 +62,11 @@ TEST(json_packer, unpack_test){
 
   for (int i = 0; i < 5; ++i) {
     timestamp->writeData(timestamp, i);
-    ch1->writeData(ch1, (float) i);
-    ch2->writeData(ch2, (float) i);
+
+    float number = i;
+    number += number / 10;
+    ch1->writeData(ch1, number);
+    ch2->writeData(ch2, number);
   }
 
   packer->prepareTimestamp(packer, timestamp);
