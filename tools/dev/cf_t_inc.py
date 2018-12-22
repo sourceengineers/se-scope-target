@@ -2,7 +2,6 @@
 import sys
 import os
 import json
-import msgpack
 
 def main():
     command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_t_inc\":" + sys.argv[2] + "}}}";

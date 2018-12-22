@@ -2,7 +2,6 @@
 import sys
 import os
 import json
-import msgpack
 
 def main():
     command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"ev_trans\":null}}}";
