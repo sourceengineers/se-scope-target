@@ -26,7 +26,7 @@ def convert(data):
         return data
 
 def printAndParse(ans):
-    if len(ans) > 0:
+    if len(ans) > 2:
         ans = ans[0:-1]
         ans = ans.decode("utf-8")
         try:
