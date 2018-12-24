@@ -33,6 +33,7 @@ void JsonUnpacker_destroy(JsonUnpackerHandle self);
 /* Returns the IUnpacker interface */
 IUnpackerHandle JsonUnpacker_getIUnpacker(JsonUnpackerHandle self);
 
+/* Calculates how big the buffer has to be */
 size_t JsonUnpacker_calculateBufferSize();
 
 #endif

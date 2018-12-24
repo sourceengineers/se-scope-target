@@ -39,8 +39,20 @@ typedef struct IIntStreamStruct {
     bool (*dataIsReady)(IIntStreamHandle self);
     gemmi_uint (*readData)(IIntStreamHandle self);
     size_t (*length)(IIntStreamHandle self);
+
+		/**
+		 *
+		 * @param data array into which the data gets written. The size of this should be what ever "length" returned
+		 * @param length Amount of bytes which should be read
+		 */
     void (*read)(IIntStreamHandle self, gemmi_uint* data, const size_t length);
     void (*writeData)(IIntStreamHandle self, const gemmi_uint data);
+
+		/**
+		 *
+		 * @param data Data which should be written into the Stream
+		 * @param length Amount of data which should be written
+		 */
     void (*write)(IIntStreamHandle self, const gemmi_uint* data, const size_t length);
     void (*close)(IIntStreamHandle self);
     void (*flush)(IIntStreamHandle self);
