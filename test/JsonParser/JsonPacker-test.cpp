@@ -60,16 +60,36 @@ TEST(json_packer, unpack_test){
   packer->prepareTimeIncrement(packer, 10);
   packer->prepareFlowControl(packer, "ACK");
 
-  for (int i = 0; i < 5; ++i) {
-    timestamp->writeData(timestamp, i);
+	ch1->writeData(ch1, (const float) -23.5354);
+	ch2->writeData(ch2, (const float) -23.5354);
+	timestamp->writeData(timestamp, 0);
 
-    float number = i;
-    number += number / 10;
-    ch1->writeData(ch1, number);
-    ch2->writeData(ch2, number);
-  }
 
-  packer->prepareTimestamp(packer, timestamp);
+	ch1->writeData(ch1, (const float) 234534523.5354);
+	ch2->writeData(ch2, (const float) 234534523.5354);
+	timestamp->writeData(timestamp, 1);
+
+
+	ch1->writeData(ch1, (const float) 0.00000345);
+	ch2->writeData(ch2, (const float) 0.00000345);
+	timestamp->writeData(timestamp, 2);
+
+
+	ch1->writeData(ch1, (const float) -0.00000345);
+	ch2->writeData(ch2, (const float) -0.00000345);
+	timestamp->writeData(timestamp, 3);
+
+
+	ch1->writeData(ch1, (const float) 0);
+	ch2->writeData(ch2, (const float) 0);
+	timestamp->writeData(timestamp, 4);
+
+
+	ch1->writeData(ch1, (const float) 1.5);
+	ch2->writeData(ch2, (const float) 1.5);
+	timestamp->writeData(timestamp, 5);
+
+	packer->prepareTimestamp(packer, timestamp);
   packer->prepareChannel(packer, ch1, 0);
   packer->prepareChannel(packer, ch2, 1);
 
@@ -80,7 +100,7 @@ TEST(json_packer, unpack_test){
 
   outputStream->read(outputStream, (uint8_t*) data, dataPending);
 
- /* EXPECT_STREQ(data, "{\"transport\":null,\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[0,1.1000000238418579,2.2000000476837158,3.2999999523162842,4.4000000953674316],\\\"1\\\":[0,.1000000238418579,2.2000000476837158,3.2999999523162842,4.4000000953674316]},\"t_stmp\":[0,1,2,3,4],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"UINT32\"],\"VAR_2\":[22222,\"FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");*/
+  EXPECT_STREQ(data, "{\"transport\":null,\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5],\"1\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5]},\"t_stmp\":[0,1,2,3,4,5],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"UINT32\"],\"VAR_2\":[22222,\"FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");
 
-  //printf("Output: %s", data);
+  printf("Output: %s", data);
 }
