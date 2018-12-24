@@ -32,14 +32,8 @@ static void generate(uint8_t* checksum, const uint8_t* bytesToCheck, const size_
 ******************************************************************************/
 static void generate(uint8_t* checksum, const uint8_t* bytesToCheck, const size_t length){
 
-  gemmi_uint check = 0;
-
   for (int i = 0; i < length; ++i) {
-    check += bytesToCheck[i];
-  }
-
-  for (int j = 0; j < 4; ++j) {
-    checksum[j] = (uint8_t) ((check >> j * 8) & 0xFF);
+    checksum[i % CHECKSUM_BYTE_LENGTH] += bytesToCheck[i];
   }
 }
 
