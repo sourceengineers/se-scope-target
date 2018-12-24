@@ -71,9 +71,6 @@ typedef struct IUnpackerStruct {
   size_t (*getLengthOfBytesToCheck)(IUnpackerHandle iUnpackHandler);
   void (*getBytesToCheck)(IUnpackerHandle iUnpackHandler, uint8_t* data);
   void (*getCheck)(IUnpackerHandle iUnpackHandler, uint8_t* checkData);
-
-  /* The following functions are likely not to be used, at will be obsolete.
-   * The commands have to know themselves how many and what kind of fields, they own */
   int (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
   bool (*getNameOfField)(IUnpackerHandle unpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
 
