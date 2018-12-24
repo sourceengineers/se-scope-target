@@ -11,6 +11,8 @@
 #include <string.h>
 #include <Scope/GeneralPurpose/Memory.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/Communication/Keywords.h>
+#include <Scope/JsonParser/JsonCommon.h>
 
 #define INPUT_BUFFER_SIZE 500
 #define TOKEN_BUFFER_SIZE 100
@@ -134,10 +136,10 @@ static jsmntok_t* getField(JsonUnpackerHandle self, jsmntok_t* command, const ch
       return NULL;
     }
 
-    char name[30];
+    char name[MAX_LENGTH_OF_FIELD_NAME];
     copyString(name, self->storageString + field->start, field->end - field->start);
 
-    if(strncmp(name, fieldName, 30) == 0){
+    if(strncmp(name, fieldName, MAX_LENGTH_OF_FIELD_NAME) == 0){
       return field+1;
     }
   }
@@ -165,10 +167,10 @@ static jsmntok_t* getCommand(JsonUnpackerHandle self, const char* commandName){
       return NULL;
     }
 
-    char name[30];
+    char name[MAX_LENGTH_OF_FIELD_NAME];
     copyString(name, self->storageString + command->start, command->end - command->start);
 
-    if(strncmp(name, commandName, 30) == 0){
+    if(strncmp(name, commandName, MAX_LENGTH_OF_FIELD_NAME) == 0){
       return command;
     }
 
@@ -212,13 +214,13 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
     return false;
   }
 
-  jsmntok_t* tok = getToken(data, self->inputTokens, (const char*) "payload", TOKEN_BUFFER_SIZE);
+  jsmntok_t* tok = getToken(data, self->inputTokens, KEYWORD_PAYLOAD, TOKEN_BUFFER_SIZE);
 
   if(tok == NULL){
     return false;
   }
 
-  tok = getToken(data, self->inputTokens, (const char*) "sc_cmd", TOKEN_BUFFER_SIZE);
+  tok = getToken(data, self->inputTokens, KEYWORD_SC_CMD, TOKEN_BUFFER_SIZE);
 
   if(tok == NULL){
     return false;
@@ -311,7 +313,7 @@ static gemmi_uint getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetch
     return 0;
   }
 
-  char value[20];
+  char value[MAX_LENGTH_OF_NUMBER];
   copyString(value, self->storageString + field->start, field->end - field->start);
 
   return atoi(value);
@@ -339,7 +341,7 @@ static float getFloatFromCommand(IUnpackerHandle iUnpackHandler, CommandFetching
     return 0;
   }
 
-  char value[20];
+  char value[MAX_LENGTH_OF_NUMBER];
   copyString(value, self->storageString + field->start, field->end - field->start);
 
   return atof(value);
@@ -367,10 +369,10 @@ static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingIn
     return false;
   }
 
-  char value[20];
+  char value[MAX_LENGTH_OF_NUMBER];
   copyString(value, self->storageString + field->start, field->end - field->start);
 
-  return strncmp(value, "true", 20) == 0 ? true : false;
+  return strncmp(value, "true", MAX_LENGTH_OF_NUMBER) == 0 ? true : false;
 }
 
 static void getStringFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information,

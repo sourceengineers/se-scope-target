@@ -10,20 +10,14 @@
 #include <Scope/JsonParser/JsonPacker.h>
 #include <string.h>
 #include <stdio.h>
-#include <Scope/GeneralPurpose/Memory.h>
+#include <Scope/JsonParser/JsonCommon.h>
 #include <Scope/Communication/Keywords.h>
 
-#if (ARCH_SIZE_32)
-#define maxLengthOfNumber 11
-#else
-#define maxLengthOfNumber 21
-#endif
+#define FLOWCONTROL_BUFFER_SIZE 30
+#define TINC_BUFFER_SIZE 30
+#define TRIGGER_BUFFER_SIZE 60
 
-#define flowControlBufferSize 30
-#define tincBufferSize 30
-#define triggerBufferSize 60
-
-#define maxControlSignSpace 30
+#define MAX_CONTROL_SIGN_SIZE 30
 
 /******************************************************************************
  Define private data
@@ -76,7 +70,21 @@ typedef struct __JsonPackerPrivateData
 static void appendString(IByteStreamHandle destination, const char* origin, const char* endWith);
 static void appendNumber(IByteStreamHandle destination, gemmi_uint origin, const char* endWith);
 static void flushBuffer(char* buffer);
-inline static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
+static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
+static bool channelMapIsEmpty(JsonPackerHandle self);
+static void formatCheck(char* formatedCheck, uint8_t* check, size_t checkLength);
+
+static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded);
+static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
+static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded);
+static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded);
+static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded);
+static void prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, const gemmi_uint address);
+static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded);
+static bool packChannel(JsonPackerHandle self, bool commaIsNeeded);
+static bool packChannelMap(JsonPackerHandle self);
+static bool packPayloadMap(JsonPackerHandle self);
+static void packBase(JsonPackerHandle self);
 
 /******************************************************************************
  Private functions
@@ -112,7 +120,7 @@ inline static void addComma(IByteStreamHandle destination, bool commaIsNeeded){
 
 inline static void appendNumber(IByteStreamHandle destination, gemmi_uint origin, const char* endWith){
 
-  char number[maxLengthOfNumber];
+  char number[MAX_LENGTH_OF_NUMBER];
 
 #if (ARCH_SIZE_32)
   sprintf(number, "%d", origin);
@@ -339,7 +347,7 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
 
   for (size_t i = 0; i < self->numberOfChannelsToSend; ++i) {
     if(self->floatStreams[i] != NULL){
-      char id[maxLengthOfNumber];
+      char id[MAX_LENGTH_OF_NUMBER];
       sprintf(id, "%u", self->channelIds[i]);
 
       /* Add a , in front of the channel data in case it isn't the first one */
@@ -354,7 +362,7 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
       self->floatStreams[i]->read(self->floatStreams[i], data, dataLength);
 
       for (int j = 0; j < dataLength; ++j) {
-        char formatedData[maxLengthOfNumber];
+        char formatedData[MAX_LENGTH_OF_NUMBER];
 
         /* add a comma in front of the number, if it is not the first number in the array */
         if(j != 0){
@@ -363,7 +371,7 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
 
         /* gcvt is used instead of sprintf, since sprintf for float is not supported by some
          * (Especially embedded) platforms */
-        gcvt(data[j], maxLengthOfNumber, formatedData);
+        gcvt(data[j], MAX_LENGTH_OF_NUMBER, formatedData);
         appendData(self->byteStream, formatedData, "");
       }
     }
@@ -567,19 +575,19 @@ size_t JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t maxAddr
                                             size_t sizeOfChannels){
 
 
-  /* The channel buffer needs enough space to print all data points. This allows for all channels to have numbers whith maxLengthOfNumber digits.
+  /* The channel buffer needs enough space to print all data points. This allows for all channels to have numbers whith MAX_LENGTH_OF_NUMBER digits.
    * 20 bytes will be reserved for the over head
    * sizeOfChannels has to be added to allow space for the ,*/
-  size_t channelBufferSize = ((maxLengthOfNumber + 1) * sizeOfChannels + maxControlSignSpace) * maxNumberOfChannels + maxControlSignSpace;
+  size_t channelBufferSize = ((MAX_LENGTH_OF_NUMBER + 1) * sizeOfChannels + MAX_CONTROL_SIGN_SIZE) * maxNumberOfChannels + MAX_CONTROL_SIGN_SIZE;
 
   /* The timestamp buffer needs enough space to print all data points.
    * Again approximately 20 bytes should be used for the overhead
    * sizeOfChannels has to be added to allow space for the ,*/
-  size_t timestampBufferSize = ((maxLengthOfNumber + 1) * sizeOfChannels + maxControlSignSpace) ;
-  size_t announcementBufferSize = (maxLengthOfNumber + maxAddrNameLength) * maxAddressesToAnnounce + maxControlSignSpace + maxLengthOfNumber * 5;
-  size_t scopeDataBufferSize = announcementBufferSize + timestampBufferSize + channelBufferSize + maxControlSignSpace \
-                              + tincBufferSize + triggerBufferSize;
-  size_t payloadBufferSize = scopeDataBufferSize + maxControlSignSpace + flowControlBufferSize ;
+  size_t timestampBufferSize = ((MAX_LENGTH_OF_NUMBER + 1) * sizeOfChannels + MAX_CONTROL_SIGN_SIZE) ;
+  size_t announcementBufferSize = (MAX_LENGTH_OF_NUMBER + maxAddrNameLength) * maxAddressesToAnnounce + MAX_CONTROL_SIGN_SIZE + MAX_LENGTH_OF_NUMBER * 5;
+  size_t scopeDataBufferSize = announcementBufferSize + timestampBufferSize + channelBufferSize + MAX_CONTROL_SIGN_SIZE \
+                              + TINC_BUFFER_SIZE + TRIGGER_BUFFER_SIZE;
+  size_t payloadBufferSize = scopeDataBufferSize + MAX_CONTROL_SIGN_SIZE + FLOWCONTROL_BUFFER_SIZE ;
   size_t outputBufferSize = payloadBufferSize + 30;
 
   return outputBufferSize;
