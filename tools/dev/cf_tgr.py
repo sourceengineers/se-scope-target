@@ -13,6 +13,9 @@ def main():
     file.write(command)
     file.close()
 
+def getCommand(id, mode, level, edge):
+    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_tgr\":{\"cl_id\":" + id + ",\"mode\": \"" + mode + "\",\"level\": " + level + ",\"edge\": \"" + edge + "\"}}}}";
+    return command;
 
 if __name__ == "__main__":
     

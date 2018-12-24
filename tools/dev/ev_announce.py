@@ -13,6 +13,8 @@ def main():
     file.write(command)
     file.close()
 
+def getCommand():
+    return "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"ev_announce\":null}}}";
 
 if __name__ == "__main__":
     

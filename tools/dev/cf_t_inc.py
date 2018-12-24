@@ -13,6 +13,8 @@ def main():
     file.write(command)
     file.close()
 
+def getCommand(t_inc):
+    return "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_t_inc\":" + t_inc + "}}}";
 
 if __name__ == "__main__":
     

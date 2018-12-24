@@ -10,6 +10,12 @@ def addState(index, id, isRunning):
     package += "\"" + id + "\" : " + isRunning + "";
     return package;
 
+def getCommand(index, id, isRunning):
+    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
+     command += addState(index, id, isRunning)
+    command += "}}}}";
+    return command;
+
 def main():
     command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
     for i in range(2,  len(sys.argv), 2):

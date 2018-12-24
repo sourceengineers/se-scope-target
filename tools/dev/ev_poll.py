@@ -13,6 +13,9 @@ def main():
     file.write(command)
     file.close()
 
+def getCommand(timestamp):
+   return "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"ev_poll\":" + timestamp + "}}}";
+
 if __name__ == "__main__":
     
     if ((len(sys.argv) < 3) or (sys.argv[1]=="--help")):
