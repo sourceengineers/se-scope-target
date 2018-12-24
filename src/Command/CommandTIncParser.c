@@ -15,8 +15,8 @@
 /* Class data */
 typedef struct __CommandTIncParserPrivateData
 {
-  ICommandHandle iCommand;
-  IUnpackerHandle iUnpacker;
+  ICommandHandle command;
+  IUnpackerHandle unpacker;
   char* commandName;
 
 } CommandTIncParserPrivateData ;
@@ -24,26 +24,26 @@ typedef struct __CommandTIncParserPrivateData
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandTIncParserHandle CommandTIncParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker){
+CommandTIncParserHandle CommandTIncParser_create(ICommandHandle command, IUnpackerHandle unpacker){
   CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
-  self->iCommand = iCommand;
-  self->iUnpacker = iUnpacker;
-  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
+  self->command = command;
+  self->unpacker = unpacker;
+  self->commandName = (char*) self->command->getCommandName(self->command);
   return self;
 }
 
 void CommandTIncParser_configure(CommandTIncParserHandle self){
 
-  if(self->iUnpacker == NULL){
+  if(self->unpacker == NULL){
     return;
   }
 
   CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = (char*) "",
                                              .isInArray = false, .arrayIndex = 0 };
 
-  const int timeIncrement = self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
+  const int timeIncrement = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
-  self->iCommand->setCommandAttribute(self->iCommand, (void*) &timeIncrement);
+  self->command->setCommandAttribute(self->command, (void*) &timeIncrement);
 }
 
 void CommandTIncParser_destroy(CommandTIncParserHandle self){

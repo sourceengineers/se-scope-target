@@ -42,7 +42,7 @@ typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the factory */
-CommandFactoryHandle CommandFactory_create(IScopeHandle iScope, 
+CommandFactoryHandle CommandFactory_create(IScopeHandle scope,
                                            ChannelHandle* channels, 
                                            size_t amountOfChannels,
                                            TriggerHandle trigger,

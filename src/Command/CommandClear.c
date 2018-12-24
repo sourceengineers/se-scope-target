@@ -18,25 +18,25 @@ static char* commandName = "ev_clear";
 /* Class data */
 typedef struct __CommandClearPrivateData
 {
-  ICommand iCommand;
-  IScopeHandle iScope;
+  ICommand command;
+  IScopeHandle scope;
 
 } CommandClearPrivateData ;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle self){
-  CommandClearHandle commandClear = (CommandClearHandle) self->implementer;
-  commandClear->iScope->clear(commandClear->iScope);
+static void run(ICommandHandle command){
+  CommandClearHandle self = (CommandClearHandle) command->implementer;
+  self->scope->clear(self->scope);
 }
 
-static void setCommandAttribute(ICommandHandle self, void* attr){
+static void setCommandAttribute(ICommandHandle command, void* attr){
   return;
 }
 
-static char* getCommandName(ICommandHandle self){
-  CommandClearHandle commandAddr = (CommandClearHandle) self->implementer;
+static char* getCommandName(ICommandHandle command){
+  CommandClearHandle commandAddr = (CommandClearHandle) command->implementer;
 
   return CommandClear_getName(commandAddr);
 }
@@ -44,21 +44,21 @@ static char* getCommandName(ICommandHandle self){
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandClearHandle CommandClear_create(IScopeHandle iScope){
+CommandClearHandle CommandClear_create(IScopeHandle scope){
 
   CommandClearHandle self = malloc(sizeof(CommandClearPrivateData));
-  self->iScope = iScope;
+  self->scope = scope;
   
-  self->iCommand.implementer = self;
-  self->iCommand.run = &run;
-  self->iCommand.setCommandAttribute = &setCommandAttribute;
-  self->iCommand.getCommandName = &getCommandName;
+  self->command.implementer = self;
+  self->command.run = &run;
+  self->command.setCommandAttribute = &setCommandAttribute;
+  self->command.getCommandName = &getCommandName;
 
   return self;
 }
 
 ICommandHandle CommandClear_getICommand(CommandClearHandle self){
-  return &self->iCommand;
+  return &self->command;
 }
 
 char* CommandClear_getName(CommandClearHandle self){

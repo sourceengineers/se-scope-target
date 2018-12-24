@@ -18,7 +18,7 @@ static char* commandName = "cf_tgr";
 /* Class data */
 typedef struct __CommandTriggerPrivateData
 {
-  ICommand iCommand;
+  ICommand command;
   
   TriggerHandle trigger;
   TriggerConfiguration config;
@@ -28,23 +28,23 @@ typedef struct __CommandTriggerPrivateData
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle self){
-  CommandTriggerHandle commandTrigger = (CommandTriggerHandle) self->implementer;
+static void run(ICommandHandle command){
+  CommandTriggerHandle self = (CommandTriggerHandle) command->implementer;
   
-  Trigger_configure(commandTrigger->trigger, commandTrigger->config);
+  Trigger_configure(self->trigger, self->config);
 }
 
-static void setCommandAttribute(ICommandHandle self, void* attr){
-  CommandTriggerHandle commandTrigger = (CommandTriggerHandle) self->implementer;
+static void setCommandAttribute(ICommandHandle command, void* attr){
+  CommandTriggerHandle self = (CommandTriggerHandle) command->implementer;
   
   TriggerConfiguration newConfig = *(TriggerConfiguration*) attr;
-  commandTrigger->config = newConfig;
+  self->config = newConfig;
 }
 
-static char* getCommandName(ICommandHandle self){
-  CommandTriggerHandle commandAddr = (CommandTriggerHandle) self->implementer;
+static char* getCommandName(ICommandHandle command){
+  CommandTriggerHandle self = (CommandTriggerHandle) command->implementer;
 
-  return CommandTrigger_getName(commandAddr);
+  return CommandTrigger_getName(self);
 }
 
 /******************************************************************************
@@ -55,16 +55,16 @@ CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger){
   CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
   self->trigger = trigger;
   
-  self->iCommand.implementer = self;
-  self->iCommand.run = &run;
-  self->iCommand.setCommandAttribute = &setCommandAttribute;
-  self->iCommand.getCommandName = &getCommandName;
+  self->command.implementer = self;
+  self->command.run = &run;
+  self->command.setCommandAttribute = &setCommandAttribute;
+  self->command.getCommandName = &getCommandName;
 
   return self;
 }
 
 ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self){
-  return &self->iCommand;
+  return &self->command;
 }
 
 char* CommandTrigger_getName(CommandTriggerHandle self){

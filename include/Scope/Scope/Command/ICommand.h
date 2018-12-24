@@ -30,9 +30,9 @@ typedef struct ICommandStruct* ICommandHandle;
 ******************************************************************************/
 typedef struct ICommandStruct {
   void* implementer;
-  void (*run)(ICommandHandle self);
-  void(*setCommandAttribute)(ICommandHandle self, void* attr);
-  char*(*getCommandName)(ICommandHandle self);
+  void (*run)(ICommandHandle command);
+  void(*setCommandAttribute)(ICommandHandle command, void* attr);
+  char*(*getCommandName)(ICommandHandle command);
 } ICommand ;
 
 #endif

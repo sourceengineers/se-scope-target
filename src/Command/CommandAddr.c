@@ -18,10 +18,9 @@ static char* commandName = "cf_addr";
 /* Class data */
 typedef struct __CommandAddrPrivateData
 {
-  ICommand iCommand;
+  ICommand command;
   
   CommandAddrConf config;
-  
   size_t amountOfChannels;
   ChannelHandle* channels;
   
@@ -30,44 +29,44 @@ typedef struct __CommandAddrPrivateData
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle self){
-  CommandAddrHandle commandAddr = (CommandAddrHandle) self->implementer;
+static void run(ICommandHandle command){
+  CommandAddrHandle self = (CommandAddrHandle) command->implementer;
   
   /* Set the polling address of the channels */
-  for (size_t i = 0; i < commandAddr->config.numberOfChangedChannels; i++) {
-    const int idChangingChannel = commandAddr->config.changedChannels[i];
+  for (size_t i = 0; i < self->config.numberOfChangedChannels; i++) {
+    const int idChangingChannel = self->config.changedChannels[i];
 
-    if(idChangingChannel >= commandAddr->amountOfChannels){
+    if(idChangingChannel >= self->amountOfChannels){
       return;
     }
 
-    ChannelHandle changingChannel = commandAddr->channels[idChangingChannel];
-    const DATA_TYPES newType = commandAddr->config.types[i];
-    void* newAddress = commandAddr->config.newAddresses[i];
+    ChannelHandle changingChannel = self->channels[idChangingChannel];
+    const DATA_TYPES newType = self->config.types[i];
+    void* newAddress = self->config.newAddresses[i];
     
     Channel_setPollAddress(changingChannel, newAddress, newType);
   }
 }
 
-static char* getCommandName(ICommandHandle self){
-  CommandAddrHandle commandAddr = (CommandAddrHandle) self->implementer;
+static char* getCommandName(ICommandHandle command){
+  CommandAddrHandle self = (CommandAddrHandle) command->implementer;
 
-  return CommandAddr_getName(commandAddr);
+  return CommandAddr_getName(self);
 }
 
-static void setCommandAttribute(ICommandHandle self, void* attr){
-  CommandAddrHandle commandAddr = (CommandAddrHandle) self->implementer;
+static void setCommandAttribute(ICommandHandle command, void* attr){
+  CommandAddrHandle self = (CommandAddrHandle) command->implementer;
 
   CommandAddrConf newConfig = *(CommandAddrConf*) attr;
   
   /* Safety checks */
-  if(newConfig.numberOfChangedChannels > commandAddr->amountOfChannels){
+  if(newConfig.numberOfChangedChannels > self->amountOfChannels){
     return;
   }
   
   /* Check that no id is bigger than the maximum ammount of channels */
   for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
-    if(newConfig.changedChannels[i] > commandAddr->amountOfChannels){
+    if(newConfig.changedChannels[i] > self->amountOfChannels){
       return;
     }
     if(newConfig.newAddresses[i] == NULL){
@@ -76,11 +75,11 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   }
   
   /* Copy data to command */
-  commandAddr->config.numberOfChangedChannels = newConfig.numberOfChangedChannels;
+  self->config.numberOfChangedChannels = newConfig.numberOfChangedChannels;
   for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
-    commandAddr->config.changedChannels[i] = newConfig.changedChannels[i]; 
-    commandAddr->config.newAddresses[i] = newConfig.newAddresses[i];
-    commandAddr->config.types[i] = newConfig.types[i];
+    self->config.changedChannels[i] = newConfig.changedChannels[i]; 
+    self->config.newAddresses[i] = newConfig.newAddresses[i];
+    self->config.types[i] = newConfig.types[i];
   }
 }
 
@@ -97,10 +96,10 @@ CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t amountOfCha
   self->channels = channels;
   self->amountOfChannels = amountOfChannels;
   
-  self->iCommand.implementer = self;
-  self->iCommand.run = &run;
-  self->iCommand.setCommandAttribute = &setCommandAttribute;
-  self->iCommand.getCommandName = &getCommandName;
+  self->command.implementer = self;
+  self->command.run = &run;
+  self->command.setCommandAttribute = &setCommandAttribute;
+  self->command.getCommandName = &getCommandName;
   
   return self;
 }
@@ -109,7 +108,7 @@ CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t amountOfCha
  Public functions
 ******************************************************************************/
 ICommandHandle CommandAddr_getICommand(CommandAddrHandle self){
-  return &self->iCommand;
+  return &self->command;
 }
 
 char* CommandAddr_getName(CommandAddrHandle self){

@@ -16,8 +16,8 @@
 /* Class data */
 typedef struct __CommandTriggerParserPrivateData
 {
-  ICommandHandle iCommand;
-  IUnpackerHandle iUnpacker;
+  ICommandHandle command;
+  IUnpackerHandle unpacker;
   char* commandName;
   ChannelHandle* channels;
   size_t numberOfChannels;
@@ -60,12 +60,12 @@ static int parseStringToEdge(const char* edgeToParse, size_t maxStringSize){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker,
+CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle command, IUnpackerHandle unpacker,
                                                        ChannelHandle* channels, size_t numberOfChannels){
   CommandTriggerParserHandle self = malloc(sizeof(CommandTriggerParserPrivateData));
-  self->iCommand = iCommand;
-  self->iUnpacker = iUnpacker;
-  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
+  self->command = command;
+  self->unpacker = unpacker;
+  self->commandName = (char*) self->command->getCommandName(self->command);
   self->channels = channels;
   self->numberOfChannels = numberOfChannels;
 
@@ -74,7 +74,7 @@ CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle iCommand, 
 
 void CommandTriggerParser_configure(CommandTriggerParserHandle self){
 
-  if(self->iUnpacker == NULL){
+  if(self->unpacker == NULL){
     return;
   }
 
@@ -84,7 +84,7 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
                                              .isInArray = false, .arrayIndex = 0 };
 
   /* Get the correct data stream */
-  gemmi_uint channelId = self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
+  gemmi_uint channelId = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
   if(channelId >= self->numberOfChannels){
     channelId = 0;
@@ -94,23 +94,23 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
 
   /* Get the trigger level */
   information.fieldName = (char*) "level";
-  const float level =  self->iUnpacker->getFloatFromCommand(self->iUnpacker, &information);
+  const float level =  self->unpacker->getFloatFromCommand(self->unpacker, &information);
 
   /* Get the trigger mode */
   char triggerModeToParse[maxStringSize];
   information.fieldName = (char*) "mode";
-  self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, triggerModeToParse, maxStringSize);
+  self->unpacker->getStringFromCommand(self->unpacker, &information, triggerModeToParse, maxStringSize);
   TRIGGER_MODE mode = parseStringToTriggerMode(triggerModeToParse, maxStringSize);
 
   /* Get the trigger edge */
   char edgeToParse[maxStringSize];
   information.fieldName = (char*) "edge";
-  self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, edgeToParse, maxStringSize);
+  self->unpacker->getStringFromCommand(self->unpacker, &information, edgeToParse, maxStringSize);
   int edge = parseStringToEdge(edgeToParse, maxStringSize);
 
   TriggerConfiguration conf = {.level = level, .mode = mode, .stream = stream, .edge = edge, .channelId = channelId};
 
-  self->iCommand->setCommandAttribute(self->iCommand, (void*) &conf);
+  self->command->setCommandAttribute(self->command, (void*) &conf);
 }
 
 void CommandTriggerParser_destroy(CommandTriggerParserHandle self){

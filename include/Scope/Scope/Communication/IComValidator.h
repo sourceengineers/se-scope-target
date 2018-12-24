@@ -31,10 +31,20 @@ typedef struct IComValidatorStruct* IComValidatorHandle;
 typedef struct IComValidatorStruct {
   void* implementer;
 
+	/**
+	 * @param check The check which gets from the received package.
+	 * @param bytesToCheck Bytes which have to be used to create the check.
+	 */
   bool (*validateCheck)(IComValidatorHandle self, const uint8_t* check, const size_t lengthOfCheck,
                               const uint8_t* bytesToCheck, const size_t lengthOfBytesToCheck);
   size_t (*getCheckLength)(IComValidatorHandle self);
-  void (*createCheck)(IComValidatorHandle self, uint8_t* checksum, const uint8_t* bytesToCheck, const size_t length);
+
+	/**
+	 *
+	 * @param checksum The array in which the created check gets written into. The size of this array can not be
+	 * 									larger than what was returned from getCheckLength.
+	 */
+	void (*createCheck)(IComValidatorHandle self, uint8_t* checksum, const uint8_t* bytesToCheck, const size_t length);
   bool (*checkPresentInProtocol)(IComValidatorHandle self);
 
 } IComValidator ;

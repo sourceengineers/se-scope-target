@@ -27,7 +27,7 @@ typedef struct __CommandAnnouncePrivateData* CommandAnnounceHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandAnnounceHandle CommandAnnounce_create(IScopeHandle iScope);
+CommandAnnounceHandle CommandAnnounce_create(IScopeHandle scope);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandAnnounce_destroy(CommandAnnounceHandle self);

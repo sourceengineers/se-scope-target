@@ -22,7 +22,7 @@
 typedef struct __JsonUnpackerPrivateData
 {
 
-  IUnpacker iUnpacker;
+  IUnpacker unpacker;
 
   size_t numberOfCommands;
 
@@ -508,21 +508,21 @@ JsonUnpackerHandle JsonUnpacker_create(){
   JsonUnpackerHandle self = (JsonUnpackerHandle) malloc(sizeof(JsonUnpackerPrivateData));
 
   self->numberOfCommands = 0;
-  self->iUnpacker.implementer = self;
-  self->iUnpacker.unpack = &unpack;
-  self->iUnpacker.getBoolFromCommand = &getBoolFromCommand;
-  self->iUnpacker.getFloatFromCommand = &getFloatFromCommand;
-  self->iUnpacker.getIntFromCommand = &getIntFromCommand;
-  self->iUnpacker.getStringFromCommand = &getStringFromCommand;
-  self->iUnpacker.getNameOfCommand = &getNameOfCommand;
-  self->iUnpacker.getNumberOfCommands = &getNumberOfCommands;
-  self->iUnpacker.getNumberOfFields = &getNumberOfFields;
-  self->iUnpacker.getNameOfField = &getNameOfField;
-  self->iUnpacker.activateNewMessage = &activateNewMessage;
-  self->iUnpacker.getLengthOfBytesToCheck = &getLengthOfBytesToCheck;
-  self->iUnpacker.getLengthOfCheck = &getLengthOfCheck;
-  self->iUnpacker.getCheck = &getCheck;
-  self->iUnpacker.getBytesToCheck = &getBytesToCheck;
+  self->unpacker.implementer = self;
+  self->unpacker.unpack = &unpack;
+  self->unpacker.getBoolFromCommand = &getBoolFromCommand;
+  self->unpacker.getFloatFromCommand = &getFloatFromCommand;
+  self->unpacker.getIntFromCommand = &getIntFromCommand;
+  self->unpacker.getStringFromCommand = &getStringFromCommand;
+  self->unpacker.getNameOfCommand = &getNameOfCommand;
+  self->unpacker.getNumberOfCommands = &getNumberOfCommands;
+  self->unpacker.getNumberOfFields = &getNumberOfFields;
+  self->unpacker.getNameOfField = &getNameOfField;
+  self->unpacker.activateNewMessage = &activateNewMessage;
+  self->unpacker.getLengthOfBytesToCheck = &getLengthOfBytesToCheck;
+  self->unpacker.getLengthOfCheck = &getLengthOfCheck;
+  self->unpacker.getCheck = &getCheck;
+  self->unpacker.getBytesToCheck = &getBytesToCheck;
 
   self->inputTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
   self->storageTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
@@ -541,7 +541,7 @@ void JsonUnpacker_destroy(JsonUnpackerHandle self){
 }
 
 IUnpackerHandle JsonUnpacker_getIUnpacker(JsonUnpackerHandle self){
-  return &self->iUnpacker;
+  return &self->unpacker;
 }
 
 size_t JsonUnpacker_calculateBufferSize(){

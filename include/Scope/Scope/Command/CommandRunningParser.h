@@ -27,7 +27,7 @@ typedef struct __CommandRunningParserPrivateData* CommandRunningParserHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandRunningParserHandle CommandRunningParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker);
+CommandRunningParserHandle CommandRunningParser_create(ICommandHandle command, IUnpackerHandle unpacker);
 
 /* Configurates the gives command */
 void CommandRunningParser_configure(CommandRunningParserHandle self);

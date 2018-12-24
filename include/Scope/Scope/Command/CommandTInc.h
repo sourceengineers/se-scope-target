@@ -29,7 +29,7 @@ typedef struct __CommandTIncPrivateData* CommandTIncHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandTIncHandle CommandTInc_create(IScopeHandle iScope);
+CommandTIncHandle CommandTInc_create(IScopeHandle scope);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandTInc_destroy(CommandTIncHandle self);

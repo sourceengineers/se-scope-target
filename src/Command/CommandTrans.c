@@ -18,47 +18,47 @@ static char* commandName = "ev_trans";
 /* Class data */
 typedef struct __CommandTransPrivateData
 {
-  ICommand iCommand;
-  IScopeHandle iScope;
+  ICommand command;
+  IScopeHandle scope;
   
 } CommandTransPrivateData ;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle self){
-  CommandTransHandle commandTrans = (CommandTransHandle) self->implementer;
-  commandTrans->iScope->transmit(commandTrans->iScope);
+static void run(ICommandHandle command){
+  CommandTransHandle self = (CommandTransHandle) command->implementer;
+  self->scope->transmit(self->scope);
 }
 
-static void setCommandAttribute(ICommandHandle self, void* attr){
+static void setCommandAttribute(ICommandHandle command, void* attr){
   return;
 }
 
-static char* getCommandName(ICommandHandle self){
-  CommandTransHandle commandAddr = (CommandTransHandle) self->implementer;
+static char* getCommandName(ICommandHandle command){
+  CommandTransHandle self = (CommandTransHandle) command->implementer;
 
-  return CommandTrans_getName(commandAddr);
+  return CommandTrans_getName(self);
 }
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandTransHandle CommandTrans_create(IScopeHandle iScope){
+CommandTransHandle CommandTrans_create(IScopeHandle scope){
 
   CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));
-  self->iScope = iScope;
+  self->scope = scope;
   
-  self->iCommand.implementer = self;
-  self->iCommand.run = &run;
-  self->iCommand.setCommandAttribute = &setCommandAttribute;
-  self->iCommand.getCommandName = &getCommandName;
+  self->command.implementer = self;
+  self->command.run = &run;
+  self->command.setCommandAttribute = &setCommandAttribute;
+  self->command.getCommandName = &getCommandName;
 
   return self;
 }
 
 ICommandHandle CommandTrans_getICommand(CommandTransHandle self){
-  return &self->iCommand;
+  return &self->command;
 }
 
 char* CommandTrans_getName(CommandTransHandle self){

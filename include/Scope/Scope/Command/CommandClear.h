@@ -27,7 +27,7 @@ typedef struct __CommandClearPrivateData* CommandClearHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandClearHandle CommandClear_create(IScopeHandle iScope);
+CommandClearHandle CommandClear_create(IScopeHandle scope);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandClear_destroy(CommandClearHandle self);

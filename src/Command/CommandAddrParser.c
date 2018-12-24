@@ -16,8 +16,8 @@
 /* Class data */
 typedef struct __CommandAddrParserPrivateData
 {
-  ICommandHandle iCommand;
-  IUnpackerHandle iUnpacker;
+  ICommandHandle command;
+  IUnpackerHandle unpacker;
   char* commandName;
 
 } CommandAddrParserPrivateData ;
@@ -48,21 +48,21 @@ static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t m
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandAddrParserHandle CommandAddrParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker){
+CommandAddrParserHandle CommandAddrParser_create(ICommandHandle command, IUnpackerHandle unpacker){
   CommandAddrParserHandle self = malloc(sizeof(CommandAddrParserPrivateData));
-  self->iCommand = iCommand;
-  self->iUnpacker = iUnpacker;
-  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
+  self->command = command;
+  self->unpacker = unpacker;
+  self->commandName = (char*) self->command->getCommandName(self->command);
   return self;
 }
 
 void CommandAddrParser_configure(CommandAddrParserHandle self){
 
-  if(self->iUnpacker == NULL){
+  if(self->unpacker == NULL){
     return;
   }
 
-  int numberOfFields = self->iUnpacker->getNumberOfFields(self->iUnpacker, (const char*) self->commandName);
+  int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) self->commandName);
 
   if(numberOfFields == -1){
     return;
@@ -76,7 +76,7 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
 
   for (size_t i = 0; i < numberOfFields; i++) {
 
-    bool foundField = self->iUnpacker->getNameOfField(self->iUnpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
+    bool foundField = self->unpacker->getNameOfField(self->unpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
 
     /* Only start parsing if the field was found, and its not a data type field */
     if(foundField == true ){
@@ -85,12 +85,12 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
       CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = nameOfField,
                                                  .isInArray = true, .arrayIndex = 0 };
 
-      newAddresses[i] = (void*) (gemmi_uint) self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
+      newAddresses[i] = (void*) (gemmi_uint) self->unpacker->getIntFromCommand(self->unpacker, &information);
 
 
       char requestedDataType[20];
       information.arrayIndex = 1;
-      self->iUnpacker->getStringFromCommand(self->iUnpacker, &information, requestedDataType, 20);
+      self->unpacker->getStringFromCommand(self->unpacker, &information, requestedDataType, 20);
       types[i] = parseStringToDataType(requestedDataType, 20);
     }
   }
@@ -101,7 +101,7 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
                           .numberOfChangedChannels = numberOfFields};
 
 
-  self->iCommand->setCommandAttribute(self->iCommand, (void*) &conf);
+  self->command->setCommandAttribute(self->command, (void*) &conf);
 }
 
 /* Deconstructor: Deletes the instance of the channel */

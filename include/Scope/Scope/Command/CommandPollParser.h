@@ -27,7 +27,7 @@ typedef struct __CommandPollParserPrivateData* CommandPollParserHandle;
  Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandPollParserHandle CommandPollParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker);
+CommandPollParserHandle CommandPollParser_create(ICommandHandle command, IUnpackerHandle unpacker);
 
 /* Configurates the gives command */
 void CommandPollParser_configure(CommandPollParserHandle self);

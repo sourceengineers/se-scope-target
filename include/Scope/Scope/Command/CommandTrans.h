@@ -27,7 +27,7 @@ typedef struct __CommandTransPrivateData* CommandTransHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandTransHandle CommandTrans_create(IScopeHandle iScope);
+CommandTransHandle CommandTrans_create(IScopeHandle scope);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandTrans_destroy(CommandTransHandle self);

@@ -18,47 +18,47 @@ static char* commandName = "ev_announce";
 /* Class data */
 typedef struct __CommandAnnouncePrivateData
 {
-  ICommand iCommand;
-  IScopeHandle iScope;
+  ICommand command;
+  IScopeHandle scope;
 
 } CommandAnnouncePrivateData ;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle self){
-  CommandAnnounceHandle commandAnnounce = (CommandAnnounceHandle) self->implementer;
-  commandAnnounce->iScope->announce(commandAnnounce->iScope);
+static void run(ICommandHandle command){
+  CommandAnnounceHandle self = (CommandAnnounceHandle) command->implementer;
+  self->scope->announce(self->scope);
 }
 
-static void setCommandAttribute(ICommandHandle self, void* attr){
+static void setCommandAttribute(ICommandHandle command, void* attr){
   return;
 }
 
-static char* getCommandName(ICommandHandle self){
-  CommandAnnounceHandle commandAddr = (CommandAnnounceHandle) self->implementer;
+static char* getCommandName(ICommandHandle command){
+  CommandAnnounceHandle self = (CommandAnnounceHandle) command->implementer;
 
-  return CommandAnnounce_getName(commandAddr);
+  return CommandAnnounce_getName(self);
 }
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandAnnounceHandle CommandAnnounce_create(IScopeHandle iScope){
+CommandAnnounceHandle CommandAnnounce_create(IScopeHandle scope){
 
   CommandAnnounceHandle self = malloc(sizeof(CommandAnnouncePrivateData));
-  self->iScope = iScope;
+  self->scope = scope;
   
-  self->iCommand.implementer = self;
-  self->iCommand.run = &run;
-  self->iCommand.setCommandAttribute = &setCommandAttribute;
-  self->iCommand.getCommandName = &getCommandName;
+  self->command.implementer = self;
+  self->command.run = &run;
+  self->command.setCommandAttribute = &setCommandAttribute;
+  self->command.getCommandName = &getCommandName;
 
   return self;
 }
 
 ICommandHandle CommandAnnounce_getICommand(CommandAnnounceHandle self){
-  return &self->iCommand;
+  return &self->command;
 }
 
 char* CommandAnnounce_getName(CommandAnnounceHandle self){

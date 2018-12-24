@@ -27,7 +27,7 @@ typedef struct __CommandTIncParserPrivateData* CommandTIncParserHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandTIncParserHandle CommandTIncParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker);
+CommandTIncParserHandle CommandTIncParser_create(ICommandHandle command, IUnpackerHandle unpacker);
 
 /* Configurates the gives command */
 void CommandTIncParser_configure(CommandTIncParserHandle self);

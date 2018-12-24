@@ -18,7 +18,7 @@ static char* commandName = "cf_running";
 /* Class data */
 typedef struct __CommandRunningPrivateData
 {
-  ICommand iCommand;
+  ICommand command;
   size_t amountOfChannels;
   CommandRunningConf config;
   ChannelHandle* channels;
@@ -28,38 +28,38 @@ typedef struct __CommandRunningPrivateData
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle self){
-  CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
+static void run(ICommandHandle command){
+  CommandRunningHandle self = (CommandRunningHandle) command->implementer;
   
-  for (size_t i = 0; i < commandRunning->config.numberOfChangedChannels; i++) {
-    const int idOfChannelChanged = commandRunning->config.changedChannels[i];
+  for (size_t i = 0; i < self->config.numberOfChangedChannels; i++) {
+    const int idOfChannelChanged = self->config.changedChannels[i];
 
-    if(idOfChannelChanged >= commandRunning->amountOfChannels){
+    if(idOfChannelChanged >= self->amountOfChannels){
       return;
     }
 
-    ChannelHandle changingChannel = commandRunning->channels[idOfChannelChanged];
+    ChannelHandle changingChannel = self->channels[idOfChannelChanged];
     
-    if(commandRunning->config.newStates[i] == CHANNEL_RUNNING){
+    if(self->config.newStates[i] == CHANNEL_RUNNING){
       Channel_setStateRunning(changingChannel);
-    } else if(commandRunning->config.newStates[i] == CHANNEL_STOPPED) {
+    } else if(self->config.newStates[i] == CHANNEL_STOPPED) {
       Channel_setStateStopped(changingChannel);
     }
   }
 }
 
-static void setCommandAttribute(ICommandHandle self, void* attr){
-  CommandRunningHandle commandRunning = (CommandRunningHandle) self->implementer;
+static void setCommandAttribute(ICommandHandle command, void* attr){
+  CommandRunningHandle self = (CommandRunningHandle) command->implementer;
 
   CommandRunningConf newConfig = *(CommandRunningConf*) attr;
   
   /* Safety checks */
-  if(newConfig.numberOfChangedChannels > commandRunning->amountOfChannels){
+  if(newConfig.numberOfChangedChannels > self->amountOfChannels){
     return;
   }
   
   for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
-    if(newConfig.changedChannels[i] > commandRunning->amountOfChannels){
+    if(newConfig.changedChannels[i] > self->amountOfChannels){
       return;
     }
     if(newConfig.newStates[i] != CHANNEL_STOPPED 
@@ -69,16 +69,16 @@ static void setCommandAttribute(ICommandHandle self, void* attr){
   }
   
   /* Copy data to command */
-  commandRunning->config.numberOfChangedChannels = newConfig.numberOfChangedChannels;
+  self->config.numberOfChangedChannels = newConfig.numberOfChangedChannels;
   for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
-    commandRunning->config.changedChannels[i] = newConfig.changedChannels[i]; 
-    commandRunning->config.newStates[i] = newConfig.newStates[i];
+    self->config.changedChannels[i] = newConfig.changedChannels[i]; 
+    self->config.newStates[i] = newConfig.newStates[i];
   }
 }
 
 
-static char* getCommandName(ICommandHandle self){
-  CommandRunningHandle commandAddr = (CommandRunningHandle) self->implementer;
+static char* getCommandName(ICommandHandle command){
+  CommandRunningHandle commandAddr = (CommandRunningHandle) command->implementer;
 
   return CommandRunning_getName(commandAddr);
 }
@@ -95,16 +95,16 @@ CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t
   self->channels = channels;
   self->amountOfChannels = amountOfChannels;
   
-  self->iCommand.implementer = self;
-  self->iCommand.run = &run;
-  self->iCommand.setCommandAttribute = &setCommandAttribute;
-  self->iCommand.getCommandName = &getCommandName;
+  self->command.implementer = self;
+  self->command.run = &run;
+  self->command.setCommandAttribute = &setCommandAttribute;
+  self->command.getCommandName = &getCommandName;
 
   return self;
 }
 
 ICommandHandle CommandRunning_getICommand(CommandRunningHandle self){
-  return &self->iCommand;
+  return &self->command;
 }
 
 char* CommandRunning_getName(CommandRunningHandle self){

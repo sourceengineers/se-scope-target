@@ -18,38 +18,38 @@ static char* commandName = "ev_poll";
 /* Class data */
 typedef struct __CommandPollPrivateData
 {
-  ICommand iCommand;
-  IScopeHandle iScope;
+  ICommand command;
+  IScopeHandle scope;
 
   gemmi_uint nextTimeStamp;
 
 } CommandPollPrivateData ;
 
 /* Implementation of the run command, which will be passed into the interface */
-static void run(ICommandHandle self);
+static void run(ICommandHandle command);
 
 /* Implementation of the getCommandName command, which will be passed into the interface */
-static char* getCommandName(ICommandHandle self);
+static char* getCommandName(ICommandHandle command);
 
 /* Implementation of the setCommandAttribute command, which will be passed into the interface */
-static void setCommandAttribute(ICommandHandle self, void* attr);
+static void setCommandAttribute(ICommandHandle command, void* attr);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle self){
-  CommandPollHandle commandPoll = (CommandPollHandle) self->implementer;
-  commandPoll->iScope->poll(commandPoll->iScope, commandPoll->nextTimeStamp);
+static void run(ICommandHandle command){
+  CommandPollHandle self = (CommandPollHandle) command->implementer;
+  self->scope->poll(self->scope, self->nextTimeStamp);
 }
 
-static void setCommandAttribute(ICommandHandle self, void* attr){
-  CommandPollHandle commandPoll = (CommandPollHandle) self->implementer;
+static void setCommandAttribute(ICommandHandle command, void* attr){
+  CommandPollHandle self = (CommandPollHandle) command->implementer;
 
-  commandPoll->nextTimeStamp = *(gemmi_uint*) attr;
+  self->nextTimeStamp = *(gemmi_uint*) attr;
 }
 
-static char* getCommandName(ICommandHandle self){
-  CommandPollHandle commandAddr = (CommandPollHandle) self->implementer;
+static char* getCommandName(ICommandHandle command){
+  CommandPollHandle commandAddr = (CommandPollHandle) command->implementer;
 
   return CommandPoll_getName(commandAddr);
 }
@@ -57,15 +57,15 @@ static char* getCommandName(ICommandHandle self){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPollHandle CommandPoll_create(IScopeHandle iScope){
+CommandPollHandle CommandPoll_create(IScopeHandle scope){
 
   CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
-  self->iScope = iScope;
+  self->scope = scope;
   
-  self->iCommand.implementer = self;
-  self->iCommand.run = &run;
-  self->iCommand.setCommandAttribute = &setCommandAttribute;
-  self->iCommand.getCommandName = &getCommandName;
+  self->command.implementer = self;
+  self->command.run = &run;
+  self->command.setCommandAttribute = &setCommandAttribute;
+  self->command.getCommandName = &getCommandName;
 
   self->nextTimeStamp = 0;
 
@@ -73,7 +73,7 @@ CommandPollHandle CommandPoll_create(IScopeHandle iScope){
 }
 
 ICommandHandle CommandPoll_getICommand(CommandPollHandle self){
-  return &self->iCommand;
+  return &self->command;
 }
 
 char* CommandPoll_getName(CommandPollHandle self){

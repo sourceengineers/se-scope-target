@@ -38,7 +38,7 @@ typedef struct __ReceiverPrivateData* ReceiverHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the receiver */
-ReceiverHandle Receiver_create(IUnpackerHandle iUnpacker, IByteStreamHandle byteStream, IComValidatorHandle validator,
+ReceiverHandle Receiver_create(IUnpackerHandle unpacker, IByteStreamHandle byteStream, IComValidatorHandle validator,
                                SenderHandle sender);
 
 /* Returns the IUnpacker interface */

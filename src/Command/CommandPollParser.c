@@ -15,8 +15,8 @@
 /* Class data */
 typedef struct __CommandPollParserPrivateData
 {
-  ICommandHandle iCommand;
-  IUnpackerHandle iUnpacker;
+  ICommandHandle command;
+  IUnpackerHandle unpacker;
   char* commandName;
 
 } CommandPollParserPrivateData ;
@@ -24,26 +24,26 @@ typedef struct __CommandPollParserPrivateData
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPollParserHandle CommandPollParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker){
+CommandPollParserHandle CommandPollParser_create(ICommandHandle command, IUnpackerHandle unpacker){
   CommandPollParserHandle self = malloc(sizeof(CommandPollParserPrivateData));
-  self->iCommand = iCommand;
-  self->iUnpacker = iUnpacker;
-  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
+  self->command = command;
+  self->unpacker = unpacker;
+  self->commandName = (char*) self->command->getCommandName(self->command);
   return self;
 }
 
 void CommandPollParser_configure(CommandPollParserHandle self){
 
-  if(self->iUnpacker == NULL){
+  if(self->unpacker == NULL){
     return;
   }
 
   CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = (char*) "",
                                              .isInArray = false, .arrayIndex = 0 };
 
-  const gemmi_uint timestamp = self->iUnpacker->getIntFromCommand(self->iUnpacker, &information);
+  const gemmi_uint timestamp = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
-  self->iCommand->setCommandAttribute(self->iCommand, (void*) &timestamp);
+  self->command->setCommandAttribute(self->command, (void*) &timestamp);
 }
 
 void CommandPollParser_destroy(CommandPollParserHandle self){

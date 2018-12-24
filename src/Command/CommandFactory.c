@@ -37,7 +37,7 @@ typedef struct __CommandFactoryPrivateData
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
+CommandFactoryHandle CommandFactory_create(IScopeHandle scope,
                                            ChannelHandle* channels, 
                                            size_t amountOfChannels,
                                            TriggerHandle trigger,
@@ -46,13 +46,13 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
   CommandFactoryHandle self = malloc(sizeof(CommandFactoryPrivateData));
   /* Initialize commands */
   self->commandRunning = CommandRunning_create(channels, amountOfChannels);
-  self->commandPoll = CommandPoll_create(iScope);
+  self->commandPoll = CommandPoll_create(scope);
   self->commandAddr = CommandAddr_create(channels, amountOfChannels);
-  self->commandTInc = CommandTInc_create(iScope);
-  self->commandTrans = CommandTrans_create(iScope);
+  self->commandTInc = CommandTInc_create(scope);
+  self->commandTrans = CommandTrans_create(scope);
   self->commandTrigger = CommandTrigger_create(trigger);
-  self->commandAnnounce = CommandAnnounce_create(iScope);
-  self->commandClear = CommandClear_create(iScope);
+  self->commandAnnounce = CommandAnnounce_create(scope);
+  self->commandClear = CommandClear_create(scope);
 
   /* Initialize needed command parser
    * Not all commands need parser, which is why there are less parser as commands */
@@ -72,33 +72,33 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle iScope,
 
 ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char* command){
 
-  if(strcmp(command, CommandRunning_getName(self->commandRunning)) == 0){
+  if(strncmp(command, CommandRunning_getName(self->commandRunning), MAX_COMMAND_LENGTH) == 0){
     CommandRunningParser_configure(self->commandRunningParser);
     return CommandRunning_getICommand(self->commandRunning);
 
-  } else if(strcmp(command, CommandPoll_getName(self->commandPoll)) == 0){
+  } else if(strncmp(command, CommandPoll_getName(self->commandPoll), MAX_COMMAND_LENGTH) == 0){
     CommandPollParser_configure(self->commandPollParser);
     return CommandPoll_getICommand(self->commandPoll);
 
-  } else if(strcmp(command, CommandAddr_getName(self->commandAddr)) == 0) {
+  } else if(strncmp(command, CommandAddr_getName(self->commandAddr), MAX_COMMAND_LENGTH) == 0) {
     CommandAddrParser_configure(self->commandAddrParser);
     return CommandAddr_getICommand(self->commandAddr);
 
-  } else if(strcmp(command, CommandTInc_getName(self->commandTInc)) == 0){
+  } else if(strncmp(command, CommandTInc_getName(self->commandTInc), MAX_COMMAND_LENGTH) == 0){
     CommandTIncParser_configure(self->commandTIncParser);
     return CommandTInc_getICommand(self->commandTInc);
 
-  } else if(strcmp(command, CommandTrans_getName(self->commandTrans)) == 0){
+  } else if(strncmp(command, CommandTrans_getName(self->commandTrans), MAX_COMMAND_LENGTH) == 0){
     return CommandTrans_getICommand(self->commandTrans);
 
-  } else if(strcmp(command, CommandTrigger_getName(self->commandTrigger)) == 0){
+  } else if(strncmp(command, CommandTrigger_getName(self->commandTrigger), MAX_COMMAND_LENGTH) == 0){
     CommandTriggerParser_configure(self->commandTriggerParser);
     return CommandTrigger_getICommand(self->commandTrigger);
 
-  } else if(strcmp(command, CommandAnnounce_getName(self->commandAnnounce)) == 0){
+  } else if(strncmp(command, CommandAnnounce_getName(self->commandAnnounce), MAX_COMMAND_LENGTH) == 0){
     return CommandAnnounce_getICommand(self->commandAnnounce);
 
-  } else if(strcmp(command, CommandClear_getName(self->commandClear)) == 0){
+  } else if(strncmp(command, CommandClear_getName(self->commandClear), MAX_COMMAND_LENGTH) == 0){
     return CommandClear_getICommand(self->commandClear);
   }
   

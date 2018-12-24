@@ -18,8 +18,8 @@ static char* commandName = "cf_t_inc";
 /* Class data */
 typedef struct __CommandTIncPrivateData
 {
-  ICommand iCommand;
-  IScopeHandle iScope;
+  ICommand command;
+  IScopeHandle scope;
   
   int timeIncrement;
 } CommandTIncPrivateData ;
@@ -27,41 +27,41 @@ typedef struct __CommandTIncPrivateData
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle self){
-  CommandTIncHandle commandTInc = (CommandTIncHandle) self->implementer;
-  commandTInc->iScope->setTimeIncrement(commandTInc->iScope, commandTInc->timeIncrement);
+static void run(ICommandHandle command){
+  CommandTIncHandle self = (CommandTIncHandle) command->implementer;
+  self->scope->setTimeIncrement(self->scope, self->timeIncrement);
 }
 
-static void setCommandAttribute(ICommandHandle self, void* attr){
-  CommandTIncHandle commandTInc = (CommandTIncHandle) self->implementer;
-  commandTInc->timeIncrement = *(int*) attr;
+static void setCommandAttribute(ICommandHandle command, void* attr){
+  CommandTIncHandle self = (CommandTIncHandle) command->implementer;
+  self->timeIncrement = *(int*) attr;
 }
 
-static char* getCommandName(ICommandHandle self){
-  CommandTIncHandle commandAddr = (CommandTIncHandle) self->implementer;
+static char* getCommandName(ICommandHandle command){
+  CommandTIncHandle self = (CommandTIncHandle) command->implementer;
 
-  return CommandTInc_getName(commandAddr);
+  return CommandTInc_getName(self);
 }
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandTIncHandle CommandTInc_create(IScopeHandle iScope){
+CommandTIncHandle CommandTInc_create(IScopeHandle scope){
 
   CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));
-  self->iScope = iScope;
+  self->scope = scope;
   self->timeIncrement = 0;
   
-  self->iCommand.implementer = self;
-  self->iCommand.run = &run;
-  self->iCommand.setCommandAttribute = &setCommandAttribute;
-  self->iCommand.getCommandName = &getCommandName;
+  self->command.implementer = self;
+  self->command.run = &run;
+  self->command.setCommandAttribute = &setCommandAttribute;
+  self->command.getCommandName = &getCommandName;
 
   return self;
 }
 
 ICommandHandle CommandTInc_getICommand(CommandTIncHandle self){
-  return &self->iCommand;
+  return &self->command;
 }
 
 char* CommandTInc_getName(CommandTIncHandle self){

@@ -28,7 +28,7 @@ typedef struct __CommandPollPrivateData* CommandPollHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandPollHandle CommandPoll_create(IScopeHandle iScope);
+CommandPollHandle CommandPoll_create(IScopeHandle scope);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandPoll_destroy(CommandPollHandle self);

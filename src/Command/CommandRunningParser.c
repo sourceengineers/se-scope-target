@@ -15,8 +15,8 @@
 /* Class data */
 typedef struct __CommandRunningParserPrivateData
 {
-  ICommandHandle iCommand;
-  IUnpackerHandle iUnpacker;
+  ICommandHandle command;
+  IUnpackerHandle unpacker;
   char* commandName;
 
 } CommandRunningParserPrivateData ;
@@ -24,21 +24,21 @@ typedef struct __CommandRunningParserPrivateData
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningParserHandle CommandRunningParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker){
+CommandRunningParserHandle CommandRunningParser_create(ICommandHandle command, IUnpackerHandle unpacker){
   CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
-  self->iCommand = iCommand;
-  self->iUnpacker = iUnpacker;
-  self->commandName = (char*) self->iCommand->getCommandName(self->iCommand);
+  self->command = command;
+  self->unpacker = unpacker;
+  self->commandName = (char*) self->command->getCommandName(self->command);
   return self;
 }
 
 void CommandRunningParser_configure(CommandRunningParserHandle self){
 
-  if(self->iUnpacker == NULL){
+  if(self->unpacker == NULL){
     return;
   }
 
-  int numberOfFields = self->iUnpacker->getNumberOfFields(self->iUnpacker, (const char*) self->commandName);
+  int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) self->commandName);
 
   if(numberOfFields == -1){
     return;
@@ -51,14 +51,14 @@ void CommandRunningParser_configure(CommandRunningParserHandle self){
 
   for (size_t i = 0; i < numberOfFields; ++i) {
 
-    bool foundField = self->iUnpacker->getNameOfField(self->iUnpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
+    bool foundField = self->unpacker->getNameOfField(self->unpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
     if(foundField == true){
       channelIds[i] = atoi(nameOfField);
 
       CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = nameOfField,
                                                  .isInArray = false, .arrayIndex = 0 };
 
-      bool newState = self->iUnpacker->getBoolFromCommand(self->iUnpacker, &information);
+      bool newState = self->unpacker->getBoolFromCommand(self->unpacker, &information);
       if(newState == true){
         newStates[i] = CHANNEL_RUNNING;
       } else {
@@ -72,7 +72,7 @@ void CommandRunningParser_configure(CommandRunningParserHandle self){
                           .numberOfChangedChannels = numberOfFields};
 
 
-  self->iCommand->setCommandAttribute(self->iCommand, (void*) &conf);
+  self->command->setCommandAttribute(self->command, (void*) &conf);
 }
 
 void CommandRunningParser_destroy(CommandRunningParserHandle self){

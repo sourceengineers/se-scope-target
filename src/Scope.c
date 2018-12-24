@@ -27,7 +27,7 @@ typedef struct __ScopePrivateData
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
 
-  IScope iScope;
+  IScope scope;
 
   /* Timestamping data */
   gemmi_uint timeIncrement;
@@ -63,30 +63,30 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void iScopePoll(IScopeHandle self, gemmi_uint timeStamp){
-  ScopeHandle scope = (ScopeHandle) self->implementer;
-  Scope_poll(scope, timeStamp);
+static void scopePoll(IScopeHandle scope, gemmi_uint timeStamp){
+  ScopeHandle self = (ScopeHandle) scope->implementer;
+  Scope_poll(self, timeStamp);
 }
 
-static void iScopeClear(IScopeHandle self){
-  ScopeHandle scope = (ScopeHandle) self->implementer;
-  Scope_clear(scope);
+static void scopeClear(IScopeHandle scope){
+  ScopeHandle self = (ScopeHandle) scope->implementer;
+  Scope_clear(self);
 }
 
-static void iScopeAnnounce(IScopeHandle self){
-  ScopeHandle scope = (ScopeHandle) self->implementer;
-  Scope_announceAddresses(scope);
+static void scopeAnnounce(IScopeHandle scope){
+  ScopeHandle self = (ScopeHandle) scope->implementer;
+  Scope_announceAddresses(self);
 }
 
-static void iScopeSetTimeIncrement(IScopeHandle self, gemmi_uint timeIncrement){
-  ScopeHandle scope = (ScopeHandle) self->implementer;
-  Scope_configureTimestampIncrement(scope, timeIncrement);
+static void scopeSetTimeIncrement(IScopeHandle scope, gemmi_uint timeIncrement){
+  ScopeHandle self = (ScopeHandle) scope->implementer;
+  Scope_configureTimestampIncrement(self, timeIncrement);
 }
 
-static void iScopeTransmit(IScopeHandle self){
-  ScopeHandle scope = (ScopeHandle) self->implementer;
-  Sender_scopeData(scope->sender);
-  Sender_transmit(scope->sender);
+static void scopeTransmit(IScopeHandle scope){
+  ScopeHandle self = (ScopeHandle) scope->implementer;
+  Sender_scopeData(self->sender);
+  Sender_transmit(self->sender);
 }
 
 static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
@@ -106,25 +106,25 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
   }
 }
 
-static gemmi_uint getTimeIncrement(IScopeHandle self){
-  ScopeHandle scope = (ScopeHandle) self->implementer;
-  return scope->timeIncrement;
+static gemmi_uint getTimeIncrement(IScopeHandle scope){
+  ScopeHandle self = (ScopeHandle) scope->implementer;
+  return self->timeIncrement;
 }
 
-static bool transmitTimestampInc(IScopeHandle self){
-  ScopeHandle scope = (ScopeHandle) self->implementer;
+static bool transmitTimestampInc(IScopeHandle scope){
+  ScopeHandle self = (ScopeHandle) scope->implementer;
 
-  if(scope->timestampingMode == TIMESTAMP_AUTOMATIC){
+  if(self->timestampingMode == TIMESTAMP_AUTOMATIC){
     return true;
-  } else if(scope->timestampingMode == TIMESTAMP_MANUAL) {
+  } else if(self->timestampingMode == TIMESTAMP_MANUAL) {
     return false;
   }
   return true;
 }
 
-static IIntStreamHandle getTimestamp(IScopeHandle self){
-  ScopeHandle scope = (ScopeHandle) self->implementer;
-  return IntRingBuffer_getIntStream(scope->timeStamp);
+static IIntStreamHandle getTimestamp(IScopeHandle scope){
+  ScopeHandle self = (ScopeHandle) scope->implementer;
+  return IntRingBuffer_getIntStream(self->timeStamp);
 }
 /******************************************************************************
  Public functions
@@ -141,15 +141,15 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->timeIncrement = 1;
   self->timestampingMode = timestampingMode;
 
-  self->iScope.implementer = self;
-  self->iScope.poll = &iScopePoll;
-  self->iScope.transmit = &iScopeTransmit;
-  self->iScope.setTimeIncrement = &iScopeSetTimeIncrement;
-  self->iScope.getTimeIncrement = &getTimeIncrement;
-  self->iScope.getTimestamp = &getTimestamp;
-  self->iScope.transmitTimestampInc = &transmitTimestampInc;
-  self->iScope.announce = &iScopeAnnounce;
-  self->iScope.clear = &iScopeClear;
+  self->scope.implementer = self;
+  self->scope.poll = &scopePoll;
+  self->scope.transmit = &scopeTransmit;
+  self->scope.setTimeIncrement = &scopeSetTimeIncrement;
+  self->scope.getTimeIncrement = &getTimeIncrement;
+  self->scope.getTimestamp = &getTimestamp;
+  self->scope.transmitTimestampInc = &transmitTimestampInc;
+  self->scope.announce = &scopeAnnounce;
+  self->scope.clear = &scopeClear;
 
   self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
   size_t outputBufferSize = JsonPacker_calculateBufferSize(numberOfChannels, maxNumberOfAddresses, channelSize);
@@ -183,7 +183,7 @@ ScopeHandle Scope_create(const size_t channelSize,
 
   self->sender = Sender_create(JsonPacker_getIPacker(self->jsonPacker), self->channels, self->numberOfChannels,
                                self->trigger,
-                               &self->iScope,
+                               &self->scope,
                                transmitCallback,
                                self->addressStorage);
 
@@ -195,7 +195,7 @@ ScopeHandle Scope_create(const size_t channelSize,
                                    self->sender);
 
   /* Create command factory */
-  self->commandFactory = CommandFactory_create(&self->iScope,
+  self->commandFactory = CommandFactory_create(&self->scope,
                                                self->channels,
                                                self->numberOfChannels,
                                                self->trigger,

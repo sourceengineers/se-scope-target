@@ -30,9 +30,9 @@ TEST(CommandAddr, test_command)
   
   /* Configure all channels and check if it worked */
   CommandAddrHandle commandAddr =  CommandAddr_create(channels, testElements);
-  ICommand* iCommand = CommandAddr_getICommand(commandAddr);
-  iCommand->setCommandAttribute(iCommand, &firstConfig);
-  iCommand->run(iCommand);
+  ICommand* command = CommandAddr_getICommand(commandAddr);
+  command->setCommandAttribute(command, &firstConfig);
+  command->run(command);
   
   /* Set initial state to control */
   for (size_t i = 0; i < testElements; i++) {
@@ -47,8 +47,8 @@ TEST(CommandAddr, test_command)
   DATA_TYPES secondTypes[testElements] = {FLOAT, FLOAT, FLOAT};
   
   CommandAddrConf secondConfig = {.newAddresses = secondAddrPointer, .changedChannels = secondChangedElements, .numberOfChangedChannels = 3, .types = secondTypes};
-  iCommand->setCommandAttribute(iCommand, &secondConfig);
-  iCommand->run(iCommand);
+  command->setCommandAttribute(command, &secondConfig);
+  command->run(command);
 
   /* Test if the first 2 channels kept their configuration */
   for (size_t i = 0; i < 2; i++) {

@@ -33,9 +33,9 @@ TEST(CommandRunning, test_command)
   Channel_setStateStopped(channels[0]);
 
   CommandRunningHandle commandRunning = CommandRunning_create(channels, testElements);
-  ICommandHandle iCommandRunning = CommandRunning_getICommand(commandRunning);  
-  iCommandRunning->setCommandAttribute(iCommandRunning, &conf);
-  iCommandRunning->run(iCommandRunning);
+  ICommandHandle command = CommandRunning_getICommand(commandRunning);
+  command->setCommandAttribute(command, &conf);
+  command->run(command);
 
   for (size_t i = 0; i < testElements; i++) {
     changedStates[i] = Channel_getState(channels[i]);

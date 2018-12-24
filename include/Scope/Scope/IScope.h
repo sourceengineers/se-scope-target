@@ -28,14 +28,14 @@ typedef struct IScopeStruct* IScopeHandle;
 ******************************************************************************/
 typedef struct IScopeStruct {
   void* implementer;
-  void (*poll)(IScopeHandle self, gemmi_uint timeStamp);
-  void (*transmit)(IScopeHandle self);
-  void (*announce)(IScopeHandle self);
-  void (*setTimeIncrement)(IScopeHandle self, gemmi_uint timeIncrement);
-  bool (*transmitTimestampInc)(IScopeHandle self);
-  gemmi_uint (*getTimeIncrement)(IScopeHandle self);
-  IIntStreamHandle (*getTimestamp)(IScopeHandle self);
-  void (*clear)(IScopeHandle self);
+  void (*poll)(IScopeHandle scope, gemmi_uint timeStamp);
+  void (*transmit)(IScopeHandle scope);
+  void (*announce)(IScopeHandle scope);
+  void (*setTimeIncrement)(IScopeHandle scope, gemmi_uint timeIncrement);
+  bool (*transmitTimestampInc)(IScopeHandle scope);
+  gemmi_uint (*getTimeIncrement)(IScopeHandle scope);
+  IIntStreamHandle (*getTimestamp)(IScopeHandle scope);
+  void (*clear)(IScopeHandle scope);
 } IScope ;
 
 #endif

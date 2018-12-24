@@ -36,15 +36,16 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
- Define interface handle data
+ Define interface handle datar
 ******************************************************************************/
 typedef struct IUnpackerStruct* IUnpackerHandle;
 
+/* Struct which is used to clean up the amount of parameters passed to the fetcher functions */
 typedef struct {
     char* commandName;
     char* fieldName;
-    bool isInArray;
-    size_t arrayIndex;
+    bool isInArray;     // Set to true if the value is in a array. Like cf_addr as example
+    size_t arrayIndex;  // Set the correct array index if isInArray is set to true
 } CommandFetchingInformation;
 
 /******************************************************************************
@@ -52,18 +53,18 @@ typedef struct {
 ******************************************************************************/
 typedef struct IUnpackerStruct {
   void* implementer;
-  bool (*unpack)(IUnpackerHandle iUnpacker, const char* data, const size_t length);
-  void (*activateNewMessage)(IUnpackerHandle iUnpacker);
+  bool (*unpack)(IUnpackerHandle unpacker, const char* data, const size_t length);
+  void (*activateNewMessage)(IUnpackerHandle unpacker);
 
   /* Functions to fetch commands and fields */
-  size_t (*getNumberOfCommands)(IUnpackerHandle iUnpacker);
-  bool (*getNameOfCommand)(IUnpackerHandle iUnpacker, char* name, const int maxLenght, const int index);
+  size_t (*getNumberOfCommands)(IUnpackerHandle unpacker);
+  bool (*getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
 
   /* Functions to fetch the data from commands */
-  gemmi_uint (*getIntFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
-  float (*getFloatFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
-  bool (*getBoolFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information);
-  void (*getStringFromCommand)(IUnpackerHandle iUnpacker, CommandFetchingInformation* information, char* targetStr, const int maxLenght);
+  gemmi_uint (*getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+  float (*getFloatFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+  bool (*getBoolFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+  void (*getStringFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information, char* targetStr, const int maxLenght);
 
   /* Functions to help the communication validators */
   size_t (*getLengthOfCheck)(IUnpackerHandle iUnpackHandler);
@@ -74,7 +75,7 @@ typedef struct IUnpackerStruct {
   /* The following functions are likely not to be used, at will be obsolete.
    * The commands have to know themselves how many and what kind of fields, they own */
   int (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
-  bool (*getNameOfField)(IUnpackerHandle iUnpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
+  bool (*getNameOfField)(IUnpackerHandle unpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
 
 } IUnpacker ;
 

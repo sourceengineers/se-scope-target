@@ -40,18 +40,18 @@ typedef struct IPackerStruct* IPackerHandle;
 ******************************************************************************/
 typedef struct IPackerStruct {
   void* implementer;
-  void (*pack)(IPackerHandle iPacker);
+  void (*pack)(IPackerHandle packer);
 
-  void (*prepareChannel)(IPackerHandle iPacker, IFloatStreamHandle stream, const gemmi_uint channelId);
-  void (*prepareTimeIncrement)(IPackerHandle iPacker, const gemmi_uint timeIncrement);
-  void (*prepareTimestamp)(IPackerHandle iPacker, IIntStreamHandle timestamp);
-  void (*prepareTrigger)(IPackerHandle iPacker, const bool isTriggered, const gemmi_uint channelId, const gemmi_uint timestamp);
-  void (*prepareFlowControl)(IPackerHandle iPacker, const char* flowcontrol);
-  void (*prepareAddressAnnouncement)(IPackerHandle iPacker, const char* name, const char* type, const gemmi_uint address);
+  void (*prepareChannel)(IPackerHandle packer, IFloatStreamHandle stream, const gemmi_uint channelId);
+  void (*prepareTimeIncrement)(IPackerHandle packer, const gemmi_uint timeIncrement);
+  void (*prepareTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
+  void (*prepareTrigger)(IPackerHandle packer, const bool isTriggered, const gemmi_uint channelId, const gemmi_uint timestamp);
+  void (*prepareFlowControl)(IPackerHandle packer, const char* flowcontrol);
+  void (*prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type, const gemmi_uint address);
 
-  IByteStreamHandle (*getByteStream)(IPackerHandle iPacker);
+  IByteStreamHandle (*getByteStream)(IPackerHandle packer);
 
-  void (*reset)(IPackerHandle iPacker);
+  void (*reset)(IPackerHandle packer);
 } IPacker ;
 
 #endif

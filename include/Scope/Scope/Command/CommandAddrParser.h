@@ -27,7 +27,7 @@ typedef struct __CommandAddrParserPrivateData* CommandAddrParserHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandAddrParserHandle CommandAddrParser_create(ICommandHandle iCommand, IUnpackerHandle iUnpacker);
+CommandAddrParserHandle CommandAddrParser_create(ICommandHandle command, IUnpackerHandle unpacker);
 
 /* Configurates the given command */
 void CommandAddrParser_configure(CommandAddrParserHandle self);

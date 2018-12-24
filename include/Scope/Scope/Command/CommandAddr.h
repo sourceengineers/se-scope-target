@@ -30,10 +30,10 @@
 
 /* Definition of the configuration struct */
 typedef struct {
-  void** newAddresses;
-  int* changedChannels;
+  void** newAddresses;          // Array to keep track on witch channels have changed
+  int* changedChannels;         // Id's of the channels stored in "newAddresses"
   int numberOfChangedChannels;
-  DATA_TYPES* types;
+  DATA_TYPES* types;            // Types of the channels
 } CommandAddrConf;
 
 /******************************************************************************
