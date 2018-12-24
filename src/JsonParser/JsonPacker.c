@@ -123,9 +123,9 @@ inline static void appendNumber(IByteStreamHandle destination, gemmi_uint origin
   char number[MAX_LENGTH_OF_NUMBER];
 
 #if (ARCH_SIZE_32)
-  sprintf(number, "%d", origin);
+  sprintf(number, "%u", origin);
 #else
-  sprintf(number, "%llu", origin);
+  sprintf(number, "%llu", (long long unsigned int) origin);
 #endif
 
   destination->write(destination, (uint8_t*) number, strlen(number));
@@ -348,7 +348,11 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
   for (size_t i = 0; i < self->numberOfChannelsToSend; ++i) {
     if(self->floatStreams[i] != NULL){
       char id[MAX_LENGTH_OF_NUMBER];
-      sprintf(id, "%u", self->channelIds[i]);
+#if (ARCH_SIZE_32)
+	    sprintf(id, "%u", self->channelIds[i]);
+#else
+	    sprintf(id, "%llu", (long long unsigned int) self->channelIds[i]);
+#endif
 
       /* Add a , in front of the channel data in case it isn't the first one */
       if(i != 0){
