@@ -23,8 +23,9 @@ void print(IByteStreamHandle stream){
 
   stream->read(stream, data, length);
 
-  fprintf(file, "\nMessage: ");
-  Msgpack_printObjFromByte(file, data,length);
+  fprintf(file, "\nMessage: %s", data);
+
+  //Msgpack_printObjFromByte(file, data,length);
   fprintf(file, "\n");
 
   fclose(file);
@@ -74,10 +75,13 @@ int main(int argc, char *argv[] ){
     var1 = var3 / 10;
 
     readFile(stream, filename);
+
     if(stream->length(stream) > 0){
       Scope_command(scope);
     }
-    
+
+    Scope_poll(scope, 0);
+    Scope_transmitData(scope);
     usleep(10000);
   }
 
