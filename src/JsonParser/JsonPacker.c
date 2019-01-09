@@ -181,7 +181,7 @@ static void prepareTimeIncrement(IPackerHandle packer, const gemmi_uint timeIncr
 static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded){
 
   if(self->tIncReady == false){
-    return false;
+    return commaIsNeeded;
   }
 
   addComma(self->byteStream, commaIsNeeded);
@@ -204,11 +204,11 @@ static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp){
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded){
 
   if(self->timestampReady == false){
-    return false;
+    return commaIsNeeded;
   }
 
   if(self->timestamp == NULL){
-    return false;
+    return commaIsNeeded;
   }
 
   addComma(self->byteStream, commaIsNeeded);
@@ -244,7 +244,7 @@ static void prepareTrigger(IPackerHandle packer, const bool isTriggered, const g
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded){
 
   if(self->triggerReady == false){
-    return false;
+    return commaIsNeeded;
   }
 
   addComma(self->byteStream, commaIsNeeded);
@@ -285,7 +285,7 @@ static void prepareFlowControl(IPackerHandle packer, const char* flowControl){
 static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded){
 
   if(self->flowcontrolReady == false){
-    return false;
+    return commaIsNeeded;
   }
 
   addComma(self->byteStream, commaIsNeeded);
@@ -317,11 +317,11 @@ static void prepareAddressAnnouncement(IPackerHandle packer, const char* name, c
 static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded){
 
   if(self->addressesReady == false){
-    return false;
+    return commaIsNeeded;
   }
 
   if(self->numberOfAddressesToAnnounce == 0){
-    return false;
+    return commaIsNeeded;
   }
 
   addComma(self->byteStream, commaIsNeeded);
@@ -354,7 +354,7 @@ static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded){
 static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
 
   if(self->channelsReady == false){
-    return false;
+    return commaIsNeeded;
   }
 
   addComma(self->byteStream, commaIsNeeded);
