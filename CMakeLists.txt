@@ -17,8 +17,6 @@ if(ARCHITECTURE STREQUAL "X86")
     set(CMAKE_C_FLAGS -m32)
     set(CMAKE_CXX_FLAGS "-m32 -fpermissive")
 
-    option(MSGPACK_32BIT ON)
-    option(MSGPACK_ENABLE_SHARED OFF)
     option(BUILD_SHARED_LIBS OFF)
 
     set(GEMMI_TESTING ON)
@@ -42,16 +40,6 @@ elseif(ARCHITECTURE STREQUAL "X64" OR ARCHITECTURE STREQUAL "" )
 
 elseif(ARCHITECTURE STREQUAL "EMBEDDED")
     message("-- EMBEDDED architecture is on")
-
-    # Setoptions so msgpack will compile correctly
-    option(MSGPACK_BUILD_EXAMPLES OFF)
-    option(MSGPACK_32BIT ON)
-    option(MSGPACK_CXX11 OFF)
-    option(MSGPACK_BOOST OFF)
-    option(MSGPACK_ENABLE_SHARED OFF)
-    option(MSGPACK_ENABLE_STATIC ON)
-    option(BUILD_SHARED_LIBS OFF)
-    option(MSGPACK_ENABLE_CXX OFF)
 
     # Disable testing and examples because they will not run on the
     # host with a embedded compiler anyway
@@ -78,7 +66,6 @@ set(PROJECT_EXAMPLES_DIR
     examples
 )
 set(PROJECT_DEPENDENCIES
-  msgpackc
   jsmn
 )
 set(PROJECT_INCLUDE_DIR
@@ -106,8 +93,7 @@ endif()
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
-include_directories("${PROJECT_DEPENDENCIES_DIR}/msgpackc/include"
-                    "${PROJECT_DEPENDENCIES_DIR}/jsmn"
+include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn"
                     "${PROJECT_INCLUDE_DIR}")
 
 

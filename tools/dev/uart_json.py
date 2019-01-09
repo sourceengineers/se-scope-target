@@ -83,7 +83,7 @@ if __name__ == "__main__":
         """Opens a connection to a Serial device and transmits the commands in "INPUT_FILE" to the device.
             The received data will be written to the "OUTPUT_FILE".
             If the received data is a cl_data package, the data will be plotted.
-        Usage: ./uart_msgpack_tester.py SERIAL_FILE INPUT_FILE OUTPUT_FILE""")
+        Usage: ./uart_json.py SERIAL_FILE INPUT_FILE OUTPUT_FILE""")
         sys.exit();
 
     conf_file = os.path.abspath(sys.argv[1])

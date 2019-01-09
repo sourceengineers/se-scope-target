@@ -51,7 +51,7 @@ void Sender_scopeData(SenderHandle self);
 /* Transmits a data package */
 bool Sender_transmit(SenderHandle self);
 
-/* Prepares a msgpack packages, containing a ack or nak */
+/* Prepares a package, containing a ack or nak */
 void Sender_flowControl(SenderHandle self, const char* flowControl);
 
 /* Transmits all addresses which are registered to be sent */

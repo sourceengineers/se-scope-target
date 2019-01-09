@@ -74,7 +74,6 @@ static void flushBuffer(char* buffer);
 static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
 static bool channelMapIsEmpty(JsonPackerHandle self);
 static void formatCheck(char* formatedCheck, uint8_t* check, size_t checkLength);
-//static void formatFloatToSci(char* formated, float data);
 
 static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded);
 static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
@@ -91,20 +90,6 @@ static void packBase(JsonPackerHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-/*static void formatFloatToSci(char* formated, float data){
-
-  if((int)(data * 1000000) == 0){
-    snprintf(formated, MAX_LENGTH_OF_NUMBER, "%d.%de%d", 0, 0, 0);
-  } else {
-    int exponent = (int)log10(fabs(data));
-    double mantissa = data / pow(10, exponent);
-    int digit = (int) mantissa;
-    int fraction = (int) fabs(((mantissa - (float) digit) * 1000));
-
-    snprintf(formated, MAX_LENGTH_OF_NUMBER, "%d.%de%d", digit, fraction, exponent);
-  }
-}*/
-
 inline static void appendString(IByteStreamHandle destination, const char* origin, const char* endWith){
   destination->writeByte(destination, (uint8_t) '\"');
   destination->write(destination, (uint8_t*) origin, strlen(origin));
@@ -387,11 +372,6 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
         if(j != 0){
           appendData(self->byteStream, ",", "");
         }
-
-        /* gcvt is used instead of sprintf, since sprintf for float is not supported by some
-         * (Especially embedded) platforms */
-        //gcvt(data[j], MAX_LENGTH_OF_NUMBER, formatedData);
-	  //    formatFloatToSci(formatedData, data[j]);
 	      snprintf(formatedData, MAX_LENGTH_OF_NUMBER, "%.4g", data[j]);
         appendData(self->byteStream, formatedData, "");
       }

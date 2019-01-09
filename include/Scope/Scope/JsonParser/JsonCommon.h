@@ -14,11 +14,11 @@
 
 
 #if (ARCH_SIZE_32)
-#define MAX_LENGTH_OF_NUMBER 11
+#define MAX_LENGTH_OF_NUMBER 12
 #else
-#define MAX_LENGTH_OF_NUMBER 21
+#define MAX_LENGTH_OF_NUMBER 22
 #endif
 
-#define MAX_LENGTH_OF_FIELD_NAME 30
+#define MAX_LENGTH_OF_FIELD_NAME 31
 
 #endif

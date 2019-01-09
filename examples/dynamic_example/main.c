@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <Scope/MsgpackParser/MsgpackCommon.h>
 
 /*
  * watch the s_out file with:
@@ -25,7 +24,6 @@ void print(IByteStreamHandle stream){
 
   fprintf(file, "\nMessage: %s", data);
 
-  //Msgpack_printObjFromByte(file, data,length);
   fprintf(file, "\n");
 
   fclose(file);

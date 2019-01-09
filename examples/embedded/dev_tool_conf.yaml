@@ -1,6 +1,6 @@
 Serial:
   Baudrate: 115200
-  File: /dev/tty.usbmodem14103
+  File: /dev/tty.usbmodem14203
   Timeout: 0.5
   
 Legend:

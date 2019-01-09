@@ -15,7 +15,7 @@ If the compile or cmake command yield an error, try running the powershell as ad
 If you want to use the dev tools under tools, you also have to install python, as well as pip.
 To install the dependencies run:
 ```bash
-pip install msgpack pyserial
+pip install pyserial
 ```
 ## Build for OS
 Once the dependencies are installed, download the repo to what ever folder and run:

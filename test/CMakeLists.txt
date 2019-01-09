@@ -20,7 +20,6 @@ endif()
 
 include_directories(../include/Scope)
 include_directories(../3party/gtest/googletest/include ../3party/gtest/googlemock/include)
-include_directories(../3party/msgpackc/include)
 
 add_executable(${TEST_PROJECT_NAME} ${LIBRARY_TESTS_SOURCE})
 target_link_libraries(${TEST_PROJECT_NAME}
