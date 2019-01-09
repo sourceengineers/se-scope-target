@@ -10,9 +10,9 @@ def addAddr(index, id, addr, type):
     package += "\"" + id + "\":[" + addr +", \"" + type + "\"]"
     return package;
 
-def getCommand(index, id, addr, type):
+def getCommand(id, addr, type):
     command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
-    command += addAddr(index, id, addr, type)
+    command += addAddr(2, id, addr, type)
     command += "}}}}";
     return command;
 

@@ -10,9 +10,9 @@ def addState(index, id, isRunning):
     package += "\"" + id + "\" : " + isRunning + "";
     return package;
 
-def getCommand(index, id, isRunning):
+def getCommand(id, isRunning):
     command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
-     command += addState(index, id, isRunning)
+    command += addState(2, id, isRunning)
     command += "}}}}";
     return command;
 
