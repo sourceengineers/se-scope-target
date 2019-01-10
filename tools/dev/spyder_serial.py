@@ -37,8 +37,8 @@ def config():
 
     # Pfad zum speichern der plots nach dem herunterfahren. 
     # Wenn kein pfad angegeben ist, wird automatisch auf den Desktop gespeichert
-#    image_path = None
-    image_path = "/Users/schuepbs/Documents"
+    image_path = None
+    #image_path = "/Users/USER/Documents"
     
     ### Channel konfiguration
     # typ = UINT8, UINT16, UINT32, FLOAT)
