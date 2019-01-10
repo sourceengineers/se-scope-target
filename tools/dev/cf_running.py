@@ -3,16 +3,17 @@ import sys
 import os
 import json
 
-def addState(index, id, isRunning):
+def addState(index, id, isRunning, first_element):
     package = "";
-    if index != 2:
+    if index != first_element:
         package = ","
     package += "\"" + id + "\" : " + isRunning + "";
     return package;
 
-def getCommand(id, isRunning):
+def getCommand(id, isRunning, amount):
     command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
-    command += addState(2, id, isRunning)
+    for i in range(amount):
+        command += addState(i, id[i], isRunning[0], 0)
     command += "}}}}";
     return command;
 
