@@ -20,17 +20,25 @@ import ev_poll
 import ev_trans
 import matplotlib.pyplot as plt
 import collections
+import os
 
 def config():
     global serial_file
+    global image_path
     global baudrate
     global timeout
     global figure_name
     global x_width
+
     ### Serial optionen
     serial_file = '/dev/tty.usbmodem14203' # z.B.: COM1 bei Windows 
     baudrate = 115200
     timeout = 0.5
+
+    # Pfad zum speichern der plots nach dem herunterfahren. 
+    # Wenn kein pfad angegeben ist, wird automatisch auf den Desktop gespeichert
+#    image_path = None
+    image_path = "/Users/schuepbs/Documents"
     
     ### Channel konfiguration
     # typ = UINT8, UINT16, UINT32, FLOAT)
@@ -43,15 +51,13 @@ def config():
              {'title' : 'Float values', 'y_label' : 'Voltage', 'x_label' : 'Time'})
     add_subplot(["Double Byte Value", "Byte Value"], \
              {'title' : 'Integer values', 'y_label' : 'Bytes', 'x_label' : 'Time'})
-    
-    
+     
     figure_name = "Device data"
 
+    # wenn die x_width auf None gesetzt wird, wird die Achse automatisch 
+    # skaliert
     x_width = 2000
 #    x_width = None
-
-
-
 
 
 
@@ -122,8 +128,8 @@ def add_subplot(new_plot, labels):
 def process_data(data):
     if len(data) > 2:
         data = data[0:-1]
-        data = data.decode("utf-8")
         try:
+            data = data.decode("utf-8")
             data = json.loads(data);
             return data
         except:
@@ -240,15 +246,31 @@ def main():
         time.sleep(0.25)
 
 ##############################################################################
+def cleanup():
+    try:
+        save_path  = os.path.abspath(image_path)
+    except:
+        save_path = os.path.expanduser("~/Desktop")
+
+    save_path = os.path.join(save_path, figure_name) 
+    figure.savefig(save_path)
+    ser.close()
+
+    print("Safed plot to: " + save_path)
+
+##############################################################################
 
 if __name__ == "__main__":
-   channels = []
-   plot_conf = []
-   device_data = []
-       
-   config()
+    channels = []
+    plot_conf = []
+    device_data = []
+
+    config()
+    init_periph()
+    init_plots()
    
-   init_periph()
-   init_plots()
-   
-   main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('Script interrupted\nCleaning up...')
+        cleanup()
