@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Pyserial installation:
@@ -18,14 +19,14 @@ import ev_clear
 import ev_poll
 import ev_trans
 import matplotlib.pyplot as plt
-import threading
+import collections
 
 def config():
     global serial_file
     global baudrate
     global timeout
     global figure_name
-    global max_data_length
+    global x_width
     ### Serial optionen
     serial_file = '/dev/tty.usbmodem14203' # z.B.: COM1 bei Windows 
     baudrate = 115200
@@ -35,19 +36,19 @@ def config():
     # typ = UINT8, UINT16, UINT32, FLOAT)
     channels.append({'name' : "Address_32", 'address' : 536969196, 'type' :  "UINT32"})
     channels.append({'name' : "Address_FLOAT", 'address' : 536969192, 'type' :  "FLOAT"})
-#    channels.append({'name' : "Address_16", 'address' : 1234, 'type' :  "UINT32"})
-#    channels.append({'name' : "Address_FLOAT", 'address' : 1234, 'type' :  "FLOAT"})
+    channels.append({'name' : "Double Byte Value", 'address' : 536969188, 'type' :  "UINT16"})
+    channels.append({'name' : "Byte Value", 'address' : 536969191, 'type' :  "UINT8"})
     
- #   add_plot(["Address_32", "Address_16"], {'y_label' : 'Voltage', 'x_label' : 'Time'})
-    add_plot(["Address_FLOAT"], {'y_label' : 'Voltage', 'x_label' : 'Time'})
-    add_plot(["Address_32"], {'y_label' : 'Voltage', 'x_label' : 'Time'})
+    add_subplot(["Address_FLOAT", "Address_32"], \
+             {'title' : 'Float values', 'y_label' : 'Voltage', 'x_label' : 'Time'})
+    add_subplot(["Double Byte Value", "Byte Value"], \
+             {'title' : 'Integer values', 'y_label' : 'Bytes', 'x_label' : 'Time'})
     
     
     figure_name = "Device data"
 
-    max_data_length = 200
-
-
+    x_width = 2000
+#    x_width = None
 
 
 
@@ -71,37 +72,40 @@ def config():
     
 def send_command(command):
     command = command.encode("utf-8")
- #   print(command)
+    print(command)
     ser.write(command)
-    time.sleep(2)
+    time.sleep(3)
     
 ##############################################################################
     
 def init_periph():
     global ser
-    global thread_read
+
     ser = serial.Serial(serial_file, baudrate, timeout=timeout)
     ser.flushInput()
     ser.flushOutput()
- 
-    send_command(ev_announce.getCommand())
+
+    addresses = []
+    types = []
+    new_state = []
+    ids = []
 
     #channels konfigurieren
     for i in range(len(channels)):
-        send_command(cf_addr.getCommand(str(i), str(channels[i]['address']), 
-                                        channels[i]['type']))
-        send_command(cf_running.getCommand(str(i), "true"))
+        addresses.append(str(channels[i]['address']))
+        types.append(channels[i]['type'])
+        ids.append(str(i))
+        new_state.append("true")
+    
+    send_command(cf_addr.getCommand(ids, addresses, types, len(channels)))
+    send_command(cf_running.getCommand(ids, new_state, len(channels)))
     
     #Clear data
     send_command(ev_clear.getCommand())
-    
-    
-    thread_read = threading.Thread(target=read_data)
-    thread_read.start()
 
 ##############################################################################
 
-def add_plot(new_plot, labels):
+def add_subplot(new_plot, labels):
     
     subplot_conf = []
     
@@ -128,22 +132,38 @@ def process_data(data):
             return None;
     
 ##############################################################################
+
 def init_plots():
     global figure
     global ax
     global anim
-    
+    global lines
+    lines = []
     
     figure, ax = plt.subplots(len(plot_conf), 1)
     figure.suptitle(figure_name)    
-    
+    ax = list(ax)
+
     for i in range(len(ax)):
+        ax[i].set_title(plot_conf[i][1]['title'])
         ax[i].set_autoscaley_on(True)
+        ax[i].set_xlabel(plot_conf[i][1]['x_label'])
+        ax[i].set_ylabel(plot_conf[i][1]['y_label'])
         ax[i].grid()
-        
+        for j in range(len(plot_conf[i][0])):
+            lines = lines + ax[i].plot([], [])
+
     for i in range(len(channels) + 1):
-       device_data.append([])
-                          
+       device_data.append(collections.deque(maxlen=x_width))
+    
+    # Set labels for lines
+    for i in range(len(plot_conf)):
+        legend_list = []
+        for ch in plot_conf[i][0]:
+            lines[ch].set_label(channels[ch]['name'])
+            legend_list.append(lines[ch])
+        ax[i].legend(handles=list(legend_list), loc='upper left')
+
 ##############################################################################    
     
 def data_is_present(data):
@@ -165,34 +185,47 @@ def prepare_data(data):
         return;
     
     # load timestamp data
-    device_data[len(channels)] = \
-        device_data[len(channels)] + ans["payload"]["sc_data"]["t_stmp"]
+    device_data[len(channels)].append(ans["payload"]["sc_data"]["t_stmp"][0])
         
     # load channel data
     for i in range(len(channels)):
         if (str(i) in ans["payload"]["sc_data"]["cl_data"]) == True:
-            device_data[i] = \
-                device_data[i] + ans["payload"]["sc_data"]["cl_data"][str(i)]
-
+            device_data[i].append(ans["payload"]["sc_data"]["cl_data"][str(i)][0])
+    
+##############################################################################
+def clear_data():
+    for data in device_data:
+        data.clear()
 ##############################################################################
 
 def read_data():
-    while True:
-        answer = ser.read_until(b'\0');
-        prepare_data(answer)
+    answer = ser.read_until(b'\0');
+    prepare_data(answer)
 
 ##############################################################################
     
 def plot_data(): 
     
-    while True:
-        for i in range(len(plot_conf)):
-            for ch in plot_conf[i][0]:
-                if len(device_data[len(channels)]) == len(device_data[ch]):
-                    ax[i].plot(device_data[len(channels)], device_data[ch])   
-                    print(device_data[ch])
-                    
-        figure.canvas.draw()
+    for i in range(len(plot_conf)):
+        for ch in plot_conf[i][0]:
+            if len(device_data[len(channels)]) == len(device_data[ch]):
+                lines[ch].set_xdata(list(device_data[len(channels)]))
+                lines[ch].set_ydata(list(device_data[ch]))
+
+            # if not the same amount of data is present in the channels,
+            # the data gets resetted, until they match
+            else:
+                device_data()
+
+        ax[i].relim()
+        ax[i].autoscale_view()
+        if not x_width == None and len(list(device_data[len(channels)])) > 0:
+            last_time_stamp = device_data[len(channels)].pop()
+            device_data[len(channels)].append(last_time_stamp)
+            ax[i].set_xlim(last_time_stamp - x_width, last_time_stamp)
+
+    plt.draw()
+    plt.pause(1e-17)
 
 ##############################################################################
     
@@ -200,8 +233,11 @@ def main():
     
     ser.flushInput()
     ser.flushOutput()
-    
-    plot_data()
+
+    while True:
+        read_data()
+        plot_data()
+        time.sleep(0.25)
 
 ##############################################################################
 
