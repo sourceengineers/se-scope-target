@@ -15,11 +15,11 @@
 /* Class data */
 typedef struct __FloatRingBufferPrivateData
 {
+  IFloatStream stream;
   float* data;
   float* head;
   float* tail;
   size_t capacity;
-  IFloatStream stream;
 } FloatRingBufferPrivateData ;
 
 /* Returns the next index of the given index */
@@ -34,6 +34,7 @@ static bool incHead(FloatRingBufferHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
+// wenn du in den stream interfaces open/close nicht brauchst würde ich sie auch im interface entfernen
 static void openStream(IFloatStreamHandle floatstream, float* data, const size_t capacity){
   return;
 }

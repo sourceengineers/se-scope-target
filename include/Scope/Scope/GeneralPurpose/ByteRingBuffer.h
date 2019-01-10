@@ -5,7 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of a ring buffer. Data can eithet be fetched
+ * @brief        Implementation of a ring buffer. Data can either be fetched
  *                through the read function, or through the implementation of
  *                stream interface.
  ******************************************************************************/
@@ -13,12 +13,12 @@
 #ifndef BYTERINGBUFFER_H_
 #define BYTERINGBUFFER_H_
 
-#include <Scope/GeneralPurpose/IByteStream.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
 
 /******************************************************************************
  Define class handle data
@@ -43,17 +43,19 @@ void ByteRingBuffer_clear(ByteRingBufferHandle self);
 size_t ByteRingBuffer_getCapacity(ByteRingBufferHandle self);
 
 /* Returns the amount of free data points in the buffer */
+// name ändern. könnte man mit dem befehl die daten zu löschen verwechseln. zb getNumberOfFreeBytes
 size_t ByteRingBuffer_freeData(ByteRingBufferHandle self);
 
 /* Returns the amount of used data points in the buffer */
+// name ändern, z.b. getNumberOfUsedBytes (damit es zur änderung oben pass)
 size_t ByteRingBuffer_usedData(ByteRingBufferHandle self);
 
 /* Writes the data in to the buffer. The amount of written data will be returned.
    If the write operation would let the buffer overflow, a -1 will be returned.*/
 int ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, const size_t length);
 
-/* Reads newest data and writes them in the passed foat array
-   The amount of safed data points will be returned.
+/* Reads newest data and writes them in the passed byte array
+   The amount of saved data points will be returned.
    if the length is smaller than the amount of data to be read, the function
    will return -1 */
 int ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size_t length);

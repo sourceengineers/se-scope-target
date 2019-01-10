@@ -5,7 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Impelments the channels, which will be attached to the scope
+ * @brief        Impelments the channels, which will be attached to the scope ???
  *
  ******************************************************************************/
 

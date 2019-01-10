@@ -13,6 +13,7 @@
  Define private data
 ******************************************************************************/
 /* Name of the command */
+// das gehört zu json -> und drum in den parser!
 static char* commandName = "cf_addr";
 
 /* Class data */

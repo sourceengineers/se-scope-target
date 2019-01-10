@@ -6,7 +6,7 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  *****************************************************************************************************************************************/
-
+// siehe kommentar ByteStream.c
 #include <Scope/GeneralPurpose/FloatStream.h>
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
 
@@ -16,10 +16,8 @@
 /* Class data */
 typedef struct __FloatStreamPrivateData
 {
-  FloatRingBufferHandle buffer;
-
   IFloatStream iFloatStream;
-
+  FloatRingBufferHandle buffer;
 } FloatStreamPrivateData ;
 
 /******************************************************************************

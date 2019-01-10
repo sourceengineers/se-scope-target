@@ -48,7 +48,7 @@ static float castDataToFloat(ChannelHandle self){
 
   switch (self->pollDataType) {
     case UINT8:
-      transportAddr = *((gemmi_uint*)self->pollAddress);
+      transportAddr = *((gemmi_uint*)self->pollAddress); // hier ADDRESS_DATA_TYPE statt gemmi_uint verwenden
       data = ((uint8_t)*((uint8_t*)&transportAddr));
       break;
     case UINT16:

@@ -52,7 +52,7 @@ size_t FloatRingBuffer_usedData(FloatRingBufferHandle self);
    If the write operation would let the buffer overflow, a -1 will be returned.*/
 int FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const size_t length);
 
-/* Reads newest data and writes them in the passed foat array
+/* Reads newest data and writes them in the passed float array
    The amount of safed data points will be returned.
    if the length is smaller than the amount of data to be read, the function
    will return -1 */

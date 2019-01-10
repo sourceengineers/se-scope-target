@@ -15,7 +15,7 @@
 /* Class data */
 typedef struct __IntRingBufferPrivateData
 {
-  gemmi_uint* data;
+  gemmi_uint* data; // braucht es das hier? kann das nicht einfach ein Uin32_t buffer sein?
   gemmi_uint* head;
   gemmi_uint* tail;
   size_t capacity;

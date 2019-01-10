@@ -9,6 +9,9 @@
 
 #include <Scope/GeneralPurpose/ByteStream.h>
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
+// braucht es diese klasse überhaupt? das ist ja nur ein wrapper um den buffer. Ich würde eine der folgenden Lösungen machen
+// a) klasse löschen
+// a) die klasse in BufferedByteStream umbenennen, den buffer nicht von IByteStream erben. die vererbung in diese klasse verlagern
 
 /******************************************************************************
  Define private data
@@ -16,10 +19,8 @@
 /* Class data */
 typedef struct __ByteStreamPrivateData
 {
-  ByteRingBufferHandle buffer;
-
-  IByteStream iByteStream;
-
+    IByteStream iByteStream; // wenn ich nur einfach-vererbung mache nenne ich das oft parent
+    ByteRingBufferHandle buffer;
 } ByteStreamPrivateData ;
 
 /******************************************************************************

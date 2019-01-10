@@ -6,7 +6,7 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  *****************************************************************************************************************************************/
-
+// siehe kommmentar in ByteStream
 #include <Scope/GeneralPurpose/IntStream.h>
 #include <Scope/GeneralPurpose/IntRingBuffer.h>
 

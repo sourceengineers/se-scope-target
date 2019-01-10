@@ -16,11 +16,11 @@
 /* Class data */
 typedef struct __ByteRingBufferPrivateData
 {
+  IByteStream stream;
   uint8_t* data;
   uint8_t* head;
   uint8_t* tail;
   size_t capacity;
-  IByteStream stream;
 } ByteRingBufferPrivateData ;
 
 /* Returns the next index of the given index */

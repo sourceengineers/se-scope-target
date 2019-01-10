@@ -94,7 +94,7 @@ static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandH
 
   for (size_t i = 0; i < numberOfCommands; ++i) {
     unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
-    commands[i] = CommandFactory_getICommand(scope->commandFactory, commandName);
+    commands[i] = CommandFactory_getICommand(scope->commandFactory, commandName); // factories sollten nicht zur laufzeit aufgerufen werden. teile der factory in Parser klasse auslagern, siehe CommandFactory
   }
 }
 
@@ -132,7 +132,7 @@ static IIntStreamHandle getTimestamp(IScopeHandle scope){
 ScopeHandle Scope_create(const size_t channelSize,
                          const size_t numberOfChannels,
                          const size_t maxNumberOfAddresses,
-                         const COM_TYPE comType,
+                         const COM_TYPE comType, // diskutieren ob das hier nicht ausserhalb des scopes besser wäre (klare layerung)
                          const TIMESTAMPING_MODE timestampingMode,
                          ScopeTransmitCallback transmitCallback){
 
@@ -178,6 +178,7 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->communicationFactory = CommunicationFactory_create();
   IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
 
+  // json packer und scope trennen -> diskuteren ob neue factory die scope und json layer für layer aufbaut sinnvoll ist
   self->jsonPacker = JsonPacker_create(numberOfChannels, maxNumberOfAddresses, communicationValidator,
           ByteStream_getIByteStream(self->outputStream));
 
@@ -236,6 +237,9 @@ void Scope_command(ScopeHandle self){
     return;
   }
 
+  // hier finde ich unlogisch dass du zuerst upack auf dem konkreten receiver aufrufst um danach den unpacker der im
+  // receiver vergraben ist weiter zu verwenden. hier könntest du das composite pattern sauber umsetzten so dass man
+  // nur noch auf den IUnpackerHandler zugreifen muss.
   IUnpackerHandle unpacker = Receiver_getIUnpacker(self->receiver);
 
   size_t numberOfCommands = unpacker->getNumberOfCommands(unpacker);
@@ -249,6 +253,7 @@ IByteStreamHandle Scope_getInputStream(ScopeHandle self){
   return ByteStream_getIByteStream(self->inputStream);
 }
 
+//das brauchts glaube ich nicht -> entfernen (du hast das mit dem senden ja über den callback gelöst)
 IByteStreamHandle Scope_getOutputStream(ScopeHandle self){
   return ByteStream_getIByteStream(self->outputStream);
 }
@@ -270,6 +275,8 @@ void Scope_poll(ScopeHandle self, gemmi_uint timeStamp){
     Channel_poll(self->channels[i]);
   }
 
+  // hier ist mir unklar wie das zusammenspiel von channel und trigger und time-stamp funktioniert
+  // das müssen wir diskutieren
   Trigger_run(self->trigger, prepareTimeStamp);
 }
 
