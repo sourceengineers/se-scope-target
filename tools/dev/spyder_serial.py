@@ -29,24 +29,40 @@ def config():
     global timeout
     global figure_name
     global x_width
+    global map_file
 
+    ##########################################################################
     ### Serial optionen
+    ##########################################################################
     serial_file = '/dev/tty.usbmodem14203' # z.B.: COM1 bei Windows 
     baudrate = 115200
-    timeout = 0.5
-
+    timeout = 1.5
+    
+    ##########################################################################
+    ### Pfade
+    ##########################################################################
     # Pfad zum speichern der plots nach dem herunterfahren. 
     # Wenn kein pfad angegeben ist, wird automatisch auf den Desktop gespeichert
     image_path = None
     #image_path = "/Users/USER/Documents"
-    
-    ### Channel konfiguration
+   
+    # Pfad zum map file
+    map_file = "/Users/schuepbs/Documents/Projects/nucleo/cmake-build-debug/nucleo.map"
+
+    ##########################################################################
+    ### Channel Konfiguration
+    ##########################################################################
     # typ = UINT8, UINT16, UINT32, FLOAT)
-    channels.append({'name' : "Address_32", 'address' : 536969196, 'type' :  "UINT32"})
-    channels.append({'name' : "Address_FLOAT", 'address' : 536969192, 'type' :  "FLOAT"})
-    channels.append({'name' : "Double Byte Value", 'address' : 536969188, 'type' :  "UINT16"})
-    channels.append({'name' : "Byte Value", 'address' : 536969191, 'type' :  "UINT8"})
+    # Die Addressen koennen entweder aus der map File ausgelesen werden, falls sie
+    # als statisch deklariert sind, oder manuell eigetragen werden.
+    channels.append({'name' : "Address_32", 'address' : get_address_from_map("intVar"), 'type' :  "UINT32"})
+    channels.append({'name' : "Address_FLOAT", 'address' : get_address_from_map("floatVar"), 'type' :  "FLOAT"})
+    channels.append({'name' : "Double Byte Value", 'address' : 536969198, 'type' :  "UINT16"})
+    channels.append({'name' : "Byte Value", 'address' : get_address_from_map("byteVar"), 'type' :  "UINT8"})
     
+    ##########################################################################
+    ### Grafik Konfiguration
+    ##########################################################################   
     add_subplot(["Address_FLOAT", "Address_32"], \
              {'title' : 'Float values', 'y_label' : 'Voltage', 'x_label' : 'Time'})
     add_subplot(["Double Byte Value", "Byte Value"], \
@@ -76,14 +92,36 @@ def config():
 ## Don't change any code after this line, or you might cause the code to break!
 ##############################################################################
     
-def send_command(command):
+def send_command(command, wait_for_ack):
+    
     command = command.encode("utf-8")
-    print(command)
-    ser.write(command)
-    time.sleep(3)
-    
+
+    while True:
+        print(command)
+        ser.write(command)
+        time.sleep(3)
+        if wait_for_ack == False:
+            break;
+        if found_flow_ctrl() == "ACK" :
+            break;
+        print("NAK was received. Trying to send again")
+   
 ##############################################################################
-    
+
+def found_flow_ctrl(): 
+    while True:
+        answer = ser.read_until(b'\0');
+        data = process_data(answer)
+        if not data == None:
+            if ("flow_ctrl" in data["payload"]) == True:
+                print(data)
+                if(data["payload"]["flow_ctrl"] == "ACK"):
+                    return "ACK";
+                if(data["payload"]["flow_ctrl"] == "NAK"):
+                    return "NAK";
+
+##############################################################################
+
 def init_periph():
     global ser
 
@@ -103,11 +141,11 @@ def init_periph():
         ids.append(str(i))
         new_state.append("true")
     
-    send_command(cf_addr.getCommand(ids, addresses, types, len(channels)))
-    send_command(cf_running.getCommand(ids, new_state, len(channels)))
+    send_command(cf_addr.getCommand(ids, addresses, types, len(channels)), True)
+    send_command(cf_running.getCommand(ids, new_state, len(channels)), True)
     
     #Clear data
-    send_command(ev_clear.getCommand())
+   # send_command(ev_clear.getCommand())
 
 ##############################################################################
 
@@ -178,14 +216,25 @@ def data_is_present(data):
         if ("cl_data" in data["payload"]["sc_data"]) == False:
             return False;
         return True;    
-    
+
+##############################################################################
+
+def channel_data_is_present(index, ans):
+    if (str(index) in ans["payload"]["sc_data"]["cl_data"]) == False:
+        return False
+
+    if len(ans["payload"]["sc_data"]["cl_data"][str(index)]) <= 0:
+        return False
+
+    return True
+
 ##############################################################################
 
 def prepare_data(data):
     ans = process_data(data)
     if ans is None:
         return;    
-    print(ans)
+    #print(ans)
     
     if not data_is_present(ans):
         return;
@@ -195,7 +244,7 @@ def prepare_data(data):
         
     # load channel data
     for i in range(len(channels)):
-        if (str(i) in ans["payload"]["sc_data"]["cl_data"]) == True:
+        if channel_data_is_present(i, ans) == True:
             device_data[i].append(ans["payload"]["sc_data"]["cl_data"][str(i)][0])
     
 ##############################################################################
@@ -219,9 +268,9 @@ def plot_data():
                 lines[ch].set_ydata(list(device_data[ch]))
 
             # if not the same amount of data is present in the channels,
-            # the data gets resetted, until they match
+           # the data gets resetted, until they match
             else:
-                device_data()
+                clear_data()
 
         ax[i].relim()
         ax[i].autoscale_view()
@@ -234,19 +283,22 @@ def plot_data():
     plt.pause(1e-17)
 
 ##############################################################################
-    
-def main():    
-    
-    ser.flushInput()
-    ser.flushOutput()
 
-    while True:
-        read_data()
-        plot_data()
-        time.sleep(0.25)
+def get_address_from_map(var_name):
+    with open(map_file, 'r') as f:
+        for line in f:
+            if var_name in line:
+                value = next(f).split()[0]
+                return int(value, 0)
+                
+    raise Exception("""The searched value \"" + var_name + "\" couldn't be 
+                        found in the map file. Sending a faulty address 
+                        might break the controller""")    
 
 ##############################################################################
+
 def cleanup():
+    print('Script interrupted\nCleaning up...')
     try:
         save_path  = os.path.abspath(image_path)
     except:
@@ -258,9 +310,22 @@ def cleanup():
 
     print("Safed plot to: " + save_path)
 
+
+##############################################################################
+    
+def main():    
+    
+    ser.flushInput()
+    ser.flushOutput()
+
+    while True:
+        read_data()
+        plot_data()
+        time.sleep(0.001)
+
 ##############################################################################
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     channels = []
     plot_conf = []
     device_data = []
@@ -272,5 +337,4 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print('Script interrupted\nCleaning up...')
         cleanup()
