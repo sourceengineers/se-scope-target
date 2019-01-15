@@ -34,15 +34,10 @@ static bool incHead(FloatRingBufferHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-// wenn du in den stream interfaces open/close nicht brauchst würde ich sie auch im interface entfernen
-static void openStream(IFloatStreamHandle floatstream, float* data, const size_t capacity){
-  return;
-}
-
 static bool dataIsReady(IFloatStreamHandle stream){
   FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
 
-  if(FloatRingBuffer_usedData(self) > 0) {
+  if(FloatRingBuffer_getNumberOfUsedData(self) > 0) {
     return true;
   } else {
     return false;
@@ -67,7 +62,7 @@ static void readAll(IFloatStreamHandle stream, float* data, const size_t length)
 static size_t streamLength(IFloatStreamHandle stream){
   FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
 
-  return FloatRingBuffer_usedData(self);
+  return FloatRingBuffer_getNumberOfUsedData(self);
 }
 
 static void writeData(IFloatStreamHandle stream, const float data){
@@ -82,9 +77,6 @@ static void writeAll(IFloatStreamHandle stream, const float* data, const size_t 
   FloatRingBuffer_write(self, data, length);
 }
 
-static void closeStream(IFloatStreamHandle stream){
-  return;
-}
 static void flush(IFloatStreamHandle stream){
   FloatRingBufferHandle self = (FloatRingBufferHandle) stream->implementer;
 
@@ -121,14 +113,12 @@ FloatRingBufferHandle FloatRingBuffer_create(size_t capacity){
   FloatRingBufferHandle self = malloc(sizeof(FloatRingBufferPrivateData));
 
   self->stream.implementer = self;
-  self->stream.open = &openStream;
   self->stream.dataIsReady = &dataIsReady;
   self->stream.readData = &readData;
   self->stream.length = &streamLength;
   self->stream.read = &readAll;
   self->stream.writeData = writeData;
   self->stream.write = writeAll;
-  self->stream.close = closeStream;
   self->stream.flush = flush;
 
   self->capacity = capacity + 1;
@@ -151,11 +141,11 @@ size_t FloatRingBuffer_getCapacity(FloatRingBufferHandle self){
   return self->capacity - 1;
 }
 
-size_t FloatRingBuffer_freeData(FloatRingBufferHandle self){
-  return (size_t) (self->capacity - (FloatRingBuffer_usedData(self))) - 1;
+size_t FloatRingBuffer_getNumberOfFreeData(FloatRingBufferHandle self){
+  return (size_t) (self->capacity - (FloatRingBuffer_getNumberOfUsedData(self))) - 1;
 }
 
-size_t FloatRingBuffer_usedData(FloatRingBufferHandle self){
+size_t FloatRingBuffer_getNumberOfUsedData(FloatRingBufferHandle self){
   const size_t absSize = (self->head >= self->tail) ?
                             (self->head - self->tail) :
                             (self->capacity - (self->tail - self->head));
@@ -170,7 +160,7 @@ void FloatRingBuffer_clear(FloatRingBufferHandle self){
 
 int FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const size_t length){
 
-  if(length > FloatRingBuffer_freeData(self)){
+  if(length > FloatRingBuffer_getNumberOfFreeData(self)){
     return -1;
   }
 
@@ -188,7 +178,7 @@ int FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const s
 
 int FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length){
 
-  if(length > FloatRingBuffer_usedData(self)){
+  if(length > FloatRingBuffer_getNumberOfUsedData(self)){
     return -1;
   }
 

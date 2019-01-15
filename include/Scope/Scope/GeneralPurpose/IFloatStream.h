@@ -35,7 +35,6 @@ typedef struct IFloatStreamStruct* IFloatStreamHandle;
 ******************************************************************************/
 typedef struct IFloatStreamStruct {
     void* implementer;
-    void (*open)(IFloatStreamHandle self, float* stream, const size_t capacity); // hier capacity anzugeben ist gefährlich, braucht malloc zur laufzeit. capacity sollte nur beim create der konkreten klasse möglich sein
     bool (*dataIsReady)(IFloatStreamHandle self);
     float (*readData)(IFloatStreamHandle self);
     size_t (*length)(IFloatStreamHandle self);
@@ -52,7 +51,6 @@ typedef struct IFloatStreamStruct {
 		 * @param length Amount of data which should be written
 		 */
     void (*write)(IFloatStreamHandle self, const float* data, const size_t length);
-    void (*close)(IFloatStreamHandle self);
     void (*flush)(IFloatStreamHandle self);
 } IFloatStream ;
 

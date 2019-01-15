@@ -43,10 +43,10 @@ void IntRingBuffer_clear(IntRingBufferHandle self);
 size_t IntRingBuffer_getCapacity(IntRingBufferHandle self);
 
 /* Returns the amount of free data points in the buffer */
-size_t IntRingBuffer_freeData(IntRingBufferHandle self);
+size_t IntRingBuffer_getNumberOfFreeData(IntRingBufferHandle self);
 
 /* Returns the amount of used data points in the buffer */
-size_t IntRingBuffer_usedData(IntRingBufferHandle self);
+size_t IntRingBuffer_getNumberOfUsedData(IntRingBufferHandle self);
 
 /* Writes the data in to the buffer. The amount of written data will be returned.
    If the write operation would let the buffer overflow, a -1 will be returned.*/

@@ -35,14 +35,10 @@ static bool incHead(ByteRingBufferHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void openStream(IByteStreamHandle bytestream, uint8_t* data, const size_t capacity){
-  return;
-}
-
 static bool dataIsReady(IByteStreamHandle stream){
   ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
 
-  if(ByteRingBuffer_usedData(self) > 0) {
+  if(ByteRingBuffer_getNumberOfUsedData(self) > 0) {
     return true;
   } else {
     return false;
@@ -67,7 +63,7 @@ static void readAll(IByteStreamHandle stream, uint8_t* data, const size_t length
 static size_t streamLength(IByteStreamHandle stream){
   ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
 
-  return ByteRingBuffer_usedData(self);
+  return ByteRingBuffer_getNumberOfUsedData(self);
 }
 
 static void writeData(IByteStreamHandle stream, const uint8_t data){
@@ -82,9 +78,6 @@ static void writeAll(IByteStreamHandle stream, const uint8_t* data, const size_t
   ByteRingBuffer_write(self, data, length);
 }
 
-static void closeStream(IByteStreamHandle stream){
-  return;
-}
 static void flush(IByteStreamHandle stream){
   ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
 
@@ -121,14 +114,12 @@ ByteRingBufferHandle ByteRingBuffer_create(size_t capacity){
   ByteRingBufferHandle self = malloc(sizeof(ByteRingBufferPrivateData));
 
   self->stream.implementer = self;
-  self->stream.open = &openStream;
   self->stream.byteIsReady = &dataIsReady;
   self->stream.readByte = &readData;
   self->stream.length = &streamLength;
   self->stream.read = &readAll;
   self->stream.writeByte = writeData;
   self->stream.write = writeAll;
-  self->stream.close = closeStream;
   self->stream.flush = flush;
 
   self->capacity = capacity + 1;
@@ -151,11 +142,11 @@ size_t ByteRingBuffer_getCapacity(ByteRingBufferHandle self){
   return self->capacity - 1;
 }
 
-size_t ByteRingBuffer_freeData(ByteRingBufferHandle self){
-  return (size_t) (self->capacity - (ByteRingBuffer_usedData(self))) - 1;
+size_t ByteRingBuffer_getNumberOfFreeData(ByteRingBufferHandle self){
+  return (size_t) (self->capacity - (ByteRingBuffer_getNumberOfUsedData(self))) - 1;
 }
 
-size_t ByteRingBuffer_usedData(ByteRingBufferHandle self){
+size_t ByteRingBuffer_getNumberOfUsedData(ByteRingBufferHandle self){
   
   const size_t absSize = (self->head >= self->tail) ?
                             (self->head - self->tail) :
@@ -171,7 +162,7 @@ void ByteRingBuffer_clear(ByteRingBufferHandle self){
 
 int ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, const size_t length){
 
-  if(length > ByteRingBuffer_freeData(self)){
+  if(length > ByteRingBuffer_getNumberOfFreeData(self)){
     return -1;
   }
 
@@ -189,7 +180,7 @@ int ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, const s
 
 int ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size_t length){
 
-  if(length > ByteRingBuffer_usedData(self)){
+  if(length > ByteRingBuffer_getNumberOfUsedData(self)){
     return -1;
   }
 

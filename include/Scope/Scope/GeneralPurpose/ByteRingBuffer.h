@@ -44,11 +44,11 @@ size_t ByteRingBuffer_getCapacity(ByteRingBufferHandle self);
 
 /* Returns the amount of free data points in the buffer */
 // name ändern. könnte man mit dem befehl die daten zu löschen verwechseln. zb getNumberOfFreeBytes
-size_t ByteRingBuffer_freeData(ByteRingBufferHandle self);
+size_t ByteRingBuffer_getNumberOfFreeData(ByteRingBufferHandle self);
 
 /* Returns the amount of used data points in the buffer */
 // name ändern, z.b. getNumberOfUsedBytes (damit es zur änderung oben pass)
-size_t ByteRingBuffer_usedData(ByteRingBufferHandle self);
+size_t ByteRingBuffer_getNumberOfUsedData(ByteRingBufferHandle self);
 
 /* Writes the data in to the buffer. The amount of written data will be returned.
    If the write operation would let the buffer overflow, a -1 will be returned.*/

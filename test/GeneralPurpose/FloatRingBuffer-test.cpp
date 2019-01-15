@@ -39,13 +39,13 @@ TEST(FloatRingBuffer, test_helper_functions)
   EXPECT_EQ(getCapacity, shortCapacity);
   
   ssize_t responce = FloatRingBuffer_write(buffer, shortTestVector, 6);
-  EXPECT_EQ(FloatRingBuffer_usedData(buffer), 6);
-  EXPECT_EQ(FloatRingBuffer_freeData(buffer), 4);
+  EXPECT_EQ(FloatRingBuffer_getNumberOfUsedData(buffer), 6);
+  EXPECT_EQ(FloatRingBuffer_getNumberOfFreeData(buffer), 4);
   
   FloatRingBuffer_clear(buffer);
   
-  EXPECT_EQ(FloatRingBuffer_usedData(buffer), 0);
-  EXPECT_EQ(FloatRingBuffer_freeData(buffer), 10);
+  EXPECT_EQ(FloatRingBuffer_getNumberOfUsedData(buffer), 0);
+  EXPECT_EQ(FloatRingBuffer_getNumberOfFreeData(buffer), 10);
 }
 
 

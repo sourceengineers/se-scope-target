@@ -34,14 +34,10 @@ static bool incHead(IntRingBufferHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void openStream(IIntStreamHandle gemmi_uintstream, gemmi_uint* data, const size_t capacity){
-  return;
-}
-
 static bool dataIsReady(IIntStreamHandle stream){
   IntRingBufferHandle self = (IntRingBufferHandle) stream->implementer;
 
-  if(IntRingBuffer_usedData(self) > 0) {
+  if(IntRingBuffer_getNumberOfUsedData(self) > 0) {
     return true;
   } else {
     return false;
@@ -66,7 +62,7 @@ static void readAll(IIntStreamHandle stream, gemmi_uint* data, const size_t leng
 static size_t streamLength(IIntStreamHandle stream){
   IntRingBufferHandle self = (IntRingBufferHandle) stream->implementer;
 
-  return IntRingBuffer_usedData(self);
+  return IntRingBuffer_getNumberOfUsedData(self);
 }
 
 static void writeData(IIntStreamHandle stream, const gemmi_uint data){
@@ -81,9 +77,6 @@ static void writeAll(IIntStreamHandle stream, const gemmi_uint* data, const size
   IntRingBuffer_write(self, data, length);
 }
 
-static void closeStream(IIntStreamHandle stream){
-  return;
-}
 static void flush(IIntStreamHandle stream){
   IntRingBufferHandle self = (IntRingBufferHandle) stream->implementer;
 
@@ -120,14 +113,12 @@ IntRingBufferHandle IntRingBuffer_create(size_t capacity){
   IntRingBufferHandle self = malloc(sizeof(IntRingBufferPrivateData));
 
   self->stream.implementer = self;
-  self->stream.open = &openStream;
   self->stream.dataIsReady = &dataIsReady;
   self->stream.readData = &readData;
   self->stream.length = &streamLength;
   self->stream.read = &readAll;
   self->stream.writeData = writeData;
   self->stream.write = writeAll;
-  self->stream.close = closeStream;
   self->stream.flush = flush;
 
   self->capacity = capacity + 1;
@@ -150,11 +141,11 @@ size_t IntRingBuffer_getCapacity(IntRingBufferHandle self){
   return self->capacity - 1;
 }
 
-size_t IntRingBuffer_freeData(IntRingBufferHandle self){
-  return (size_t) (self->capacity - (IntRingBuffer_usedData(self))) - 1;
+size_t IntRingBuffer_getNumberOfFreeData(IntRingBufferHandle self){
+  return (size_t) (self->capacity - (IntRingBuffer_getNumberOfUsedData(self))) - 1;
 }
 
-size_t IntRingBuffer_usedData(IntRingBufferHandle self){
+size_t IntRingBuffer_getNumberOfUsedData(IntRingBufferHandle self){
 
   const size_t absSize = (self->head >= self->tail) ?
                             (self->head - self->tail) :
@@ -170,7 +161,7 @@ void IntRingBuffer_clear(IntRingBufferHandle self){
 
 int IntRingBuffer_write(IntRingBufferHandle self, const gemmi_uint* data, const size_t length){
 
-  if(length > IntRingBuffer_freeData(self)){
+  if(length > IntRingBuffer_getNumberOfFreeData(self)){
     return -1;
   }
 
@@ -188,7 +179,7 @@ int IntRingBuffer_write(IntRingBufferHandle self, const gemmi_uint* data, const 
 
 int IntRingBuffer_read(IntRingBufferHandle self, gemmi_uint* data, const size_t length){
 
-  if(length > IntRingBuffer_usedData(self)){
+  if(length > IntRingBuffer_getNumberOfUsedData(self)){
     return -1;
   }
 

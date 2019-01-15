@@ -227,7 +227,7 @@ void Scope_destroy(ScopeHandle self){
   self = NULL;
 }
 
-void Scope_command(ScopeHandle self){
+void Scope_receiveData(ScopeHandle self){
 
   if(ByteStream_length(self->inputStream) <= 0){
     return;
@@ -347,7 +347,7 @@ void Scope_clear(ScopeHandle self){
   self->currentTimestamp = 0;
 }
 
-void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
+void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
                              const gemmi_uint addressId){
   AddressStorage_setAnnounceAddress(self->addressStorage, name, address, type, addressId);

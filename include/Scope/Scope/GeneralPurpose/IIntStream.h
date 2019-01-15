@@ -35,7 +35,6 @@ typedef struct IIntStreamStruct* IIntStreamHandle;
 ******************************************************************************/
 typedef struct IIntStreamStruct {
     void* implementer;
-    void (*open)(IIntStreamHandle self, gemmi_uint* stream, const size_t capacity); // würde ich entfernen
     bool (*dataIsReady)(IIntStreamHandle self);
     gemmi_uint (*readData)(IIntStreamHandle self);
     size_t (*length)(IIntStreamHandle self);
@@ -54,7 +53,6 @@ typedef struct IIntStreamStruct {
 		 * @param length Amount of data which should be written
 		 */
     void (*write)(IIntStreamHandle self, const gemmi_uint* data, const size_t length);
-    void (*close)(IIntStreamHandle self); // würde ich entfernen
     void (*flush)(IIntStreamHandle self);
 } IIntStream ;
 

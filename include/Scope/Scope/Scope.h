@@ -45,7 +45,7 @@ void Scope_destroy(ScopeHandle self);
 /* Passes data to the scope which has to be parsed. The data has to be in the form of the specified protocol, or will
  * be rejected.
  * After parsing, the commands will be executed */
-void Scope_command(ScopeHandle self);
+void Scope_receiveData(ScopeHandle self);
 
 /* Returns the input stream which feeds data into the Receiver */
 IByteStreamHandle Scope_getInputStream(ScopeHandle self);
@@ -87,7 +87,7 @@ void Scope_setChannelStopped(ScopeHandle self, gemmi_uint channelId);
 void Scope_announceAddresses(ScopeHandle self);
 
 /* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
-void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
+void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
                              const gemmi_uint addressId);
 

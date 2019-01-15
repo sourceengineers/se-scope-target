@@ -59,13 +59,13 @@ This can be useful if the variables are not static.
 
 ```c
 
-/*void Scope_setAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
+/*void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
                              const gemmi_uint addressId);*/
 
 /* Registers the addresses */
 uint8_t var;
-Scope_setAnnounceAddresses(scope,(const char*) "NAME_OF_VAR", &var, UINT8, 0);
+Scope_addAnnounceAddresses(scope,(const char*) "NAME_OF_VAR", &var, UINT8, 0);
 
 /* Announces the addresses to the host. This only works if the transmitCallback is set correctly */
 Scope_announceAddresses(scope);
@@ -79,12 +79,12 @@ Scope_announceAddresses(scope);
 ## Commands
 It is possible to control the scope entirely through commands send by the host. 
 To see all available commands are and their functions, check the [protocol](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md) description.
-For this to work, the Scope_command() function has to be used.
+For this to work, the Scope_receiveData() function has to be used.
 
 Alternatively, every command has a corresponding function defined in Scope.h. For a detailed description of the corresponding functions check this [page](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/command-api.md).
 ### Command execution
-If commands should be sent to the scope, the Scope_command() function has to be used.
-This function reads the data from the input stream and interprets it. Meaning, the data has to be received, written into the input stream and afterwards, Scope_command(scope) can be called.
+If commands should be sent to the scope, the Scope_receiveData() function has to be used.
+This function reads the data from the input stream and interprets it. Meaning, the data has to be received, written into the input stream and afterwards, Scope_receiveData(scope) can be called.
 
 ```c
 IByteStreamHandle input_stream = Scope_getInputStream(scope);
@@ -97,7 +97,7 @@ scanf(&data);
 input_stream->write(input_stream, data, 100);
 
 /* After the data is written to the stream, the command function can be executed */
-Scope_command(scope);
+Scope_receiveData(scope);
 ```
 # Protocol
 The host and the target are communicating through a custom defined protocol. 

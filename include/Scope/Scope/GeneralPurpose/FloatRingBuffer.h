@@ -43,10 +43,10 @@ void FloatRingBuffer_clear(FloatRingBufferHandle self);
 size_t FloatRingBuffer_getCapacity(FloatRingBufferHandle self);
 
 /* Returns the amount of free data points in the buffer */
-size_t FloatRingBuffer_freeData(FloatRingBufferHandle self);
+size_t FloatRingBuffer_getNumberOfFreeData(FloatRingBufferHandle self);
 
 /* Returns the amount of used data points in the buffer */
-size_t FloatRingBuffer_usedData(FloatRingBufferHandle self);
+size_t FloatRingBuffer_getNumberOfUsedData(FloatRingBufferHandle self);
 
 /* Writes the data in to the buffer. The amount of written data will be returned.
    If the write operation would let the buffer overflow, a -1 will be returned.*/

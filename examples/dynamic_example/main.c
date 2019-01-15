@@ -59,10 +59,9 @@ int main(int argc, char *argv[] ){
   float var2;
   uint32_t var3;
 
-  // addAnnoucedAddress würde mir besser gefallen
-  Scope_setAnnounceAddresses(scope,(const char*) "VAR1", &var1, UINT8, 0);
-  Scope_setAnnounceAddresses(scope,(const char*) "VAR2", &var2, FLOAT, 1);
-  Scope_setAnnounceAddresses(scope,(const char*) "VAR3", &var3, UINT32, 2);
+  Scope_addAnnounceAddresses(scope,(const char*) "VAR1", &var1, UINT8, 0);
+  Scope_addAnnounceAddresses(scope,(const char*) "VAR2", &var2, FLOAT, 1);
+  Scope_addAnnounceAddresses(scope,(const char*) "VAR3", &var3, UINT32, 2);
 
   Scope_announceAddresses(scope);
 
@@ -75,11 +74,7 @@ int main(int argc, char *argv[] ){
 
     readFile(stream, filename);
 
-    // ich dieses if ist überflüssig, du checkst das ja am anfang von command nochmal
-    if(stream->length(stream) > 0){
-      // hier läuft ja die ganze rx kommunikation. wäre Scope_receiveData nicht besser?
-      Scope_command(scope);
-    }
+    Scope_receiveData(scope);
 
     Scope_poll(scope, 0);
     Scope_transmitData(scope);
