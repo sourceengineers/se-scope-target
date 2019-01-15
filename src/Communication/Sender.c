@@ -78,7 +78,7 @@ void Sender_scopeData(SenderHandle self){
 
   for (size_t i = 0; i < self->numberOfChannels; ++i) {
     if(Channel_isRunning(self->channels[i]) == true){
-      self->packer->prepareChannel(self->packer, Channel_getRingBufferFloatStream(self->channels[i]), (const uint32_t) i);
+      self->packer->prepareChannel(self->packer, self->channels[i], (const uint32_t) i);
     }
   }
 
@@ -105,7 +105,7 @@ bool Sender_transmit(SenderHandle self){
     return false;
   }
 
-  IByteStreamHandle stream = self->packer->getByteStream(self->packer);
+  IByteStreamHandle stream = self->packer->getBufferedByteStream(self->packer);
   self->transmitCallback(stream);
 
   return true;

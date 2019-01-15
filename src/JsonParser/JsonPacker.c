@@ -46,7 +46,7 @@ typedef struct __JsonPackerPrivateData
   bool channelsReady;
   size_t numberOfChannelsToSend;
   uint32_t* channelIds;
-  IFloatStreamHandle* floatStreams;
+  ChannelHandle* channels;
 
   /* Timestamp increment data */
   bool tIncReady;
@@ -134,23 +134,23 @@ inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE
   }
 }
 
-static void prepareChannel(IPackerHandle packer, IFloatStreamHandle stream, const uint32_t channelId){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+static void prepareChannel(IPackerHandle packer, ChannelHandle channel, const uint32_t channelId){
+    JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
 
-  if(channelId >= self->maxNumberOfChannels){
-    return;
-  }
+    if(channelId >= self->maxNumberOfChannels){
+        return;
+    }
 
-  if(self->numberOfChannelsToSend >= self->maxNumberOfChannels){
-    return;
-  }
+    if(self->numberOfChannelsToSend >= self->maxNumberOfChannels){
+        return;
+    }
 
-  self->channelIds[self->numberOfChannelsToSend] = channelId;
-  self->floatStreams[self->numberOfChannelsToSend] = stream;
+    self->channelIds[self->numberOfChannelsToSend] = channelId;
+    self->channels[self->numberOfChannelsToSend] = channel;
 
-  self->numberOfChannelsToSend++;
+    self->numberOfChannelsToSend++;
 
-  self->channelsReady = true;
+    self->channelsReady = true;
 }
 
 static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement){
@@ -346,7 +346,7 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
   appendString(self->byteStream, KEYWORD_CL_DATA, ":{");
 
   for (size_t i = 0; i < self->numberOfChannelsToSend; ++i) {
-    if(self->floatStreams[i] != NULL){
+    if(self->channels[i] != NULL){
       char id[MAX_LENGTH_OF_NUMBER];
 #if (ARCH_SIZE_32)
 	    sprintf(id, "%u", self->channelIds[i]);
@@ -360,10 +360,9 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
       }
       appendString(self->byteStream, id, ":[");
 
-      const size_t dataLength = self->floatStreams[i]->length(self->floatStreams[i]);
+      const size_t dataLength = Channel_getNumberOfUsedData(self->channels[i]);
       float data[dataLength];
-
-      self->floatStreams[i]->read(self->floatStreams[i], data, dataLength);
+      Channel_read(self->channels[i], data, dataLength);
 
       for (int j = 0; j < dataLength; ++j) {
         char formatedData[MAX_LENGTH_OF_NUMBER];
@@ -500,7 +499,7 @@ static void reset(IPackerHandle packer){
   self->numberOfChannelsToSend = 0;
 
   for (int i = 0; i < self->maxNumberOfChannels; ++i) {
-    self->floatStreams[i] = NULL;
+    self->channels[i] = NULL;
   }
 
   self->tIncReady = false;
@@ -514,7 +513,7 @@ static void reset(IPackerHandle packer){
   flushBuffer(self->flowcontrol);
 }
 
-static IByteStreamHandle getByteStream(IPackerHandle packer){
+static IByteStreamHandle getBufferedByteStream(IPackerHandle packer){
   JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
   return self->byteStream;
 }
@@ -527,7 +526,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
 
   JsonPackerHandle self = (JsonPackerHandle) malloc(sizeof(JsonPackerPrivateData));
 
-  self->floatStreams = malloc(sizeof(IFloatStreamHandle) * maxNumberOfChannels);
+  self->channels = malloc(sizeof(ChannelHandle) * maxNumberOfChannels);
   self->channelIds = malloc(sizeof(uint32_t) * maxNumberOfChannels);
   self->validator = validator;
   self->numberOfChannelsToSend = 0;
@@ -547,7 +546,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
   self->packer.prepareTimeIncrement = &prepareTimeIncrement;
   self->packer.prepareTimestamp = &prepareTimestamp;
   self->packer.prepareTrigger = &prepareTrigger;
-  self->packer.getByteStream = &getByteStream;
+  self->packer.getBufferedByteStream = &getBufferedByteStream;
   self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
 
   self->packer.reset(&self->packer);
@@ -563,8 +562,8 @@ void JsonPacker_destroy(JsonPackerHandle self){
   self->namesOfAddresses = NULL;
   free(self->typesOfAddresses);
   self->typesOfAddresses = NULL;
-  free(self->floatStreams);
-  self->floatStreams = NULL;
+  free(self->channels);
+  self->channels = NULL;
   free(self->channelIds);
   self->channelIds = NULL;
 

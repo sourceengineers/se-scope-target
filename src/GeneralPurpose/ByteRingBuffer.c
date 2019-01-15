@@ -8,7 +8,7 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
-#include <Scope/GeneralPurpose/ByteStream.h>
+#include <Scope/GeneralPurpose/BufferedByteStream.h>
 
 /******************************************************************************
  Define private data
@@ -16,7 +16,6 @@
 /* Class data */
 typedef struct __ByteRingBufferPrivateData
 {
-  IByteStream stream;
   uint8_t* data;
   uint8_t* head;
   uint8_t* tail;
@@ -35,55 +34,6 @@ static bool incHead(ByteRingBufferHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static bool dataIsReady(IByteStreamHandle stream){
-  ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
-
-  if(ByteRingBuffer_getNumberOfUsedData(self) > 0) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-static uint8_t readData(IByteStreamHandle stream){
-  ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
-
-  uint8_t data;
-  ByteRingBuffer_read(self, &data, 1);
-
-  return data;
-}
-
-static void readAll(IByteStreamHandle stream, uint8_t* data, const size_t length){
-  ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
-
-  ByteRingBuffer_read(self, data, length);
-}
-
-static size_t streamLength(IByteStreamHandle stream){
-  ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
-
-  return ByteRingBuffer_getNumberOfUsedData(self);
-}
-
-static void writeData(IByteStreamHandle stream, const uint8_t data){
-  ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
-
-  ByteRingBuffer_write(self, &data, 1);
-}
-
-static void writeAll(IByteStreamHandle stream, const uint8_t* data, const size_t length){
-  ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
-
-  ByteRingBuffer_write(self, data, length);
-}
-
-static void flush(IByteStreamHandle stream){
-  ByteRingBufferHandle self = (ByteRingBufferHandle) stream->implementer;
-
-  ByteRingBuffer_clear(self);
-}
-
 static uint8_t* nextIndex(ByteRingBufferHandle self, uint8_t* index){
   const uint32_t positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
@@ -112,15 +62,6 @@ ByteRingBufferHandle ByteRingBuffer_create(size_t capacity){
 
   /* Allocate memory and set _private variables */
   ByteRingBufferHandle self = malloc(sizeof(ByteRingBufferPrivateData));
-
-  self->stream.implementer = self;
-  self->stream.byteIsReady = &dataIsReady;
-  self->stream.readByte = &readData;
-  self->stream.length = &streamLength;
-  self->stream.read = &readAll;
-  self->stream.writeByte = writeData;
-  self->stream.write = writeAll;
-  self->stream.flush = flush;
 
   self->capacity = capacity + 1;
   self->data = malloc(sizeof(uint8_t) * self->capacity);
@@ -194,8 +135,4 @@ int ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size_t l
   } while(length > i);
 
   return i;
-}
-
-IByteStreamHandle ByteRingBuffer_getIByteStream(ByteRingBufferHandle self){
-  return &self->stream;
 }

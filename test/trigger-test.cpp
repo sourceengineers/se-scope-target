@@ -3,7 +3,7 @@
 
 extern "C" {
     #include <Scope/Trigger.h>
-    #include <Scope/GeneralPurpose/FloatStream.h>
+    #include <Scope/GeneralPurpose/BufferedFloatStream.h>
 }
 using namespace std;
 
@@ -33,7 +33,7 @@ static void streamGetData(IFloatStreamHandle iFloatStream, float* data, const si
 
 TEST(Trigger, test_normal)
 {
-  IFloatStream stream = *FloatStream_getIFloatStream(FloatStream_create(4));
+  IFloatStream stream = *BufferedFloatStream_getIFloatStream(BufferedFloatStream_create(4));
 
   TriggerHandle trigger = Trigger_create();
   TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_NORMAL, .stream = stream, .channelId = 1};

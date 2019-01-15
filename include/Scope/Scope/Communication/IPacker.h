@@ -26,7 +26,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <Scope/Channel.h>
-#include <Scope/GeneralPurpose/ByteStream.h>
+#include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/IIntStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
@@ -42,14 +42,14 @@ typedef struct IPackerStruct {
   void* implementer;
   void (*pack)(IPackerHandle packer);
 
-  void (*prepareChannel)(IPackerHandle packer, IFloatStreamHandle stream, const uint32_t channelId);
+  void (*prepareChannel)(IPackerHandle packer, ChannelHandle channel, const uint32_t channelId);
   void (*prepareTimeIncrement)(IPackerHandle packer, const uint32_t timeIncrement);
   void (*prepareTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
   void (*prepareTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);
   void (*prepareFlowControl)(IPackerHandle packer, const char* flowcontrol);
   void (*prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type, const ADDRESS_DATA_TYPE address);
 
-  IByteStreamHandle (*getByteStream)(IPackerHandle packer);
+  IByteStreamHandle (*getBufferedByteStream)(IPackerHandle packer);
 
   void (*reset)(IPackerHandle packer);
 } IPacker ;

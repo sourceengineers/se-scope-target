@@ -72,8 +72,8 @@ def config():
 
     # wenn die x_width auf None gesetzt wird, wird die Achse automatisch 
     # skaliert
-    x_width = 2000
-#    x_width = None
+#    x_width = 2000
+    x_width = None
 
 
 

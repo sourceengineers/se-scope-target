@@ -118,6 +118,15 @@ endif()
 ################################################################################
 # Install project
 ################################################################################
+TARGET_INCLUDE_DIRECTORIES (gemmi
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:include>
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+
 message("-- Project will be installed to: ${CMAKE_INSTALL_PREFIX}")
 install( TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library )
 install( DIRECTORY "${PROJECT_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include" )

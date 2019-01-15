@@ -47,8 +47,8 @@ typedef struct __ScopePrivateData
   SenderHandle sender;
 
   /* Streams */
-  ByteStreamHandle inputStream;
-  ByteStreamHandle outputStream;
+  BufferedByteStreamHandle inputStream;
+  BufferedByteStreamHandle outputStream;
 
   AddressStorageHandle addressStorage;
 
@@ -156,8 +156,8 @@ ScopeHandle Scope_create(const size_t channelSize,
   size_t inputBufferSize = JsonUnpacker_calculateBufferSize();
 
   /* Create input and output streams */
-  self->inputStream = ByteStream_create(inputBufferSize);
-  self->outputStream = ByteStream_create(outputBufferSize);
+  self->inputStream = BufferedByteStream_create(inputBufferSize);
+  self->outputStream = BufferedByteStream_create(outputBufferSize);
 
   /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
@@ -180,7 +180,7 @@ ScopeHandle Scope_create(const size_t channelSize,
 
   // json packer und scope trennen -> diskuteren ob neue factory die scope und json layer für layer aufbaut sinnvoll ist
   self->jsonPacker = JsonPacker_create(numberOfChannels, maxNumberOfAddresses, communicationValidator,
-          ByteStream_getIByteStream(self->outputStream));
+          BufferedByteStream_getIByteStream(self->outputStream));
 
   self->sender = Sender_create(JsonPacker_getIPacker(self->jsonPacker), self->channels, self->numberOfChannels,
                                self->trigger,
@@ -191,7 +191,7 @@ ScopeHandle Scope_create(const size_t channelSize,
   /* Create the unpacker and receiver */
   self->jsonUnpacker = JsonUnpacker_create();
   self->receiver = Receiver_create(JsonUnpacker_getIUnpacker(self->jsonUnpacker),
-                                   ByteStream_getIByteStream(self->inputStream),
+                                   BufferedByteStream_getIByteStream(self->inputStream),
                                    communicationValidator,
                                    self->sender);
 
@@ -216,8 +216,8 @@ void Scope_destroy(ScopeHandle self){
   CommandFactory_destroy(self->commandFactory);
   JsonUnpacker_destroy(self->jsonUnpacker);
   Receiver_destroy(self->receiver);
-  ByteStream_destroy(self->inputStream);
-  ByteStream_destroy(self->outputStream);
+  BufferedByteStream_destroy(self->inputStream);
+  BufferedByteStream_destroy(self->outputStream);
   JsonPacker_destroy(self->jsonPacker);
   Sender_destroy(self->sender);
   CommunicationFactory_destroy(self->communicationFactory);
@@ -229,7 +229,7 @@ void Scope_destroy(ScopeHandle self){
 
 void Scope_receiveData(ScopeHandle self){
 
-  if(ByteStream_length(self->inputStream) <= 0){
+  if(BufferedByteStream_length(self->inputStream) <= 0){
     return;
   }
 
@@ -250,12 +250,12 @@ void Scope_receiveData(ScopeHandle self){
 }
 
 IByteStreamHandle Scope_getInputStream(ScopeHandle self){
-  return ByteStream_getIByteStream(self->inputStream);
+  return BufferedByteStream_getIByteStream(self->inputStream);
 }
 
 //das brauchts glaube ich nicht -> entfernen (du hast das mit dem senden ja über den callback gelöst)
 IByteStreamHandle Scope_getOutputStream(ScopeHandle self){
-  return ByteStream_getIByteStream(self->outputStream);
+  return BufferedByteStream_getIByteStream(self->outputStream);
 }
 
 void Scope_poll(ScopeHandle self, uint32_t timeStamp){

@@ -58,8 +58,5 @@ int FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const s
    will return -1 */
 int FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length);
 
-/* Returns the IFloatStream interface */
-IFloatStreamHandle FloatRingBuffer_getIFloatStream(FloatRingBufferHandle self);
-
 
 #endif

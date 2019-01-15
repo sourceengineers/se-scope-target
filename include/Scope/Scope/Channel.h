@@ -64,14 +64,21 @@ bool Channel_isRunning(ChannelHandle self);
    wrong */
 int Channel_poll(ChannelHandle self);
 
-/* Returns the FloatStream of the buffer, so data can be read */
-IFloatStreamHandle Channel_getRingBufferFloatStream(ChannelHandle self);
-
-/* Safes to data points into the triggerData and returns the amount of points 
+/* Safes to data points into the triggerData and returns the amount of points
    written */
 IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self);
 
 /* Clears the data in the channel */
 void Channel_clear(ChannelHandle self);
+
+/**
+ *
+ * @param data Array to receive the data
+ * @param size Max size of array
+ * @return -1 if the requested amount of data is not big enough. Else the amount of actaully written data points */
+int Channel_read(ChannelHandle self, float data[], size_t size);
+
+/* Returns the capacity of the Channel */
+size_t Channel_getNumberOfUsedData(ChannelHandle self);
 
 #endif

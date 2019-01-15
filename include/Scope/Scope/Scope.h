@@ -19,7 +19,7 @@
 #include <Scope/Command/CommandFactory.h>
 #include <Scope/Communication/Receiver.h>
 
-#include <Scope/GeneralPurpose/ByteStream.h>
+#include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
