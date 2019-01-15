@@ -57,7 +57,7 @@ IByteStreamHandle Scope_getOutputStream(ScopeHandle self);
 void Scope_transmitData(ScopeHandle self);
 
 /* Polls data from all channels */
-void Scope_poll(ScopeHandle self, gemmi_uint timeStamp);
+void Scope_poll(ScopeHandle self, uint32_t timeStamp);
 
 /* Configures the channel with the given id, with the wanted address */
 /* If the id exceeds the maximum amount of channels, the function will return without doing anything */
@@ -71,17 +71,17 @@ void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* poll
  *
  * If the id exceeds the maximum amount of channels, the function will return without doing anything
  * */
-void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, gemmi_uint channelId);
+void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, uint32_t channelId);
 
 /* Sets the timestamp increment
  * If the timestamp increment mode is set to manual, this will not have any effect */
-void Scope_configureTimestampIncrement(ScopeHandle self, gemmi_uint timstampIncrement);
+void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrement);
 
 /* Sets the channel with the given index to running */
-void Scope_setChannelRunning(ScopeHandle self, gemmi_uint channelId);
+void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId);
 
 /* Sets the channel with the given index to stopped */
-void Scope_setChannelStopped(ScopeHandle self, gemmi_uint channelId);
+void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
 
 /* Sends all configured watch addresses to the host */
 void Scope_announceAddresses(ScopeHandle self);
@@ -89,7 +89,7 @@ void Scope_announceAddresses(ScopeHandle self);
 /* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
 void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
-                             const gemmi_uint addressId);
+                             const uint32_t addressId);
 
 /* Clears the data in the channels, as well as the timestamp buffer */
 void Scope_clear(ScopeHandle self);

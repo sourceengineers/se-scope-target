@@ -53,7 +53,7 @@ size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self){
   return self->maxAmountOfAddresses;
 }
 
-AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const gemmi_uint addressId){
+AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const uint32_t addressId){
   return &self->addresses[addressId];
 }
 
@@ -64,9 +64,9 @@ void AddressStorage_flagAddressesAsSend(AddressStorageHandle self){
   }
 }
 
-void AddressStorage_setAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
+void AddressStorage_addAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
                                     const DATA_TYPES type,
-                                    const gemmi_uint addressId){
+                                    const uint32_t addressId){
 
   if(addressId >= self->maxAmountOfAddresses){
     return;
@@ -77,7 +77,7 @@ void AddressStorage_setAnnounceAddress(AddressStorageHandle self, const char* na
   }
 
   self->addresses[addressId].type = type;
-  self->addresses[addressId].address = (const gemmi_uint) address;
+  self->addresses[addressId].address = (const ADDRESS_DATA_TYPE) address;
   strncpy(self->addresses[addressId].name, name, maxAddrNameLength);
   self->addresses[addressId].hasToBeSent = true;
 }

@@ -30,10 +30,10 @@ typedef struct __ScopePrivateData
   IScope scope;
 
   /* Timestamping data */
-  gemmi_uint timeIncrement;
+  uint32_t timeIncrement;
   IntRingBufferHandle timeStamp;
   TIMESTAMPING_MODE timestampingMode;
-  gemmi_uint currentTimestamp;
+  uint32_t currentTimestamp;
 
   /* Communication validators */
   CommunicationFactoryHandle communicationFactory;
@@ -63,7 +63,7 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void scopePoll(IScopeHandle scope, gemmi_uint timeStamp){
+static void scopePoll(IScopeHandle scope, uint32_t timeStamp){
   ScopeHandle self = (ScopeHandle) scope->implementer;
   Scope_poll(self, timeStamp);
 }
@@ -78,7 +78,7 @@ static void scopeAnnounce(IScopeHandle scope){
   Scope_announceAddresses(self);
 }
 
-static void scopeSetTimeIncrement(IScopeHandle scope, gemmi_uint timeIncrement){
+static void scopeSetTimeIncrement(IScopeHandle scope, uint32_t timeIncrement){
   ScopeHandle self = (ScopeHandle) scope->implementer;
   Scope_configureTimestampIncrement(self, timeIncrement);
 }
@@ -106,7 +106,7 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
   }
 }
 
-static gemmi_uint getTimeIncrement(IScopeHandle scope){
+static uint32_t getTimeIncrement(IScopeHandle scope){
   ScopeHandle self = (ScopeHandle) scope->implementer;
   return self->timeIncrement;
 }
@@ -258,9 +258,9 @@ IByteStreamHandle Scope_getOutputStream(ScopeHandle self){
   return ByteStream_getIByteStream(self->outputStream);
 }
 
-void Scope_poll(ScopeHandle self, gemmi_uint timeStamp){
+void Scope_poll(ScopeHandle self, uint32_t timeStamp){
 
-  gemmi_uint prepareTimeStamp = 0;
+  uint32_t prepareTimeStamp = 0;
 
   if(self->timestampingMode == TIMESTAMP_AUTOMATIC){
     self->currentTimestamp += self->timeIncrement;
@@ -295,7 +295,7 @@ void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* poll
   Channel_setPollAddress(self->channels[channelId], pollAddress, type);
 }
 
-void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, gemmi_uint channelId){
+void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, uint32_t channelId){
 
   if(channelId >= self->numberOfChannels){
     return;
@@ -312,11 +312,11 @@ void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGG
   Trigger_configure(self->trigger, triggerConf);
 }
 
-void Scope_configureTimestampIncrement(ScopeHandle self, gemmi_uint timstampIncrement){
+void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrement){
   self->timeIncrement = timstampIncrement;
 }
 
-void Scope_setChannelRunning(ScopeHandle self, gemmi_uint channelId){
+void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId){
 
   if(channelId >= self->numberOfChannels){
     return;
@@ -325,7 +325,7 @@ void Scope_setChannelRunning(ScopeHandle self, gemmi_uint channelId){
   Channel_setStateRunning(self->channels[channelId]);
 }
 
-void Scope_setChannelStopped(ScopeHandle self, gemmi_uint channelId){
+void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
 
   if(channelId >= self->numberOfChannels){
     return;
@@ -349,6 +349,6 @@ void Scope_clear(ScopeHandle self){
 
 void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
-                             const gemmi_uint addressId){
-  AddressStorage_setAnnounceAddress(self->addressStorage, name, address, type, addressId);
+                             const uint32_t addressId){
+  AddressStorage_addAnnounceAddress(self->addressStorage, name, address, type, addressId);
 }

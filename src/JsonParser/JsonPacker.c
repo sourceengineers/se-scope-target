@@ -34,8 +34,8 @@ typedef struct __JsonPackerPrivateData
   size_t maxAddressesToAnnounce;
   char** namesOfAddresses;
   char** typesOfAddresses;
-  gemmi_uint* addresses;
-  gemmi_uint numberOfAddressesToAnnounce;
+  ADDRESS_DATA_TYPE* addresses;
+  uint32_t numberOfAddressesToAnnounce;
   bool addressesReady;
 
   IComValidatorHandle validator;
@@ -45,12 +45,12 @@ typedef struct __JsonPackerPrivateData
   /* Channel preparation data */
   bool channelsReady;
   size_t numberOfChannelsToSend;
-  gemmi_uint* channelIds;
+  uint32_t* channelIds;
   IFloatStreamHandle* floatStreams;
 
   /* Timestamp increment data */
   bool tIncReady;
-  gemmi_uint timeIncrement;
+  uint32_t timeIncrement;
 
   /* Timestamp data */
   bool timestampReady;
@@ -59,8 +59,8 @@ typedef struct __JsonPackerPrivateData
   /* Trigger data */
   bool triggerReady;
   bool isTriggered;
-  gemmi_uint channelId;
-  gemmi_uint triggerTimestamp;
+  uint32_t channelId;
+  uint32_t triggerTimestamp;
 
   /* Flow control data */
   bool flowcontrolReady;
@@ -69,7 +69,7 @@ typedef struct __JsonPackerPrivateData
 } JsonPackerPrivateData ;
 
 static void appendString(IByteStreamHandle destination, const char* origin, const char* endWith);
-static void appendNumber(IByteStreamHandle destination, gemmi_uint origin, const char* endWith);
+static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE origin, const char* endWith);
 static void flushBuffer(char* buffer);
 static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
 static bool channelMapIsEmpty(JsonPackerHandle self);
@@ -80,7 +80,7 @@ static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded);
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded);
 static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded);
-static void prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, const gemmi_uint address);
+static void prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, ADDRESS_DATA_TYPE address);
 static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded);
 static bool packChannel(JsonPackerHandle self, bool commaIsNeeded);
 static bool packChannelMap(JsonPackerHandle self);
@@ -118,7 +118,7 @@ inline static void addComma(IByteStreamHandle destination, bool commaIsNeeded){
   }
 }
 
-inline static void appendNumber(IByteStreamHandle destination, gemmi_uint origin, const char* endWith){
+inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE origin, const char* endWith){
 
   char number[MAX_LENGTH_OF_NUMBER];
 
@@ -134,7 +134,7 @@ inline static void appendNumber(IByteStreamHandle destination, gemmi_uint origin
   }
 }
 
-static void prepareChannel(IPackerHandle packer, IFloatStreamHandle stream, const gemmi_uint channelId){
+static void prepareChannel(IPackerHandle packer, IFloatStreamHandle stream, const uint32_t channelId){
   JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
 
   if(channelId >= self->maxNumberOfChannels){
@@ -153,7 +153,7 @@ static void prepareChannel(IPackerHandle packer, IFloatStreamHandle stream, cons
   self->channelsReady = true;
 }
 
-static void prepareTimeIncrement(IPackerHandle packer, const gemmi_uint timeIncrement){
+static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement){
   JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
 
   self->tIncReady = true;
@@ -200,7 +200,7 @@ static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded){
   appendString(self->byteStream, KEYWORD_T_STMP, ":[");
 
   const size_t dataLength = self->timestamp->length(self->timestamp);
-  gemmi_uint data[dataLength];
+  uint32_t data[dataLength];
 
   self->timestamp->read(self->timestamp, data, dataLength);
   for (int i = 0; i < dataLength; ++i) {
@@ -217,7 +217,7 @@ static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded){
   return true;
 }
 
-static void prepareTrigger(IPackerHandle packer, const bool isTriggered, const gemmi_uint channelId, const gemmi_uint timestamp){
+static void prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp){
   JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
 
   self->triggerReady = true;
@@ -283,7 +283,7 @@ static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded){
 }
 
 
-static void prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, const gemmi_uint address){
+static void prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, ADDRESS_DATA_TYPE address){
   JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
 
   if(self->numberOfAddressesToAnnounce >= self->maxAddressesToAnnounce){
@@ -528,12 +528,12 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
   JsonPackerHandle self = (JsonPackerHandle) malloc(sizeof(JsonPackerPrivateData));
 
   self->floatStreams = malloc(sizeof(IFloatStreamHandle) * maxNumberOfChannels);
-  self->channelIds = malloc(sizeof(gemmi_uint) * maxNumberOfChannels);
+  self->channelIds = malloc(sizeof(uint32_t) * maxNumberOfChannels);
   self->validator = validator;
   self->numberOfChannelsToSend = 0;
   self->maxNumberOfChannels = maxNumberOfChannels;
   self->maxAddressesToAnnounce = maxAddressesToAnnounce;
-  self->addresses = malloc(sizeof(gemmi_uint) * maxAddressesToAnnounce);
+  self->addresses = malloc(sizeof(ADDRESS_DATA_TYPE) * maxAddressesToAnnounce);
   self->namesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
   self->typesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
 

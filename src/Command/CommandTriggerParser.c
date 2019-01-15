@@ -84,7 +84,7 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
                                              .isInArray = false, .arrayIndex = 0 };
 
   /* Get the correct data stream */
-  gemmi_uint channelId = self->unpacker->getIntFromCommand(self->unpacker, &information);
+  uint32_t channelId = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
   if(channelId >= self->numberOfChannels){
     channelId = 0;

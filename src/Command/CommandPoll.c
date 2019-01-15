@@ -21,7 +21,7 @@ typedef struct __CommandPollPrivateData
   ICommand command;
   IScopeHandle scope;
 
-  gemmi_uint nextTimeStamp;
+  uint32_t nextTimeStamp;
 
 } CommandPollPrivateData ;
 
@@ -45,7 +45,7 @@ static void run(ICommandHandle command){
 static void setCommandAttribute(ICommandHandle command, void* attr){
   CommandPollHandle self = (CommandPollHandle) command->implementer;
 
-  self->nextTimeStamp = *(gemmi_uint*) attr;
+  self->nextTimeStamp = *(uint32_t*) attr;
 }
 
 static char* getCommandName(ICommandHandle command){

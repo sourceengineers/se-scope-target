@@ -4,15 +4,15 @@ This page describes the API corresponding to the [commands](https://bitbucket.or
 The channels can either be stopped Scope_setChannelStopped or started Scope_setChannelRunning.
 ```c
 /* Sets the channel with the given index to running */
-void Scope_setChannelRunning(ScopeHandle self, gemmi_uint channelId);
+void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId);
 /* Sets the channel with the given index to stopped */
-void Scope_setChannelStopped(ScopeHandle self, gemmi_uint channelId);
+void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
 ```
 The channelId must not exceed the maximum amount of channels.
 # ev_poll
 ```c
 /* Polls data from all channels */
-void Scope_poll(ScopeHandle self, gemmi_uint timeStamp);
+void Scope_poll(ScopeHandle self, uint32_t timeStamp);
 ```
 If the scope is set to TIMESTAMP_AUTOMATIC, the Scope_poll function ignores the timestamp value supplied.
 # ev_trans
@@ -42,13 +42,13 @@ void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* poll
  *
  * If the id exceeds the maximum amount of channels, the function will return without doing anything
  * */
-void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, gemmi_uint channelId);
+void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, uint32_t channelId);
 ```
 # cf_t_inc
 ```c
 /* Sets the timestamp increment
  * If the timestamp increment mode is set to manual, this will not have any effect */
-void Scope_configureTimestampIncrement(ScopeHandle self, gemmi_uint timstampIncrement);
+void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrement);
 ```
 The Scope_configureTimestampIncrement does only have a affect on the scope timestamping mode is set to TIMESTAMP_AUTOMATIC
 # ev_clear

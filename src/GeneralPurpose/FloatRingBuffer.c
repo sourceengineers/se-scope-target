@@ -84,7 +84,7 @@ static void flush(IFloatStreamHandle stream){
 }
 
 static float* nextIndex(FloatRingBufferHandle self, float* index){
-  const gemmi_uint positionRelative = ((index + 1) - self->data);
+  const uint32_t positionRelative = ((index + 1) - self->data);
   return (positionRelative % self->capacity) + self->data;
 }
 

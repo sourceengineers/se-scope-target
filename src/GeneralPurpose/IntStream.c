@@ -52,19 +52,19 @@ size_t IntStream_length(IntStreamHandle self){
   return self->iIntStream.length(&self->iIntStream);
 }
 
-void IntStream_write(IntStreamHandle self, const gemmi_uint* data, const size_t length){
+void IntStream_write(IntStreamHandle self, const uint32_t* data, const size_t length){
   self->iIntStream.write(&self->iIntStream, data, length);
 }
 
-void IntStream_writeData(IntStreamHandle self, const gemmi_uint data){
+void IntStream_writeData(IntStreamHandle self, const uint32_t data){
   self->iIntStream.writeData(&self->iIntStream, data);
 }
 
-void IntStream_read(IntStreamHandle self, gemmi_uint* data, const size_t length){
+void IntStream_read(IntStreamHandle self, uint32_t* data, const size_t length){
   self->iIntStream.read(&self->iIntStream, data, length);
 }
 
-gemmi_uint IntStream_readData(IntStreamHandle self){
+uint32_t IntStream_readData(IntStreamHandle self){
   return self->iIntStream.readData(&self->iIntStream);
 }
 

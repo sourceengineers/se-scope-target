@@ -32,9 +32,9 @@ typedef enum {UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE} DATA_TYPES;
 
 /* Choose the right integer length */
 #if (ARCH_SIZE_32)
-  #define gemmi_uint uint32_t
+  #define ADDRESS_DATA_TYPE uint32_t
 #else
-  #define gemmi_uint uint64_t
+  #define ADDRESS_DATA_TYPE uint64_t
 #endif
 
 

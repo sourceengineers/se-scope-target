@@ -42,12 +42,12 @@ typedef struct IPackerStruct {
   void* implementer;
   void (*pack)(IPackerHandle packer);
 
-  void (*prepareChannel)(IPackerHandle packer, IFloatStreamHandle stream, const gemmi_uint channelId);
-  void (*prepareTimeIncrement)(IPackerHandle packer, const gemmi_uint timeIncrement);
+  void (*prepareChannel)(IPackerHandle packer, IFloatStreamHandle stream, const uint32_t channelId);
+  void (*prepareTimeIncrement)(IPackerHandle packer, const uint32_t timeIncrement);
   void (*prepareTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
-  void (*prepareTrigger)(IPackerHandle packer, const bool isTriggered, const gemmi_uint channelId, const gemmi_uint timestamp);
+  void (*prepareTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);
   void (*prepareFlowControl)(IPackerHandle packer, const char* flowcontrol);
-  void (*prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type, const gemmi_uint address);
+  void (*prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type, const ADDRESS_DATA_TYPE address);
 
   IByteStreamHandle (*getByteStream)(IPackerHandle packer);
 

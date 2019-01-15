@@ -61,7 +61,7 @@ typedef struct IUnpackerStruct {
   bool (*getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
 
   /* Functions to fetch the data from commands */
-  gemmi_uint (*getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+  ADDRESS_DATA_TYPE (*getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
   float (*getFloatFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
   bool (*getBoolFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
   void (*getStringFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information, char* targetStr, const int maxLenght);

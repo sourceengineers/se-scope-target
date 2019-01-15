@@ -61,7 +61,7 @@ This can be useful if the variables are not static.
 
 /*void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                              const DATA_TYPES type,
-                             const gemmi_uint addressId);*/
+                             const uint32_t addressId);*/
 
 /* Registers the addresses */
 uint8_t var;

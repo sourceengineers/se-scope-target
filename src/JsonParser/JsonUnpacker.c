@@ -47,8 +47,8 @@ static bool jsoneq(const char *json, jsmntok_t *tok, const char *key);
 
 static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t *tok, size_t index){
 
-  gemmi_uint startPosition = tok->start;
-  gemmi_uint foundNextTokens = 0;
+  uint32_t startPosition = tok->start;
+  uint32_t foundNextTokens = 0;
 
   for (int i = 0; i < TOKEN_BUFFER_SIZE - 1; ++i) {
 
@@ -291,7 +291,7 @@ static bool getNameOfCommand(IUnpackerHandle iUnpackHandler, char* name, const i
   return true;
 }
 
-static gemmi_uint getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
+static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
   JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
 
   jsmntok_t* field = getCommand(self, information->commandName);

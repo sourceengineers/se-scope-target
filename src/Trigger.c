@@ -18,11 +18,11 @@ typedef struct __TriggerPrivateData
 {
   float level;
   int edge;
-  gemmi_uint triggerIndex;
+  uint32_t triggerIndex;
   IFloatStream stream;
   TriggerStrategy triggerStrategies[3];
   TriggerStrategy run;
-  gemmi_uint activeChannelId;
+  uint32_t activeChannelId;
   bool isTriggered;
 } TriggerPrivateData;
 
@@ -33,13 +33,13 @@ static bool checkCurrentData(TriggerHandle self, float* triggerData);
 static bool getTriggerData(TriggerHandle self, float* data);
 
 /* Strategy for the continous trigger */
-static bool triggerContinuous(TriggerHandle self, const gemmi_uint index);
+static bool triggerContinuous(TriggerHandle self, const uint32_t index);
 
 /* Strategy for the normal trigger */
-static bool triggerNormal(TriggerHandle self, const gemmi_uint index);
+static bool triggerNormal(TriggerHandle self, const uint32_t index);
 
 /* Strategy for the one shot trigger */
-static bool triggerOneShot(TriggerHandle self, const gemmi_uint index);
+static bool triggerOneShot(TriggerHandle self, const uint32_t index);
 
 /* Checks the given configuration data for possible errors and return false
  * if errors were found */
@@ -90,11 +90,11 @@ static bool getTriggerData(TriggerHandle self, float* data){
   return true;
 }
 
-static bool triggerContinuous(TriggerHandle self, const gemmi_uint index){
+static bool triggerContinuous(TriggerHandle self, const uint32_t index){
   return false;
 }
 
-static bool triggerNormal(TriggerHandle self, const gemmi_uint index){
+static bool triggerNormal(TriggerHandle self, const uint32_t index){
   float triggerData[2];
   bool streamSuccessfull = getTriggerData(self, triggerData);
   
@@ -116,7 +116,7 @@ static bool triggerNormal(TriggerHandle self, const gemmi_uint index){
   return isTriggered;
 }
 
-static bool triggerOneShot(TriggerHandle self, const gemmi_uint index){
+static bool triggerOneShot(TriggerHandle self, const uint32_t index){
   return false;
 }
 
@@ -173,7 +173,7 @@ void Trigger_destroy(TriggerHandle self){
   self = NULL;
 }
 
-gemmi_uint Trigger_getTriggerIndex(TriggerHandle self){
+uint32_t Trigger_getTriggerIndex(TriggerHandle self){
     return self->triggerIndex;
 }
 
@@ -186,7 +186,7 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
     return true;
 }
 
-bool Trigger_run(TriggerHandle self, const gemmi_uint timestamp){
+bool Trigger_run(TriggerHandle self, const uint32_t timestamp){
   self->isTriggered = self->run(self, timestamp);
   return self->isTriggered;
 }
@@ -200,6 +200,6 @@ void Trigger_release(TriggerHandle self){
   self->triggerIndex = 0;
 }
 
-gemmi_uint Trigger_getChannelId(TriggerHandle self){
+uint32_t Trigger_getChannelId(TriggerHandle self){
   return self->activeChannelId;
 }

@@ -28,7 +28,7 @@ typedef struct __AddressStoragePrivateData* AddressStorageHandle;
 typedef struct {
     char name[maxAddrNameLength];
     DATA_TYPES type;
-    gemmi_uint address;
+    ADDRESS_DATA_TYPE address;
     bool hasToBeSent;
 } AddressDefinition;
 
@@ -40,15 +40,15 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses);
 
 /* Sets a new definition of a address. If the addressId is bigger than the maximum amount of elements,
  * the function will return without doing anything */
-void AddressStorage_setAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
+void AddressStorage_addAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
                                     const DATA_TYPES type,
-                                    const gemmi_uint addressId);
+                                    const uint32_t addressId);
 
 /* Returns how many addresses can be configured at maximum */
 size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self);
 
 /* Returns a pointer to a address */
-AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const gemmi_uint addressId);
+AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const uint32_t addressId);
 
 /* Flags all Addresses as send */
 void AddressStorage_flagAddressesAsSend(AddressStorageHandle self);

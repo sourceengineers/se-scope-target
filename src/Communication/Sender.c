@@ -65,7 +65,7 @@ void Sender_addressAnnouncement(SenderHandle self){
 
   const size_t maxAddresses = AddressStorage_getMaxAmountOfAddresses(self->addressStorage);
 
-  for (gemmi_uint i = 0; i < maxAddresses; ++i) {
+  for (uint32_t i = 0; i < maxAddresses; ++i) {
     AddressDefinition* addr = AddressStorage_getAddressToTransmit(self->addressStorage, i);
     if(addr->hasToBeSent == true){
       self->packer->prepareAddressAnnouncement(self->packer, addr->name, getDataTypeName(addr->type), addr->address);
@@ -78,13 +78,13 @@ void Sender_scopeData(SenderHandle self){
 
   for (size_t i = 0; i < self->numberOfChannels; ++i) {
     if(Channel_isRunning(self->channels[i]) == true){
-      self->packer->prepareChannel(self->packer, Channel_getRingBufferFloatStream(self->channels[i]), (const gemmi_uint) i);
+      self->packer->prepareChannel(self->packer, Channel_getRingBufferFloatStream(self->channels[i]), (const uint32_t) i);
     }
   }
 
   const bool isTriggered = Trigger_isTriggered(self->trigger);
-  const gemmi_uint channelId = Trigger_getChannelId(self->trigger);
-  const gemmi_uint triggerTimestamp = Trigger_getTriggerIndex(self->trigger);
+  const uint32_t channelId = Trigger_getChannelId(self->trigger);
+  const uint32_t triggerTimestamp = Trigger_getTriggerIndex(self->trigger);
 
   self->packer->prepareTrigger(self->packer, isTriggered, channelId, triggerTimestamp);
 
@@ -92,7 +92,7 @@ void Sender_scopeData(SenderHandle self){
   self->packer->prepareTimestamp(self->packer, scopeTimestamp);
 
   if(self->scope->transmitTimestampInc(self->scope) == true){
-    const gemmi_uint timeIncrement = self->scope->getTimeIncrement(self->scope);
+    const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
     self->packer->prepareTimeIncrement(self->packer, timeIncrement);
   }
 

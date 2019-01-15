@@ -38,7 +38,7 @@ typedef struct {
  int edge;
  TRIGGER_MODE mode;
  IFloatStream stream;
- gemmi_uint channelId;
+ uint32_t channelId;
 } TriggerConfiguration ;
 
 
@@ -48,7 +48,7 @@ typedef struct {
 typedef struct __TriggerPrivateData* TriggerHandle;
 
 /* Typedef for a function pointer, to easier handle the strategies */
-typedef bool (*TriggerStrategy)(TriggerHandle self, const gemmi_uint index);
+typedef bool (*TriggerStrategy)(TriggerHandle self, const uint32_t index);
 
 /******************************************************************************
 Public functions 
@@ -63,7 +63,7 @@ void Trigger_destroy(TriggerHandle self);
 bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf);
 
 /* Returns the triggered index */
-gemmi_uint Trigger_getTriggerIndex(TriggerHandle self);
+uint32_t Trigger_getTriggerIndex(TriggerHandle self);
 
 /* Returns if the trigger is triggered or not */
 bool Trigger_isTriggered(TriggerHandle self);
@@ -72,9 +72,9 @@ bool Trigger_isTriggered(TriggerHandle self);
 void Trigger_release(TriggerHandle self);
 
 /* Returns the id of the channel which is currently active */
-gemmi_uint Trigger_getChannelId(TriggerHandle self);
+uint32_t Trigger_getChannelId(TriggerHandle self);
 
 /* Function which calls the currently chosen trigger strategy */
-bool Trigger_run(TriggerHandle self, const gemmi_uint timstamp);
+bool Trigger_run(TriggerHandle self, const uint32_t timstamp);
 
 #endif

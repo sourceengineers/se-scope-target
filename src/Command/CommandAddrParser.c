@@ -85,7 +85,7 @@ void CommandAddrParser_configure(CommandAddrParserHandle self){
       CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = nameOfField,
                                                  .isInArray = true, .arrayIndex = 0 };
 
-      newAddresses[i] = (void*) (gemmi_uint) self->unpacker->getIntFromCommand(self->unpacker, &information);
+      newAddresses[i] = (void*) (ADDRESS_DATA_TYPE) self->unpacker->getIntFromCommand(self->unpacker, &information);
 
 
       char requestedDataType[20];
