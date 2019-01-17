@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-  #include <Scope/Command/CommandFactory.h>
+  #include <Scope/Command/CommandDispatcher.h>
 }
 
 using namespace testing;

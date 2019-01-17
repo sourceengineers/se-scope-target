@@ -13,7 +13,6 @@ TEST(CommandAddr, test_command)
   const size_t amountChannelChanged = 3;
   float dataPointOne = 5.5f;
   
-  FloatRingBufferHandle buffers[testElements];
   ChannelHandle channels[testElements];
   
   int firstChangedElements[testElements] = {0, 1, 2, 3, 4};
@@ -24,8 +23,7 @@ TEST(CommandAddr, test_command)
     
   /* Set initial state to control */
   for (size_t i = 0; i < testElements; i++) {
-    buffers[i] = FloatRingBuffer_create(10);
-    channels[i] = Channel_create(buffers[i]);
+    channels[i] = Channel_create(10);
   }
   
   /* Configure all channels and check if it worked */
@@ -40,7 +38,6 @@ TEST(CommandAddr, test_command)
     ASSERT_EQ(currentAddrPointer, &dataPointOne);
   }
   
-  /* Reconfigure some channels to check if only the specified channels get changed */
   float dataPointTwo = 6.6f;
   int secondChangedElements[testElements] = {2,3,4};
   void* secondAddrPointer[testElements] = {&dataPointTwo, &dataPointTwo, &dataPointTwo};

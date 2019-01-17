@@ -97,14 +97,14 @@ static void setState(ChannelHandle self, CHANNEL_STATES state) {
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ChannelHandle Channel_create(FloatRingBufferHandle buffer) {
+ChannelHandle Channel_create(size_t capacity) {
 
     ChannelHandle self = malloc(sizeof(ChannelPrivateData));
     self->stream = BufferedFloatStream_getIFloatStream(BufferedFloatStream_create(4));
 
     /* Set private variables */
     self->state = CHANNEL_INIT;
-    self->buffer = buffer;
+    self->buffer = FloatRingBuffer_create(capacity);
     self->oldTriggerData = 0.0f;
 
     return self;

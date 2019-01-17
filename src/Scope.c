@@ -23,7 +23,6 @@ typedef struct __ScopePrivateData
 {
   size_t numberOfChannels;
   ChannelHandle* channels;
-  FloatRingBufferHandle* buffers;
   TriggerHandle trigger;
   CommandFactoryHandle commandFactory;
 
@@ -161,12 +160,10 @@ ScopeHandle Scope_create(const size_t channelSize,
 
   /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
-  self->buffers = malloc(sizeof(FloatRingBufferHandle) * numberOfChannels);
   self->numberOfChannels = numberOfChannels;
 
   for (size_t i = 0; i < numberOfChannels; i++) {
-    self->buffers[i] = FloatRingBuffer_create(channelSize);
-    self->channels[i] = Channel_create(self->buffers[i]);
+    self->channels[i] = Channel_create(channelSize);
   }
   self->timeStamp = IntRingBuffer_create(channelSize);
 
@@ -208,7 +205,6 @@ ScopeHandle Scope_create(const size_t channelSize,
 void Scope_destroy(ScopeHandle self){
 
   for (size_t i = 0; i < self->numberOfChannels; ++i) {
-    FloatRingBuffer_destroy(self->buffers[i]);
     Channel_destroy(self->channels[i]);
   }
 
@@ -228,8 +224,10 @@ void Scope_destroy(ScopeHandle self){
 }
 
 void Scope_receiveData(ScopeHandle self){
+ 
 
-  if(BufferedByteStream_length(self->inputStream) <= 0){
+  IByteStreamHandle stream = BufferedByteStream_getIByteStream(self->inputStream); 
+  if(stream->length(stream) <= 0){
     return;
   }
 

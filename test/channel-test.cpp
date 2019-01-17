@@ -17,8 +17,7 @@ TEST(Channel, test_polling) {
     float data;
 
     /* Create Instanzes */
-    FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
-    ChannelHandle channel = Channel_create(buffer);
+    ChannelHandle channel = Channel_create(shortCapacity);
 
     /* Configure channel */
     Channel_setPollAddress(channel, &data, FLOAT);
@@ -43,8 +42,7 @@ TEST(Channel, test_data_types) {
     float shortAnswer[shortVectorLength];
 
     /* Create Instanzes */
-    FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
-    ChannelHandle channel = Channel_create(buffer);
+    ChannelHandle channel = Channel_create(shortCapacity);
     float answer;
 
     float data = 5.5f;
@@ -85,8 +83,7 @@ TEST(Channel, test_states) {
     float data;
 
     /* Create Instanzes */
-    FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity);
-    ChannelHandle channel = Channel_create(buffer);
+    ChannelHandle channel = Channel_create(shortCapacity);
 
     EXPECT_EQ(Channel_poll(channel), -1);
     bool isRunning = Channel_setStateRunning(channel);
@@ -114,8 +111,7 @@ TEST(Channel, test_trigger_stream) {
     float data;
 
     /* Create Instanzes */
-    FloatRingBufferHandle buffer = FloatRingBuffer_create(shortCapacity + 2);
-    ChannelHandle channel = Channel_create(buffer);
+    ChannelHandle channel = Channel_create(shortCapacity);
 
     /* Configure channel */
     Channel_setPollAddress(channel, &data, FLOAT);

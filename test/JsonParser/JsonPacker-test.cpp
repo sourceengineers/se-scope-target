@@ -49,8 +49,8 @@ TEST(json_packer, unpack_test) {
     IByteStreamHandle outputStream = BufferedByteStream_getIByteStream(BufferedByteStream_create(sizes));
 
     IIntStreamHandle timestamp = BufferedIntStream_getIIntStream(BufferedIntStream_create(channelSize));
-    ChannelHandle ch1 = Channel_create(FloatRingBuffer_create(channelSize));
-    ChannelHandle ch2 = Channel_create(FloatRingBuffer_create(channelSize));
+    ChannelHandle ch1 = Channel_create(channelSize);
+    ChannelHandle ch2 = Channel_create(channelSize);
 
     Channel_setPollAddress(ch1, &d1, FLOAT);
     Channel_setPollAddress(ch2, &d2, FLOAT);

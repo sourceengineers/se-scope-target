@@ -32,7 +32,7 @@ typedef struct __ChannelPrivateData* ChannelHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-ChannelHandle Channel_create(FloatRingBufferHandle buffer);
+ChannelHandle Channel_create(size_t capacity);
 
 /* Deconstructor: Deletes the instance of the channel */
 void Channel_destroy(ChannelHandle self);
