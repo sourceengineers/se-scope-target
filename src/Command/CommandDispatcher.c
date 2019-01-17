@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandFactory.c
+ * @file         CommandDispatcher.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,14 +7,14 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandFactory.h>
+#include <Scope/Command/CommandDispatcher.h>
 #include <string.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandFactoryPrivateData
+typedef struct __CommandDispatcherPrivateData
 {
   CommandRunningHandle commandRunning;
   CommandPollHandle commandPoll;
@@ -31,19 +31,19 @@ typedef struct __CommandFactoryPrivateData
   CommandTriggerParserHandle commandTriggerParser;
   CommandPollParserHandle commandPollParser;
 
-} CommandFactoryPrivateData ;
+} CommandDispatcherPrivateData ;
 
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandFactoryHandle CommandFactory_create(IScopeHandle scope,
+CommandDispatcherHandle CommandDispatcher_create(IScopeHandle scope,
                                            ChannelHandle* channels, 
                                            size_t amountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker){
 
-  CommandFactoryHandle self = malloc(sizeof(CommandFactoryPrivateData));
+  CommandDispatcherHandle self = malloc(sizeof(CommandDispatcherPrivateData));
   /* Initialize commands */
   self->commandRunning = CommandRunning_create(channels, amountOfChannels);
   self->commandPoll = CommandPoll_create(scope);
@@ -72,7 +72,7 @@ CommandFactoryHandle CommandFactory_create(IScopeHandle scope,
 
 // das hier würde ich in eine klasse CommandParser auslagern so dass die factory nur die commands erzeugt
 // die methode könnte CommandParser_run oder Commadnparser_parse heissen
-ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char* command){
+ICommandHandle CommandDispatcher_getICommand(CommandDispatcherHandle self, const char* command){
 
   if(strncmp(command, CommandRunning_getName(self->commandRunning), MAX_COMMAND_LENGTH) == 0){
     CommandRunningParser_configure(self->commandRunningParser);
@@ -107,7 +107,7 @@ ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char*
   return NULL;
 }
 
-void CommandFactory_destroy(CommandFactoryHandle self){
+void CommandDispatcher_destroy(CommandDispatcherHandle self){
 
   CommandRunning_destroy(self->commandRunning);
   CommandPoll_destroy(self->commandPoll);

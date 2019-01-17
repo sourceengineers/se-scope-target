@@ -16,7 +16,7 @@
 #include <Scope/Channel.h>
 #include <Scope/IScope.h>
 
-#include <Scope/Command/CommandFactory.h>
+#include <Scope/Command/CommandDispatcher.h>
 #include <Scope/Communication/Receiver.h>
 
 #include <Scope/GeneralPurpose/BufferedByteStream.h>

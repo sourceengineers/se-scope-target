@@ -24,10 +24,10 @@ typedef struct __CommunicationFactoryPrivateData* CommunicationFactoryHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the factory */
+/* Constructor: Creates a new instance of the dispatcher */
 CommunicationFactoryHandle CommunicationFactory_create();
                                            
-/* Deconstructor: Deletes the instance of the factory */
+/* Deconstructor: Deletes the instance of the dispatcher */
 void CommunicationFactory_destroy(CommunicationFactoryHandle self);
 
 /* Returns the command interface */

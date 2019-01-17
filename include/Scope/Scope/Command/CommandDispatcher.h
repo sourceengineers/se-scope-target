@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         CommandFactory.h
+ * @file         CommandDispatcher.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -8,7 +8,7 @@
  * @brief        Factory to generate the different Command interfaces 
  * 
  *               Since the usage of malloc after the initial construction is 
- *               not permitted, all objects returned by the factory are pre- 
+ *               not permitted, all objects returned by the dispatcher are pre-
  *               generated during the construction process.
  *
  ******************************************************************************/ 
@@ -36,23 +36,23 @@
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __CommandFactoryPrivateData* CommandFactoryHandle;
+typedef struct __CommandDispatcherPrivateData* CommandDispatcherHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the factory */
-CommandFactoryHandle CommandFactory_create(IScopeHandle scope,
+/* Constructor: Creates a new instance of the dispatcher */
+CommandDispatcherHandle CommandDispatcher_create(IScopeHandle scope,
                                            ChannelHandle* channels, 
                                            size_t amountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker);
                                            
-/* Deconstructor: Deletes the instance of the factory */
-void CommandFactory_destroy(CommandFactoryHandle self);
+/* Deconstructor: Deletes the instance of the dispatcher */
+void CommandDispatcher_destroy(CommandDispatcherHandle self);
 
 /* Returns the command interface */
-ICommandHandle CommandFactory_getICommand(CommandFactoryHandle self, const char* command);
+ICommandHandle CommandDispatcher_getICommand(CommandDispatcherHandle self, const char* command);
 
 
 #endif
