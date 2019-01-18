@@ -10,7 +10,7 @@
  *               Starts a sending sending the pending addresses
  * 
  ******************************************************************************/
- 
+
 #ifndef COMMANDANNOUNCE_H_
 #define COMMANDANNOUNCE_H_
 
@@ -34,9 +34,5 @@ void CommandAnnounce_destroy(CommandAnnounceHandle self);
 
 /* Returns the command interface */
 ICommandHandle CommandAnnounce_getICommand(CommandAnnounceHandle self);
-
-/* Returns the name of the command */
-char* CommandAnnounce_getName(CommandAnnounceHandle self);
-
 
 #endif

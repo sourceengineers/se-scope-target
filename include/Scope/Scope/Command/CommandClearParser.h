@@ -1,41 +1,41 @@
 /*!*****************************************************************************
- * @file         CommandTInc.h
+ * @file         CommandClearParser.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the configurator for the cf_TInc.
+ * @brief        Implementation of the configurator for the ev_clear.
  *
  *              
  ******************************************************************************/
 
-#ifndef COMMANDTINCPARSER_H_
-#define COMMANDTINCPARSER_H_
+#ifndef COMMANDCLEARPARSER_H_
+#define COMMANDCLEARPARSER_H_
 
 #include <Scope/Command/ICommand.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Command/CommandTInc.h>
+#include <Scope/Command/CommandClear.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __CommandTIncParserPrivateData* CommandTIncParserHandle;
+typedef struct __CommandClearParserPrivateData* CommandClearParserHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
+CommandClearParserHandle CommandClearParser_create(IScopeHandle scope);
 
 /* Configurates the gives command */
-ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self);
+ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self);
 
 /* Returns the name of the command */
-char* CommandTIncParser_getName();
+char* CommandClearParser_getName();
 
 /* Deconstructor: Deletes the instance of the command parser */
-void CommandTIncParser_destroy(CommandTIncParserHandle self);
+void CommandClearParser_destroy(CommandClearParserHandle self);
 
 #endif

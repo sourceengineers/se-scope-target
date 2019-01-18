@@ -12,7 +12,7 @@
  *               prevent code dublication.
  *                
  ******************************************************************************/
- 
+
 #ifndef COMMANDTINC_H_
 #define COMMANDTINC_H_
 
@@ -37,8 +37,6 @@ void CommandTInc_destroy(CommandTIncHandle self);
 /* Returns the command interface */
 ICommandHandle CommandTInc_getICommand(CommandTIncHandle self);
 
-/* Returns the name of the command */
-char* CommandTInc_getName(CommandTIncHandle self);
 
 
 #endif

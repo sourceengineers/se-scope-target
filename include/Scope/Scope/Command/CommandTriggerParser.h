@@ -9,7 +9,7 @@
  *
  *              
  ******************************************************************************/
- 
+
 #ifndef COMMANDTRIGGERPARSER_H_
 #define COMMANDTRIGGERPARSER_H_
 
@@ -27,11 +27,14 @@ typedef struct __CommandTriggerParserPrivateData* CommandTriggerParserHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle command, IUnpackerHandle unpacker,
+CommandTriggerParserHandle CommandTriggerParser_create(IUnpackerHandle unpacker, TriggerHandle trigger,
                                                        ChannelHandle* channels, size_t numberOfChannels);
 
 /* Configurates the gives command */
-void CommandTriggerParser_configure(CommandTriggerParserHandle self);
+ICommandHandle CommandTriggerParser_getCommand(CommandTriggerParserHandle self);
+
+/* Returns the name of the command */
+char* CommandTriggerParser_getName();
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandTriggerParser_destroy(CommandTriggerParserHandle self);

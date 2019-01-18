@@ -9,7 +9,7 @@
  *
  *              
  ******************************************************************************/
- 
+
 #ifndef COMMANDADDRPARSER_H_
 #define COMMANDADDRPARSER_H_
 
@@ -27,12 +27,16 @@ typedef struct __CommandAddrParserPrivateData* CommandAddrParserHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandAddrParserHandle CommandAddrParser_create(ICommandHandle command, IUnpackerHandle unpacker);
+CommandAddrParserHandle CommandAddrParser_create(ChannelHandle* channels, size_t amountOfChannels, \
+                                                  IUnpackerHandle unpacker);
 
 /* Configurates the given command */
-void CommandAddrParser_configure(CommandAddrParserHandle self);
+ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self);
 
 /* Deconstructor: Deletes the instance of the parser */
 void CommandAddrParser_destroy(CommandAddrParserHandle self);
+
+/* Returns the name of the command */
+char* CommandAddrParser_getName();
 
 #endif

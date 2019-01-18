@@ -13,10 +13,13 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
+/* Name of the command */
+static char* commandName = "cf_tgr";
+
 /* Class data */
 typedef struct __CommandTriggerParserPrivateData
 {
-  ICommandHandle command;
+  CommandTriggerHandle command;
   IUnpackerHandle unpacker;
   char* commandName;
   ChannelHandle* channels;
@@ -60,22 +63,21 @@ static int parseStringToEdge(const char* edgeToParse, size_t maxStringSize){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandTriggerParserHandle CommandTriggerParser_create(ICommandHandle command, IUnpackerHandle unpacker,
+CommandTriggerParserHandle CommandTriggerParser_create(IUnpackerHandle unpacker, TriggerHandle trigger,
                                                        ChannelHandle* channels, size_t numberOfChannels){
   CommandTriggerParserHandle self = malloc(sizeof(CommandTriggerParserPrivateData));
-  self->command = command;
+  self->command = CommandTrigger_create(trigger);
   self->unpacker = unpacker;
-  self->commandName = (char*) self->command->getCommandName(self->command);
   self->channels = channels;
   self->numberOfChannels = numberOfChannels;
 
   return self;
 }
 
-void CommandTriggerParser_configure(CommandTriggerParserHandle self){
+ICommandHandle CommandTriggerParser_getCommand(CommandTriggerParserHandle self){
 
   if(self->unpacker == NULL){
-    return;
+    return NULL;
   }
 
   const size_t maxStringSize = 20;
@@ -110,10 +112,18 @@ void CommandTriggerParser_configure(CommandTriggerParserHandle self){
 
   TriggerConfiguration conf = {.level = level, .mode = mode, .stream = stream, .edge = edge, .channelId = channelId};
 
-  self->command->setCommandAttribute(self->command, (void*) &conf);
+  ICommandHandle command = CommandTrigger_getICommand(self->command);
+  command->setCommandAttribute(command, (void*) &conf);
+
+  return command;
 }
 
+char* CommandTriggerParser_getName(CommandTriggerHandle self){
+  return commandName;
+}
 void CommandTriggerParser_destroy(CommandTriggerParserHandle self){
+  CommandTrigger_destroy(self->command);
+
   free(self);
   self = NULL;
 }

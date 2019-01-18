@@ -11,7 +11,7 @@
  *               IScope interface, to prevent code dublication.
  *
  ******************************************************************************/
- 
+
 #ifndef COMMANDPOLL_H_
 #define COMMANDPOLL_H_
 
@@ -35,9 +35,5 @@ void CommandPoll_destroy(CommandPollHandle self);
 
 /* Returns the command interface */
 ICommandHandle CommandPoll_getICommand(CommandPollHandle self);
-
-/* Returns the name of the command */
-char* CommandPoll_getName(CommandPollHandle self);
-
 
 #endif

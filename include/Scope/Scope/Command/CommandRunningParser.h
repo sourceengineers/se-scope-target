@@ -9,7 +9,7 @@
  *
  *              
  ******************************************************************************/
- 
+
 #ifndef COMMANDRUNNINGPARSER_H_
 #define COMMANDRUNNINGPARSER_H_
 
@@ -27,10 +27,14 @@ typedef struct __CommandRunningParserPrivateData* CommandRunningParserHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandRunningParserHandle CommandRunningParser_create(ICommandHandle command, IUnpackerHandle unpacker);
+CommandRunningParserHandle CommandRunningParser_create(ChannelHandle* channels, size_t amountOfChannels, \
+                                                        IUnpackerHandle unpacker);
 
 /* Configurates the gives command */
-void CommandRunningParser_configure(CommandRunningParserHandle self);
+ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self);
+
+/* Returns the name of the command */
+char* CommandRunningParser_getName();
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandRunningParser_destroy(CommandRunningParserHandle self);

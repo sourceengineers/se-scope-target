@@ -20,7 +20,7 @@
  *               numberOfChangedChannels or it will be ingored.
  *              
  ******************************************************************************/
- 
+
 #ifndef COMMANDADDR_H_
 #define COMMANDADDR_H_
 
@@ -30,10 +30,10 @@
 
 /* Definition of the configuration struct */
 typedef struct {
-  void** newAddresses;          // Array to keep track on witch channels have changed
-  int* changedChannels;         // Id's of the channels stored in "newAddresses"
-  int numberOfChangedChannels;
-  DATA_TYPES* types;            // Types of the channels
+    void** newAddresses;          // Array to keep track on witch channels have changed
+    int* changedChannels;         // Id's of the channels stored in "newAddresses"
+    int numberOfChangedChannels;
+    DATA_TYPES* types;            // Types of the channels
 } CommandAddrConf;
 
 /******************************************************************************
@@ -52,9 +52,5 @@ void CommandAddr_destroy(CommandAddrHandle self);
 
 /* Returns the command interface */
 ICommandHandle CommandAddr_getICommand(CommandAddrHandle self);
-
-/* Returns the name of the command */
-char* CommandAddr_getName(CommandAddrHandle self);
-
 
 #endif

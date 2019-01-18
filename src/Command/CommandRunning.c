@@ -12,8 +12,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "cf_running";
 
 /* Class data */
 typedef struct __CommandRunningPrivateData
@@ -76,13 +74,6 @@ static void setCommandAttribute(ICommandHandle command, void* attr){
   }
 }
 
-
-static char* getCommandName(ICommandHandle command){
-  CommandRunningHandle commandAddr = (CommandRunningHandle) command->implementer;
-
-  return CommandRunning_getName(commandAddr);
-}
-
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -98,17 +89,12 @@ CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t
   self->command.implementer = self;
   self->command.run = &run;
   self->command.setCommandAttribute = &setCommandAttribute;
-  self->command.getCommandName = &getCommandName;
 
   return self;
 }
 
 ICommandHandle CommandRunning_getICommand(CommandRunningHandle self){
   return &self->command;
-}
-
-char* CommandRunning_getName(CommandRunningHandle self){
-  return commandName;
 }
 
 void CommandRunning_destroy(CommandRunningHandle self){

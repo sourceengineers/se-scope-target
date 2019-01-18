@@ -1,11 +1,11 @@
 /*!*****************************************************************************
- * @file         CommandPoll.h
+ * @file         CommandPollParser.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the configurator for the cf_poll.
+ * @brief        Implementation of the configurator for the ev_clear.
  *
  *
  ******************************************************************************/
@@ -27,10 +27,13 @@ typedef struct __CommandPollParserPrivateData* CommandPollParserHandle;
  Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandPollParserHandle CommandPollParser_create(ICommandHandle command, IUnpackerHandle unpacker);
+CommandPollParserHandle CommandPollParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
 
 /* Configurates the gives command */
-void CommandPollParser_configure(CommandPollParserHandle self);
+ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self);
+
+/* Returns the name of the command */
+char* CommandPollParser_getName();
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandPollParser_destroy(CommandPollParserHandle self);

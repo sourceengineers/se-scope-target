@@ -10,7 +10,7 @@
  *               Configurates the Trigger. The used structure is defined and 
  *               explained in the trigger.h file.
  ******************************************************************************/
- 
+
 #ifndef COMMANDTRIGGER_H_
 #define COMMANDTRIGGER_H_
 
@@ -34,9 +34,5 @@ void CommandTrigger_destroy(CommandTriggerHandle self);
 
 /* Returns the command interface */
 ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self);
-
-/* Returns the name of the command */
-char* CommandTrigger_getName(CommandTriggerHandle self);
-
 
 #endif

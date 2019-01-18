@@ -12,36 +12,38 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Class data */
-typedef struct __CommandRunningParserPrivateData
-{
-  ICommandHandle command;
-  IUnpackerHandle unpacker;
-  char* commandName;
+/* Name of the command */
+static char* commandName = "cf_running";
 
-} CommandRunningParserPrivateData ;
+/* Class data */
+typedef struct __CommandRunningParserPrivateData{
+    CommandRunningHandle command;
+    IUnpackerHandle unpacker;
+    char* commandName;
+
+} CommandRunningParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningParserHandle CommandRunningParser_create(ICommandHandle command, IUnpackerHandle unpacker){
+CommandRunningParserHandle CommandRunningParser_create(ChannelHandle* channels, size_t amountOfChannels, \
+                                                        IUnpackerHandle unpacker){
   CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
-  self->command = command;
+  self->command = CommandRunning_create(channels, amountOfChannels);
   self->unpacker = unpacker;
-  self->commandName = (char*) self->command->getCommandName(self->command);
   return self;
 }
 
-void CommandRunningParser_configure(CommandRunningParserHandle self){
+ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
 
   if(self->unpacker == NULL){
-    return;
+    return NULL;
   }
 
   int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) self->commandName);
 
   if(numberOfFields == -1){
-    return;
+    return NULL;
   }
 
   int channelIds[numberOfFields];
@@ -49,19 +51,20 @@ void CommandRunningParser_configure(CommandRunningParserHandle self){
 
   char nameOfField[MAX_FIELD_LENGTH];
 
-  for (size_t i = 0; i < numberOfFields; ++i) {
+  for(size_t i = 0; i < numberOfFields; ++i){
 
-    bool foundField = self->unpacker->getNameOfField(self->unpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH, i);
+    bool foundField = self->unpacker->getNameOfField(self->unpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH,
+                                                     i);
     if(foundField == true){
       channelIds[i] = atoi(nameOfField);
 
-      CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = nameOfField,
-                                                 .isInArray = false, .arrayIndex = 0 };
+      CommandFetchingInformation information = {.commandName = self->commandName, .fieldName = nameOfField,
+              .isInArray = false, .arrayIndex = 0};
 
       bool newState = self->unpacker->getBoolFromCommand(self->unpacker, &information);
       if(newState == true){
         newStates[i] = CHANNEL_RUNNING;
-      } else {
+      } else{
         newStates[i] = CHANNEL_STOPPED;
       }
     }
@@ -71,11 +74,19 @@ void CommandRunningParser_configure(CommandRunningParserHandle self){
                           .changedChannels = channelIds, \
                           .numberOfChangedChannels = numberOfFields};
 
+  ICommandHandle command = CommandRunning_getICommand(self->command);
+  command->setCommandAttribute(command, (void*) &conf);
 
-  self->command->setCommandAttribute(self->command, (void*) &conf);
+  return command;
+}
+
+char* CommandRunningParser_getName(){
+  return commandName;
 }
 
 void CommandRunningParser_destroy(CommandRunningParserHandle self){
+  CommandRunning_destroy(self->command);
+
   free(self);
   self = NULL;
 }

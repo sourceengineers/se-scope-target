@@ -12,41 +12,50 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Class data */
-typedef struct __CommandPollParserPrivateData
-{
-  ICommandHandle command;
-  IUnpackerHandle unpacker;
-  char* commandName;
+//* Name of the command */
+static char* commandName = "ev_poll";
 
-} CommandPollParserPrivateData ;
+/* Class data */
+typedef struct __CommandPollParserPrivateData{
+    CommandPollHandle command;
+    IUnpackerHandle unpacker;
+
+} CommandPollParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPollParserHandle CommandPollParser_create(ICommandHandle command, IUnpackerHandle unpacker){
+CommandPollParserHandle CommandPollParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
   CommandPollParserHandle self = malloc(sizeof(CommandPollParserPrivateData));
-  self->command = command;
+  self->command = CommandPoll_create(scope);
   self->unpacker = unpacker;
-  self->commandName = (char*) self->command->getCommandName(self->command);
   return self;
 }
 
-void CommandPollParser_configure(CommandPollParserHandle self){
+ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self){
 
   if(self->unpacker == NULL){
-    return;
+    return NULL;
   }
 
-  CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = (char*) "",
-                                             .isInArray = false, .arrayIndex = 0 };
+  CommandFetchingInformation information = {.commandName = commandName, .fieldName = (char*) "",
+          .isInArray = false, .arrayIndex = 0};
 
   const uint32_t timestamp = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
-  self->command->setCommandAttribute(self->command, (void*) &timestamp);
+  ICommandHandle command = CommandPoll_getICommand(self->command);
+  command->setCommandAttribute(command, (void*) &timestamp);
+
+  return command;
+}
+
+char* CommandPollParser_getName(){
+  return commandName;
 }
 
 void CommandPollParser_destroy(CommandPollParserHandle self){
+  CommandPoll_destroy(self->command);
+
   free(self);
   self = NULL;
 }

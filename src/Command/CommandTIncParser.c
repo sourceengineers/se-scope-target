@@ -12,41 +12,50 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Class data */
-typedef struct __CommandTIncParserPrivateData
-{
-  ICommandHandle command;
-  IUnpackerHandle unpacker;
-  char* commandName;
+/* Name of the command */
+static char* commandName = "cf_t_inc";
 
-} CommandTIncParserPrivateData ;
+/* Class data */
+typedef struct __CommandTIncParserPrivateData{
+    CommandTIncHandle command;
+    IUnpackerHandle unpacker;
+
+} CommandTIncParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandTIncParserHandle CommandTIncParser_create(ICommandHandle command, IUnpackerHandle unpacker){
+CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
   CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
-  self->command = command;
+  self->command = CommandTInc_create(scope);
   self->unpacker = unpacker;
-  self->commandName = (char*) self->command->getCommandName(self->command);
   return self;
 }
 
-void CommandTIncParser_configure(CommandTIncParserHandle self){
+ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self){
 
   if(self->unpacker == NULL){
-    return;
+    return NULL;
   }
 
-  CommandFetchingInformation information = { .commandName = self->commandName, .fieldName = (char*) "",
-                                             .isInArray = false, .arrayIndex = 0 };
+  CommandFetchingInformation information = {.commandName = commandName, .fieldName = (char*) "",
+          .isInArray = false, .arrayIndex = 0};
 
   const int timeIncrement = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
-  self->command->setCommandAttribute(self->command, (void*) &timeIncrement);
+  ICommandHandle command = CommandTInc_getICommand(self->command);
+  command->setCommandAttribute(command, (void*) &timeIncrement);
+
+  return command;
+}
+
+char* CommandTIncParser_getName(CommandTIncParserHandle self){
+  return commandName;
 }
 
 void CommandTIncParser_destroy(CommandTIncParserHandle self){
+  CommandTInc_destroy(self->command);
+
   free(self);
   self = NULL;
 }

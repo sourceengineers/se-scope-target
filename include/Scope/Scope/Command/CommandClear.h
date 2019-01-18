@@ -35,8 +35,6 @@ void CommandClear_destroy(CommandClearHandle self);
 /* Returns the command interface */
 ICommandHandle CommandClear_getICommand(CommandClearHandle self);
 
-/* Returns the name of the command */
-char* CommandClear_getName(CommandClearHandle self);
 
 
 #endif

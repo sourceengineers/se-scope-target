@@ -12,9 +12,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "ev_clear";
-
 /* Class data */
 typedef struct __CommandClearPrivateData
 {
@@ -35,12 +32,6 @@ static void setCommandAttribute(ICommandHandle command, void* attr){
   return;
 }
 
-static char* getCommandName(ICommandHandle command){
-  CommandClearHandle commandAddr = (CommandClearHandle) command->implementer;
-
-  return CommandClear_getName(commandAddr);
-}
-
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -52,7 +43,6 @@ CommandClearHandle CommandClear_create(IScopeHandle scope){
   self->command.implementer = self;
   self->command.run = &run;
   self->command.setCommandAttribute = &setCommandAttribute;
-  self->command.getCommandName = &getCommandName;
 
   return self;
 }
@@ -60,11 +50,6 @@ CommandClearHandle CommandClear_create(IScopeHandle scope){
 ICommandHandle CommandClear_getICommand(CommandClearHandle self){
   return &self->command;
 }
-
-char* CommandClear_getName(CommandClearHandle self){
-  return commandName;
-}
-
 
 void CommandClear_destroy(CommandClearHandle self){
   free(self);

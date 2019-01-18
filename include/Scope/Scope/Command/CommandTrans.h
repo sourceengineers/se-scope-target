@@ -35,8 +35,4 @@ void CommandTrans_destroy(CommandTransHandle self);
 /* Returns the command interface */
 ICommandHandle CommandTrans_getICommand(CommandTransHandle self);
 
-/* Returns the name of the command */
-char* CommandTrans_getName(CommandTransHandle self);
-
-
 #endif

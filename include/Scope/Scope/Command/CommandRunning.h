@@ -16,7 +16,7 @@
  *               Only CHANNEL_RUNNING and CHANNEL_STOPPED will affect the
  *               channel state.
  ******************************************************************************/
- 
+
 #ifndef COMMANDRUNNING_H_
 #define COMMANDRUNNING_H_
 
@@ -27,9 +27,9 @@
 
 /* Struct used to help the command configure the channels */
 typedef struct {
-  CHANNEL_STATES* newStates;
-  int* changedChannels;
-  int numberOfChangedChannels;
+    CHANNEL_STATES* newStates;
+    int* changedChannels;
+    int numberOfChangedChannels;
 } CommandRunningConf;
 
 /******************************************************************************
@@ -48,9 +48,5 @@ void CommandRunning_destroy(CommandRunningHandle self);
 
 /* Returns the command interface */
 ICommandHandle CommandRunning_getICommand(CommandRunningHandle self);
-
-/* Returns the name of the command */
-char* CommandRunning_getName(CommandRunningHandle self);
-
 
 #endif

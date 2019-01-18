@@ -14,34 +14,33 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandDispatcherPrivateData
-{
-  CommandRunningHandle commandRunning;
-  CommandPollHandle commandPoll;
-  CommandAddrHandle commandAddr;
-  CommandClearHandle commandClear;
-  CommandTIncHandle commandTInc;
-  CommandTransHandle commandTrans;
-  CommandTriggerHandle commandTrigger;
-  CommandAnnounceHandle commandAnnounce;
+typedef struct __CommandDispatcherPrivateData{
+    CommandRunningHandle commandRunning;
+    CommandPollHandle commandPoll;
+    CommandAddrHandle commandAddr;
+    CommandClearHandle commandClear;
+    CommandTIncHandle commandTInc;
+    CommandTransHandle commandTrans;
+    CommandTriggerHandle commandTrigger;
+    CommandAnnounceHandle commandAnnounce;
 
-  CommandAddrParserHandle commandAddrParser;
-  CommandRunningParserHandle commandRunningParser;
-  CommandTIncParserHandle commandTIncParser;
-  CommandTriggerParserHandle commandTriggerParser;
-  CommandPollParserHandle commandPollParser;
+    CommandAddrParserHandle commandAddrParser;
+    CommandRunningParserHandle commandRunningParser;
+    CommandTIncParserHandle commandTIncParser;
+    CommandTriggerParserHandle commandTriggerParser;
+    CommandPollParserHandle commandPollParser;
 
-} CommandDispatcherPrivateData ;
+} CommandDispatcherPrivateData;
 
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
 CommandDispatcherHandle CommandDispatcher_create(IScopeHandle scope,
-                                           ChannelHandle* channels, 
-                                           size_t amountOfChannels,
-                                           TriggerHandle trigger,
-                                           IUnpackerHandle unpacker){
+                                                 ChannelHandle* channels,
+                                                 size_t amountOfChannels,
+                                                 TriggerHandle trigger,
+                                                 IUnpackerHandle unpacker){
 
   CommandDispatcherHandle self = malloc(sizeof(CommandDispatcherPrivateData));
   /* Initialize commands */
@@ -82,7 +81,7 @@ ICommandHandle CommandDispatcher_getICommand(CommandDispatcherHandle self, const
     CommandPollParser_configure(self->commandPollParser);
     return CommandPoll_getICommand(self->commandPoll);
 
-  } else if(strncmp(command, CommandAddr_getName(self->commandAddr), MAX_COMMAND_LENGTH) == 0) {
+  } else if(strncmp(command, CommandAddr_getName(self->commandAddr), MAX_COMMAND_LENGTH) == 0){
     CommandAddrParser_configure(self->commandAddrParser);
     return CommandAddr_getICommand(self->commandAddr);
 
@@ -103,7 +102,7 @@ ICommandHandle CommandDispatcher_getICommand(CommandDispatcherHandle self, const
   } else if(strncmp(command, CommandClear_getName(self->commandClear), MAX_COMMAND_LENGTH) == 0){
     return CommandClear_getICommand(self->commandClear);
   }
-  
+
   return NULL;
 }
 
