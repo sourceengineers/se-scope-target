@@ -13,7 +13,7 @@
 #define UARTVALIDATOR_H_
 
 #include <Scope/Communication/IComValidator.h>
-#include <Scope/Communication/CommunicationCommons.h>
+#include <Scope/Communication/Validators/CommunicationCommons.h>
 #include <Scope/Communication/IComValidator.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 

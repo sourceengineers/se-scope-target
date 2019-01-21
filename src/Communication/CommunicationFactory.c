@@ -10,7 +10,7 @@
 #include <Scope/Communication/CommunicationFactory.h>
 #include <string.h>
 #include <Scope/Communication/EthernetValidator.h>
-#include <Scope/Communication/UartValidator.h>
+#include <Scope/Communication/Validators/UartValidator.h>
 
 /******************************************************************************
  Define private data

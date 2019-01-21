@@ -8,8 +8,8 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Communication/IComValidator.h>
-#include <Scope/Communication/CommunicationCommons.h>
-#include <Scope/Communication/UartValidator.h>
+#include <Scope/Communication/Validators/CommunicationCommons.h>
+#include <Scope/Communication/Validators/UartValidator.h>
 
 /******************************************************************************
  Define private data
