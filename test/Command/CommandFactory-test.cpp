@@ -2,13 +2,13 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-  #include <Scope/Command/CommandParser.h>
+  #include <Scope/Command/CommandParserDispatcher.h>
 }
 
 using namespace testing;
 using namespace std;
 
-TEST(CommandParser, test_destroy)
+TEST(CommandParserDispatcher, test_destroy)
 {
   const size_t numberOfChannels = 3;
   ChannelHandle channels[numberOfChannels] = {NULL};
@@ -17,14 +17,14 @@ TEST(CommandParser, test_destroy)
   ICommand* commandClear = NULL;
   ICommand* commandAnnounce = NULL;
 
-  CommandParserHandle commandParser = CommandParser_create(NULL, channels, numberOfChannels, NULL, NULL);
+  CommandParserDispatcherHandle commandParserDispatcher = CommandParserDispatcher_create(NULL, channels, numberOfChannels, NULL, NULL);
   
-  commandTrans = CommandParser_run(commandParser, (const char*) "ev_trans");
+  commandTrans = CommandParserDispatcher_run(commandParserDispatcher, (const char*) "ev_trans");
   ASSERT_THAT(commandTrans, NotNull());
-  commandClear = CommandParser_run(commandParser, (const char*) "ev_clear");
+  commandClear = CommandParserDispatcher_run(commandParserDispatcher, (const char*) "ev_clear");
   ASSERT_THAT(commandClear, NotNull());
-  commandAnnounce = CommandParser_run(commandParser, (const char*) "ev_announce");
+  commandAnnounce = CommandParserDispatcher_run(commandParserDispatcher, (const char*) "ev_announce");
   ASSERT_THAT(commandAnnounce, NotNull());
 
-  CommandParser_destroy(commandParser);
+  CommandParserDispatcher_destroy(commandParserDispatcher);
 }

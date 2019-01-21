@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         CommandParser.h
+ * @file         CommandParserDispatcher.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -8,7 +8,7 @@
  * @brief        Factory to generate the different Command interfaces 
  * 
  *               Since the usage of malloc after the initial construction is 
- *               not permitted, all objects returned by the commandParser are pre-
+ *               not permitted, all objects returned by the commandParserDispatcher are pre-
  *               generated during the construction process.
  *
  ******************************************************************************/ 
@@ -31,23 +31,23 @@
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __CommandParserPrivateData* CommandParserHandle;
+typedef struct __CommandParserDispatcherPrivateData* CommandParserDispatcherHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the commandParser */
-CommandParserHandle CommandParser_create(IScopeHandle scope,
+/* Constructor: Creates a new instance of the commandParserDispatcher */
+CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope,
                                            ChannelHandle* channels, 
                                            size_t amountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker);
                                            
-/* Deconstructor: Deletes the instance of the commandParser */
-void CommandParser_destroy(CommandParserHandle self);
+/* Deconstructor: Deletes the instance of the commandParserDispatcher */
+void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self);
 
 /* Returns the command interface */
-ICommandHandle CommandParser_run(CommandParserHandle self, const char* command);
+ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, const char* command);
 
 
 #endif

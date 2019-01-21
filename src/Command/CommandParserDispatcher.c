@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandParser.c
+ * @file         CommandParserDispatcher.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,14 +7,14 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandParser.h>
+#include <Scope/Command/CommandParserDispatcher.h>
 #include <string.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandParserPrivateData {
+typedef struct __CommandParserDispatcherPrivateData {
 		CommandAddrParserHandle commandAddrParser;
 		CommandRunningParserHandle commandRunningParser;
 		CommandTIncParserHandle commandTIncParser;
@@ -23,19 +23,19 @@ typedef struct __CommandParserPrivateData {
 		CommandAnnounceParserHandle commandAnnounceParser;
 		CommandTransParserHandle commandTransParser;
 		CommandClearParserHandle commandClearParser;
-} CommandParserPrivateData;
+} CommandParserDispatcherPrivateData;
 
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandParserHandle CommandParser_create(IScopeHandle scope,
+CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope,
                                                  ChannelHandle *channels,
                                                  size_t amountOfChannels,
                                                  TriggerHandle trigger,
                                                  IUnpackerHandle unpacker) {
 
-	CommandParserHandle self = malloc(sizeof(CommandParserPrivateData));
+	CommandParserDispatcherHandle self = malloc(sizeof(CommandParserDispatcherPrivateData));
 
 	/* Initialize needed command parser
 	* Not all commands need parser, which is why there are less parser as commands */
@@ -52,7 +52,7 @@ CommandParserHandle CommandParser_create(IScopeHandle scope,
 	return self;
 }
 
-ICommandHandle CommandParser_run(CommandParserHandle self, const char *command) {
+ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, const char *command) {
 
 	if (strncmp(command, CommandRunningParser_getName(), MAX_COMMAND_LENGTH) == 0) {
 		return CommandRunningParser_getCommand(self->commandRunningParser);
@@ -82,7 +82,7 @@ ICommandHandle CommandParser_run(CommandParserHandle self, const char *command) 
 	return NULL;
 }
 
-void CommandParser_destroy(CommandParserHandle self) {
+void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self) {
 
 	CommandRunningParser_destroy(self->commandRunningParser);
 	CommandAddrParser_destroy(self->commandAddrParser);
