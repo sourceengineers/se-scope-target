@@ -15,7 +15,7 @@
 #ifndef COMMANDPOLL_H_
 #define COMMANDPOLL_H_
 
-#include <Scope/IScope.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 

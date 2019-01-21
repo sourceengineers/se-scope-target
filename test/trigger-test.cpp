@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include <Scope/Trigger.h>
+    #include <Scope/Core/Trigger.h>
     #include <Scope/GeneralPurpose/BufferedFloatStream.h>
 }
 using namespace std;

@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-  #include <Scope/Command/CommandParserDispatcher.h>
+  #include <Scope/Parser/CommandParserDispatcher.h>
 }
 
 using namespace testing;

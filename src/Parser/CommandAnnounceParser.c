@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandClearParser.c
+ * @file         CommandAnnounceParser.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,40 +7,40 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandClearParser.h>
+#include <Scope/Parser/CommandAnnounceParser.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static char* commandName = "ev_clear";
+static char* commandName = "ev_announce";
 
 /* Class data */
-typedef struct __CommandClearParserPrivateData{
-    CommandClearHandle command;
+typedef struct __CommandAnnounceParserPrivateData{
+    CommandAnnounceHandle command;
     char* commandName;
 
-} CommandClearParserPrivateData;
+} CommandAnnounceParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandClearParserHandle CommandClearParser_create(IScopeHandle scope){
-  CommandClearParserHandle self = malloc(sizeof(CommandClearParserPrivateData));
-  self->command = CommandClear_create(scope);
+CommandAnnounceParserHandle CommandAnnounceParser_create(IScopeHandle scope){
+  CommandAnnounceParserHandle self = malloc(sizeof(CommandAnnounceParserPrivateData));
+  self->command = CommandAnnounce_create(scope);
   return self;
 }
 
-ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self){
-  return CommandClear_getICommand(self->command);
+ICommandHandle CommandAnnounceParser_getCommand(CommandAnnounceParserHandle self){
+  return CommandAnnounce_getICommand(self->command);
 }
 
-char* CommandClearParser_getName(){
+char* CommandAnnounceParser_getName(){
   return commandName;
 }
 
-void CommandClearParser_destroy(CommandClearParserHandle self){
-  CommandClear_destroy(self->command);
+void CommandAnnounceParser_destroy(CommandAnnounceParserHandle self){
+  CommandAnnounce_destroy(self->command);
 
   free(self);
   self = NULL;

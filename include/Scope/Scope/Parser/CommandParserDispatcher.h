@@ -16,16 +16,16 @@
 #ifndef COMMANDFACTORY_H_
 #define COMMANDFACTORY_H_
 
-#include <Scope/Command/CommandAddrParser.h>
-#include <Scope/Command/CommandRunningParser.h>
-#include <Scope/Command/CommandTIncParser.h>
-#include <Scope/Command/CommandTriggerParser.h>
-#include <Scope/Command/CommandPollParser.h>
-#include <Scope/Command/CommandAnnounceParser.h>
-#include <Scope/Command/CommandTransParser.h>
-#include <Scope/Command/CommandClearParser.h>
+#include <Scope/Parser/CommandAddrParser.h>
+#include <Scope/Parser/CommandRunningParser.h>
+#include <Scope/Parser/CommandTIncParser.h>
+#include <Scope/Parser/CommandTriggerParser.h>
+#include <Scope/Parser/CommandPollParser.h>
+#include <Scope/Parser/CommandAnnounceParser.h>
+#include <Scope/Parser/CommandTransParser.h>
+#include <Scope/Parser/CommandClearParser.h>
 
-#include <Scope/IScope.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

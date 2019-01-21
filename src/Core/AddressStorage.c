@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/AddressStorage.h>
+#include <Scope/Core/AddressStorage.h>
 #include <stdlib.h>
 #include <string.h>
 

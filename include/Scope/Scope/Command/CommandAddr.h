@@ -24,7 +24,7 @@
 #ifndef COMMANDADDR_H_
 #define COMMANDADDR_H_
 
-#include <Scope/Channel.h>
+#include <Scope/Core/Channel.h>
 #include <Scope/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 

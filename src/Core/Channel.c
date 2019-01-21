@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Channel.h>
+#include <Scope/Core/Channel.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/BufferedFloatStream.h>
 

@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandAnnounceParser.c
+ * @file         CommandTransParser.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,40 +7,41 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandAnnounceParser.h>
+#include <Scope/Parser/CommandTransParser.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static char* commandName = "ev_announce";
+static char* commandName = "ev_trans";
 
 /* Class data */
-typedef struct __CommandAnnounceParserPrivateData{
-    CommandAnnounceHandle command;
-    char* commandName;
+typedef struct __CommandTransParserPrivateData
+{
+  CommandTransHandle command;
+  char* commandName;
 
-} CommandAnnounceParserPrivateData;
+} CommandTransParserPrivateData ;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandAnnounceParserHandle CommandAnnounceParser_create(IScopeHandle scope){
-  CommandAnnounceParserHandle self = malloc(sizeof(CommandAnnounceParserPrivateData));
-  self->command = CommandAnnounce_create(scope);
+CommandTransParserHandle CommandTransParser_create(IScopeHandle scope){
+  CommandTransParserHandle self = malloc(sizeof(CommandTransParserPrivateData));
+  self->command = CommandTrans_create(scope);
   return self;
 }
 
-ICommandHandle CommandAnnounceParser_getCommand(CommandAnnounceParserHandle self){
-  return CommandAnnounce_getICommand(self->command);
+ICommandHandle CommandTransParser_getCommand(CommandTransParserHandle self){
+  return CommandTrans_getICommand(self->command);
 }
 
-char* CommandAnnounceParser_getName(){
+char* CommandTransParser_getName(){
   return commandName;
 }
 
-void CommandAnnounceParser_destroy(CommandAnnounceParserHandle self){
-  CommandAnnounce_destroy(self->command);
+void CommandTransParser_destroy(CommandTransParserHandle self){
+  CommandTrans_destroy(self->command);
 
   free(self);
   self = NULL;

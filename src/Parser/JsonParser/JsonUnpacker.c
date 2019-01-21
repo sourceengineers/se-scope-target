@@ -7,12 +7,12 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/JsonParser/JsonUnpacker.h>
+#include <Scope/Parser/JsonParser/JsonUnpacker.h>
 #include <string.h>
 #include <Scope/GeneralPurpose/Memory.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Communication/Keywords.h>
-#include <Scope/JsonParser/JsonCommon.h>
+#include <Scope/Parser/JsonParser/JsonCommon.h>
 
 #define INPUT_BUFFER_SIZE 500
 #define TOKEN_BUFFER_SIZE 100

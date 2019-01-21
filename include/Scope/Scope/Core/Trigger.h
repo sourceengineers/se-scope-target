@@ -21,7 +21,7 @@
 #ifndef TRIGGER_H_
 #define TRIGGER_H_
 
-#include <Scope/Channel.h>
+#include <Scope/Core/Channel.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Constants to represent the different edges on which the trigger can be 

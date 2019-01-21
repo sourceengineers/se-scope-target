@@ -22,10 +22,10 @@
 #include <Scope/Communication/IPacker.h>
 #include <Scope/Communication/CommunicationCommons.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/Channel.h>
-#include <Scope/Trigger.h>
-#include <Scope/IScope.h>
-#include <Scope/AddressStorage.h>
+#include <Scope/Core/Channel.h>
+#include <Scope/Core/Trigger.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/Core/AddressStorage.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

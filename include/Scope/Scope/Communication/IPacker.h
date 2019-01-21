@@ -25,7 +25,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include <Scope/Channel.h>
+#include <Scope/Core/Channel.h>
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/IIntStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>

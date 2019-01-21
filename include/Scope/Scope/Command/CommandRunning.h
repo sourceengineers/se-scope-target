@@ -21,7 +21,7 @@
 #define COMMANDRUNNING_H_
 
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Channel.h>
+#include <Scope/Core/Channel.h>
 #include <Scope/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 

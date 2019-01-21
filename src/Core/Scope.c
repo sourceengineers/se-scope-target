@@ -7,10 +7,10 @@
  *
 *******************************************************************************/
 
-#include <Scope/Scope.h>
+#include <Scope/Core/Scope.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/JsonParser/JsonUnpacker.h>
-#include <Scope/JsonParser/JsonPacker.h>
+#include <Scope/Parser/JsonParser/JsonUnpacker.h>
+#include <Scope/Parser/JsonParser/JsonPacker.h>
 #include <Scope/Communication/Sender.h>
 #include <Scope/Communication/CommunicationFactory.h>
 #include <Scope/GeneralPurpose/IntRingBuffer.h>

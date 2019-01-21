@@ -7,10 +7,10 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/JsonParser/JsonPacker.h>
+#include <Scope/Parser/JsonParser/JsonPacker.h>
 #include <string.h>
 #include <stdio.h>
-#include <Scope/JsonParser/JsonCommon.h>
+#include <Scope/Parser/JsonParser/JsonCommon.h>
 #include <Scope/Communication/Keywords.h>
 //#include <math.h>
 

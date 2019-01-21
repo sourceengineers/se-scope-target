@@ -14,7 +14,7 @@
 
 #include <Scope/Communication/IPacker.h>
 #include <Scope/Communication/IComValidator.h>
-#include <Scope/AddressStorage.h>
+#include <Scope/Core/AddressStorage.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

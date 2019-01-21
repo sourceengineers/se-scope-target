@@ -12,11 +12,11 @@
 #ifndef SCOPE_H_
 #define SCOPE_H_
 
-#include <Scope/Trigger.h>
-#include <Scope/Channel.h>
-#include <Scope/IScope.h>
+#include <Scope/Core/Trigger.h>
+#include <Scope/Core/Channel.h>
+#include <Scope/Core/IScope.h>
 
-#include <Scope/Command/CommandParserDispatcher.h>
+#include <Scope/Parser/CommandParserDispatcher.h>
 #include <Scope/Communication/Receiver.h>
 
 #include <Scope/GeneralPurpose/BufferedByteStream.h>

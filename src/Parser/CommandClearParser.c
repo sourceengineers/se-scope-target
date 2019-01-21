@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandTransParser.c
+ * @file         CommandClearParser.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,41 +7,40 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandTransParser.h>
+#include <Scope/Parser/CommandClearParser.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static char* commandName = "ev_trans";
+static char* commandName = "ev_clear";
 
 /* Class data */
-typedef struct __CommandTransParserPrivateData
-{
-  CommandTransHandle command;
-  char* commandName;
+typedef struct __CommandClearParserPrivateData{
+    CommandClearHandle command;
+    char* commandName;
 
-} CommandTransParserPrivateData ;
+} CommandClearParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandTransParserHandle CommandTransParser_create(IScopeHandle scope){
-  CommandTransParserHandle self = malloc(sizeof(CommandTransParserPrivateData));
-  self->command = CommandTrans_create(scope);
+CommandClearParserHandle CommandClearParser_create(IScopeHandle scope){
+  CommandClearParserHandle self = malloc(sizeof(CommandClearParserPrivateData));
+  self->command = CommandClear_create(scope);
   return self;
 }
 
-ICommandHandle CommandTransParser_getCommand(CommandTransParserHandle self){
-  return CommandTrans_getICommand(self->command);
+ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self){
+  return CommandClear_getICommand(self->command);
 }
 
-char* CommandTransParser_getName(){
+char* CommandClearParser_getName(){
   return commandName;
 }
 
-void CommandTransParser_destroy(CommandTransParserHandle self){
-  CommandTrans_destroy(self->command);
+void CommandClearParser_destroy(CommandClearParserHandle self){
+  CommandClear_destroy(self->command);
 
   free(self);
   self = NULL;
