@@ -27,7 +27,7 @@ typedef struct IScopeStruct* IScopeHandle;
  Define interface
 ******************************************************************************/
 typedef struct IScopeStruct {
-  void* implementer;
+  GenericReference handle;
   void (*poll)(IScopeHandle scope, uint32_t timeStamp);
   void (*transmit)(IScopeHandle scope);
   void (*announce)(IScopeHandle scope);

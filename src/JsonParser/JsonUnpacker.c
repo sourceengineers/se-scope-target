@@ -198,7 +198,7 @@ static bool jsoneq(const char *json, jsmntok_t *tok, const char *key) {
 }
 
 static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_t length){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   if(strnlen(data, INPUT_BUFFER_SIZE) >= INPUT_BUFFER_SIZE){
     return false;
@@ -239,7 +239,7 @@ static bool unpack(IUnpackerHandle iUnpackHandler, const char* data, const size_
 }
 
 static void activateNewMessage(IUnpackerHandle iUnpackHandler){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   memcpy(self->storageTokens, self->inputTokens, TOKEN_BUFFER_SIZE * sizeof(jsmntok_t));
   strcpy(self->storageString, self->inputString);
@@ -250,13 +250,13 @@ static void activateNewMessage(IUnpackerHandle iUnpackHandler){
 }
 
 static size_t getNumberOfCommands(IUnpackerHandle iUnpackHandler){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   return self->numberOfCommands;
 }
 
 static bool getNameOfCommand(IUnpackerHandle iUnpackHandler, char* name, const int maxLenght, const int index){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* tok = getCommandField(self);
 
@@ -292,7 +292,7 @@ static bool getNameOfCommand(IUnpackerHandle iUnpackHandler, char* name, const i
 }
 
 static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* field = getCommand(self, information->commandName);
   field = getField(self, field, information->fieldName);
@@ -320,7 +320,7 @@ static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle iUnpackHandler, Comma
 }
 
 static float getFloatFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* field = getCommand(self, information->commandName);
   field = getField(self, field, information->fieldName);
@@ -348,7 +348,7 @@ static float getFloatFromCommand(IUnpackerHandle iUnpackHandler, CommandFetching
 }
 
 static bool getBoolFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* field = getCommand(self, information->commandName);
   field = getField(self, field, information->fieldName);
@@ -379,7 +379,7 @@ static void getStringFromCommand(IUnpackerHandle iUnpackHandler, CommandFetching
                                  char* targetStr,
                                  const int maxLenght){
 
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* field = getCommand(self, information->commandName);
   field = getField(self, field, information->fieldName);
@@ -407,7 +407,7 @@ static void getStringFromCommand(IUnpackerHandle iUnpackHandler, CommandFetching
 static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandName, char* fieldName,
                            const int maxLenght,
                            const int index){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* command = getCommand(self, commandName);
 
@@ -437,7 +437,7 @@ static bool getNameOfField(IUnpackerHandle iUnpackHandler, const char* commandNa
 }
 
 static size_t getLengthOfCheck(IUnpackerHandle iUnpackHandler){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "transport", TOKEN_BUFFER_SIZE);
 
@@ -449,7 +449,7 @@ static size_t getLengthOfCheck(IUnpackerHandle iUnpackHandler){
 }
 
 static size_t getLengthOfBytesToCheck(IUnpackerHandle iUnpackHandler){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "payload", TOKEN_BUFFER_SIZE);
 
@@ -461,7 +461,7 @@ static size_t getLengthOfBytesToCheck(IUnpackerHandle iUnpackHandler){
 }
 
 static void getBytesToCheck(IUnpackerHandle iUnpackHandler, uint8_t* data){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
   jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "payload", TOKEN_BUFFER_SIZE);
 
   if((tok+1)->type != JSMN_OBJECT){
@@ -472,7 +472,7 @@ static void getBytesToCheck(IUnpackerHandle iUnpackHandler, uint8_t* data){
 }
 
 static void getCheck(IUnpackerHandle iUnpackHandler, uint8_t* checkData){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* tok = getToken(self->inputString, self->inputTokens, (const char*) "transport", TOKEN_BUFFER_SIZE);
 
@@ -485,7 +485,7 @@ static void getCheck(IUnpackerHandle iUnpackHandler, uint8_t* checkData){
 }
 
 static int getNumberOfFields(IUnpackerHandle iUnpackHandler, const char* commandName){
-  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->implementer;
+  JsonUnpackerHandle self = (JsonUnpackerHandle) iUnpackHandler->handle;
 
   jsmntok_t* command = getCommand(self, commandName);
 
@@ -510,7 +510,7 @@ JsonUnpackerHandle JsonUnpacker_create(){
   JsonUnpackerHandle self = (JsonUnpackerHandle) malloc(sizeof(JsonUnpackerPrivateData));
 
   self->numberOfCommands = 0;
-  self->unpacker.implementer = self;
+  self->unpacker.handle = self;
   self->unpacker.unpack = &unpack;
   self->unpacker.getBoolFromCommand = &getBoolFromCommand;
   self->unpacker.getFloatFromCommand = &getFloatFromCommand;

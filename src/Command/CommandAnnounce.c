@@ -23,7 +23,7 @@ typedef struct __CommandAnnouncePrivateData{
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandAnnounceHandle self = (CommandAnnounceHandle) command->implementer;
+  CommandAnnounceHandle self = (CommandAnnounceHandle) command->handle;
   self->scope->announce(self->scope);
 }
 
@@ -39,7 +39,7 @@ CommandAnnounceHandle CommandAnnounce_create(IScopeHandle scope){
   CommandAnnounceHandle self = malloc(sizeof(CommandAnnouncePrivateData));
   self->scope = scope;
 
-  self->command.implementer = self;
+  self->command.handle = self;
   self->command.run = &run;
 
   return self;

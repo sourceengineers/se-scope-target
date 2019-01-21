@@ -23,7 +23,7 @@ typedef struct __BufferedFloatStreamPrivateData {
  Public functions
 ******************************************************************************/
 static bool dataIsReady(IFloatStreamHandle stream){
-  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->implementer;
+  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
 
   if(FloatRingBuffer_getNumberOfUsedData(self->buffer) > 0) {
     return true;
@@ -33,7 +33,7 @@ static bool dataIsReady(IFloatStreamHandle stream){
 }
 
 static float readData(IFloatStreamHandle stream){
-  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->implementer;
+  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
 
   float data;
   FloatRingBuffer_read(self->buffer, &data, 1);
@@ -42,31 +42,31 @@ static float readData(IFloatStreamHandle stream){
 }
 
 static void readAll(IFloatStreamHandle stream, float* data, const size_t length){
-  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->implementer;
+  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
 
   FloatRingBuffer_read(self->buffer, data, length);
 }
 
 static size_t streamLength(IFloatStreamHandle stream){
-  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->implementer;
+  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
 
   return FloatRingBuffer_getNumberOfUsedData(self->buffer);
 }
 
 static void writeData(IFloatStreamHandle stream, const float data){
-  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->implementer;
+  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
 
   FloatRingBuffer_write(self->buffer, &data, 1);
 }
 
 static void writeAll(IFloatStreamHandle stream, const float* data, const size_t length){
-  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->implementer;
+  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
 
   FloatRingBuffer_write(self->buffer, data, length);
 }
 
 static void flush(IFloatStreamHandle stream){
-  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->implementer;
+  BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
 
   FloatRingBuffer_clear(self->buffer);
 }
@@ -77,7 +77,7 @@ BufferedFloatStreamHandle BufferedFloatStream_create(size_t capacity) {
 
   self->buffer = FloatRingBuffer_create(capacity);
 
-  self->parent.implementer = self;
+  self->parent.handle = self;
   self->parent.dataIsReady = &dataIsReady;
   self->parent.readData = &readData;
   self->parent.length = &streamLength;

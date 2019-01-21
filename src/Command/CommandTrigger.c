@@ -25,7 +25,7 @@ typedef struct __CommandTriggerPrivateData {
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command) {
-  CommandTriggerHandle self = (CommandTriggerHandle) command->implementer;
+  CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
 
   Trigger_configure(self->trigger, self->config);
 }
@@ -38,7 +38,7 @@ CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger) {
   CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
   self->trigger = trigger;
 
-  self->command.implementer = self;
+  self->command.handle = self;
   self->command.run = &run;
 
   return self;

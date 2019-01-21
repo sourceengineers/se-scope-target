@@ -76,7 +76,7 @@ UartValidatorHandle UartValidator_create(){
 
   UartValidatorHandle self = (UartValidatorHandle) malloc(sizeof(UartValidatorPrivateData));
 
-  self->validator.implementer = self;
+  self->validator.handle = self;
   self->validator.checkPresentInProtocol = &checkPresentInProtocol;
   self->validator.createCheck = &createCheck;
   self->validator.getCheckLength = &getCheckLength;

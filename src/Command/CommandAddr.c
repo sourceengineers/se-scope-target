@@ -26,7 +26,7 @@ typedef struct __CommandAddrPrivateData{
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandAddrHandle self = (CommandAddrHandle) command->implementer;
+  CommandAddrHandle self = (CommandAddrHandle) command->handle;
 
   /* Set the polling address of the channels */
   for(size_t i = 0; i < self->config.numberOfChangedChannels; i++){
@@ -59,7 +59,7 @@ CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t amountOfCha
   self->channels = channels;
   self->amountOfChannels = amountOfChannels;
 
-  self->command.implementer = self;
+  self->command.handle = self;
   self->command.run = &run;
 
   return self;

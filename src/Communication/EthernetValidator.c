@@ -48,7 +48,7 @@ EthernetValidatorHandle EthernetValidator_create(){
 
   EthernetValidatorHandle self = (EthernetValidatorHandle) malloc(sizeof(EthernetValidatorPrivateData));
 
-  self->validator.implementer = self;
+  self->validator.handle = self;
   self->validator.checkPresentInProtocol = &checkPresentInProtocol;
   self->validator.createCheck = &createCheck;
   self->validator.getCheckLength = &getCheckLength;

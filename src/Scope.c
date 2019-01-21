@@ -63,27 +63,27 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
  Private functions
 ******************************************************************************/
 static void scopePoll(IScopeHandle scope, uint32_t timeStamp){
-  ScopeHandle self = (ScopeHandle) scope->implementer;
+  ScopeHandle self = (ScopeHandle) scope->handle;
   Scope_poll(self, timeStamp);
 }
 
 static void scopeClear(IScopeHandle scope){
-  ScopeHandle self = (ScopeHandle) scope->implementer;
+  ScopeHandle self = (ScopeHandle) scope->handle;
   Scope_clear(self);
 }
 
 static void scopeAnnounce(IScopeHandle scope){
-  ScopeHandle self = (ScopeHandle) scope->implementer;
+  ScopeHandle self = (ScopeHandle) scope->handle;
   Scope_announceAddresses(self);
 }
 
 static void scopeSetTimeIncrement(IScopeHandle scope, uint32_t timeIncrement){
-  ScopeHandle self = (ScopeHandle) scope->implementer;
+  ScopeHandle self = (ScopeHandle) scope->handle;
   Scope_configureTimestampIncrement(self, timeIncrement);
 }
 
 static void scopeTransmit(IScopeHandle scope){
-  ScopeHandle self = (ScopeHandle) scope->implementer;
+  ScopeHandle self = (ScopeHandle) scope->handle;
   Sender_scopeData(self->sender);
   Sender_transmit(self->sender);
 }
@@ -106,12 +106,12 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
 }
 
 static uint32_t getTimeIncrement(IScopeHandle scope){
-  ScopeHandle self = (ScopeHandle) scope->implementer;
+  ScopeHandle self = (ScopeHandle) scope->handle;
   return self->timeIncrement;
 }
 
 static bool transmitTimestampInc(IScopeHandle scope){
-  ScopeHandle self = (ScopeHandle) scope->implementer;
+  ScopeHandle self = (ScopeHandle) scope->handle;
 
   if(self->timestampingMode == TIMESTAMP_AUTOMATIC){
     return true;
@@ -122,7 +122,7 @@ static bool transmitTimestampInc(IScopeHandle scope){
 }
 
 static IIntStreamHandle getTimestamp(IScopeHandle scope){
-  ScopeHandle self = (ScopeHandle) scope->implementer;
+  ScopeHandle self = (ScopeHandle) scope->handle;
   return IntRingBuffer_getIntStream(self->timeStamp);
 }
 /******************************************************************************
@@ -140,7 +140,7 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->timeIncrement = 1;
   self->timestampingMode = timestampingMode;
 
-  self->scope.implementer = self;
+  self->scope.handle = self;
   self->scope.poll = &scopePoll;
   self->scope.transmit = &scopeTransmit;
   self->scope.setTimeIncrement = &scopeSetTimeIncrement;

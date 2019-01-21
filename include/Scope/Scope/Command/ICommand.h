@@ -29,7 +29,7 @@ typedef struct ICommandStruct* ICommandHandle;
  Define interface
 ******************************************************************************/
 typedef struct ICommandStruct {
-  void* implementer;
+  GenericReference handle;
   void (*run)(ICommandHandle command);
 } ICommand ;
 

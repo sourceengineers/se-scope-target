@@ -37,6 +37,8 @@ typedef enum {UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE} DATA_TYPES;
   #define ADDRESS_DATA_TYPE uint64_t
 #endif
 
+#define GenericReference void*
+
 
 
 #endif

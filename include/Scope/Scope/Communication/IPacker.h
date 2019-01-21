@@ -39,7 +39,7 @@ typedef struct IPackerStruct* IPackerHandle;
  Define interface
 ******************************************************************************/
 typedef struct IPackerStruct {
-  void* implementer;
+  GenericReference handle;
   void (*pack)(IPackerHandle packer);
 
   void (*prepareChannel)(IPackerHandle packer, ChannelHandle channel, const uint32_t channelId);

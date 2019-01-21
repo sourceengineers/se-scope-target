@@ -25,7 +25,7 @@ typedef struct __CommandTIncPrivateData{
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandTIncHandle self = (CommandTIncHandle) command->implementer;
+  CommandTIncHandle self = (CommandTIncHandle) command->handle;
   self->scope->setTimeIncrement(self->scope, self->timeIncrement);
 }
 
@@ -38,7 +38,7 @@ CommandTIncHandle CommandTInc_create(IScopeHandle scope){
   self->scope = scope;
   self->timeIncrement = 0;
 
-  self->command.implementer = self;
+  self->command.handle = self;
   self->command.run = &run;
 
   return self;

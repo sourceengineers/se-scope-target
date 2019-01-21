@@ -34,7 +34,7 @@ typedef struct IIntStreamStruct* IIntStreamHandle;
  Define interface
 ******************************************************************************/
 typedef struct IIntStreamStruct {
-    void* implementer;
+    GenericReference handle;
     bool (*dataIsReady)(IIntStreamHandle self);
     uint32_t (*readData)(IIntStreamHandle self);
     size_t (*length)(IIntStreamHandle self);

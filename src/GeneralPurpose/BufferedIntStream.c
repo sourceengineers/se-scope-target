@@ -23,7 +23,7 @@ typedef struct __BufferedIntStreamPrivateData {
  Public functions
 ******************************************************************************/
 static bool dataIsReady(IIntStreamHandle stream){
-  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->implementer;
+  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
 
   if(IntRingBuffer_getNumberOfUsedData(self->buffer) > 0) {
     return true;
@@ -33,7 +33,7 @@ static bool dataIsReady(IIntStreamHandle stream){
 }
 
 static uint32_t readData(IIntStreamHandle stream){
-  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->implementer;
+  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
 
   uint32_t data;
   IntRingBuffer_read(self->buffer, &data, 1);
@@ -42,31 +42,31 @@ static uint32_t readData(IIntStreamHandle stream){
 }
 
 static void readAll(IIntStreamHandle stream, uint32_t* data, const size_t length){
-  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->implementer;
+  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
 
   IntRingBuffer_read(self->buffer, data, length);
 }
 
 static size_t streamLength(IIntStreamHandle stream){
-  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->implementer;
+  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
 
   return IntRingBuffer_getNumberOfUsedData(self->buffer);
 }
 
 static void writeData(IIntStreamHandle stream, const uint32_t data){
-  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->implementer;
+  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
 
   IntRingBuffer_write(self->buffer, &data, 1);
 }
 
 static void writeAll(IIntStreamHandle stream, const uint32_t* data, const size_t length){
-  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->implementer;
+  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
 
   IntRingBuffer_write(self->buffer, data, length);
 }
 
 static void flush(IIntStreamHandle stream){
-  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->implementer;
+  BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
 
   IntRingBuffer_clear(self->buffer);
 }
@@ -77,7 +77,7 @@ BufferedIntStreamHandle BufferedIntStream_create(size_t capacity) {
 
   self->buffer = IntRingBuffer_create(capacity);
 
-  self->parent.implementer = self;
+  self->parent.handle = self;
   self->parent.dataIsReady = &dataIsReady;
   self->parent.readData = &readData;
   self->parent.length = &streamLength;

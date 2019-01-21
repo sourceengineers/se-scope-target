@@ -34,7 +34,7 @@ typedef struct IFloatStreamStruct* IFloatStreamHandle;
  Define interface
 ******************************************************************************/
 typedef struct IFloatStreamStruct {
-    void* implementer;
+    GenericReference handle;
     bool (*dataIsReady)(IFloatStreamHandle self);
     float (*readData)(IFloatStreamHandle self);
     size_t (*length)(IFloatStreamHandle self);

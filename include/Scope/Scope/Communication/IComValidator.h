@@ -29,7 +29,7 @@ typedef struct IComValidatorStruct* IComValidatorHandle;
  Define interface
 ******************************************************************************/
 typedef struct IComValidatorStruct {
-  void* implementer;
+  GenericReference handle;
 
 	/**
 	 * @param check The check which gets from the received package.

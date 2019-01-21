@@ -23,7 +23,7 @@ typedef struct __BufferedByteStreamPrivateData {
  Public functions
 ******************************************************************************/
 static bool dataIsReady(IByteStreamHandle parent) {
-    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->implementer;
+    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     if (ByteRingBuffer_getNumberOfUsedData(self->buffer) > 0) {
         return true;
@@ -33,7 +33,7 @@ static bool dataIsReady(IByteStreamHandle parent) {
 }
 
 static uint8_t readData(IByteStreamHandle parent) {
-    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->implementer;
+    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     uint8_t data;
     ByteRingBuffer_read(self->buffer, &data, 1);
@@ -42,31 +42,31 @@ static uint8_t readData(IByteStreamHandle parent) {
 }
 
 static void readAll(IByteStreamHandle parent, uint8_t *data, const size_t length) {
-    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->implementer;
+    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     ByteRingBuffer_read(self->buffer, data, length);
 }
 
 static size_t streamLength(IByteStreamHandle parent) {
-    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->implementer;
+    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     return ByteRingBuffer_getNumberOfUsedData(self->buffer);
 }
 
 static void writeData(IByteStreamHandle parent, const uint8_t data) {
-    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->implementer;
+    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     ByteRingBuffer_write(self->buffer, &data, 1);
 }
 
 static void writeAll(IByteStreamHandle parent, const uint8_t *data, const size_t length) {
-    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->implementer;
+    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     ByteRingBuffer_write(self->buffer, data, length);
 }
 
 static void flush(IByteStreamHandle parent) {
-    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->implementer;
+    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     ByteRingBuffer_clear(self->buffer);
 }
@@ -77,7 +77,7 @@ BufferedByteStreamHandle BufferedByteStream_create(size_t capacity) {
 
     self->buffer = ByteRingBuffer_create(capacity);
 
-    self->parent.implementer = self;
+    self->parent.handle = self;
     self->parent.byteIsReady = &dataIsReady;
     self->parent.readByte = &readData;
     self->parent.length = &streamLength;

@@ -34,7 +34,7 @@ static void setCommandAttribute(ICommandHandle command, void* attr);
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandPollHandle self = (CommandPollHandle) command->implementer;
+  CommandPollHandle self = (CommandPollHandle) command->handle;
   self->scope->poll(self->scope, self->nextTimeStamp);
 }
 
@@ -46,7 +46,7 @@ CommandPollHandle CommandPoll_create(IScopeHandle scope){
   CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
   self->scope = scope;
 
-  self->command.implementer = self;
+  self->command.handle = self;
   self->command.run = &run;
 
   self->nextTimeStamp = 0;

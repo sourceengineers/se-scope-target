@@ -52,7 +52,7 @@ typedef struct {
  Define interface
 ******************************************************************************/
 typedef struct IUnpackerStruct {
-  void* implementer;
+  GenericReference handle;
   bool (*unpack)(IUnpackerHandle unpacker, const char* data, const size_t length);
   void (*activateNewMessage)(IUnpackerHandle unpacker);
 

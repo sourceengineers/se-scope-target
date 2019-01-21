@@ -135,7 +135,7 @@ inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE
 }
 
 static void prepareChannel(IPackerHandle packer, ChannelHandle channel, const uint32_t channelId){
-    JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     if(channelId >= self->maxNumberOfChannels){
         return;
@@ -154,7 +154,7 @@ static void prepareChannel(IPackerHandle packer, ChannelHandle channel, const ui
 }
 
 static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+  JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
   self->tIncReady = true;
   self->timeIncrement = timeIncrement;
@@ -180,7 +180,7 @@ static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded){
 
 
 static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+  JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
   self->timestampReady = true;
   self->timestamp = timestamp;
@@ -218,7 +218,7 @@ static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded){
 }
 
 static void prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+  JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
   self->triggerReady = true;
   self->isTriggered = isTriggered;
@@ -256,7 +256,7 @@ static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded){
 }
 
 static void prepareFlowControl(IPackerHandle packer, const char* flowControl){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+  JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
   /* Flow control data will be "NAK" or "ACK" which is why longer strings will be rejected by default */
   if(strlen(flowControl) > 3){
@@ -284,7 +284,7 @@ static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded){
 
 
 static void prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, ADDRESS_DATA_TYPE address){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+  JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
   if(self->numberOfAddressesToAnnounce >= self->maxAddressesToAnnounce){
     return;
@@ -480,7 +480,7 @@ static void packBase(JsonPackerHandle self){
 }
 
 static void packData(IPackerHandle packer){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+  JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
   self->byteStream->flush(self->byteStream);
 
@@ -490,7 +490,7 @@ static void packData(IPackerHandle packer){
 }
 
 static void reset(IPackerHandle packer){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+  JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
   self->addressesReady = false;
   self->channelsReady = false;
@@ -514,7 +514,7 @@ static void reset(IPackerHandle packer){
 }
 
 static IByteStreamHandle getBufferedByteStream(IPackerHandle packer){
-  JsonPackerHandle self = (JsonPackerHandle) packer->implementer;
+  JsonPackerHandle self = (JsonPackerHandle) packer->handle;
   return self->byteStream;
 }
 /******************************************************************************
@@ -538,7 +538,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
 
   self->byteStream = byteStream;
 
-  self->packer.implementer = self;
+  self->packer.handle = self;
   self->packer.pack = &packData;
   self->packer.reset = &reset;
   self->packer.prepareChannel = prepareChannel;
