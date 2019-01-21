@@ -12,7 +12,7 @@
 #ifndef COMMUNICATIONFACTORY_H_
 #define COMMUNICATIONFACTORY_H_
 
-#include <Scope/Communication/EthernetValidator.h>
+#include <Scope/Communication/Validators/EthernetValidator.h>
 #include <Scope/Communication/IComValidator.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 

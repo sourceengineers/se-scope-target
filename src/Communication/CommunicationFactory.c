@@ -9,7 +9,7 @@
 
 #include <Scope/Communication/CommunicationFactory.h>
 #include <string.h>
-#include <Scope/Communication/EthernetValidator.h>
+#include <Scope/Communication/Validators/EthernetValidator.h>
 #include <Scope/Communication/Validators/UartValidator.h>
 
 /******************************************************************************

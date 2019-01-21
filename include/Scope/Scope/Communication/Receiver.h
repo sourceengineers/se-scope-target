@@ -20,14 +20,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <Scope/Parser/IUnpacker.h>
-#include <Scope/Communication/Validators/CommunicationCommons.h>
+#include <Scope/Communication/CommunicationCommons.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Communication/IComValidator.h>
 #include <Scope/Communication/Sender.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
-
-static const size_t MAX_FIELD_LENGTH = 30;
-static const size_t MAX_COMMAND_LENGTH = 30;
 
 /******************************************************************************
  Define class handle data

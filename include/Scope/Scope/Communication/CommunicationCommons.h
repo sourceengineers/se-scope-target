@@ -16,6 +16,9 @@
 static const char* FLOWCONTROL_ACK = "ACK";
 static const char* FLOWCONTROL_NAK = "NAK";
 
+static const size_t MAX_FIELD_LENGTH = 30;
+static const size_t MAX_COMMAND_LENGTH = 30;
+
 /* Defines possible communication types */
 typedef enum {ETHERNET, UART} COM_TYPE;
 

@@ -8,8 +8,8 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Communication/IComValidator.h>
-#include <Scope/Communication/Validators/CommunicationCommons.h>
-#include <Scope/Communication/EthernetValidator.h>
+#include <Scope/Communication/CommunicationCommons.h>
+#include <Scope/Communication/Validators/EthernetValidator.h>
 
 /******************************************************************************
  Define private data
