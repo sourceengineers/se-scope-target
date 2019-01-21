@@ -13,9 +13,9 @@
 #ifndef COMMANDADDRPARSER_H_
 #define COMMANDADDRPARSER_H_
 
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Command/CommandAddr.h>
+#include <Scope/Parser/Command/CommandAddr.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

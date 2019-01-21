@@ -15,7 +15,7 @@
 #define COMMANDTRIGGER_H_
 
 #include <Scope/Core/Trigger.h>
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

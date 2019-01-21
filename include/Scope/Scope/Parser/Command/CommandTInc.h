@@ -1,38 +1,45 @@
 /*!*****************************************************************************
- * @file         CommandAnnounce.h
+ * @file         CommandTInc.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the ev_announce command
+ * @brief        Implementation of the cf_t_inc command
  *                
- *               Starts a sending sending the pending addresses
- * 
+ *               Sets the time increment of the scope poll events. 
+ *               The function will be provided by the IScope interface, to 
+ *               prevent code dublication.
+ *                
  ******************************************************************************/
 
-#ifndef COMMANDANNOUNCE_H_
-#define COMMANDANNOUNCE_H_
+#ifndef COMMANDTINC_H_
+#define COMMANDTINC_H_
 
 #include <Scope/Core/IScope.h>
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __CommandAnnouncePrivateData* CommandAnnounceHandle;
+typedef struct __CommandTIncPrivateData* CommandTIncHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandAnnounceHandle CommandAnnounce_create(IScopeHandle scope);
+CommandTIncHandle CommandTInc_create(IScopeHandle scope);
 
 /* Deconstructor: Deletes the instance of the command */
-void CommandAnnounce_destroy(CommandAnnounceHandle self);
+void CommandTInc_destroy(CommandTIncHandle self);
+
+/* Sets the Attributes of the command */
+void CommandTInc_setAttributes(CommandTIncHandle self, uint32_t timeIncrement);
 
 /* Returns the command interface */
-ICommandHandle CommandAnnounce_getICommand(CommandAnnounceHandle self);
+ICommandHandle CommandTInc_getICommand(CommandTIncHandle self);
+
+
 
 #endif

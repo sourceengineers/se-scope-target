@@ -13,9 +13,9 @@
 #ifndef COMMANDPOLLPARSER_H_
 #define COMMANDPOLLPARSER_H_
 
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Command/CommandPoll.h>
+#include <Scope/Parser/Command/CommandPoll.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

@@ -13,9 +13,9 @@
 #ifndef COMMANDCLEARPARSER_H_
 #define COMMANDCLEARPARSER_H_
 
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Command/CommandClear.h>
+#include <Scope/Parser/Command/CommandClear.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

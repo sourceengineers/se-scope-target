@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandTInc.c
+ * @file         CommandTrigger.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,36 +7,36 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandTInc.h>
+#include <Scope/Parser/Command/CommandTrigger.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
-
 /* Class data */
-typedef struct __CommandTIncPrivateData{
+typedef struct __CommandTriggerPrivateData {
     ICommand command;
-    IScopeHandle scope;
 
-    int timeIncrement;
-} CommandTIncPrivateData;
+    TriggerHandle trigger;
+    TriggerConfiguration config;
+
+} CommandTriggerPrivateData;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle command){
-  CommandTIncHandle self = (CommandTIncHandle) command->handle;
-  self->scope->setTimeIncrement(self->scope, self->timeIncrement);
+static void run(ICommandHandle command) {
+  CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
+
+  Trigger_configure(self->trigger, self->config);
 }
 
 /******************************************************************************
- Private functions
+Public functions
 ******************************************************************************/
-CommandTIncHandle CommandTInc_create(IScopeHandle scope){
+CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger) {
 
-  CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));
-  self->scope = scope;
-  self->timeIncrement = 0;
+  CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
+  self->trigger = trigger;
 
   self->command.handle = self;
   self->command.run = &run;
@@ -44,15 +44,16 @@ CommandTIncHandle CommandTInc_create(IScopeHandle scope){
   return self;
 }
 
-ICommandHandle CommandTInc_getICommand(CommandTIncHandle self){
+ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self) {
   return &self->command;
 }
 
-void CommandTInc_setAttributes(CommandTIncHandle self, uint32_t timeIncrement){
-  self->timeIncrement = timeIncrement;
+void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf) {
+
+  self->config = conf;
 }
 
-void CommandTInc_destroy(CommandTIncHandle self){
+void CommandTrigger_destroy(CommandTriggerHandle self) {
   free(self);
   self = NULL;
 }

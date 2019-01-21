@@ -15,7 +15,7 @@
 #define COMMANDCLEAR_H_
 
 #include <Scope/Core/IScope.h>
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

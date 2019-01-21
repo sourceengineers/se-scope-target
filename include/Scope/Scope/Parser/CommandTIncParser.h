@@ -13,9 +13,9 @@
 #ifndef COMMANDTINCPARSER_H_
 #define COMMANDTINCPARSER_H_
 
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Command/CommandTInc.h>
+#include <Scope/Parser/Command/CommandTInc.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

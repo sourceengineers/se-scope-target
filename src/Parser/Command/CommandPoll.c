@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandTrans.c
+ * @file         CommandPoll.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,49 +7,62 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandTrans.h>
+#include <Scope/Parser/Command/CommandPoll.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandTransPrivateData{
+typedef struct __CommandPollPrivateData{
     ICommand command;
     IScopeHandle scope;
 
-} CommandTransPrivateData;
+    uint32_t nextTimeStamp;
+
+} CommandPollPrivateData;
+
+/* Implementation of the run command, which will be passed into the interface */
+static void run(ICommandHandle command);
+
+/* Implementation of the getCommandName command, which will be passed into the interface */
+static char* getCommandName(ICommandHandle command);
+
+/* Implementation of the setCommandAttribute command, which will be passed into the interface */
+static void setCommandAttribute(ICommandHandle command, void* attr);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandTransHandle self = (CommandTransHandle) command->handle;
-  self->scope->transmit(self->scope);
-}
-
-static void setCommandAttribute(ICommandHandle command, void* attr){
-  return;
+  CommandPollHandle self = (CommandPollHandle) command->handle;
+  self->scope->poll(self->scope, self->nextTimeStamp);
 }
 
 /******************************************************************************
- Private functions
+ Public functions
 ******************************************************************************/
-CommandTransHandle CommandTrans_create(IScopeHandle scope){
+CommandPollHandle CommandPoll_create(IScopeHandle scope){
 
-  CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));
+  CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
   self->scope = scope;
 
   self->command.handle = self;
   self->command.run = &run;
 
+  self->nextTimeStamp = 0;
+
   return self;
 }
 
-ICommandHandle CommandTrans_getICommand(CommandTransHandle self){
+ICommandHandle CommandPoll_getICommand(CommandPollHandle self){
   return &self->command;
 }
 
-void CommandTrans_destroy(CommandTransHandle self){
+void CommandPoll_setAttributes(CommandPollHandle self, uint32_t timestamp){
+  self->nextTimeStamp = timestamp;
+}
+
+void CommandPoll_destroy(CommandPollHandle self){
   free(self);
   self = NULL;
 }

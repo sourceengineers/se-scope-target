@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandClear.c
+ * @file         CommandTInc.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,50 +7,52 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandClear.h>
+#include <Scope/Parser/Command/CommandTInc.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Class data */
-typedef struct __CommandClearPrivateData
-{
-  ICommand command;
-  IScopeHandle scope;
 
-} CommandClearPrivateData ;
+/* Class data */
+typedef struct __CommandTIncPrivateData{
+    ICommand command;
+    IScopeHandle scope;
+
+    int timeIncrement;
+} CommandTIncPrivateData;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandClearHandle self = (CommandClearHandle) command->handle;
-  self->scope->clear(self->scope);
-}
-
-static void setCommandAttribute(ICommandHandle command, void* attr){
-  return;
+  CommandTIncHandle self = (CommandTIncHandle) command->handle;
+  self->scope->setTimeIncrement(self->scope, self->timeIncrement);
 }
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandClearHandle CommandClear_create(IScopeHandle scope){
+CommandTIncHandle CommandTInc_create(IScopeHandle scope){
 
-  CommandClearHandle self = malloc(sizeof(CommandClearPrivateData));
+  CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));
   self->scope = scope;
-  
+  self->timeIncrement = 0;
+
   self->command.handle = self;
   self->command.run = &run;
 
   return self;
 }
 
-ICommandHandle CommandClear_getICommand(CommandClearHandle self){
+ICommandHandle CommandTInc_getICommand(CommandTIncHandle self){
   return &self->command;
 }
 
-void CommandClear_destroy(CommandClearHandle self){
+void CommandTInc_setAttributes(CommandTIncHandle self, uint32_t timeIncrement){
+  self->timeIncrement = timeIncrement;
+}
+
+void CommandTInc_destroy(CommandTIncHandle self){
   free(self);
   self = NULL;
 }

@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandTrigger.c
+ * @file         CommandClear.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,53 +7,50 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Command/CommandTrigger.h>
+#include <Scope/Parser/Command/CommandClear.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandTriggerPrivateData {
-    ICommand command;
+typedef struct __CommandClearPrivateData
+{
+  ICommand command;
+  IScopeHandle scope;
 
-    TriggerHandle trigger;
-    TriggerConfiguration config;
-
-} CommandTriggerPrivateData;
+} CommandClearPrivateData ;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle command) {
-  CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
+static void run(ICommandHandle command){
+  CommandClearHandle self = (CommandClearHandle) command->handle;
+  self->scope->clear(self->scope);
+}
 
-  Trigger_configure(self->trigger, self->config);
+static void setCommandAttribute(ICommandHandle command, void* attr){
+  return;
 }
 
 /******************************************************************************
-Public functions
+ Private functions
 ******************************************************************************/
-CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger) {
+CommandClearHandle CommandClear_create(IScopeHandle scope){
 
-  CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
-  self->trigger = trigger;
-
+  CommandClearHandle self = malloc(sizeof(CommandClearPrivateData));
+  self->scope = scope;
+  
   self->command.handle = self;
   self->command.run = &run;
 
   return self;
 }
 
-ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self) {
+ICommandHandle CommandClear_getICommand(CommandClearHandle self){
   return &self->command;
 }
 
-void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf) {
-
-  self->config = conf;
-}
-
-void CommandTrigger_destroy(CommandTriggerHandle self) {
+void CommandClear_destroy(CommandClearHandle self){
   free(self);
   self = NULL;
 }

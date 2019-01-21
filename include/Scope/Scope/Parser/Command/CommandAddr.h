@@ -25,7 +25,7 @@
 #define COMMANDADDR_H_
 
 #include <Scope/Core/Channel.h>
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Definition of the configuration struct */

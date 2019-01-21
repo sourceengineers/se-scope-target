@@ -13,9 +13,9 @@
 #ifndef COMMANDTRIGGERPARSER_H_
 #define COMMANDTRIGGERPARSER_H_
 
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Command/CommandTrigger.h>
+#include <Scope/Parser/Command/CommandTrigger.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

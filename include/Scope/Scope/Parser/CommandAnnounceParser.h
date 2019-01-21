@@ -13,9 +13,9 @@
 #ifndef COMMANDANNOUNCEPARSER_H_
 #define COMMANDANNOUNCEPARSER_H_
 
-#include <Scope/Command/ICommand.h>
+#include <Scope/Parser/Command/ICommand.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Command/CommandAnnounce.h>
+#include <Scope/Parser/Command/CommandAnnounce.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
