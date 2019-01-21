@@ -44,36 +44,6 @@ static void run(ICommandHandle command){
   }
 }
 
-
-static void setCommandAttribute(ICommandHandle command, void* attr){
-  CommandAddrHandle self = (CommandAddrHandle) command->implementer;
-
-  CommandAddrConf newConfig = *(CommandAddrConf*) attr;
-
-  /* Safety checks */
-  if(newConfig.numberOfChangedChannels > self->amountOfChannels){
-    return;
-  }
-
-  /* Check that no id is bigger than the maximum ammount of channels */
-  for(size_t i = 0; i < newConfig.numberOfChangedChannels; i++){
-    if(newConfig.changedChannels[i] > self->amountOfChannels){
-      return;
-    }
-    if(newConfig.newAddresses[i] == NULL){
-      return;
-    }
-  }
-
-  /* Copy data to command */
-  self->config.numberOfChangedChannels = newConfig.numberOfChangedChannels;
-  for(size_t i = 0; i < newConfig.numberOfChangedChannels; i++){
-    self->config.changedChannels[i] = newConfig.changedChannels[i];
-    self->config.newAddresses[i] = newConfig.newAddresses[i];
-    self->config.types[i] = newConfig.types[i];
-  }
-}
-
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -91,13 +61,38 @@ CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t amountOfCha
 
   self->command.implementer = self;
   self->command.run = &run;
-  self->command.setCommandAttribute = &setCommandAttribute;
 
   return self;
 }
 
 ICommandHandle CommandAddr_getICommand(CommandAddrHandle self){
   return &self->command;
+}
+
+void CommandAddr_setAttributes(CommandAddrHandle self, CommandAddrConf conf){
+
+  /* Safety checks */
+  if(conf.numberOfChangedChannels > self->amountOfChannels){
+    return;
+  }
+
+  /* Check that no id is bigger than the maximum ammount of channels */
+  for(size_t i = 0; i < conf.numberOfChangedChannels; i++){
+    if(conf.changedChannels[i] > self->amountOfChannels){
+      return;
+    }
+    if(conf.newAddresses[i] == NULL){
+      return;
+    }
+  }
+
+  /* Copy data to command */
+  self->config.numberOfChangedChannels = conf.numberOfChangedChannels;
+  for(size_t i = 0; i < conf.numberOfChangedChannels; i++){
+    self->config.changedChannels[i] = conf.changedChannels[i];
+    self->config.newAddresses[i] = conf.newAddresses[i];
+    self->config.types[i] = conf.types[i];
+  }
 }
 
 void CommandAddr_destroy(CommandAddrHandle self){

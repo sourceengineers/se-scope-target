@@ -34,6 +34,9 @@ CommandTIncHandle CommandTInc_create(IScopeHandle scope);
 /* Deconstructor: Deletes the instance of the command */
 void CommandTInc_destroy(CommandTIncHandle self);
 
+/* Sets the Attributes of the command */
+void CommandTInc_setAttributes(CommandTIncHandle self, uint32_t timeIncrement);
+
 /* Returns the command interface */
 ICommandHandle CommandTInc_getICommand(CommandTIncHandle self);
 

@@ -30,13 +30,6 @@ static void run(ICommandHandle command) {
   Trigger_configure(self->trigger, self->config);
 }
 
-static void setCommandAttribute(ICommandHandle command, void *attr) {
-  CommandTriggerHandle self = (CommandTriggerHandle) command->implementer;
-
-  TriggerConfiguration newConfig = *(TriggerConfiguration *) attr;
-  self->config = newConfig;
-}
-
 /******************************************************************************
 Public functions
 ******************************************************************************/
@@ -47,13 +40,17 @@ CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger) {
 
   self->command.implementer = self;
   self->command.run = &run;
-  self->command.setCommandAttribute = &setCommandAttribute;
 
   return self;
 }
 
 ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self) {
   return &self->command;
+}
+
+void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf) {
+
+  self->config = conf;
 }
 
 void CommandTrigger_destroy(CommandTriggerHandle self) {

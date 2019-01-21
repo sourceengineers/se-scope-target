@@ -36,7 +36,7 @@ ICommandHandle CommandTransParser_getCommand(CommandTransParserHandle self){
   return CommandTrans_getICommand(self->command);
 }
 
-char* CommandTransParser_getName(CommandTransHandle self){
+char* CommandTransParser_getName(){
   return commandName;
 }
 

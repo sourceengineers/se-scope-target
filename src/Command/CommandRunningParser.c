@@ -74,10 +74,9 @@ ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
                           .changedChannels = channelIds, \
                           .numberOfChangedChannels = numberOfFields};
 
-  ICommandHandle command = CommandRunning_getICommand(self->command);
-  command->setCommandAttribute(command, (void*) &conf);
+  CommandRunning_setAttributes(self->command, conf);
 
-  return command;
+  return CommandRunning_getICommand(self->command);
 }
 
 char* CommandRunningParser_getName(){

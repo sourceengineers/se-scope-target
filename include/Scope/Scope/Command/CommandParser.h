@@ -8,7 +8,7 @@
  * @brief        Factory to generate the different Command interfaces 
  * 
  *               Since the usage of malloc after the initial construction is 
- *               not permitted, all objects returned by the dispatcher are pre-
+ *               not permitted, all objects returned by the commandParser are pre-
  *               generated during the construction process.
  *
  ******************************************************************************/ 
@@ -36,18 +36,18 @@ typedef struct __CommandParserPrivateData* CommandParserHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the dispatcher */
+/* Constructor: Creates a new instance of the commandParser */
 CommandParserHandle CommandParser_create(IScopeHandle scope,
                                            ChannelHandle* channels, 
                                            size_t amountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker);
                                            
-/* Deconstructor: Deletes the instance of the dispatcher */
+/* Deconstructor: Deletes the instance of the commandParser */
 void CommandParser_destroy(CommandParserHandle self);
 
 /* Returns the command interface */
-ICommandHandle CommandParser_getICommand(CommandParserHandle self, const char* command);
+ICommandHandle CommandParser_run(CommandParserHandle self, const char* command);
 
 
 #endif

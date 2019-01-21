@@ -38,12 +38,6 @@ static void run(ICommandHandle command){
   self->scope->poll(self->scope, self->nextTimeStamp);
 }
 
-static void setCommandAttribute(ICommandHandle command, void* attr){
-  CommandPollHandle self = (CommandPollHandle) command->implementer;
-
-  self->nextTimeStamp = *(uint32_t*) attr;
-}
-
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -54,7 +48,6 @@ CommandPollHandle CommandPoll_create(IScopeHandle scope){
 
   self->command.implementer = self;
   self->command.run = &run;
-  self->command.setCommandAttribute = &setCommandAttribute;
 
   self->nextTimeStamp = 0;
 
@@ -63,6 +56,10 @@ CommandPollHandle CommandPoll_create(IScopeHandle scope){
 
 ICommandHandle CommandPoll_getICommand(CommandPollHandle self){
   return &self->command;
+}
+
+void CommandPoll_setAttributes(CommandPollHandle self, uint32_t timestamp){
+  self->nextTimeStamp = timestamp;
 }
 
 void CommandPoll_destroy(CommandPollHandle self){

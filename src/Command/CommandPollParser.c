@@ -43,10 +43,9 @@ ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self){
 
   const uint32_t timestamp = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
-  ICommandHandle command = CommandPoll_getICommand(self->command);
-  command->setCommandAttribute(command, (void*) &timestamp);
+  CommandPoll_setAttributes(self->command, timestamp);
 
-  return command;
+  return CommandPoll_getICommand(self->command);
 }
 
 char* CommandPollParser_getName(){

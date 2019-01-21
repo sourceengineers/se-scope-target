@@ -46,6 +46,9 @@ CommandRunningHandle CommandRunning_create(ChannelHandle* channels, size_t amoun
 /* Deconstructor: Deletes the instance of the command */
 void CommandRunning_destroy(CommandRunningHandle self);
 
+/* Sets the Attributes of the command */
+void CommandRunning_setAttributes(CommandRunningHandle self, CommandRunningConf conf);
+
 /* Returns the command interface */
 ICommandHandle CommandRunning_getICommand(CommandRunningHandle self);
 

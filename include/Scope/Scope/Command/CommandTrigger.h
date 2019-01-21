@@ -32,6 +32,9 @@ CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger);
 /* Deconstructor: Deletes the instance of the command */
 void CommandTrigger_destroy(CommandTriggerHandle self);
 
+/* Sets the Attributes of the command */
+void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf);
+
 /* Returns the command interface */
 ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self);
 

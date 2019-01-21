@@ -101,10 +101,9 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self){
                           .types = types, \
                           .numberOfChangedChannels = numberOfFields};
 
-  ICommandHandle command = CommandAddr_getICommand(self->command);
-  command->setCommandAttribute(command, (void*) &conf);
+  CommandAddr_setAttributes(self->command, conf);
 
-  return command;
+  return CommandAddr_getICommand(self->command);
 }
 
 /* Deconstructor: Deletes the instance of the channel */

@@ -50,6 +50,9 @@ CommandAddrHandle CommandAddr_create(ChannelHandle* channels, const size_t amoun
 /* Deconstructor: Deletes the instance of the command */
 void CommandAddr_destroy(CommandAddrHandle self);
 
+/* Sets the Attributes of the command */
+void CommandAddr_setAttributes(CommandAddrHandle self, CommandAddrConf conf);
+
 /* Returns the command interface */
 ICommandHandle CommandAddr_getICommand(CommandAddrHandle self);
 

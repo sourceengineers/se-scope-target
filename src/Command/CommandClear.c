@@ -42,7 +42,6 @@ CommandClearHandle CommandClear_create(IScopeHandle scope){
   
   self->command.implementer = self;
   self->command.run = &run;
-  self->command.setCommandAttribute = &setCommandAttribute;
 
   return self;
 }

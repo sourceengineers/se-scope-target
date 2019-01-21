@@ -46,33 +46,6 @@ static void run(ICommandHandle command){
   }
 }
 
-static void setCommandAttribute(ICommandHandle command, void* attr){
-  CommandRunningHandle self = (CommandRunningHandle) command->implementer;
-
-  CommandRunningConf newConfig = *(CommandRunningConf*) attr;
-  
-  /* Safety checks */
-  if(newConfig.numberOfChangedChannels > self->amountOfChannels){
-    return;
-  }
-  
-  for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
-    if(newConfig.changedChannels[i] > self->amountOfChannels){
-      return;
-    }
-    if(newConfig.newStates[i] != CHANNEL_STOPPED 
-      && newConfig.newStates[i] != CHANNEL_RUNNING){
-      return;
-    }
-  }
-  
-  /* Copy data to command */
-  self->config.numberOfChangedChannels = newConfig.numberOfChangedChannels;
-  for (size_t i = 0; i < newConfig.numberOfChangedChannels; i++) {
-    self->config.changedChannels[i] = newConfig.changedChannels[i]; 
-    self->config.newStates[i] = newConfig.newStates[i];
-  }
-}
 
 /******************************************************************************
  Public functions
@@ -88,13 +61,37 @@ CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t
   
   self->command.implementer = self;
   self->command.run = &run;
-  self->command.setCommandAttribute = &setCommandAttribute;
 
   return self;
 }
 
 ICommandHandle CommandRunning_getICommand(CommandRunningHandle self){
   return &self->command;
+}
+
+void CommandRunning_setAttributes(CommandRunningHandle self, CommandRunningConf conf){
+
+  /* Safety checks */
+  if(conf.numberOfChangedChannels > self->amountOfChannels){
+    return;
+  }
+
+  for (size_t i = 0; i < conf.numberOfChangedChannels; i++) {
+    if(conf.changedChannels[i] > self->amountOfChannels){
+      return;
+    }
+    if(conf.newStates[i] != CHANNEL_STOPPED
+      && conf.newStates[i] != CHANNEL_RUNNING){
+      return;
+    }
+  }
+
+  /* Copy data to command */
+  self->config.numberOfChangedChannels = conf.numberOfChangedChannels;
+  for (size_t i = 0; i < conf.numberOfChangedChannels; i++) {
+    self->config.changedChannels[i] = conf.changedChannels[i];
+    self->config.newStates[i] = conf.newStates[i];
+  }
 }
 
 void CommandRunning_destroy(CommandRunningHandle self){

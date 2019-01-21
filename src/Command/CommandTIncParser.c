@@ -41,15 +41,14 @@ ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self){
   CommandFetchingInformation information = {.commandName = commandName, .fieldName = (char*) "",
           .isInArray = false, .arrayIndex = 0};
 
-  const int timeIncrement = self->unpacker->getIntFromCommand(self->unpacker, &information);
+  const uint32_t timeIncrement = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
-  ICommandHandle command = CommandTInc_getICommand(self->command);
-  command->setCommandAttribute(command, (void*) &timeIncrement);
+  CommandTInc_setAttributes(self->command, timeIncrement);
 
-  return command;
+  return CommandTInc_getICommand(self->command);
 }
 
-char* CommandTIncParser_getName(CommandTIncParserHandle self){
+char* CommandTIncParser_getName(){
   return commandName;
 }
 

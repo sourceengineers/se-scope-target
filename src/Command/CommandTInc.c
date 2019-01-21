@@ -29,11 +29,6 @@ static void run(ICommandHandle command){
   self->scope->setTimeIncrement(self->scope, self->timeIncrement);
 }
 
-static void setCommandAttribute(ICommandHandle command, void* attr){
-  CommandTIncHandle self = (CommandTIncHandle) command->implementer;
-  self->timeIncrement = *(int*) attr;
-}
-
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -45,13 +40,16 @@ CommandTIncHandle CommandTInc_create(IScopeHandle scope){
 
   self->command.implementer = self;
   self->command.run = &run;
-  self->command.setCommandAttribute = &setCommandAttribute;
 
   return self;
 }
 
 ICommandHandle CommandTInc_getICommand(CommandTIncHandle self){
   return &self->command;
+}
+
+void CommandTInc_setAttributes(CommandTIncHandle self, uint32_t timeIncrement){
+  self->timeIncrement = timeIncrement;
 }
 
 void CommandTInc_destroy(CommandTIncHandle self){

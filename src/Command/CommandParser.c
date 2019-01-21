@@ -52,9 +52,7 @@ CommandParserHandle CommandParser_create(IScopeHandle scope,
 	return self;
 }
 
-// das hier würde ich in eine klasse CommandParser auslagern so dass die factory nur die commands erzeugt
-// die methode könnte CommandParser_run oder Commadnparser_parse heissen
-ICommandHandle CommandParser_getICommand(CommandParserHandle self, const char *command) {
+ICommandHandle CommandParser_run(CommandParserHandle self, const char *command) {
 
 	if (strncmp(command, CommandRunningParser_getName(), MAX_COMMAND_LENGTH) == 0) {
 		return CommandRunningParser_getCommand(self->commandRunningParser);

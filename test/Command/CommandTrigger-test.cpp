@@ -19,9 +19,8 @@ TEST(CommandTrigger, test_command)
   stream.writeData(&stream, 5.5f);
 
   CommandTriggerHandle commandTrigger = CommandTrigger_create(trigger);
+  CommandTrigger_setAttributes(commandTrigger, conf);
   ICommand* command = CommandTrigger_getICommand(commandTrigger);
-
-  command->setCommandAttribute(command, &conf);
   command->run(command);
 
   bool isTriggered = Trigger_run(trigger, 1);

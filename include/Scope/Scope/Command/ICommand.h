@@ -31,7 +31,6 @@ typedef struct ICommandStruct* ICommandHandle;
 typedef struct ICommandStruct {
   void* implementer;
   void (*run)(ICommandHandle command);
-  void(*setCommandAttribute)(ICommandHandle command, void* attr);
 } ICommand ;
 
 #endif

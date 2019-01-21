@@ -112,13 +112,12 @@ ICommandHandle CommandTriggerParser_getCommand(CommandTriggerParserHandle self){
 
   TriggerConfiguration conf = {.level = level, .mode = mode, .stream = stream, .edge = edge, .channelId = channelId};
 
-  ICommandHandle command = CommandTrigger_getICommand(self->command);
-  command->setCommandAttribute(command, (void*) &conf);
+  CommandTrigger_setAttributes(self->command, conf);
 
-  return command;
+  return CommandTrigger_getICommand(self->command);
 }
 
-char* CommandTriggerParser_getName(CommandTriggerHandle self){
+char* CommandTriggerParser_getName(){
   return commandName;
 }
 void CommandTriggerParser_destroy(CommandTriggerParserHandle self){
