@@ -19,8 +19,8 @@ typedef struct __CommandRunningPrivateData
   ICommand command;
   size_t amountOfChannels;
   CommandRunningConf config;
-  ChannelHandle* channels;
-  
+  IScopeHandle scope;
+
 } CommandRunningPrivateData ;
 
 /******************************************************************************
@@ -30,18 +30,16 @@ static void run(ICommandHandle command){
   CommandRunningHandle self = (CommandRunningHandle) command->handle;
   
   for (size_t i = 0; i < self->config.numberOfChangedChannels; i++) {
-    const int idOfChannelChanged = self->config.changedChannels[i];
+    const uint32_t idOfChannelChanged = self->config.changedChannels[i];
 
     if(idOfChannelChanged >= self->amountOfChannels){
       return;
     }
 
-    ChannelHandle changingChannel = self->channels[idOfChannelChanged];
-    
     if(self->config.newStates[i] == CHANNEL_RUNNING){
-      Channel_setStateRunning(changingChannel);
+      self->scope->setChannelRunning(self->scope, idOfChannelChanged);
     } else if(self->config.newStates[i] == CHANNEL_STOPPED) {
-      Channel_setStateStopped(changingChannel);
+      self->scope->setChannelStopped(self->scope, idOfChannelChanged);
     }
   }
 }
@@ -50,15 +48,17 @@ static void run(ICommandHandle command){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningHandle CommandRunning_create(ChannelHandle* channels, const size_t amountOfChannels){
+CommandRunningHandle CommandRunning_create(IScopeHandle scope){//ChannelHandle* channels, const size_t amountOfChannels){
 
   CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));
-  self->config.newStates = malloc(sizeof(CHANNEL_STATES) * amountOfChannels);
-  self->config.changedChannels = malloc(sizeof(int) * amountOfChannels);
+
+  self->scope = scope;
+  self->amountOfChannels = self->scope->getAmountOfChannels(self->scope);
+
+  self->config.newStates = malloc(sizeof(CHANNEL_STATES) * self->amountOfChannels);
+  self->config.changedChannels = malloc(sizeof(int) * self->amountOfChannels);
   self->config.numberOfChangedChannels = 0;
-  self->channels = channels;
-  self->amountOfChannels = amountOfChannels;
-  
+
   self->command.handle = self;
   self->command.run = &run;
 

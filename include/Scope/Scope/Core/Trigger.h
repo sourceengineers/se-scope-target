@@ -32,7 +32,7 @@ static const int TRIGGER_EDGE_NEGATIVE = -1;
 /* Enum to represent different trigger types */
 typedef enum {TRIGGER_NORMAL, TRIGGER_CONTINUOUS, TRIGGER_ONESHOT} TRIGGER_MODE;
 
-/* Struct purely used to configure the channel */
+/* Struct purely used to configure the trigger */
 typedef struct {
  float level;
  int edge;
@@ -40,7 +40,6 @@ typedef struct {
  IFloatStream stream;
  uint32_t channelId;
 } TriggerConfiguration ;
-
 
 /******************************************************************************
  Define class handle data

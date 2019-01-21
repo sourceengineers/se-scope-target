@@ -93,7 +93,7 @@ static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandH
 
   for (size_t i = 0; i < numberOfCommands; ++i) {
     unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
-    commands[i] = CommandParserDispatcher_run(scope->commandParserDispatcher, commandName); // factories sollten nicht zur laufzeit aufgerufen werden. teile der commandParserDispatcher in Parser klasse auslagern, siehe CommandParserDispatcher
+    commands[i] = CommandParserDispatcher_run(scope->commandParserDispatcher, commandName);
   }
 }
 
@@ -121,9 +121,31 @@ static bool transmitTimestampInc(IScopeHandle scope){
   return true;
 }
 
+static size_t getAmountOfChannels(IScopeHandle scope){
+  ScopeHandle self = (ScopeHandle) scope->handle;
+  return self->numberOfChannels;
+}
+
 static IIntStreamHandle getTimestamp(IScopeHandle scope){
   ScopeHandle self = (ScopeHandle) scope->handle;
   return IntRingBuffer_getIntStream(self->timeStamp);
+}
+
+static void setChannelRunning(IScopeHandle scope, uint32_t idOfChangedChannel){
+  ScopeHandle self = (ScopeHandle) scope->handle;
+  Scope_setChannelRunning(self, idOfChangedChannel);
+}
+
+static void setChannelStopped(IScopeHandle scope, uint32_t idOfChangedChannel){
+  ScopeHandle self = (ScopeHandle) scope->handle;
+  Scope_setChannelStopped(self, idOfChangedChannel);
+}
+
+static void configureChannelAddress(IScopeHandle scope, void* address,
+	                                uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress){
+
+  ScopeHandle self = (ScopeHandle) scope->handle;
+  Scope_configureChannel(self, idOfChangedChannel, address, typeOfAddress);
 }
 /******************************************************************************
  Public functions
@@ -149,6 +171,11 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->scope.transmitTimestampInc = &transmitTimestampInc;
   self->scope.announce = &scopeAnnounce;
   self->scope.clear = &scopeClear;
+  self->scope.getAmountOfChannels = &getAmountOfChannels;
+  self->scope.setChannelStopped = &setChannelStopped;
+  self->scope.setChannelRunning = &setChannelRunning;
+  self->scope.configureChannelAddress = &configureChannelAddress;
+
 
   self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
   size_t outputBufferSize = JsonPacker_calculateBufferSize(numberOfChannels, maxNumberOfAddresses, channelSize);

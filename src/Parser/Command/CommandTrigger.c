@@ -8,6 +8,7 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Parser/Command/CommandTrigger.h>
+#include <Scope/Core/IScope.h>
 
 /******************************************************************************
  Define private data
@@ -16,8 +17,8 @@
 typedef struct __CommandTriggerPrivateData {
     ICommand command;
 
-    TriggerHandle trigger;
-    TriggerConfiguration config;
+    IScopeHandle scope;
+    CommandTriggerConfiguration config;
 
 } CommandTriggerPrivateData;
 
@@ -27,16 +28,18 @@ typedef struct __CommandTriggerPrivateData {
 static void run(ICommandHandle command) {
   CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
 
-  Trigger_configure(self->trigger, self->config);
+  /**
+   * TODO clean this up somehow
+   */
+  self->scope->configureTrigger(self->scope, self->config);
 }
 
 /******************************************************************************
 Public functions
 ******************************************************************************/
-CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger) {
+CommandTriggerHandle CommandTrigger_create(IScopeHandle scope) {
 
   CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
-  self->trigger = trigger;
 
   self->command.handle = self;
   self->command.run = &run;
@@ -48,7 +51,7 @@ ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self) {
   return &self->command;
 }
 
-void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf) {
+void CommandTrigger_setAttributes(CommandTriggerHandle self, CommandTriggerConfiguration conf) {
 
   self->config = conf;
 }

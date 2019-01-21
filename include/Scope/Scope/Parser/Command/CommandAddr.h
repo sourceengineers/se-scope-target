@@ -24,15 +24,15 @@
 #ifndef COMMANDADDR_H_
 #define COMMANDADDR_H_
 
-#include <Scope/Core/Channel.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/Parser/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Definition of the configuration struct */
 typedef struct {
     void** newAddresses;          // Array to keep track on witch channels have changed
-    int* changedChannels;         // Id's of the channels stored in "newAddresses"
-    int numberOfChangedChannels;
+    uint32_t* changedChannels;         // Id's of the channels stored in "newAddresses"
+    uint32_t numberOfChangedChannels;
     DATA_TYPES* types;            // Types of the channels
 } CommandAddrConf;
 
@@ -45,7 +45,7 @@ typedef struct __CommandAddrPrivateData* CommandAddrHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandAddrHandle CommandAddr_create(ChannelHandle* channels, const size_t amountOfChannels);
+CommandAddrHandle CommandAddr_create(IScopeHandle scope);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandAddr_destroy(CommandAddrHandle self);

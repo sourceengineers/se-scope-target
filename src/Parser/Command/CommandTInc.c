@@ -18,7 +18,7 @@ typedef struct __CommandTIncPrivateData{
     ICommand command;
     IScopeHandle scope;
 
-    int timeIncrement;
+    uint32_t timeIncrement;
 } CommandTIncPrivateData;
 
 /******************************************************************************

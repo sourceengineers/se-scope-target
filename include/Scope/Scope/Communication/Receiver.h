@@ -47,5 +47,4 @@ bool Receiver_unpack(ReceiverHandle self);
 /* Deconstructor: Deletes the instance of the receiver */
 void Receiver_destroy(ReceiverHandle self);
 
-
 #endif

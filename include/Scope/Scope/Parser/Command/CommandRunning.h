@@ -28,8 +28,8 @@
 /* Struct used to help the command configure the channels */
 typedef struct {
     CHANNEL_STATES* newStates;
-    int* changedChannels;
-    int numberOfChangedChannels;
+    uint32_t * changedChannels;
+    uint32_t numberOfChangedChannels;
 } CommandRunningConf;
 
 /******************************************************************************
@@ -41,7 +41,7 @@ typedef struct __CommandRunningPrivateData* CommandRunningHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandRunningHandle CommandRunning_create(ChannelHandle* channels, size_t amountOfChannels);
+CommandRunningHandle CommandRunning_create(IScopeHandle scope);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandRunning_destroy(CommandRunningHandle self);

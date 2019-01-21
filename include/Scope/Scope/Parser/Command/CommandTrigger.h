@@ -14,9 +14,17 @@
 #ifndef COMMANDTRIGGER_H_
 #define COMMANDTRIGGER_H_
 
-#include <Scope/Core/Trigger.h>
 #include <Scope/Parser/Command/ICommand.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+
+/* Struct purely used to configure the trigger */
+typedef struct {
+ float level;
+ int edge;
+ TRIGGER_MODE mode;
+ IFloatStream stream;
+ uint32_t channelId;
+} CommandTriggerConfiguration;
 
 /******************************************************************************
  Define class handle data
@@ -33,7 +41,7 @@ CommandTriggerHandle CommandTrigger_create(TriggerHandle trigger);
 void CommandTrigger_destroy(CommandTriggerHandle self);
 
 /* Sets the Attributes of the command */
-void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf);
+void CommandTrigger_setAttributes(CommandTriggerHandle self, CommandTriggerConfiguration conf);
 
 /* Returns the command interface */
 ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self);

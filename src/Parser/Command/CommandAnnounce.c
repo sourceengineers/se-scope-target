@@ -27,10 +27,6 @@ static void run(ICommandHandle command){
   self->scope->announce(self->scope);
 }
 
-static void setCommandAttribute(ICommandHandle command, void* attr){
-  return;
-}
-
 /******************************************************************************
  Private functions
 ******************************************************************************/

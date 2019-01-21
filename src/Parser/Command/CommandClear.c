@@ -28,10 +28,6 @@ static void run(ICommandHandle command){
   self->scope->clear(self->scope);
 }
 
-static void setCommandAttribute(ICommandHandle command, void* attr){
-  return;
-}
-
 /******************************************************************************
  Private functions
 ******************************************************************************/

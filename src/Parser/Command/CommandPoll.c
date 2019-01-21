@@ -21,15 +21,6 @@ typedef struct __CommandPollPrivateData{
 
 } CommandPollPrivateData;
 
-/* Implementation of the run command, which will be passed into the interface */
-static void run(ICommandHandle command);
-
-/* Implementation of the getCommandName command, which will be passed into the interface */
-static char* getCommandName(ICommandHandle command);
-
-/* Implementation of the setCommandAttribute command, which will be passed into the interface */
-static void setCommandAttribute(ICommandHandle command, void* attr);
-
 /******************************************************************************
  Private functions
 ******************************************************************************/

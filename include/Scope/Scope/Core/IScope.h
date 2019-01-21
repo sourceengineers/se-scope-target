@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <Scope/GeneralPurpose/IIntStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Core/Trigger.h>
 
 /******************************************************************************
  Define interface handle data
@@ -36,6 +37,13 @@ typedef struct IScopeStruct {
   uint32_t (*getTimeIncrement)(IScopeHandle scope);
   IIntStreamHandle (*getTimestamp)(IScopeHandle scope);
   void (*clear)(IScopeHandle scope);
+	void (*configureTrigger)(IScopeHandle scope);
+	void (*configureChannelAddress)(IScopeHandle scope, void* address,
+	                                uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress);
+		void (*setChannelRunning)(IScopeHandle scope, uint32_t idOfChangedChannel);
+		void (*setChannelStopped)(IScopeHandle scope, uint32_t idOfChangedChannel);
+		size_t (*getAmountOfChannels)(IScopeHandle scope);
+
 } IScope ;
 
 #endif

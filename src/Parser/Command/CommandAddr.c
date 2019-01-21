@@ -18,7 +18,7 @@ typedef struct __CommandAddrPrivateData{
 
     CommandAddrConf config;
     size_t amountOfChannels;
-    ChannelHandle* channels;
+    IScopeHandle scope;
 
 } CommandAddrPrivateData;
 
@@ -30,34 +30,32 @@ static void run(ICommandHandle command){
 
   /* Set the polling address of the channels */
   for(size_t i = 0; i < self->config.numberOfChangedChannels; i++){
-    const int idChangingChannel = self->config.changedChannels[i];
+    const uint32_t idChangingChannel = self->config.changedChannels[i];
 
     if(idChangingChannel >= self->amountOfChannels){
       return;
     }
 
-    ChannelHandle changingChannel = self->channels[idChangingChannel];
     const DATA_TYPES newType = self->config.types[i];
     void* newAddress = self->config.newAddresses[i];
 
-    Channel_setPollAddress(changingChannel, newAddress, newType);
+    self->scope->configureChannelAddress(self->scope, newAddress, idChangingChannel, newType);
   }
 }
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandAddrHandle CommandAddr_create(ChannelHandle* channels, size_t amountOfChannels){
+CommandAddrHandle CommandAddr_create(IScopeHandle scope){
 
   CommandAddrHandle self = malloc(sizeof(CommandAddrPrivateData));
-  self->config.newAddresses = malloc(sizeof(void*) * amountOfChannels);
-  self->config.changedChannels = malloc(sizeof(int) * amountOfChannels);
-  self->config.types = malloc(sizeof(DATA_TYPES) * amountOfChannels);
+  self->scope = scope;
+  self->amountOfChannels = self->scope->getAmountOfChannels(self->scope);
+  self->config.newAddresses = malloc(sizeof(void*) * self->amountOfChannels);
+  self->config.changedChannels = malloc(sizeof(int) * self->amountOfChannels);
+  self->config.types = malloc(sizeof(DATA_TYPES) * self->amountOfChannels);
 
   self->config.numberOfChangedChannels = 0;
-
-  self->channels = channels;
-  self->amountOfChannels = amountOfChannels;
 
   self->command.handle = self;
   self->command.run = &run;
