@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         CommandDispatcher.h
+ * @file         CommandParser.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -16,19 +16,14 @@
 #ifndef COMMANDFACTORY_H_
 #define COMMANDFACTORY_H_
 
-#include <Scope/Command/CommandRunning.h>
-#include <Scope/Command/CommandPoll.h>
-#include <Scope/Command/CommandAddr.h>
-#include <Scope/Command/CommandTInc.h>
-#include <Scope/Command/CommandTrans.h>
-#include <Scope/Command/CommandTrigger.h>
 #include <Scope/Command/CommandAddrParser.h>
 #include <Scope/Command/CommandRunningParser.h>
 #include <Scope/Command/CommandTIncParser.h>
 #include <Scope/Command/CommandTriggerParser.h>
-#include <Scope/Command/CommandAnnounce.h>
 #include <Scope/Command/CommandPollParser.h>
-#include <Scope/Command/CommandClear.h>
+#include <Scope/Command/CommandAnnounceParser.h>
+#include <Scope/Command/CommandTransParser.h>
+#include <Scope/Command/CommandClearParser.h>
 
 #include <Scope/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
@@ -36,23 +31,23 @@
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __CommandDispatcherPrivateData* CommandDispatcherHandle;
+typedef struct __CommandParserPrivateData* CommandParserHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the dispatcher */
-CommandDispatcherHandle CommandDispatcher_create(IScopeHandle scope,
+CommandParserHandle CommandParser_create(IScopeHandle scope,
                                            ChannelHandle* channels, 
                                            size_t amountOfChannels,
                                            TriggerHandle trigger,
                                            IUnpackerHandle unpacker);
                                            
 /* Deconstructor: Deletes the instance of the dispatcher */
-void CommandDispatcher_destroy(CommandDispatcherHandle self);
+void CommandParser_destroy(CommandParserHandle self);
 
 /* Returns the command interface */
-ICommandHandle CommandDispatcher_getICommand(CommandDispatcherHandle self, const char* command);
+ICommandHandle CommandParser_getICommand(CommandParserHandle self, const char* command);
 
 
 #endif

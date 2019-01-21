@@ -24,7 +24,7 @@ typedef struct __ScopePrivateData
   size_t numberOfChannels;
   ChannelHandle* channels;
   TriggerHandle trigger;
-  CommandDispatcherHandle commandFactory;
+  CommandParserHandle commandFactory;
 
   IScope scope;
 
@@ -93,7 +93,7 @@ static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandH
 
   for (size_t i = 0; i < numberOfCommands; ++i) {
     unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
-    commands[i] = CommandDispatcher_getICommand(scope->commandFactory, commandName); // factories sollten nicht zur laufzeit aufgerufen werden. teile der dispatcher in Parser klasse auslagern, siehe CommandDispatcher
+    commands[i] = CommandParser_getICommand(scope->commandFactory, commandName); // factories sollten nicht zur laufzeit aufgerufen werden. teile der dispatcher in Parser klasse auslagern, siehe CommandParser
   }
 }
 
@@ -193,7 +193,7 @@ ScopeHandle Scope_create(const size_t channelSize,
                                    self->sender);
 
   /* Create command dispatcher */
-  self->commandFactory = CommandDispatcher_create(&self->scope,
+  self->commandFactory = CommandParser_create(&self->scope,
                                                self->channels,
                                                self->numberOfChannels,
                                                self->trigger,
@@ -209,7 +209,7 @@ void Scope_destroy(ScopeHandle self){
   }
 
   Trigger_destroy(self->trigger);
-  CommandDispatcher_destroy(self->commandFactory);
+  CommandParser_destroy(self->commandFactory);
   JsonUnpacker_destroy(self->jsonUnpacker);
   Receiver_destroy(self->receiver);
   BufferedByteStream_destroy(self->inputStream);
