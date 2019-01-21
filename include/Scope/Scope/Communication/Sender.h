@@ -19,7 +19,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <Scope/Communication/IPacker.h>
+#include <Scope/Parser/IPacker.h>
 #include <Scope/Communication/Validators/CommunicationCommons.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Core/Channel.h>

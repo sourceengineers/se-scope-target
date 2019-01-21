@@ -12,7 +12,7 @@
 #ifndef JSONPACKER_H_
 #define JSONPACKER_H_
 
-#include <Scope/Communication/IPacker.h>
+#include <Scope/Parser/IPacker.h>
 #include <Scope/Communication/IComValidator.h>
 #include <Scope/Core/AddressStorage.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
