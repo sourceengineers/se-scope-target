@@ -13,8 +13,8 @@
 #include <Scope/Parser/JsonParser/JsonPacker.h>
 #include <Scope/Communication/Sender.h>
 #include <Scope/Communication/CommunicationFactory.h>
-#include <Scope/GeneralPurpose/IntRingBuffer.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/BufferedIntStream.h>
 
 /******************************************************************************
  Define private data
@@ -31,7 +31,7 @@ typedef struct __ScopePrivateData
 
   /* Timestamping data */
   uint32_t timeIncrement;
-  IntRingBufferHandle timeStamp;
+  BufferedIntStreamHandle timeStamp;
   TIMESTAMPING_MODE timestampingMode;
   uint32_t currentTimestamp;
 
@@ -129,7 +129,7 @@ static size_t getAmountOfChannels(IScopeHandle scope){
 
 static IIntStreamHandle getTimestamp(IScopeHandle scope){
   ScopeHandle self = (ScopeHandle) scope->handle;
-  return IntRingBuffer_getIntStream(self->timeStamp);
+  return BufferedIntStream_getIIntStream(self->timeStamp);
 }
 
 static void configureTrigger(IScopeHandle scope, TriggerConfiguration conf){
@@ -198,7 +198,7 @@ ScopeHandle Scope_create(const size_t channelSize,
   for (size_t i = 0; i < amountOfChannels; i++) {
     self->channels[i] = Channel_create(channelSize);
   }
-  self->timeStamp = IntRingBuffer_create(channelSize);
+  self->timeStamp = BufferedIntStream_create(channelSize);
 
   /* Create Trigger */
   self->trigger = Trigger_create(self->channels, self->amountOfChannels);
@@ -296,7 +296,8 @@ void Scope_poll(ScopeHandle self, uint32_t timeStamp){
     prepareTimeStamp = timeStamp;
   }
 
-  IntRingBuffer_write(self->timeStamp, &prepareTimeStamp, 1);
+  IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timeStamp);
+  stream->write(stream, &prepareTimeStamp, 1);
 
   for (size_t i = 0; i < self->amountOfChannels; i++) {
     Channel_poll(self->channels[i]);
@@ -369,7 +370,8 @@ void Scope_clear(ScopeHandle self){
   for (size_t i = 0; i < self->amountOfChannels; i++) {
     Channel_clear(self->channels[i]);
   }
-  IntRingBuffer_clear(self->timeStamp);
+  IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timeStamp);
+  stream->flush(stream);
   self->currentTimestamp = 0;
 }
 

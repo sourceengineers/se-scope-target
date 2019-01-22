@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
-
+#include <string.h>
 /*
  * watch the s_out file with:
  *    $ watch -n 1 cat s_out
@@ -37,10 +37,10 @@ void readFile(IByteStreamHandle stream, const char* filename){
     return;
   }
 
-  uint8_t byte = 0;
+  char buffer[200];
 
-  while(fread(&byte, 1, 1, file) != 0){
-    stream->writeByte(stream, byte);
+  while(fgets(buffer, 200, file) != NULL){
+    stream->write(stream, (uint8_t*) buffer, strlen(buffer));
   }
   fclose(file);
   fopen(filename, "w");
@@ -78,7 +78,7 @@ int main(int argc, char *argv[] ){
 
     Scope_poll(scope, 0);
     Scope_transmitData(scope);
-    usleep(10000);
+    usleep(50000);
   }
 
   return 0;

@@ -58,8 +58,4 @@ int IntRingBuffer_write(IntRingBufferHandle self, const uint32_t* data, const si
    will return -1 */
 int IntRingBuffer_read(IntRingBufferHandle self, uint32_t* data, const size_t length);
 
-/* Returns the IIntStream interface */
-IIntStreamHandle IntRingBuffer_getIntStream(IntRingBufferHandle self);
-
-
 #endif

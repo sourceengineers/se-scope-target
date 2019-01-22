@@ -19,6 +19,7 @@ void print(IByteStreamHandle stream){
   uint8_t data[length];
 
   stream->read(stream, data, length);
+  fprintf(file, "%s", data);
 
   fclose(file);
 }
