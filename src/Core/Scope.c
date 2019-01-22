@@ -9,8 +9,8 @@
 
 #include <Scope/Core/Scope.h>
 #include <Scope/Communication/Receiver.h>
-#include <Scope/Parser/JsonParser/JsonUnpacker.h>
-#include <Scope/Parser/JsonParser/JsonPacker.h>
+#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+#include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Communication/Sender.h>
 #include <Scope/Communication/CommunicationFactory.h>
 #include <Scope/Core/ScopeTypes.h>
@@ -159,7 +159,6 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
 ScopeHandle Scope_create(const size_t channelSize,
                          const size_t amountOfChannels,
                          const size_t maxNumberOfAddresses,
-                         const COM_TYPE comType, // diskutieren ob das hier nicht ausserhalb des scopes besser wäre (klare layerung)
                          const TIMESTAMPING_MODE timestampingMode,
                          ScopeTransmitCallback transmitCallback){
 

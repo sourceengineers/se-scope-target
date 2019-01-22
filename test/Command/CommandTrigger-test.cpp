@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include <Scope/Parser/Command/CommandTrigger.h>
+    #include <Scope/Control/Command/CommandTrigger.h>
     #include <Scope/GeneralPurpose/BufferedFloatStream.h>
     #include <Scope/Core/Trigger.h>
 }

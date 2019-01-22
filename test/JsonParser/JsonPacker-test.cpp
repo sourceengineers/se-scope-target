@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-#include <Scope/Parser/JsonParser/JsonPacker.h>
+#include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/BufferedIntStream.h>
 #include <Scope/GeneralPurpose/BufferedFloatStream.h>

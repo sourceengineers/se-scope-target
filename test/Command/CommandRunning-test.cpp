@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include <Scope/Parser/Command/CommandRunning.h>
+    #include <Scope/Control/Command/CommandRunning.h>
 }
 
 using namespace std;

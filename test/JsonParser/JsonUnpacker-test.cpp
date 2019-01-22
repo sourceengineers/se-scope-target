@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-    #include <Scope/Parser/JsonParser/JsonUnpacker.h>
+    #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
 }
 
 using namespace testing;

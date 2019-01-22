@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <zconf.h>
 
 /*
  * watch the s_out file with:
@@ -39,7 +40,8 @@ int main(){
     for (size_t i = 0; i < rand() % 20; i++) {
       test = rand() % 50;
       Scope_poll(scope, 0);
-    }    
+    }
+
     
     Scope_transmitData(scope);
     

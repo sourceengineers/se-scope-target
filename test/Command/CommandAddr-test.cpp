@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include <Scope/Parser/Command/CommandAddr.h>
+    #include <Scope/Control/Command/CommandAddr.h>
     #include <Scope/Core/Channel.h>
 }
 

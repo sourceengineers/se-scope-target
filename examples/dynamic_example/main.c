@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <zconf.h>
+
 /*
  * watch the s_out file with:
  *    $ watch -n 1 cat s_out

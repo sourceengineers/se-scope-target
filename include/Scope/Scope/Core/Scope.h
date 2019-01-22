@@ -16,7 +16,7 @@
 #include <Scope/Core/Channel.h>
 #include <Scope/Core/IScope.h>
 
-#include <Scope/Parser/CommandParserDispatcher.h>
+#include <Scope/Control/CommandParserDispatcher.h>
 #include <Scope/Communication/Receiver.h>
 
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
@@ -36,9 +36,7 @@ typedef struct __ScopePrivateData* ScopeHandle;
 ScopeHandle Scope_create(const size_t channelSize,
                          const size_t amountOfChannels,
                          const size_t maxNumberOfAddresses,
-                         const COM_TYPE comType,
-                         const TIMESTAMPING_MODE timestampingMode,
-                         ScopeTransmitCallback transmitCallback);
+                         const TIMESTAMPING_MODE timestampingMode);
 
 /* Deconstructor: Deletes the instance of the channel */
 void Scope_destroy(ScopeHandle self);

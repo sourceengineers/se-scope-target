@@ -34,8 +34,6 @@ typedef struct IByteStreamStruct* IByteStreamHandle;
  Define interface
 ******************************************************************************/
 typedef struct IByteStreamStruct {
-  // hier habe ich bisher handle verwendet,
-  // ich würde in data-types noch einen type GenericReference einführen und hier nicht void* verwenden
   GenericReference handle;
   bool (*byteIsReady)(IByteStreamHandle self);
   uint8_t (*readByte)(IByteStreamHandle self);
