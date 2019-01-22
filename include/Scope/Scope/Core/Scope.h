@@ -22,18 +22,19 @@
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
+#include <Scope/Core/ScopeTypes.h>
+
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
 typedef struct __ScopePrivateData* ScopeHandle;
 
-typedef enum {TIMESTAMP_AUTOMATIC, TIMESTAMP_MANUAL} TIMESTAMPING_MODE;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
 ScopeHandle Scope_create(const size_t channelSize,
-                         const size_t numberOfChannels,
+                         const size_t amountOfChannels,
                          const size_t maxNumberOfAddresses,
                          const COM_TYPE comType,
                          const TIMESTAMPING_MODE timestampingMode,

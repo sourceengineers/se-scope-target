@@ -14,14 +14,11 @@
 
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Core/ScopeTypes.h>
 
 /* Indication for the trigger data */
 static const int CHANNEL_CURRENT_DATA = 0;
 static const int CHANNEL_OLD_DATA = 1;
-
-/* Channels States */
-typedef enum {CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;
 
 /******************************************************************************
  Define class handle data
@@ -39,7 +36,7 @@ void Channel_destroy(ChannelHandle self);
 
 /* Sets the address which the channel will poll from
    Sets the state to CHANNEL_RUNNING */
-void Channel_setPollAddress(ChannelHandle self, void* pollAddress, const DATA_TYPES pollDataType);
+void Channel_setPollAddress(ChannelHandle self, void* pollAddress, DATA_TYPES pollDataType);
 
 /* Returns the current polling address */
 void* Channel_getPollAddress(ChannelHandle self);

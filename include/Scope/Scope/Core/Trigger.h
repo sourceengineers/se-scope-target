@@ -23,23 +23,7 @@
 
 #include <Scope/Core/Channel.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
-
-/* Constants to represent the different edges on which the trigger can be 
-   configured */
-static const int TRIGGER_EDGE_POSITIVE = 1;
-static const int TRIGGER_EDGE_NEGATIVE = -1;
-
-/* Enum to represent different trigger types */
-typedef enum {TRIGGER_NORMAL, TRIGGER_CONTINUOUS, TRIGGER_ONESHOT} TRIGGER_MODE;
-
-/* Struct purely used to configure the trigger */
-typedef struct {
- float level;
- int edge;
- TRIGGER_MODE mode;
- IFloatStream stream;
- uint32_t channelId;
-} TriggerConfiguration ;
+#include <Scope/Core/ScopeTypes.h>
 
 /******************************************************************************
  Define class handle data
@@ -53,7 +37,7 @@ typedef bool (*TriggerStrategy)(TriggerHandle self, const uint32_t index);
 Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the Trigger */
-TriggerHandle Trigger_create();
+TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels);
 
 /* Deconstructor: Deletes the instance of the Trigger */
 void Trigger_destroy(TriggerHandle self);
