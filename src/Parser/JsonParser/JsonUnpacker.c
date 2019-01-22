@@ -13,6 +13,7 @@
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Communication/Keywords.h>
 #include <Scope/Parser/JsonParser/JsonCommon.h>
+#include <stdlib.h>
 
 #define INPUT_BUFFER_SIZE 500
 #define TOKEN_BUFFER_SIZE 100
@@ -316,7 +317,12 @@ static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle iUnpackHandler, Comma
   char value[MAX_LENGTH_OF_NUMBER];
   copyString(value, self->storageString + field->start, field->end - field->start);
 
-  return atoi(value);
+#if (ARCH_SIZE_32)
+  return strtoul(value, NULL, 0);
+#else
+  return strtoull(value, NULL, 0);
+#endif
+
 }
 
 static float getFloatFromCommand(IUnpackerHandle iUnpackHandler, CommandFetchingInformation* information){
