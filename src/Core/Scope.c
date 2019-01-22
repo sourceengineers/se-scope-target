@@ -181,7 +181,7 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->scope.setChannelStopped = &setChannelStopped;
   self->scope.setChannelRunning = &setChannelRunning;
   self->scope.configureChannelAddress = &configureChannelAddress;
-
+  self->scope.configureTrigger = &configureTrigger;
 
   self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
   size_t outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, maxNumberOfAddresses, channelSize);

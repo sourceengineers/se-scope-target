@@ -39,6 +39,7 @@ CommandTriggerHandle CommandTrigger_create(IScopeHandle scope) {
   CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
 
   self->command.handle = self;
+  self->scope = scope;
   self->command.run = &run;
 
   return self;
