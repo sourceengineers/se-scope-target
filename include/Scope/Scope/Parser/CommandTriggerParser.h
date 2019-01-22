@@ -27,8 +27,7 @@ typedef struct __CommandTriggerParserPrivateData* CommandTriggerParserHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandTriggerParserHandle CommandTriggerParser_create(IUnpackerHandle unpacker, TriggerHandle trigger,
-                                                       ChannelHandle* channels, size_t numberOfChannels);
+CommandTriggerParserHandle CommandTriggerParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
 
 /* Configurates the gives command */
 ICommandHandle CommandTriggerParser_getCommand(CommandTriggerParserHandle self);

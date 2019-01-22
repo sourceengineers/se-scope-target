@@ -18,7 +18,6 @@ static char* commandName = "ev_announce";
 /* Class data */
 typedef struct __CommandAnnounceParserPrivateData{
     CommandAnnounceHandle command;
-    char* commandName;
 
 } CommandAnnounceParserPrivateData;
 

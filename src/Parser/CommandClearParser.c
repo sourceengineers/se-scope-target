@@ -18,7 +18,6 @@ static char* commandName = "ev_clear";
 /* Class data */
 typedef struct __CommandClearParserPrivateData{
     CommandClearHandle command;
-    char* commandName;
 
 } CommandClearParserPrivateData;
 

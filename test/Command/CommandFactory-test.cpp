@@ -10,14 +10,14 @@ using namespace std;
 
 TEST(CommandParserDispatcher, test_destroy)
 {
-  const size_t numberOfChannels = 3;
-  ChannelHandle channels[numberOfChannels] = {NULL};
+  const size_t amountOfChannels = 3;
+  ChannelHandle channels[amountOfChannels] = {NULL};
 
   ICommand* commandTrans = NULL;
   ICommand* commandClear = NULL;
   ICommand* commandAnnounce = NULL;
 
-  CommandParserDispatcherHandle commandParserDispatcher = CommandParserDispatcher_create(NULL, channels, numberOfChannels, NULL, NULL);
+  CommandParserDispatcherHandle commandParserDispatcher = CommandParserDispatcher_create(NULL, NULL);
   
   commandTrans = CommandParserDispatcher_run(commandParserDispatcher, (const char*) "ev_trans");
   ASSERT_THAT(commandTrans, NotNull());

@@ -14,6 +14,7 @@
 #include <Scope/Communication/Sender.h>
 #include <Scope/Communication/CommunicationFactory.h>
 #include <Scope/GeneralPurpose/IntRingBuffer.h>
+#include <Scope/Core/ScopeTypes.h>
 
 /******************************************************************************
  Define private data
@@ -332,7 +333,6 @@ void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGG
           .edge = edge,
           .mode = mode,
           .channelId = channelId,
-          .stream = *Channel_getTriggerDataStream(self->channels[channelId])
   };
 
   Trigger_configure(self->trigger, triggerConf);

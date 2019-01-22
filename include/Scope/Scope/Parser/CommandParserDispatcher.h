@@ -37,11 +37,7 @@ typedef struct __CommandParserDispatcherPrivateData* CommandParserDispatcherHand
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the commandParserDispatcher */
-CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope,
-                                           ChannelHandle* channels, 
-                                           size_t amountOfChannels,
-                                           TriggerHandle trigger,
-                                           IUnpackerHandle unpacker);
+CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope, IUnpackerHandle unpacker);
                                            
 /* Deconstructor: Deletes the instance of the commandParserDispatcher */
 void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self);

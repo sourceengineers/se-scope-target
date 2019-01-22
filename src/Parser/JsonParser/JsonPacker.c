@@ -44,7 +44,7 @@ typedef struct __JsonPackerPrivateData
 
   /* Channel preparation data */
   bool channelsReady;
-  size_t numberOfChannelsToSend;
+  size_t amountOfChannelsToSend;
   uint32_t* channelIds;
   ChannelHandle* channels;
 
@@ -141,14 +141,14 @@ static void prepareChannel(IPackerHandle packer, ChannelHandle channel, const ui
         return;
     }
 
-    if(self->numberOfChannelsToSend >= self->maxNumberOfChannels){
+    if(self->amountOfChannelsToSend >= self->maxNumberOfChannels){
         return;
     }
 
-    self->channelIds[self->numberOfChannelsToSend] = channelId;
-    self->channels[self->numberOfChannelsToSend] = channel;
+    self->channelIds[self->amountOfChannelsToSend] = channelId;
+    self->channels[self->amountOfChannelsToSend] = channel;
 
-    self->numberOfChannelsToSend++;
+    self->amountOfChannelsToSend++;
 
     self->channelsReady = true;
 }
@@ -345,7 +345,7 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
   addComma(self->byteStream, commaIsNeeded);
   appendString(self->byteStream, KEYWORD_CL_DATA, ":{");
 
-  for (size_t i = 0; i < self->numberOfChannelsToSend; ++i) {
+  for (size_t i = 0; i < self->amountOfChannelsToSend; ++i) {
     if(self->channels[i] != NULL){
       char id[MAX_LENGTH_OF_NUMBER];
 #if (ARCH_SIZE_32)
@@ -496,7 +496,7 @@ static void reset(IPackerHandle packer){
   self->channelsReady = false;
 
   self->numberOfAddressesToAnnounce = 0;
-  self->numberOfChannelsToSend = 0;
+  self->amountOfChannelsToSend = 0;
 
   for (int i = 0; i < self->maxNumberOfChannels; ++i) {
     self->channels[i] = NULL;
@@ -529,7 +529,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
   self->channels = malloc(sizeof(ChannelHandle) * maxNumberOfChannels);
   self->channelIds = malloc(sizeof(uint32_t) * maxNumberOfChannels);
   self->validator = validator;
-  self->numberOfChannelsToSend = 0;
+  self->amountOfChannelsToSend = 0;
   self->maxNumberOfChannels = maxNumberOfChannels;
   self->maxAddressesToAnnounce = maxAddressesToAnnounce;
   self->addresses = malloc(sizeof(ADDRESS_DATA_TYPE) * maxAddressesToAnnounce);

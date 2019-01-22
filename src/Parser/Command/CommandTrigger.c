@@ -18,7 +18,7 @@ typedef struct __CommandTriggerPrivateData {
     ICommand command;
 
     IScopeHandle scope;
-    CommandTriggerConfiguration config;
+    TriggerConfiguration config;
 
 } CommandTriggerPrivateData;
 
@@ -28,9 +28,6 @@ typedef struct __CommandTriggerPrivateData {
 static void run(ICommandHandle command) {
   CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
 
-  /**
-   * TODO clean this up somehow
-   */
   self->scope->configureTrigger(self->scope, self->config);
 }
 
@@ -51,7 +48,7 @@ ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self) {
   return &self->command;
 }
 
-void CommandTrigger_setAttributes(CommandTriggerHandle self, CommandTriggerConfiguration conf) {
+void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf) {
 
   self->config = conf;
 }

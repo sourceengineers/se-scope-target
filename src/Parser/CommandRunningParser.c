@@ -19,17 +19,15 @@ static char* commandName = "cf_running";
 typedef struct __CommandRunningParserPrivateData{
     CommandRunningHandle command;
     IUnpackerHandle unpacker;
-    char* commandName;
 
 } CommandRunningParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningParserHandle CommandRunningParser_create(ChannelHandle* channels, size_t amountOfChannels, \
-                                                        IUnpackerHandle unpacker){
+CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
   CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
-  self->command = CommandRunning_create(channels, amountOfChannels);
+  self->command = CommandRunning_create(scope);
   self->unpacker = unpacker;
   return self;
 }
@@ -40,25 +38,25 @@ ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
     return NULL;
   }
 
-  int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) self->commandName);
+  const uint32_t numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) commandName);
 
   if(numberOfFields == -1){
     return NULL;
   }
 
-  int channelIds[numberOfFields];
+  uint32_t channelIds[numberOfFields];
   CHANNEL_STATES newStates[numberOfFields];
 
   char nameOfField[MAX_FIELD_LENGTH];
 
   for(size_t i = 0; i < numberOfFields; ++i){
 
-    bool foundField = self->unpacker->getNameOfField(self->unpacker, self->commandName, nameOfField, MAX_FIELD_LENGTH,
-                                                     i);
+    bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField, MAX_FIELD_LENGTH, i);
+
     if(foundField == true){
       channelIds[i] = atoi(nameOfField);
 
-      CommandFetchingInformation information = {.commandName = self->commandName, .fieldName = nameOfField,
+      CommandFetchingInformation information = {.commandName = commandName, .fieldName = nameOfField,
               .isInArray = false, .arrayIndex = 0};
 
       bool newState = self->unpacker->getBoolFromCommand(self->unpacker, &information);

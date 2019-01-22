@@ -35,8 +35,8 @@ TEST(Trigger, test_normal)
 {
   IFloatStream stream = *BufferedFloatStream_getIFloatStream(BufferedFloatStream_create(4));
 
-  TriggerHandle trigger = Trigger_create();
-  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_NORMAL, .stream = stream, .channelId = 1};
+  TriggerHandle trigger = Trigger_create(NULL, 0);
+  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_NORMAL, .channelId = 1};
 
   stream.flush(&stream);
   stream.writeData(&stream, 1.1f);
@@ -151,8 +151,8 @@ TEST(Trigger, test_continuous)
   stream.length = &streamGetSize;
   stream.read = &streamGetData;
 
-  TriggerHandle trigger = Trigger_create();
-  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_CONTINUOUS, .stream = stream, .channelId = 1};
+  TriggerHandle trigger = Trigger_create(NULL, 0);
+  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_CONTINUOUS, .channelId = 1};
 
   bool isTriggered = Trigger_run(trigger, 1);
 

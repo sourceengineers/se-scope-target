@@ -28,7 +28,7 @@
 /* Struct used to help the command configure the channels */
 typedef struct {
     CHANNEL_STATES* newStates;
-    uint32_t * changedChannels;
+    uint32_t* changedChannels;
     uint32_t numberOfChangedChannels;
 } CommandRunningConf;
 

@@ -3,6 +3,7 @@
 
 extern "C" {
     #include <Scope/Parser/Command/CommandAddr.h>
+    #include <Scope/Core/Channel.h>
 }
 
 using namespace std;
@@ -15,7 +16,7 @@ TEST(CommandAddr, test_command)
   
   ChannelHandle channels[testElements];
   
-  int firstChangedElements[testElements] = {0, 1, 2, 3, 4};
+  uint32_t firstChangedElements[testElements] = {0, 1, 2, 3, 4};
   void* firstAddrPointer[testElements] = {&dataPointOne, &dataPointOne, &dataPointOne, &dataPointOne, &dataPointOne};
   DATA_TYPES firstTypes[testElements] = {FLOAT, FLOAT, FLOAT, FLOAT, FLOAT};
   
@@ -27,7 +28,7 @@ TEST(CommandAddr, test_command)
   }
   
   /* Configure all channels and check if it worked */
-  CommandAddrHandle commandAddr =  CommandAddr_create(channels, testElements);
+  CommandAddrHandle commandAddr =  CommandAddr_create(NULL);
   CommandAddr_setAttributes(commandAddr, firstConfig);
   ICommand* command = CommandAddr_getICommand(commandAddr);
   command->run(command);
@@ -39,7 +40,7 @@ TEST(CommandAddr, test_command)
   }
   
   float dataPointTwo = 6.6f;
-  int secondChangedElements[testElements] = {2,3,4};
+  uint32_t secondChangedElements[testElements] = {2,3,4};
   void* secondAddrPointer[testElements] = {&dataPointTwo, &dataPointTwo, &dataPointTwo};
   DATA_TYPES secondTypes[testElements] = {FLOAT, FLOAT, FLOAT};
   

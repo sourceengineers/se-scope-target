@@ -24,7 +24,7 @@ typedef struct __CommandAddrParserPrivateData{
 } CommandAddrParserPrivateData;
 
 /* Takes a String as input and retrieves the matching data type defined in "DataTypes.h" */
-static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t maxLength);
+static DATA_TYPES parseStringToDataType(const char* dataTypeName, size_t maxLength);
 
 /******************************************************************************
  Private functions
@@ -49,10 +49,9 @@ static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t m
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandAddrParserHandle CommandAddrParser_create(ChannelHandle* channels, size_t amountOfChannels, \
-                                                  IUnpackerHandle unpacker){
+CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
   CommandAddrParserHandle self = malloc(sizeof(CommandAddrParserPrivateData));
-  self->command = CommandAddr_create(channels, amountOfChannels);
+  self->command = CommandAddr_create(scope);
   self->unpacker = unpacker;
   return self;
 }
@@ -63,13 +62,13 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self){
     return NULL;
   }
 
-  int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, commandName);
+  const uint32_t numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, commandName);
 
   if(numberOfFields == -1){
     return NULL;
   }
 
-  int channelIds[numberOfFields];
+  uint32_t channelIds[numberOfFields];
   void* newAddresses[numberOfFields];
   DATA_TYPES types[numberOfFields];
 
@@ -77,11 +76,11 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self){
 
   for(size_t i = 0; i < numberOfFields; i++){
 
-    bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField, MAX_FIELD_LENGTH, i);
+    const bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField, MAX_FIELD_LENGTH, i);
 
     /* Only start parsing if the field was found, and its not a data type field */
     if(foundField == true){
-      channelIds[i] = atoi(nameOfField);
+      channelIds[i] = (uint32_t) atoi(nameOfField);
 
       CommandFetchingInformation information = {.commandName = commandName, .fieldName = nameOfField,
               .isInArray = true, .arrayIndex = 0};

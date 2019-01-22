@@ -17,11 +17,14 @@ TEST(CommandRunning, test_command)
   CHANNEL_STATES newStates[amountChannelChanged] = {CHANNEL_RUNNING, CHANNEL_STOPPED, CHANNEL_RUNNING};
   
   CHANNEL_STATES changedStates[testElements] = {CHANNEL_NONE,CHANNEL_NONE,CHANNEL_NONE,CHANNEL_NONE,CHANNEL_NONE};
-  int changedChannels[amountChannelChanged] = {0, 2, 4};
+  uint32_t changedChannels[amountChannelChanged] = {0, 2, 4};
   
   
-  CommandRunningConf conf = {.newStates = newStates, .changedChannels = changedChannels, .numberOfChangedChannels = amountChannelChanged};
-  
+  CommandRunningConf conf;
+  conf.newStates = newStates;
+  conf.numberOfChangedChannels = amountChannelChanged;
+  conf.changedChannels = changedChannels;
+
   /* Set initial state to control */
   for (size_t i = 0; i < testElements; i++) {
     channels[i] = Channel_create(10);
@@ -30,7 +33,7 @@ TEST(CommandRunning, test_command)
   }
   Channel_setStateStopped(channels[0]);
 
-  CommandRunningHandle commandRunning = CommandRunning_create(channels, testElements);
+  CommandRunningHandle commandRunning = CommandRunning_create(NULL);
   CommandRunning_setAttributes(commandRunning, conf);
 
   ICommandHandle command = CommandRunning_getICommand(commandRunning);
