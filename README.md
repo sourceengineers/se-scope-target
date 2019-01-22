@@ -30,7 +30,7 @@ Generate the scope.
 /*
 Definition of the Scope_create
 ScopeHandle Scope_create(const size_t channelSize,
-                         const size_t numberOfChannels,
+                         const size_t amountOfChannels,
                          const size_t maxNumberOfAddresses,
                          const COM_TYPE comType,
                          const PROT_TYPE protType,

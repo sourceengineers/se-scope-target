@@ -39,7 +39,7 @@ typedef void(*ScopeTransmitCallback)(IByteStreamHandle stream);
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the Sender */
-SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t numberOfChannels,
+SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t amountOfChannels,
                            TriggerHandle trigger,
                            IScopeHandle scope,
                            ScopeTransmitCallback transmitCallback,

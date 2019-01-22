@@ -21,7 +21,7 @@
 /* Class data */
 typedef struct __ScopePrivateData
 {
-  size_t numberOfChannels;
+  size_t amountOfChannels;
   ChannelHandle* channels;
   TriggerHandle trigger;
   CommandParserDispatcherHandle commandParserDispatcher;
@@ -123,12 +123,17 @@ static bool transmitTimestampInc(IScopeHandle scope){
 
 static size_t getAmountOfChannels(IScopeHandle scope){
   ScopeHandle self = (ScopeHandle) scope->handle;
-  return self->numberOfChannels;
+  return self->amountOfChannels;
 }
 
 static IIntStreamHandle getTimestamp(IScopeHandle scope){
   ScopeHandle self = (ScopeHandle) scope->handle;
   return IntRingBuffer_getIntStream(self->timeStamp);
+}
+
+static void configureTrigger(IScopeHandle scope, TriggerConfiguration conf){
+  ScopeHandle self = (ScopeHandle) scope->handle;
+  Trigger_configure(self->trigger, conf);
 }
 
 static void setChannelRunning(IScopeHandle scope, uint32_t idOfChangedChannel){
@@ -151,7 +156,7 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
  Public functions
 ******************************************************************************/
 ScopeHandle Scope_create(const size_t channelSize,
-                         const size_t numberOfChannels,
+                         const size_t amountOfChannels,
                          const size_t maxNumberOfAddresses,
                          const COM_TYPE comType, // diskutieren ob das hier nicht ausserhalb des scopes besser wäre (klare layerung)
                          const TIMESTAMPING_MODE timestampingMode,
@@ -178,7 +183,7 @@ ScopeHandle Scope_create(const size_t channelSize,
 
 
   self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
-  size_t outputBufferSize = JsonPacker_calculateBufferSize(numberOfChannels, maxNumberOfAddresses, channelSize);
+  size_t outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, maxNumberOfAddresses, channelSize);
   size_t inputBufferSize = JsonUnpacker_calculateBufferSize();
 
   /* Create input and output streams */
@@ -186,16 +191,16 @@ ScopeHandle Scope_create(const size_t channelSize,
   self->outputStream = BufferedByteStream_create(outputBufferSize);
 
   /* Create channels and buffers */
-  self->channels = malloc(sizeof(ChannelHandle) * numberOfChannels);
-  self->numberOfChannels = numberOfChannels;
+  self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
+  self->amountOfChannels = amountOfChannels;
 
-  for (size_t i = 0; i < numberOfChannels; i++) {
+  for (size_t i = 0; i < amountOfChannels; i++) {
     self->channels[i] = Channel_create(channelSize);
   }
   self->timeStamp = IntRingBuffer_create(channelSize);
 
   /* Create Trigger */
-  self->trigger = Trigger_create();
+  self->trigger = Trigger_create(self->channels, self->amountOfChannels);
 
   /* Communication section */
   /* Create validators */
@@ -203,10 +208,10 @@ ScopeHandle Scope_create(const size_t channelSize,
   IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
 
   // json packer und scope trennen -> diskuteren ob neue factory die scope und json layer für layer aufbaut sinnvoll ist
-  self->jsonPacker = JsonPacker_create(numberOfChannels, maxNumberOfAddresses, communicationValidator,
+  self->jsonPacker = JsonPacker_create(amountOfChannels, maxNumberOfAddresses, communicationValidator,
           BufferedByteStream_getIByteStream(self->outputStream));
 
-  self->sender = Sender_create(JsonPacker_getIPacker(self->jsonPacker), self->channels, self->numberOfChannels,
+  self->sender = Sender_create(JsonPacker_getIPacker(self->jsonPacker), self->channels, self->amountOfChannels,
                                self->trigger,
                                &self->scope,
                                transmitCallback,
@@ -220,18 +225,14 @@ ScopeHandle Scope_create(const size_t channelSize,
                                    self->sender);
 
   /* Create command commandParserDispatcher */
-  self->commandParserDispatcher = CommandParserDispatcher_create(&self->scope,
-                                               self->channels,
-                                               self->numberOfChannels,
-                                               self->trigger,
-                                               Receiver_getIUnpacker(self->receiver));
+  self->commandParserDispatcher = CommandParserDispatcher_create(&self->scope, Receiver_getIUnpacker(self->receiver));
 
   return self;
 }
 
 void Scope_destroy(ScopeHandle self){
 
-  for (size_t i = 0; i < self->numberOfChannels; ++i) {
+  for (size_t i = 0; i < self->amountOfChannels; ++i) {
     Channel_destroy(self->channels[i]);
   }
 
@@ -296,7 +297,7 @@ void Scope_poll(ScopeHandle self, uint32_t timeStamp){
 
   IntRingBuffer_write(self->timeStamp, &prepareTimeStamp, 1);
 
-  for (size_t i = 0; i < self->numberOfChannels; i++) {
+  for (size_t i = 0; i < self->amountOfChannels; i++) {
     Channel_poll(self->channels[i]);
   }
 
@@ -313,7 +314,7 @@ void Scope_transmitData(ScopeHandle self){
 
 void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* pollAddress, DATA_TYPES type){
 
-  if(channelId >= self->numberOfChannels){
+  if(channelId >= self->amountOfChannels){
     return;
   }
 
@@ -322,7 +323,7 @@ void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* poll
 
 void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, uint32_t channelId){
 
-  if(channelId >= self->numberOfChannels){
+  if(channelId >= self->amountOfChannels){
     return;
   }
 
@@ -343,7 +344,7 @@ void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrem
 
 void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId){
 
-  if(channelId >= self->numberOfChannels){
+  if(channelId >= self->amountOfChannels){
     return;
   }
 
@@ -352,7 +353,7 @@ void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId){
 
 void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
 
-  if(channelId >= self->numberOfChannels){
+  if(channelId >= self->amountOfChannels){
     return;
   }
 
@@ -365,7 +366,7 @@ void Scope_announceAddresses(ScopeHandle self){
 }
 
 void Scope_clear(ScopeHandle self){
-  for (size_t i = 0; i < self->numberOfChannels; i++) {
+  for (size_t i = 0; i < self->amountOfChannels; i++) {
     Channel_clear(self->channels[i]);
   }
   IntRingBuffer_clear(self->timeStamp);

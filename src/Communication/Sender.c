@@ -19,7 +19,7 @@ typedef struct __SenderPrivateData
   TriggerHandle trigger;
   IScopeHandle scope;
 
-  size_t numberOfChannels;
+  size_t amountOfChannels;
   ChannelHandle* channels;
 
   AddressStorageHandle addressStorage;
@@ -35,7 +35,7 @@ typedef struct __SenderPrivateData
 /******************************************************************************
  Public functions
 ******************************************************************************/
-SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t numberOfChannels,
+SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const size_t amountOfChannels,
                            TriggerHandle trigger,
                            IScopeHandle scope,
                            ScopeTransmitCallback transmitCallback,
@@ -49,7 +49,7 @@ SenderHandle Sender_create(IPackerHandle packer, ChannelHandle* channels, const 
   self->addressStorage = addressStorage;
 
   self->channels = channels;
-  self->numberOfChannels = numberOfChannels;
+  self->amountOfChannels = amountOfChannels;
 
   self->transmitCallback = transmitCallback;
 
@@ -76,7 +76,7 @@ void Sender_addressAnnouncement(SenderHandle self){
 
 void Sender_scopeData(SenderHandle self){
 
-  for (size_t i = 0; i < self->numberOfChannels; ++i) {
+  for (size_t i = 0; i < self->amountOfChannels; ++i) {
     if(Channel_isRunning(self->channels[i]) == true){
       self->packer->prepareChannel(self->packer, self->channels[i], (const uint32_t) i);
     }
