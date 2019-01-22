@@ -35,8 +35,7 @@ typedef struct __ScopePrivateData* ScopeHandle;
 /* Constructor: Creates a new instance of the channel */
 ScopeHandle Scope_create(const size_t channelSize,
                          const size_t amountOfChannels,
-                         const size_t maxNumberOfAddresses,
-                         const TIMESTAMPING_MODE timestampingMode);
+                         const size_t maxNumberOfAddresses);
 
 /* Deconstructor: Deletes the instance of the channel */
 void Scope_destroy(ScopeHandle self);

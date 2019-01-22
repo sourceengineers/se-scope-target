@@ -15,8 +15,6 @@
 /* Class data */
 typedef struct __ScopeBuilderPrivateData {
 
-    ScopeHandle scope;
-
 
 } ScopeBuilderPrivateData;
 

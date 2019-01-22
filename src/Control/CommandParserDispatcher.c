@@ -29,7 +29,7 @@ typedef struct __CommandParserDispatcherPrivateData {
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope, IUnpackerHandle unpacker) {
+CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope, IPackerHandle unpacker, IUnpackerHandle packer) {
 
 	CommandParserDispatcherHandle self = malloc(sizeof(CommandParserDispatcherPrivateData));
 

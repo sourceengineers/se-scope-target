@@ -16,7 +16,7 @@
 /******************************************************************************
  Define interface handle data
 ******************************************************************************/
-typedef struct IRunnaleStruct* IRunnableHandle;
+typedef struct IRunnableStruct* IRunnableHandle;
 
 /******************************************************************************
  Define interface

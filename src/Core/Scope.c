@@ -54,11 +54,6 @@ typedef struct __ScopePrivateData
 
 } ScopePrivateData ;
 
-/* Fetches all commands from the Parser */
-static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands);
-
-/* Executes all fetched commands */
-static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 
 /******************************************************************************
  Private functions
@@ -87,23 +82,6 @@ static void scopeTransmit(IScopeHandle scope){
   ScopeHandle self = (ScopeHandle) scope->handle;
   Sender_scopeData(self->sender);
   Sender_transmit(self->sender);
-}
-
-static void fetchCommands(ScopeHandle scope, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
-  char commandName[MAX_COMMAND_LENGTH];
-
-  for (size_t i = 0; i < numberOfCommands; ++i) {
-    unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
-    commands[i] = CommandParserDispatcher_run(scope->commandParserDispatcher, commandName);
-  }
-}
-
-static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
-  for (size_t i = 0; i < numberOfCommands; ++i) {
-    if(commands[i] != NULL){
-      commands[i]->run(commands[i]);
-    }
-  }
 }
 
 static uint32_t getTimeIncrement(IScopeHandle scope){
@@ -158,14 +136,12 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
 ******************************************************************************/
 ScopeHandle Scope_create(const size_t channelSize,
                          const size_t amountOfChannels,
-                         const size_t maxNumberOfAddresses,
-                         const TIMESTAMPING_MODE timestampingMode,
-                         ScopeTransmitCallback transmitCallback){
-
+                         const size_t maxNumberOfAddresses){
+/*
   ScopeHandle self = malloc(sizeof(ScopePrivateData));
   self->currentTimestamp = 0;
   self->timeIncrement = 1;
-  self->timestampingMode = timestampingMode;
+ // self->timestampingMode = timestampingMode;
 
   self->scope.handle = self;
   self->scope.poll = &scopePoll;
@@ -186,11 +162,9 @@ ScopeHandle Scope_create(const size_t channelSize,
   size_t outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, maxNumberOfAddresses, channelSize);
   size_t inputBufferSize = JsonUnpacker_calculateBufferSize();
 
-  /* Create input and output streams */
   self->inputStream = BufferedByteStream_create(inputBufferSize);
   self->outputStream = BufferedByteStream_create(outputBufferSize);
 
-  /* Create channels and buffers */
   self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
   self->amountOfChannels = amountOfChannels;
 
@@ -199,15 +173,11 @@ ScopeHandle Scope_create(const size_t channelSize,
   }
   self->timeStamp = BufferedIntStream_create(channelSize);
 
-  /* Create Trigger */
   self->trigger = Trigger_create(self->channels, self->amountOfChannels);
 
-  /* Communication section */
-  /* Create validators */
   self->communicationFactory = CommunicationFactory_create();
   IComValidatorHandle communicationValidator = CommunicationFactory_getIComValidator(self->communicationFactory, comType);
 
-  // json packer und scope trennen -> diskuteren ob neue factory die scope und json layer für layer aufbaut sinnvoll ist
   self->jsonPacker = JsonPacker_create(amountOfChannels, maxNumberOfAddresses, communicationValidator,
           BufferedByteStream_getIByteStream(self->outputStream));
 
@@ -217,17 +187,15 @@ ScopeHandle Scope_create(const size_t channelSize,
                                transmitCallback,
                                self->addressStorage);
 
-  /* Create the unpacker and receiver */
   self->jsonUnpacker = JsonUnpacker_create();
   self->receiver = Receiver_create(JsonUnpacker_getIUnpacker(self->jsonUnpacker),
                                    BufferedByteStream_getIByteStream(self->inputStream),
                                    communicationValidator,
                                    self->sender);
 
-  /* Create command commandParserDispatcher */
   self->commandParserDispatcher = CommandParserDispatcher_create(&self->scope, Receiver_getIUnpacker(self->receiver));
 
-  return self;
+  return self;*/
 }
 
 void Scope_destroy(ScopeHandle self){
@@ -262,26 +230,10 @@ void Scope_receiveData(ScopeHandle self){
   if(Receiver_unpack(self->receiver) == false){
     return;
   }
-
-  // hier finde ich unlogisch dass du zuerst upack auf dem konkreten receiver aufrufst um danach den unpacker der im
-  // receiver vergraben ist weiter zu verwenden. hier könntest du das composite pattern sauber umsetzten so dass man
-  // nur noch auf den IUnpackerHandler zugreifen muss.
-  IUnpackerHandle unpacker = Receiver_getIUnpacker(self->receiver);
-
-  size_t numberOfCommands = unpacker->getNumberOfCommands(unpacker);
-  ICommandHandle commands[numberOfCommands];
-
-  fetchCommands(self, unpacker, commands, numberOfCommands);
-  runCommands(commands, numberOfCommands);
 }
 
 IByteStreamHandle Scope_getInputStream(ScopeHandle self){
   return BufferedByteStream_getIByteStream(self->inputStream);
-}
-
-//das brauchts glaube ich nicht -> entfernen (du hast das mit dem senden ja über den callback gelöst)
-IByteStreamHandle Scope_getOutputStream(ScopeHandle self){
-  return BufferedByteStream_getIByteStream(self->outputStream);
 }
 
 void Scope_poll(ScopeHandle self, uint32_t timeStamp){

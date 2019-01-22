@@ -23,6 +23,8 @@ typedef struct __SerializerPrivateData* SerializerHandle;
 /* Constructor: Creates a new instance of the channel */
 SerializerHandle Serializer_create(IRunnableHandle packer, IRunnableHandle unpacker);
 
+IRxTxRunnableHandle Serializer_getRxTxRunnable(SerializerHandle self);
+
 /* Deconstructor: Deletes the instance of the channel */
 void Serializer_destroy(SerializerHandle self);
 

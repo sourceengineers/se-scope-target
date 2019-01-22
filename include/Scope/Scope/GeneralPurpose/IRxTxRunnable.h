@@ -16,7 +16,7 @@
 /******************************************************************************
  Define interface handle data
 ******************************************************************************/
-typedef struct IRxTxRunnaleStruct* IRxTxRunnableHandle;
+typedef struct IRxTxRunnableStruct* IRxTxRunnableHandle;
 
 /******************************************************************************
  Define interface

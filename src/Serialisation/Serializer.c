@@ -8,6 +8,7 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Serialisation/Serializer.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
@@ -15,27 +16,46 @@
 /* Class data */
 typedef struct __SerializerPrivateData {
 
+    IRxTxRunnable rxTxRunnable;
+
     IRunnableHandle packer;
     IRunnableHandle unpacker;
 
 } SerializerPrivateData;
 
-
 /******************************************************************************
  Private functions
 ******************************************************************************/
-void runRx(IRxTxRunnableHandle runnable){
-
+static void runRx(IRxTxRunnableHandle runnable){
+    SerializerHandle self = (SerializerHandle) runnable->handle;
+    self->unpacker->run(self->unpacker);
 }
 
-void runTx(IRxTxRunnableHandle runnable){
+static void runTx(IRxTxRunnableHandle runnable){
+    SerializerHandle self = (SerializerHandle) runnable->handle;
+    self->packer->run(self->packer);
 }
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
-SerializerHandle Serializer_create(IRunnableHandle packer, IRunnableHandle unpacker);
+SerializerHandle Serializer_create(IRunnableHandle packer, IRunnableHandle unpacker){
 
+    SerializerHandle self = malloc(sizeof(SerializerPrivateData));
 
+    self->packer = packer;
+    self->unpacker = unpacker;
+    self->rxTxRunnable.runRx = &runRx;
+    self->rxTxRunnable.runTx = &runTx;
 
+    return self;
+}
 
-void Serializer_destroy(SerializerHandle self);
+IRxTxRunnableHandle Serializer_getRxTxRunnable(SerializerHandle self){
+    return &self->rxTxRunnable;
+}
+
+void Serializer_destroy(SerializerHandle self){
+    free(self);
+    self = NULL;
+}

@@ -51,7 +51,7 @@ void readFile(IByteStreamHandle stream, const char* filename){
 
 int main(int argc, char *argv[] ){
 
-  ScopeHandle scope = Scope_create(500, 3, 3, ETHERNET, TIMESTAMP_AUTOMATIC, print);
+  ScopeHandle scope = Scope_create(500, 3, 3);
   IByteStreamHandle stream = Scope_getInputStream(scope);
 
 

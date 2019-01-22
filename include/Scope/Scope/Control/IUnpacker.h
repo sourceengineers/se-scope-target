@@ -56,6 +56,8 @@ typedef struct IUnpackerStruct {
   bool (*unpack)(IUnpackerHandle unpacker, const char* data, const size_t length);
   void (*activateNewMessage)(IUnpackerHandle unpacker);
 
+  bool (*dataPending)(IUnpackerHandle unpacker);
+
   /* Functions to fetch commands and fields */
   size_t (*getNumberOfCommands)(IUnpackerHandle unpacker);
   bool (*getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
