@@ -17,7 +17,7 @@ TEST(CommandParserDispatcher, test_destroy)
   ICommand* commandClear = NULL;
   ICommand* commandAnnounce = NULL;
 
-  CommandParserDispatcherHandle commandParserDispatcher = CommandParserDispatcher_create(NULL, NULL);
+  CommandParserDispatcherHandle commandParserDispatcher = CommandParserDispatcher_create(NULL, NULL, NULL);
   
   commandTrans = CommandParserDispatcher_run(commandParserDispatcher, (const char*) "ev_trans");
   ASSERT_THAT(commandTrans, NotNull());

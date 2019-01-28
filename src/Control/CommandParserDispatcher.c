@@ -29,7 +29,7 @@ typedef struct __CommandParserDispatcherPrivateData {
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope, IPackerHandle unpacker, IUnpackerHandle packer) {
+CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker) {
 
 	CommandParserDispatcherHandle self = malloc(sizeof(CommandParserDispatcherPrivateData));
 
@@ -39,7 +39,7 @@ CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope,
 	self->commandRunningParser = CommandRunningParser_create(scope, unpacker);
 	self->commandTIncParser = CommandTIncParser_create(scope, unpacker);
 	self->commandTriggerParser = CommandTriggerParser_create(scope, unpacker);
-	self->commandPollParser = CommandPollParser_create(scope, unpacker);
+	self->commandPollParser = CommandPollParser_create(scope);
 	self->commandAnnounceParser = CommandAnnounceParser_create(scope);
 	self->commandTransParser = CommandTransParser_create(scope);
 	self->commandClearParser = CommandClearParser_create(scope);

@@ -27,7 +27,6 @@ typedef struct __JsonPackerPrivateData* JsonPackerHandle;
 ******************************************************************************/
 /* Constructor: Creates a new instance of the Packer */
 JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
-                                   IComValidatorHandle validator,
                                    IByteStreamHandle byteStream);
 
 /* Destroys the instance of the Packer */

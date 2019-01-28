@@ -10,8 +10,8 @@
 #define SERIALIZER_H
 
 #include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/GeneralPurpose/IRxTxRunnable.h>
-
+#include <Scope/Control/IPacker.h>
+#include <Scope/Control/IUnpacker.h>
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
@@ -21,9 +21,11 @@ typedef struct __SerializerPrivateData* SerializerHandle;
  Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-SerializerHandle Serializer_create(IRunnableHandle packer, IRunnableHandle unpacker);
+SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker);
 
-IRxTxRunnableHandle Serializer_getRxTxRunnable(SerializerHandle self);
+IRunnableHandle Serializer_getRxRunnable(SerializerHandle self);
+
+IRunnableHandle Serializer_getTxRunnable(SerializerHandle self);
 
 /* Deconstructor: Deletes the instance of the channel */
 void Serializer_destroy(SerializerHandle self);

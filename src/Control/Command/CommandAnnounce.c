@@ -24,7 +24,7 @@ typedef struct __CommandAnnouncePrivateData{
 ******************************************************************************/
 static void run(ICommandHandle command){
   CommandAnnounceHandle self = (CommandAnnounceHandle) command->handle;
-  self->scope->announce(self->scope);
+//  self->scope->announce(self->scope);
 }
 
 /******************************************************************************

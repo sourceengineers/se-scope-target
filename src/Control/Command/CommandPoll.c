@@ -17,16 +17,14 @@ typedef struct __CommandPollPrivateData{
     ICommand command;
     IScopeHandle scope;
 
-    uint32_t nextTimeStamp;
-
 } CommandPollPrivateData;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandPollHandle self = (CommandPollHandle) command->handle;
-  self->scope->poll(self->scope, self->nextTimeStamp);
+    CommandPollHandle self = (CommandPollHandle) command->handle;
+    self->scope->poll(self->scope);
 }
 
 /******************************************************************************
@@ -34,26 +32,20 @@ static void run(ICommandHandle command){
 ******************************************************************************/
 CommandPollHandle CommandPoll_create(IScopeHandle scope){
 
-  CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
-  self->scope = scope;
+    CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
+    self->scope = scope;
 
-  self->command.handle = self;
-  self->command.run = &run;
+    self->command.handle = self;
+    self->command.run = &run;
 
-  self->nextTimeStamp = 0;
-
-  return self;
+    return self;
 }
 
 ICommandHandle CommandPoll_getICommand(CommandPollHandle self){
-  return &self->command;
-}
-
-void CommandPoll_setAttributes(CommandPollHandle self, uint32_t timestamp){
-  self->nextTimeStamp = timestamp;
+    return &self->command;
 }
 
 void CommandPoll_destroy(CommandPollHandle self){
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

@@ -11,9 +11,9 @@
 
 #include <Scope/Control/IPacker.h>
 #include <Scope/Control/IUnpacker.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/Control/Command/ICommand.h>
 #include <Scope/Control/CommandParserDispatcher.h>
-#include <Scope/GeneralPurpose/IRxTxRunnable.h>
 #include <Scope/Core/IScope.h>
 
 /******************************************************************************
@@ -26,7 +26,9 @@ typedef struct __ControllerPrivateData* ControllerHandle;
 ******************************************************************************/
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker);
 
-IRxTxRunnableHandle Controller_getRxTxRunnable(ControllerHandle self);
+IRunnableHandle Controller_getRxRunnable(ControllerHandle self);
+
+IRunnableHandle Controller_getTxRunnable(ControllerHandle self);
 
 void Controller_destroy(ControllerHandle self);
 

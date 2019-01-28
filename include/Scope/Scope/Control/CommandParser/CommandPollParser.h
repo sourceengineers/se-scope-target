@@ -14,7 +14,6 @@
 #define COMMANDPOLLPARSER_H_
 
 #include <Scope/Control/Command/ICommand.h>
-#include <Scope/Communication/Receiver.h>
 #include <Scope/Control/Command/CommandPoll.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
@@ -27,7 +26,7 @@ typedef struct __CommandPollParserPrivateData* CommandPollParserHandle;
  Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandPollParserHandle CommandPollParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
+CommandPollParserHandle CommandPollParser_create(IScopeHandle scope);
 
 /* Configurates the gives command */
 ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self);

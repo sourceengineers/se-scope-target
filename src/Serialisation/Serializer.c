@@ -9,50 +9,68 @@
 
 #include <Scope/Serialisation/Serializer.h>
 #include <stdlib.h>
+#include <Scope/Serialisation/SerializerDefinitions.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __SerializerPrivateData {
+typedef struct __SerializerPrivateData{
 
-    IRxTxRunnable rxTxRunnable;
+    IRunnable runRx;
+    IRunnable runTx;
 
-    IRunnableHandle packer;
-    IRunnableHandle unpacker;
+    IPackerHandle packer;
+    IUnpackerHandle unpacker;
 
 } SerializerPrivateData;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void runRx(IRxTxRunnableHandle runnable){
+static void runRx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
-    self->unpacker->run(self->unpacker);
+
+    if(self->unpacker->streamIsEmpty(self->unpacker)){
+        return;
+    }
+
+    bool parsingIsValid = self->unpacker->unpack(self->unpacker);
+
+    if(parsingIsValid == false){
+       self->packer->prepareFlowControl(self->packer, FLOWCONTROL_NAK);
+    } else {
+        self->packer->prepareFlowControl(self->packer, FLOWCONTROL_ACK);
+    }
 }
 
-static void runTx(IRxTxRunnableHandle runnable){
+static void runTx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
-    self->packer->run(self->packer);
+    self->packer->pack(self->packer);
 }
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-SerializerHandle Serializer_create(IRunnableHandle packer, IRunnableHandle unpacker){
+SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker){
 
     SerializerHandle self = malloc(sizeof(SerializerPrivateData));
 
     self->packer = packer;
     self->unpacker = unpacker;
-    self->rxTxRunnable.runRx = &runRx;
-    self->rxTxRunnable.runTx = &runTx;
+
+    self->runRx.run = &runRx;
+    self->runTx.run = &runTx;
 
     return self;
 }
 
-IRxTxRunnableHandle Serializer_getRxTxRunnable(SerializerHandle self){
-    return &self->rxTxRunnable;
+IRunnableHandle Serializer_getTxRunnable(SerializerHandle self){
+    return &self->runTx;
+}
+
+IRunnableHandle Serializer_getRxRunnable(SerializerHandle self){
+    return &self->runRx;
 }
 
 void Serializer_destroy(SerializerHandle self){

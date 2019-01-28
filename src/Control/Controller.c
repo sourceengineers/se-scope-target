@@ -14,15 +14,17 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __ControllerPrivateData {
-    IRxTxRunnable rxTxRunnable;
+typedef struct __ControllerPrivateData{
+    IRunnable rxRunnable;
+    IRunnable txRunnable;
 
     IUnpackerHandle unpacker;
     CommandParserDispatcherHandle commandParserDispatcher;
 } ControllerPrivateData;
 
 /* Fetches all commands from the Parser */
-static void fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands);
+static void
+fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands);
 
 /* Executes all fetched commands */
 static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
@@ -30,7 +32,7 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void runRx(IRxTxRunnableHandle runnable){
+static void runRx(IRunnableHandle runnable){
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
     if(self->unpacker->dataPending(self->unpacker) == false){
@@ -44,26 +46,37 @@ static void runRx(IRxTxRunnableHandle runnable){
     runCommands(commands, numberOfCommands);
 }
 
-static void runTx(IRxTxRunnableHandle runnable){
+static void runTx(IRunnableHandle runnable){
     ControllerHandle self = (ControllerHandle) runnable->handle;
 }
 
-static void fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
-  char commandName[MAX_COMMAND_LENGTH];
+static void
+fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
 
-  for (size_t i = 0; i < numberOfCommands; ++i) {
-    unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
-    commands[i] = CommandParserDispatcher_run(self->commandParserDispatcher, commandName);
-  }
+    /* Check if new data is pending */
+    if(!self->unpacker->dataPending(self->unpacker)){
+        return;
+    }
+
+    char commandName[MAX_COMMAND_LENGTH];
+
+    for(size_t i = 0; i < numberOfCommands; ++i){
+        unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
+        commands[i] = CommandParserDispatcher_run(self->commandParserDispatcher, commandName);
+    }
+
+    /* Singal the unpacker that the data was interpreted */
+    self->unpacker->dataRead(self->unpacker);
 }
 
 static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
-  for (size_t i = 0; i < numberOfCommands; ++i) {
-    if(commands[i] != NULL){
-      commands[i]->run(commands[i]);
+    for(size_t i = 0; i < numberOfCommands; ++i){
+        if(commands[i] != NULL){
+            commands[i]->run(commands[i]);
+        }
     }
-  }
 }
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -71,16 +84,20 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
 
-    self->rxTxRunnable.runRx = &runRx;
-    self->rxTxRunnable.runTx = &runTx;
+    self->rxRunnable.run = &runRx;
+    self->txRunnable.run = &runTx;
     self->unpacker = unpacker;
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, packer, unpacker);
 
     return self;
 }
 
-IRxTxRunnableHandle Controller_getRxTxRunnable(ControllerHandle self){
-    return &self->rxTxRunnable;
+IRunnableHandle Controller_getRxRunnable(ControllerHandle self){
+    return &self->rxRunnable;
+}
+
+IRunnableHandle Controller_getTxRunnable(ControllerHandle self){
+    return &self->txRunnable;
 }
 
 void Controller_destroy(ControllerHandle self){

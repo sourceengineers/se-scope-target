@@ -8,8 +8,10 @@
  * @brief        Parser interface.
  *
  *               unpack: Unpacks the given data. Returns false if the parsing process failed
- *               activateNewMessage: Activates the last parsed message to be the new object, from which the data gets
-*                                     fetched. This is used in case as example checksums are faulty.
+ *               dataPending: Offers the Controller a possibility to check if new data is ready to be read or not
+ *               dataRead: This function has to be executed by the controller once the pending data was interpreted
+ *               streamIsEmpty: Checks if data in the input stream is present or not
+ *
  *               getNumberOfCommands: Returns the number of parser commands
  *               getNameOfCommand: Writes the name of the command, at the given index into the name field
  *               getNameOfField: Same as getNameOfCommand, but for the command fields
@@ -17,12 +19,6 @@
  *               getFloatFromCommand: Returns the float value of a given command and field
  *               getBoolFromCommand: Returns the float value of a given command and field
  *               getStringFromCommand: Returns the float value of a given command and field
- *
- *               getLengthOfCheck: Returns the number of bytes present in check field of the received data
- *               getCheck: Returns the bytes of the check
- *               getLengthOfBytesToCheck: Returns the amount of data over which a check has to be conducted
- *               getBytesToCheck: Returns the bytes over which a check will be generated. This is the data in the
- *                                  payload field
  *
  *
  *****************************************************************************************************************************************/
@@ -41,7 +37,7 @@
 typedef struct IUnpackerStruct* IUnpackerHandle;
 
 /* Struct which is used to clean up the amount of parameters passed to the fetcher functions */
-typedef struct {
+typedef struct{
     char* commandName;
     char* fieldName;
     bool isInArray;     // Set to true if the value is in a array. Like cf_addr as example
@@ -51,31 +47,29 @@ typedef struct {
 /******************************************************************************
  Define interface
 ******************************************************************************/
-typedef struct IUnpackerStruct {
-  GenericReference handle;
-  bool (*unpack)(IUnpackerHandle unpacker, const char* data, const size_t length);
-  void (*activateNewMessage)(IUnpackerHandle unpacker);
+typedef struct IUnpackerStruct{
+    GenericReference handle;
 
-  bool (*dataPending)(IUnpackerHandle unpacker);
+    bool (* unpack)(IUnpackerHandle unpacker);
 
-  /* Functions to fetch commands and fields */
-  size_t (*getNumberOfCommands)(IUnpackerHandle unpacker);
-  bool (*getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+    bool (* dataPending)(IUnpackerHandle unpacker);
+    void (* dataRead)(IUnpackerHandle unpacker);
+    bool (* streamIsEmpty)(IUnpackerHandle unpacker);
 
-  /* Functions to fetch the data from commands */
-  ADDRESS_DATA_TYPE (*getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
-  float (*getFloatFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
-  bool (*getBoolFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
-  void (*getStringFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information, char* targetStr, const int maxLenght);
+    /* Functions to fetch commands and fields */
+    size_t (* getNumberOfCommands)(IUnpackerHandle unpacker);
+    bool (* getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+    /* Functions to fetch the data from commands */
+    ADDRESS_DATA_TYPE (* getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+    float (* getFloatFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+    bool (* getBoolFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+    void (* getStringFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information, char* targetStr,
+                                  const int maxLenght);
+    /* Functions to help the communication validators */
+    int (* getNumberOfFields)(IUnpackerHandle unpacker, const char* commandName);
+    bool (* getNameOfField)(IUnpackerHandle unpacker, const char* commandName, char* fieldName, const int maxLenght,
+                            const int index);
 
-  /* Functions to help the communication validators */
-  size_t (*getLengthOfCheck)(IUnpackerHandle iUnpackHandler);
-  size_t (*getLengthOfBytesToCheck)(IUnpackerHandle iUnpackHandler);
-  void (*getBytesToCheck)(IUnpackerHandle iUnpackHandler, uint8_t* data);
-  void (*getCheck)(IUnpackerHandle iUnpackHandler, uint8_t* checkData);
-  int (*getNumberOfFields)(IUnpackerHandle IUnpacker, const char* commandName);
-  bool (*getNameOfField)(IUnpackerHandle unpacker, const char* commandName, char* fieldName, const int maxLenght, const int index);
-
-} IUnpacker ;
+} IUnpacker;
 
 #endif

@@ -15,6 +15,7 @@
 #include <jsmn/jsmn.h>
 #include <Scope/Control/IUnpacker.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/BufferedByteStream.h>
 
 /******************************************************************************
  Define class handle data
@@ -25,7 +26,7 @@ typedef struct __JsonUnpackerPrivateData* JsonUnpackerHandle;
  Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the json unpacker */
-JsonUnpackerHandle JsonUnpacker_create();
+JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream);
 
 /* Destroys the instance of the json unpacker */
 void JsonUnpacker_destroy(JsonUnpackerHandle self);

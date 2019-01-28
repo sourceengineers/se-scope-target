@@ -12,16 +12,12 @@
 #ifndef SCOPE_H_
 #define SCOPE_H_
 
+#include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/Core/Trigger.h>
 #include <Scope/Core/Channel.h>
 #include <Scope/Core/IScope.h>
-
-#include <Scope/Control/CommandParserDispatcher.h>
-#include <Scope/Communication/Receiver.h>
-
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
+#include <Scope/Core/AddressStorage.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
-
 #include <Scope/Core/ScopeTypes.h>
 
 /******************************************************************************
@@ -33,9 +29,10 @@ typedef struct __ScopePrivateData* ScopeHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-ScopeHandle Scope_create(const size_t channelSize,
-                         const size_t amountOfChannels,
-                         const size_t maxNumberOfAddresses);
+ScopeHandle Scope_create(size_t channelSize,
+                         size_t amountOfChannels,
+                         size_t maxNumberOfAddresses,
+                         uint32_t* referenceTimestamp);
 
 /* Deconstructor: Deletes the instance of the channel */
 void Scope_destroy(ScopeHandle self);
@@ -45,17 +42,11 @@ void Scope_destroy(ScopeHandle self);
  * After parsing, the commands will be executed */
 void Scope_receiveData(ScopeHandle self);
 
-/* Returns the input stream which feeds data into the Receiver */
-IByteStreamHandle Scope_getInputStream(ScopeHandle self);
-
-/* Returns the output stream, with data fed by the sender */
-IByteStreamHandle Scope_getOutputStream(ScopeHandle self);
-
 /* Packs all the necessary data into a package ready to be sent */
-void Scope_transmitData(ScopeHandle self);
+//void Scope_transmitData(ScopeHandle self);
 
 /* Polls data from all channels */
-void Scope_poll(ScopeHandle self, uint32_t timeStamp);
+void Scope_poll(ScopeHandle self);
 
 /* Configures the channel with the given id, with the wanted address */
 /* If the id exceeds the maximum amount of channels, the function will return without doing anything */
@@ -82,7 +73,7 @@ void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId);
 void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
 
 /* Sends all configured watch addresses to the host */
-void Scope_announceAddresses(ScopeHandle self);
+//void Scope_announceAddresses(ScopeHandle self);
 
 /* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
 void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
@@ -92,5 +83,11 @@ void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* 
 /* Clears the data in the channels, as well as the timestamp buffer */
 void Scope_clear(ScopeHandle self);
 
+/* Returns the Runnable of the scope */
+IRunnableHandle Scope_getIRunnable(ScopeHandle self);
+
+/* Returns the IScope interface */
+IScopeHandle Scope_getIScope(ScopeHandle self);
 
 #endif
+

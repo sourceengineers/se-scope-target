@@ -29,11 +29,8 @@ typedef struct IScopeStruct* IScopeHandle;
 ******************************************************************************/
 typedef struct IScopeStruct {
   	GenericReference handle;
-  	void (*poll)(IScopeHandle scope, uint32_t timeStamp);
-  	void (*transmit)(IScopeHandle scope);
-  	void (*announce)(IScopeHandle scope);
+  	void (*poll)(IScopeHandle scope);
   	void (*setTimeIncrement)(IScopeHandle scope, uint32_t timeIncrement);
-  	bool (*transmitTimestampInc)(IScopeHandle scope);
   	uint32_t (*getTimeIncrement)(IScopeHandle scope);
   	IIntStreamHandle (*getTimestamp)(IScopeHandle scope);
   	void (*clear)(IScopeHandle scope);

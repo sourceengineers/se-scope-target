@@ -14,9 +14,9 @@
 #define COMMANDRUNNINGPARSER_H_
 
 #include <Scope/Control/Command/ICommand.h>
-#include <Scope/Communication/Receiver.h>
 #include <Scope/Control/Command/CommandRunning.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Control/IUnpacker.h>
 
 /******************************************************************************
  Define class handle data

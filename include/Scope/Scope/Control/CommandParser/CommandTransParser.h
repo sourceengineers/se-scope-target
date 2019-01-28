@@ -14,7 +14,6 @@
 #define COMMANDTRANSPARSER_H_
 
 #include <Scope/Control/Command/ICommand.h>
-#include <Scope/Communication/Receiver.h>
 #include <Scope/Control/Command/CommandTrans.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 

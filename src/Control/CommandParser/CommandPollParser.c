@@ -18,32 +18,19 @@ static char* commandName = "ev_poll";
 /* Class data */
 typedef struct __CommandPollParserPrivateData{
     CommandPollHandle command;
-    IUnpackerHandle unpacker;
 
 } CommandPollParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPollParserHandle CommandPollParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
+CommandPollParserHandle CommandPollParser_create(IScopeHandle scope){
   CommandPollParserHandle self = malloc(sizeof(CommandPollParserPrivateData));
   self->command = CommandPoll_create(scope);
-  self->unpacker = unpacker;
   return self;
 }
 
 ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self){
-
-  if(self->unpacker == NULL){
-    return NULL;
-  }
-
-  CommandFetchingInformation information = {.commandName = commandName, .fieldName = (char*) "",
-          .isInArray = false, .arrayIndex = 0};
-
-  const uint32_t timestamp = self->unpacker->getIntFromCommand(self->unpacker, &information);
-
-  CommandPoll_setAttributes(self->command, timestamp);
 
   return CommandPoll_getICommand(self->command);
 }

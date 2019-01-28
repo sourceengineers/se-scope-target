@@ -33,9 +33,6 @@ CommandPollHandle CommandPoll_create(IScopeHandle scope);
 /* Deconstructor: Deletes the instance of the command */
 void CommandPoll_destroy(CommandPollHandle self);
 
-/* Sets the Attributes of the command */
-void CommandPoll_setAttributes(CommandPollHandle self, uint32_t timestamp);
-
 /* Returns the command interface */
 ICommandHandle CommandPoll_getICommand(CommandPollHandle self);
 
