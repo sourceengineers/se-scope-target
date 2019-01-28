@@ -181,6 +181,6 @@ int Channel_read(ChannelHandle self, float data[], size_t size) {
     return FloatRingBuffer_read(self->buffer, data, size);
 }
 
-size_t Channel_getNumberOfUsedData(ChannelHandle self) {
+size_t Channel_getAmountOfUsedData(ChannelHandle self) {
     return FloatRingBuffer_getNumberOfUsedData(self->buffer);
 }

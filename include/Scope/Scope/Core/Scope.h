@@ -37,6 +37,12 @@ ScopeHandle Scope_create(size_t channelSize,
 /* Deconstructor: Deletes the instance of the channel */
 void Scope_destroy(ScopeHandle self);
 
+/* Tells the scope to transmit the data in its channels */
+void Scope_transmit(ScopeHandle self);
+
+/* Tells the scope to transmit the announce addresses */
+void Scope_announce(ScopeHandle self);
+
 /* Passes data to the scope which has to be parsed. The data has to be in the form of the specified protocol, or will
  * be rejected.
  * After parsing, the commands will be executed */

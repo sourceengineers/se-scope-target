@@ -16,6 +16,7 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <Scope/Core/ScopeTypes.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -23,14 +24,7 @@
 ******************************************************************************/
 typedef struct __AddressStoragePrivateData* AddressStorageHandle;
 
-#define maxAddrNameLength 30
 
-typedef struct {
-    char name[maxAddrNameLength];
-    DATA_TYPES type;
-    ADDRESS_DATA_TYPE address;
-    bool hasToBeSent;
-} AddressDefinition;
 
 /******************************************************************************
  Public functions

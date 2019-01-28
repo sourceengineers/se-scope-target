@@ -76,6 +76,6 @@ void Channel_clear(ChannelHandle self);
 int Channel_read(ChannelHandle self, float data[], size_t size);
 
 /* Returns the capacity of the Channel */
-size_t Channel_getNumberOfUsedData(ChannelHandle self);
+size_t Channel_getAmountOfUsedData(ChannelHandle self);
 
 #endif

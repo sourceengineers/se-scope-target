@@ -30,7 +30,6 @@ typedef struct __JsonUnpackerPrivateData{
 
     jsmn_parser parser;
     jsmntok_t* inputTokens;
-    char* inputString;
     char* storageString;
     jsmntok_t* storageTokens;
 
@@ -42,7 +41,7 @@ typedef struct __JsonUnpackerPrivateData{
 static int matchKeyToIndex(const char* json, jsmntok_t* tok, const char* key, int msgLength);
 
 static bool jsoneq(const char* json, jsmntok_t* tok, const char* key);
-static void activateNewMessage(JsonUnpackerHandle self);
+static void activateNewMessage(JsonUnpackerHandle self, char* data);
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -89,6 +88,10 @@ static jsmntok_t* getToken(const char* json, jsmntok_t* tok, const char* key, in
 
 static jsmntok_t* getCommandField(JsonUnpackerHandle self){
     jsmntok_t* tok = getToken(self->storageString, self->storageTokens, (const char*) "sc_cmd", TOKEN_BUFFER_SIZE);
+
+    if(tok == NULL){
+        return NULL;
+    }
 
     return tok + 1;
 }
@@ -248,9 +251,7 @@ static bool unpack(IUnpackerHandle unpacker){
         return false;
     }
 
-    strcpy(self->inputString, data);
-
-    activateNewMessage(self);
+    activateNewMessage(self, data);
     return true;
 }
 
@@ -300,6 +301,11 @@ static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle unpacker, CommandFetc
     JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
 
     jsmntok_t* field = getCommand(self, information->commandName);
+
+    if(field == NULL){
+        return NULL;
+    }
+
     field = getField(self, field, information->fieldName);
 
     if(field == NULL){
@@ -480,10 +486,10 @@ static bool streamIsEmpty(IUnpackerHandle unpacker){
     return !self->stream->byteIsReady(self->stream);
 }
 
-static void activateNewMessage(JsonUnpackerHandle self){
+static void activateNewMessage(JsonUnpackerHandle self, char* data){
 
     memcpy(self->storageTokens, self->inputTokens, TOKEN_BUFFER_SIZE * sizeof(jsmntok_t));
-    strcpy(self->storageString, self->inputString);
+    strcpy(self->storageString, data);
 
     jsmntok_t* tok = getCommandField(self);
 
@@ -520,7 +526,6 @@ JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
     self->inputTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
     self->storageTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
 
-    self->inputString = (char*) malloc(sizeof(char) * INPUT_BUFFER_SIZE);
     self->storageString = (char*) malloc(sizeof(char) * INPUT_BUFFER_SIZE);
 
     jsmn_init(&self->parser);

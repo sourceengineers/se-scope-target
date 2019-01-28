@@ -45,7 +45,8 @@ typedef struct __JsonPackerPrivateData{
     bool channelsReady;
     size_t amountOfChannelsToSend;
     uint32_t* channelIds;
-    ChannelHandle* channels;
+    float** channelsData;
+    size_t* channelSizes;
 
     /* Timestamp increment data */
     bool tIncReady;
@@ -147,7 +148,7 @@ inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE
     }
 }
 
-static void prepareChannel(IPackerHandle packer, ChannelHandle channel, const uint32_t channelId){
+static void prepareChannel(IPackerHandle packer, float* data, size_t length, const uint32_t channelId){
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     if(channelId >= self->maxNumberOfChannels){
@@ -159,7 +160,8 @@ static void prepareChannel(IPackerHandle packer, ChannelHandle channel, const ui
     }
 
     self->channelIds[self->amountOfChannelsToSend] = channelId;
-    self->channels[self->amountOfChannelsToSend] = channel;
+    self->channelsData[self->amountOfChannelsToSend] = data;
+    self->channelSizes[self->amountOfChannelsToSend] = length;
 
     self->amountOfChannelsToSend++;
 
@@ -367,7 +369,7 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
     appendString(self->byteStream, KEYWORD_CL_DATA, ":{");
 
     for(size_t i = 0; i < self->amountOfChannelsToSend; ++i){
-        if(self->channels[i] != NULL){
+        if(self->channelsData[i] != NULL){
             char id[MAX_LENGTH_OF_NUMBER];
 #if (ARCH_SIZE_32)
             sprintf(id, "%u", self->channelIds[i]);
@@ -381,18 +383,14 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
             }
             appendString(self->byteStream, id, ":[");
 
-            const size_t dataLength = Channel_getNumberOfUsedData(self->channels[i]);
-            float data[dataLength];
-            Channel_read(self->channels[i], data, dataLength);
-
-            for(int j = 0; j < dataLength; ++j){
+            for(int j = 0; j < self->channelSizes[i]; ++j){
                 char formatedData[MAX_LENGTH_OF_NUMBER];
 
                 /* add a comma in front of the number, if it is not the first number in the array */
                 if(j != 0){
                     appendData(self->byteStream, ",", "");
                 }
-                snprintf(formatedData, MAX_LENGTH_OF_NUMBER, "%.4g", data[j]);
+                snprintf(formatedData, MAX_LENGTH_OF_NUMBER, "%.4g", self->channelsData[i][j]);
                 appendData(self->byteStream, formatedData, "");
             }
         }
@@ -481,7 +479,7 @@ static void reset(IPackerHandle packer){
     self->amountOfChannelsToSend = 0;
 
     for(int i = 0; i < self->maxNumberOfChannels; ++i){
-        self->channels[i] = NULL;
+        self->channelsData[i] = NULL;
     }
 
     self->tIncReady = false;
@@ -507,7 +505,8 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
 
     JsonPackerHandle self = (JsonPackerHandle) malloc(sizeof(JsonPackerPrivateData));
 
-    self->channels = malloc(sizeof(ChannelHandle) * maxNumberOfChannels);
+    self->channelsData = malloc(sizeof(float*) * maxNumberOfChannels);
+    self->channelSizes = malloc(sizeof(size_t) * maxNumberOfChannels);
     self->channelIds = malloc(sizeof(uint32_t) * maxNumberOfChannels);
     self->amountOfChannelsToSend = 0;
     self->maxNumberOfChannels = maxNumberOfChannels;
@@ -543,8 +542,10 @@ void JsonPacker_destroy(JsonPackerHandle self){
     self->namesOfAddresses = NULL;
     free(self->typesOfAddresses);
     self->typesOfAddresses = NULL;
-    free(self->channels);
-    self->channels = NULL;
+    free(self->channelSizes);
+    self->channelSizes = NULL;
+    free(self->channelsData);
+    self->channelsData = NULL;
     free(self->channelIds);
     self->channelIds = NULL;
 

@@ -18,6 +18,8 @@ typedef struct __ControllerPrivateData{
     IRunnable rxRunnable;
     IRunnable txRunnable;
 
+    IScopeHandle scope;
+
     IUnpackerHandle unpacker;
     CommandParserDispatcherHandle commandParserDispatcher;
 } ControllerPrivateData;
@@ -44,19 +46,30 @@ static void runRx(IRunnableHandle runnable){
 
     fetchCommands(self, self->unpacker, commands, numberOfCommands);
     runCommands(commands, numberOfCommands);
+
+    /* Singal the unpacker that the data was interpreted */
+    self->unpacker->dataRead(self->unpacker);
 }
 
 static void runTx(IRunnableHandle runnable){
     ControllerHandle self = (ControllerHandle) runnable->handle;
+
+    if(self->scope->scopeIsReadyToSend(self->scope) == false){
+        return;
+    }
+
+    ICommandHandle packCommand;
+    packCommand = CommandParserDispatcher_run(self->commandParserDispatcher, (const char*) "ev_pack");
+
+    if(packCommand == NULL){
+        return;
+    }
+
+    packCommand->run(packCommand);
 }
 
 static void
 fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
-
-    /* Check if new data is pending */
-    if(!self->unpacker->dataPending(self->unpacker)){
-        return;
-    }
 
     char commandName[MAX_COMMAND_LENGTH];
 
@@ -64,9 +77,6 @@ fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle* c
         unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
         commands[i] = CommandParserDispatcher_run(self->commandParserDispatcher, commandName);
     }
-
-    /* Singal the unpacker that the data was interpreted */
-    self->unpacker->dataRead(self->unpacker);
 }
 
 static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
@@ -87,6 +97,7 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->rxRunnable.run = &runRx;
     self->txRunnable.run = &runTx;
     self->unpacker = unpacker;
+    self->scope = scope;
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, packer, unpacker);
 
     return self;

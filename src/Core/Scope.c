@@ -22,6 +22,7 @@ typedef struct __ScopePrivateData{
     size_t amountOfChannels;
     ChannelHandle* channels;
     TriggerHandle trigger;
+    size_t channelSize;
     AddressStorageHandle addressStorage;
 
     /* Timestamping data */
@@ -31,9 +32,9 @@ typedef struct __ScopePrivateData{
     uint32_t lastTimestamp;
 
     /* Flags */
-    bool dataPending;
-    bool dataReadyToSend;
-    bool announcementReadyToSend;
+    bool scopeIsReadyToSend;
+    bool dataIsReadyToSend;
+    bool announcementIsReadyToSend;
 
 } ScopePrivateData;
 
@@ -93,10 +94,113 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
     Scope_configureChannel(self, idOfChangedChannel, address, typeOfAddress);
 }
 
+void announce(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    Scope_announce(self);
+}
+
+void transmit(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    Scope_transmit(self);
+}
+
+bool scopeIsReadyToSend(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    return self->scopeIsReadyToSend;
+}
+
+bool dataIsReadyToSend(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    return self->dataIsReadyToSend;
+}
+
+bool announcementIsReadyToSend(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    return self->announcementIsReadyToSend;
+}
+
+void dataIsTransmitted(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    self->dataIsReadyToSend = false;
+    self->scopeIsReadyToSend = false;
+    self->announcementIsReadyToSend = false;
+}
+
+
 static void run(IRunnableHandle runnable){
     ScopeHandle self = (ScopeHandle) runnable->handle;
 
     Scope_poll(self);
+}
+
+TriggeredValues getTriggerData(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    TriggeredValues values;
+
+    values.isTriggered = Trigger_isTriggered(self->trigger);
+    values.triggerTimestamp = Trigger_getTriggerIndex(self->trigger);
+    values.channelId = Trigger_getChannelId(self->trigger);
+
+    return values;
+}
+
+bool channelIsRunning(IScopeHandle scope, uint32_t channelId){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    if(channelId >= self->amountOfChannels){
+        return false;
+    }
+
+    return Channel_isRunning(self->channels[channelId]);
+}
+
+int readChannelData(IScopeHandle scope, float data[], size_t size, uint32_t channelId){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    if(channelId >= self->amountOfChannels){
+        return false;
+    }
+
+    return Channel_read(self->channels[channelId], data, size);
+}
+
+size_t getAmountOfUsedChannelData(IScopeHandle scope, uint32_t channelId){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    if(channelId >= self->amountOfChannels){
+        return false;
+    }
+
+    return Channel_getAmountOfUsedData(self->channels[channelId]);
+}
+
+AddressDefinition* getAnnounceAddressToTransmit(IScopeHandle scope, uint32_t addressId){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    if(addressId >= self->amountOfChannels){
+        return NULL;
+    }
+
+    return AddressStorage_getAddressToTransmit(self->addressStorage, addressId);
+}
+
+size_t getMaxAmmountOfAnnounceAddresses(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    return AddressStorage_getMaxAmountOfAddresses(self->addressStorage);
+}
+
+size_t getMaxSizeOfChannel(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    return self->channelSize;
 }
 
 /******************************************************************************
@@ -111,6 +215,10 @@ ScopeHandle Scope_create(size_t channelSize,
     self->timeIncrement = 1;
     self->referenceTimestamp = referenceTimestamp;
     self->lastTimestamp = 0;
+    self->scopeIsReadyToSend = false;
+    self->announcementIsReadyToSend = false;
+    self->dataIsReadyToSend = false;
+    self->channelSize = channelSize;
 
     self->scope.handle = self;
     self->scope.poll = &scopePoll;
@@ -123,6 +231,17 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.setChannelRunning = &setChannelRunning;
     self->scope.configureChannelAddress = &configureChannelAddress;
     self->scope.configureTrigger = &configureTrigger;
+    self->scope.announcementIsReadyToSend = &announcementIsReadyToSend;
+    self->scope.scopeIsReadyToSend = &scopeIsReadyToSend;
+    self->scope.dataIsReadyToSend = &dataIsReadyToSend;
+    self->scope.dataIsTransmitted = &dataIsTransmitted;
+    self->scope.getTriggerData = &getTriggerData;
+    self->scope.channelIsRunning = &channelIsRunning;
+    self->scope.readChannelData = &readChannelData;
+    self->scope.getAmountOfUsedChannelData = &getAmountOfUsedChannelData;
+    self->scope.getAnnounceAddressToTransmit = &getAnnounceAddressToTransmit;
+    self->scope.getMaxAmmountOfAnnounceAddresses = &getMaxAmmountOfAnnounceAddresses;
+    self->scope.getMaxSizeOfChannel = &getMaxSizeOfChannel;
 
     self->runnable.run = &run;
 
@@ -155,12 +274,17 @@ void Scope_destroy(ScopeHandle self){
     self = NULL;
 }
 
-/*
-void Scope_receiveData(ScopeHandle self){
+void Scope_transmit(ScopeHandle self){
 
+    self->scopeIsReadyToSend = true;
+    self->dataIsReadyToSend = true;
+}
 
+void Scope_announce(ScopeHandle self){
 
-}*/
+    self->scopeIsReadyToSend = true;
+    self->announcementIsReadyToSend = true;
+}
 
 void Scope_poll(ScopeHandle self){
 

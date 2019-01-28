@@ -27,6 +27,8 @@
 
 #include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Control/IPacker.h>
 
 /******************************************************************************
  Define class handle data
@@ -37,7 +39,7 @@ typedef struct __CommandParserDispatcherPrivateData* CommandParserDispatcherHand
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the commandParserDispatcher */
-CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope, IPackerHandle unpacker, IUnpackerHandle packer);
+CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker);
 
 /* Deconstructor: Deletes the instance of the commandParserDispatcher */
 void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self);

@@ -42,7 +42,7 @@ typedef struct IPackerStruct {
   GenericReference handle;
   void (*pack)(IPackerHandle packer);
 
-  void (*prepareChannel)(IPackerHandle packer, ChannelHandle channel, const uint32_t channelId);
+  void (*prepareChannel)(IPackerHandle packer, float* data, size_t length, const uint32_t channelId);
   void (*prepareTimeIncrement)(IPackerHandle packer, const uint32_t timeIncrement);
   void (*prepareTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
   void (*prepareTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);

@@ -36,6 +36,9 @@
 ******************************************************************************/
 typedef struct IUnpackerStruct* IUnpackerHandle;
 
+static const size_t MAX_COMMAND_LENGTH = 30;
+static const size_t MAX_FIELD_LENGTH = 30;
+
 /* Struct which is used to clean up the amount of parameters passed to the fetcher functions */
 typedef struct{
     char* commandName;

@@ -12,6 +12,8 @@
 #ifndef SCOPETYPES_H
 #define SCOPETYPES_H
 #include <stdint.h>
+#include <stdbool.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Trigger definitions */
 /* Constants to represent the different edges on which the trigger can be
@@ -30,11 +32,23 @@ typedef struct {
  uint32_t channelId;
 } TriggerConfiguration;
 
-/* Scope definitions */
-typedef enum {TIMESTAMP_AUTOMATIC, TIMESTAMP_MANUAL} TIMESTAMPING_MODE;
+typedef struct {
+    bool isTriggered;
+    uint32_t channelId;
+    uint32_t triggerTimestamp;
+} TriggeredValues;
 
 /* Channel definitions */
 /* Channels States */
 typedef enum {CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;
+
+/* Definitions for the addressannouncement */
+#define maxAddrNameLength 30
+typedef struct {
+    char name[maxAddrNameLength];
+    DATA_TYPES type;
+    ADDRESS_DATA_TYPE address;
+    bool hasToBeSent;
+} AddressDefinition;
 
 #endif

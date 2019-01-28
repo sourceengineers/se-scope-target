@@ -33,13 +33,7 @@ static bool checkPresentInProtocol(IComValidatorHandle self) {
     return false;
 }
 
-
 TEST(json_packer, unpack_test) {
-
-    validator.validateCheck = &validateCheck;
-    validator.getCheckLength = &getCheckLength;
-    validator.createCheck = &createCheck;
-    validator.checkPresentInProtocol = &checkPresentInProtocol;
 
     size_t channelSize = 400;
     size_t sizes = JsonPacker_calculateBufferSize(5, 10, channelSize);
@@ -57,7 +51,7 @@ TEST(json_packer, unpack_test) {
     Channel_setStateRunning(ch1);
     Channel_setStateRunning(ch2);
 
-    IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(5, 10, &validator, outputStream));
+    IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(5, 10,  outputStream));
 
     packer->prepareAddressAnnouncement(packer, "VAR_1", "UINT32", 11111);
     packer->prepareAddressAnnouncement(packer, "VAR_2", "FLOAT", 22222);
@@ -104,8 +98,17 @@ TEST(json_packer, unpack_test) {
     timestamp->writeData(timestamp, 5);
 
     packer->prepareTimestamp(packer, timestamp);
-    packer->prepareChannel(packer, ch1, 0);
-    packer->prepareChannel(packer, ch2, 1);
+
+    size_t length_ch1 = Channel_getAmountOfUsedData(ch1);
+    float data_ch1[length_ch1];
+    Channel_read(ch1, data_ch1, length_ch1);
+
+    size_t length_ch2 = Channel_getAmountOfUsedData(ch2);
+    float data_ch2[length_ch2];
+    Channel_read(ch2, data_ch2, length_ch2);
+
+    packer->prepareChannel(packer, data_ch1, length_ch1, 0);
+    packer->prepareChannel(packer, data_ch2, length_ch2, 1);
 
     packer->pack(packer);
 
@@ -115,7 +118,7 @@ TEST(json_packer, unpack_test) {
     outputStream->read(outputStream, (uint8_t *) data, dataPending);
 
     EXPECT_STREQ(data,
-                 "{\"transport\":null,\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5],\"1\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5]},\"t_stmp\":[0,1,2,3,4,5],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"UINT32\"],\"VAR_2\":[22222,\"FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");
+                 "\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5],\"1\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5]},\"t_stmp\":[0,1,2,3,4,5],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"UINT32\"],\"VAR_2\":[22222,\"FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}");
 
     printf("Output: %s", data);
 }

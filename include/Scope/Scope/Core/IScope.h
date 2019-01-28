@@ -29,6 +29,8 @@ typedef struct IScopeStruct* IScopeHandle;
 ******************************************************************************/
 typedef struct IScopeStruct {
   	GenericReference handle;
+
+  	/* Functions represention the various commands */
   	void (*poll)(IScopeHandle scope);
   	void (*setTimeIncrement)(IScopeHandle scope, uint32_t timeIncrement);
   	uint32_t (*getTimeIncrement)(IScopeHandle scope);
@@ -37,10 +39,27 @@ typedef struct IScopeStruct {
 	void (*configureTrigger)(IScopeHandle scope, TriggerConfiguration conf);
 	void (*configureChannelAddress)(IScopeHandle scope, void* address,
 	                                uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress);
-
+    void (*announce)(IScopeHandle scope);
+    void (*transmit)(IScopeHandle scope);
 	void (*setChannelRunning)(IScopeHandle scope, uint32_t idOfChangedChannel);
 	void (*setChannelStopped)(IScopeHandle scope, uint32_t idOfChangedChannel);
+
+	/* Helper functions */
 	size_t (*getAmountOfChannels)(IScopeHandle scope);
+
+	bool (*scopeIsReadyToSend)(IScopeHandle scope);
+    bool (*dataIsReadyToSend)(IScopeHandle scope);
+    bool (*announcementIsReadyToSend)(IScopeHandle scope);
+    void (*dataIsTransmitted)(IScopeHandle scope);
+
+    /* Data fetcher functions */
+    TriggeredValues (*getTriggerData)(IScopeHandle scope);
+    bool (*channelIsRunning)(IScopeHandle scope, uint32_t channelId);
+    int (*readChannelData)(IScopeHandle scope, float data[], size_t size, uint32_t channelId);
+    size_t (*getAmountOfUsedChannelData)(IScopeHandle scope, uint32_t channelId);
+    AddressDefinition* (*getAnnounceAddressToTransmit)(IScopeHandle scope, uint32_t addressId);
+    size_t (*getMaxAmmountOfAnnounceAddresses)(IScopeHandle scope);
+    size_t (*getMaxSizeOfChannel)(IScopeHandle scope);
 
 } IScope ;
 
