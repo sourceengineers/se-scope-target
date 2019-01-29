@@ -242,7 +242,10 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.getAnnounceAddressToTransmit = &getAnnounceAddressToTransmit;
     self->scope.getMaxAmmountOfAnnounceAddresses = &getMaxAmmountOfAnnounceAddresses;
     self->scope.getMaxSizeOfChannel = &getMaxSizeOfChannel;
+    self->scope.announce = &announce;
+    self->scope.transmit = &transmit;
 
+    self->runnable.handle = self;
     self->runnable.run = &run;
 
     self->addressStorage = AddressStorage_create(maxNumberOfAddresses);

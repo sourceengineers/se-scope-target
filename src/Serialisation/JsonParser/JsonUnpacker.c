@@ -303,7 +303,7 @@ static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle unpacker, CommandFetc
     jsmntok_t* field = getCommand(self, information->commandName);
 
     if(field == NULL){
-        return NULL;
+        return 0;
     }
 
     field = getField(self, field, information->fieldName);

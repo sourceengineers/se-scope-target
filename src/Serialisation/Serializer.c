@@ -31,7 +31,7 @@ typedef struct __SerializerPrivateData{
 static void runRx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
-    if(self->unpacker->streamIsEmpty(self->unpacker)){
+    if(self->unpacker->streamIsEmpty(self->unpacker) == true){
         return;
     }
 
@@ -59,6 +59,8 @@ SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacke
     self->packer = packer;
     self->unpacker = unpacker;
 
+    self->runRx.handle = self;
+    self->runTx.handle = self;
     self->runRx.run = &runRx;
     self->runTx.run = &runTx;
 

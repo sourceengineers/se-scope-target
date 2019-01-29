@@ -21,6 +21,7 @@ typedef struct __ControllerPrivateData{
     IScopeHandle scope;
 
     IUnpackerHandle unpacker;
+    IPackerHandle packer;
     CommandParserDispatcherHandle commandParserDispatcher;
 } ControllerPrivateData;
 
@@ -54,7 +55,8 @@ static void runRx(IRunnableHandle runnable){
 static void runTx(IRunnableHandle runnable){
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
-    if(self->scope->scopeIsReadyToSend(self->scope) == false){
+    if((self->scope->scopeIsReadyToSend(self->scope) == false) && \
+        self->packer->flowControlReadyToSend(self->packer) == false){
         return;
     }
 
@@ -94,9 +96,12 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
 
+    self->rxRunnable.handle = self;
+    self->txRunnable.handle = self;
     self->rxRunnable.run = &runRx;
     self->txRunnable.run = &runTx;
     self->unpacker = unpacker;
+    self->packer = packer;
     self->scope = scope;
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, packer, unpacker);
 

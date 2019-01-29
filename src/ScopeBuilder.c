@@ -8,16 +8,28 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/ScopeBuilder.h>
-#include <Scope/Core/Scope.h>
-#include <Scope/Control/Controller.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+#include <Scope/Communication/Interfaces/EthernetJson.h>
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
 typedef struct __ScopeBuilderPrivateData {
 
+
+    BufferedByteStreamHandle inputStream;
+    BufferedByteStreamHandle outputStream;
+
+    EthernetJsonHandle ethernetJson;
+
+    JsonPackerHandle packer;
+    JsonUnpackerHandle unpacker;
+
+    ScopeHandle scope;
+    ControllerHandle controller;
+    SerializerHandle serializer;
+    CommunicatorHandle communicator;
 
 } ScopeBuilderPrivateData;
 
@@ -26,29 +38,57 @@ typedef struct __ScopeBuilderPrivateData {
 ******************************************************************************/
 
 /* Constructor: Creates a new instance of the channel */
-ScopeBuilderHandle ScopeBuilder_create(){
+ScopeBuilderHandle ScopeBuilder_create(TransmitCallback callback, uint32_t* timestampReference){
 
-    uint32_t timestampReference;
+    ScopeBuilderHandle self = malloc(sizeof(ScopeBuilderPrivateData));
 
     // TODO: The sizes have to be adjustable from outside the builder
     size_t outputBufferSize = JsonPacker_calculateBufferSize(3,3,200);
     size_t inputBufferSize = JsonUnpacker_calculateBufferSize();
 
-    BufferedByteStreamHandle inputStream = BufferedByteStream_create(inputBufferSize);
-    BufferedByteStreamHandle outputStream = BufferedByteStream_create(outputBufferSize);
+    self->inputStream = BufferedByteStream_create(inputBufferSize);
+    self->outputStream = BufferedByteStream_create(outputBufferSize);
 
     // TODO: Packer and unpacker have to be adjustable from outside the builder
-    JsonUnpackerHandle unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(inputStream));
-    JsonPackerHandle packer = JsonPacker_create(3, 3, BufferedByteStream_getIByteStream(outputStream));
+    self->unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(self->inputStream));
+    self->packer = JsonPacker_create(3, 3, BufferedByteStream_getIByteStream(self->outputStream));
 
     // TODO: All Parameters of the scope have to be adjustable
-    ScopeHandle scope = Scope_create(200, 3, 3, &timestampReference);
+    self->scope = Scope_create(200, 3, 3, timestampReference);
 
-    IScopeHandle iscope = Scope_getIScope(scope);
+    self->ethernetJson = EthernetJson_create(callback, \
+                                        BufferedByteStream_getIByteStream(self->inputStream), \
+                                        BufferedByteStream_getIByteStream(self->outputStream));
 
-    /* The Controller will be the last class to be generated */
-    ControllerHandle controller = Controller_create(iscope, JsonPacker_getIPacker(packer), JsonUnpacker_getIUnpacker(unpacker));
+    self->controller = Controller_create(Scope_getIScope(self->scope), JsonPacker_getIPacker(self->packer), \
+            JsonUnpacker_getIUnpacker(self->unpacker));
+    self->serializer = Serializer_create(JsonPacker_getIPacker(self->packer), \
+            JsonUnpacker_getIUnpacker(self->unpacker));
+    self->communicator = Communicator_create(EthernetJson_getCommunicator(self->ethernetJson));
+
+    return self;
+}
+
+
+ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
+
+    ScopeObject obj;
+
+    obj.scope = self->scope;
+    obj.input = BufferedByteStream_getIByteStream(self->inputStream);
+    obj.runScope = Scope_getIRunnable(self->scope);
+    obj.runControlRx = Controller_getRxRunnable(self->controller);
+    obj.runControlTx = Controller_getTxRunnable(self->controller);
+    obj.runSerializerRx = Serializer_getRxRunnable(self->serializer);
+    obj.runSerializerTx = Serializer_getTxRunnable(self->serializer);
+    obj.runCommunicationRx = Communicator_getRxRunnable(self->communicator);
+    obj.runCommunicationTx = Communicator_getTxRunnable(self->communicator);
+
+    return obj;
 }
 
 /* Deconstructor: Deletes the instance of the channel */
-void ScopeBuilder_destroy(ScopeBuilderHandle self);
+void ScopeBuilder_destroy(ScopeBuilderHandle self){
+
+
+}

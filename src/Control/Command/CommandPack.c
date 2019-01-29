@@ -80,7 +80,11 @@ CommandPackHandle CommandPack_create(IScopeHandle scope, IPackerHandle packer){
     const size_t amountOfChannels = self->scope->getAmountOfChannels(self->scope);
 
     // Todo: this takes up unnecessary space. Maybe streams would be a better option?
-    self->channelData = malloc(sizeof(float*) * maxSizeOfChannels * amountOfChannels);
+    self->channelData = malloc(sizeof(float**) * amountOfChannels);
+
+    for(size_t i = 0; i < amountOfChannels; i++){
+        self->channelData[i] = malloc(sizeof(float*) * maxSizeOfChannels);
+    }
 
     self->command.handle = self;
     self->command.run = &run;
@@ -93,6 +97,8 @@ ICommandHandle CommandPack_getICommand(CommandPackHandle self){
 }
 
 void CommandPack_destroy(CommandPackHandle self){
+    free(self->channelData);
+    self = NULL;
     free(self);
     self = NULL;
 }

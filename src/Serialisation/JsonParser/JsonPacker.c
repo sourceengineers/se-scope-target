@@ -37,8 +37,6 @@ typedef struct __JsonPackerPrivateData{
     uint32_t numberOfAddressesToAnnounce;
     bool addressesReady;
 
-    IComValidatorHandle validator;
-
     IByteStreamHandle byteStream;
 
     /* Channel preparation data */
@@ -434,6 +432,7 @@ static bool packChannelMap(JsonPackerHandle self){
 
 static bool packPayloadMap(JsonPackerHandle self){
 
+    appendData(self->byteStream, "{", "");
     appendString(self->byteStream, KEYWORD_PAYLOAD, ":{");
 
     bool commaIsNeeded = packChannelMap(self);
@@ -462,6 +461,10 @@ static bool packPayloadMap(JsonPackerHandle self){
 
 static void packData(IPackerHandle packer){
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
+
+    if(self->dataPendingToBePacked == false){
+        return;
+    }
 
     self->byteStream->flush(self->byteStream);
 
@@ -492,10 +495,12 @@ static void reset(IPackerHandle packer){
     flushBuffer(self->flowcontrol);
 }
 
-static IByteStreamHandle getBufferedByteStream(IPackerHandle packer){
+static bool flowControlReadyToSend(IPackerHandle packer){
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
-    return self->byteStream;
+
+    return self->flowcontrolReady;
 }
+
 
 /******************************************************************************
  Public functions
@@ -526,8 +531,8 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.prepareTimeIncrement = &prepareTimeIncrement;
     self->packer.prepareTimestamp = &prepareTimestamp;
     self->packer.prepareTrigger = &prepareTrigger;
-    self->packer.getBufferedByteStream = &getBufferedByteStream;
     self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
+    self->packer.flowControlReadyToSend = &flowControlReadyToSend;
 
     self->packer.reset(&self->packer);
 

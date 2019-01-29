@@ -49,7 +49,7 @@ typedef struct IPackerStruct {
   void (*prepareFlowControl)(IPackerHandle packer, const char* flowcontrol);
   void (*prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type, const ADDRESS_DATA_TYPE address);
 
-  IByteStreamHandle (*getBufferedByteStream)(IPackerHandle packer);
+  bool (*flowControlReadyToSend)(IPackerHandle packer);
 
   void (*reset)(IPackerHandle packer);
 } IPacker ;

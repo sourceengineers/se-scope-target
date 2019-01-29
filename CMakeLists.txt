@@ -30,7 +30,7 @@ elseif(ARCHITECTURE STREQUAL "X64" OR ARCHITECTURE STREQUAL "" )
     # X64 Host machines should be able to run tests as well as examples
     message("-- x64 architecture is on")
 
-    set(GEMMI_BUILD_EXAMPLES OFF)
+    set(GEMMI_BUILD_EXAMPLES ON)
     set(GEMMI_TESTING ON)
 
     # Inform the compiler to compile for 64 bit code

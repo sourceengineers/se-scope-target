@@ -10,29 +10,6 @@ extern "C" {
 using namespace testing;
 using namespace std;
 
-IComValidator validator;
-
-static bool validateCheck(IComValidatorHandle self, const uint8_t *check, const size_t lengthOfCheck,
-                          const uint8_t *bytesToCheck, const size_t lengthOfBytesToCheck) {
-    return true;
-}
-
-static size_t getCheckLength(IComValidatorHandle self) {
-    return 4;
-}
-
-static void createCheck(IComValidatorHandle self, uint8_t *checksum, const uint8_t *bytesToCheck, const size_t length) {
-
-    for (int i = 0; i < length; ++i) {
-        checksum[i % 4] += bytesToCheck[i];
-    }
-}
-
-
-static bool checkPresentInProtocol(IComValidatorHandle self) {
-    return false;
-}
-
 TEST(json_packer, unpack_test) {
 
     size_t channelSize = 400;
