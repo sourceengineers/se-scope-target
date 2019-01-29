@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-#include <Scope/Channel.h>
+#include <Scope/Core/Channel.h>
 }
 
 using namespace std;

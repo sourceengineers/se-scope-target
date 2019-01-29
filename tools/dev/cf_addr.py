@@ -25,7 +25,7 @@ def main():
     for i in range(2,  len(sys.argv), 3):
         command += addAddr(i, sys.argv[i], sys.argv[i+1], sys.argv[i+2], 2)
 
-    command += "}}}}";
+    command += "}}}}\n\0";
 
     print(command);
 

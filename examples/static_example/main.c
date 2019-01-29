@@ -3,6 +3,10 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <zconf.h>
+#include <Scope/Communication/Interfaces/EthernetJson.h>
+#include <Scope/Serialisation/JsonParser/JsonPacker.h>
+#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
 
 /*
  * watch the s_out file with:
@@ -13,39 +17,74 @@
 
 void print(IByteStreamHandle stream){
 
-  FILE* file = fopen("s_out", "w+");
+    FILE* file = fopen("s_out", "w+");
 
-  const size_t length = stream->length(stream);
-  uint8_t data[length];
+    const size_t length = stream->length(stream);
+    uint8_t data[length];
 
-  stream->read(stream, data, length);
+    stream->read(stream, data, length);
+    fprintf(file, "%s", data);
 
-  fclose(file);
+    fclose(file);
 }
 
 int main(){
 
-  int test = 0;
-  int timestamp = 0;
 
-  ScopeHandle scope = Scope_create(500, 1, 0, UART, TIMESTAMP_AUTOMATIC, print);
-  Scope_configureChannel(scope, 0, &test, UINT32);
-  Scope_setChannelRunning(scope, 0);
-  Scope_configureTrigger(scope, 48, TRIGGER_EDGE_POSITIVE, TRIGGER_NORMAL, 0);
-  
-  while (1) {
-    
-    for (size_t i = 0; i < rand() % 20; i++) {
-      test = rand() % 50;
-      Scope_poll(scope, 0);
-    }    
-    
-    Scope_transmitData(scope);
-    
-    timestamp++;
-    
-    usleep(1000);
-  }
+/***********************************************************************************************************************
+* Build Scope
+***********************************************************************************************************************/
+    size_t amountOfChannels = 2;
+    size_t sizeOfChannels = 100;
+    size_t addressesInAddressAnnouncer = 3;
+    size_t outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
+                                                             addressesInAddressAnnouncer);
 
-  return 0;
+    BufferedByteStreamHandle output = BufferedByteStream_create(outputBufferSize);
+    JsonPackerHandle packer = JsonPacker_create(3, 3, BufferedByteStream_getIByteStream(output));
+    EthernetJsonHandle ethernetJson = EthernetJson_create(print, NULL,
+                                                          BufferedByteStream_getIByteStream(output));
+    uint32_t timestamp = 0;
+
+    AddressStorageHandle addressStorage = AddressStorage_create(addressesInAddressAnnouncer);
+
+    ScopeBuilderHandle builder = ScopeBuilder_create();
+    ScopeBuilder_setChannels(builder, amountOfChannels, sizeOfChannels);
+    ScopeBuilder_setStreams(builder, NULL, BufferedByteStream_getIByteStream(output));
+    ScopeBuilder_setTimestampReference(builder, &timestamp);
+    ScopeBuilder_setCommunication(builder, EthernetJson_getCommunicator(ethernetJson));
+    ScopeBuilder_setParser(builder, JsonPacker_getIPacker(packer), NULL);
+    ScopeBuilder_setAddressStorage(builder, addressStorage);
+
+    ScopeObject obj = ScopeBuilder_build(builder);
+
+
+/***********************************************************************************************************************
+* User code
+***********************************************************************************************************************/
+    int test = 0;
+    Scope_configureChannel(obj.scope, 0, &test, UINT32);
+    Scope_setChannelRunning(obj.scope, 0);
+    Scope_configureTrigger(obj.scope, 48, TRIGGER_EDGE_POSITIVE, TRIGGER_NORMAL, 0);
+
+    while(1){
+
+        for(size_t i = 0; i < rand() % 20; i++){
+            test = rand() % 50;
+            ScopeRunner_run(obj);
+        }
+
+        timestamp++;
+
+        usleep(1000);
+    }
+
+    ScopeBuilder_destroy(builder);
+
+    JsonPacker_destroy(packer);
+    EthernetJson_destroy(ethernetJson);
+    BufferedByteStream_destroy(output);
+    AddressStorage_destroy(addressStorage);
+
+    return 0;
 }

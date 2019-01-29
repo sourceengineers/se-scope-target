@@ -20,7 +20,7 @@ def getCommand(id, isRunning, amount):
 def main():
     command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
     for i in range(2,  len(sys.argv), 2):
-        command += addState(i, sys.argv[i], sys.argv[i+1])
+        command += addState(i, sys.argv[i], sys.argv[i+1], 2)
     command += "}}}}";
     print(command);
     filename = os.path.abspath(sys.argv[1])
