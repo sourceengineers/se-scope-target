@@ -31,6 +31,7 @@ TEST(json_unpacker, unpack_test){
 
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
     stream->write(stream,(uint8_t*) data, strlen(data));
+    stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
     bool unpackSuccessful = unpacker->unpack(unpacker);
 
@@ -45,6 +46,7 @@ TEST(json_unpacker, command_name){
 
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
     stream->write(stream,(uint8_t*) data, strlen(data));
+    stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
     bool unpackSuccessful = unpacker->unpack(unpacker);
 
@@ -62,6 +64,7 @@ TEST(json_unpacker, command_name){
 TEST(json_unpacker, values_from_commands){
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
     stream->write(stream,(uint8_t*) data, strlen(data));
+    stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
     bool unpackSuccessful = unpacker->unpack(unpacker);
 
@@ -104,6 +107,7 @@ TEST(json_unpacker, values_from_commands){
 TEST(json_unpacker, values_from_array){
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
     stream->write(stream,(uint8_t*) data, strlen(data));
+    stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
     bool unpackSuccessful = unpacker->unpack(unpacker);
 
@@ -126,7 +130,7 @@ TEST(json_unpacker, values_from_array){
 
 }
 
-static const char* faultyData = (const char*) "\"payload\": {"
+static const char* faultyData = (const char*) "{\"payload\": {"
                                               "\"sc_cmd\": {"
                                               "\"ev_announce\": null,"
                                               "\"ev_trans\": null,"
@@ -140,6 +144,7 @@ static const char* faultyData = (const char*) "\"payload\": {"
                                               "\"mode\": \"Continous\","
                                               "\"level\": 1.75,"
                                               "\"edge\": \"fallig\""
+                                              "}"
                                               "}"
                                               "}"
                                               "}";
@@ -166,6 +171,7 @@ static const char* notParsingData = (const char*) "\"payload\": {"
 TEST(json_unpacker, edge_cases){
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
     stream->write(stream,(uint8_t*) notParsingData, strlen(notParsingData));
+    stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
 
     bool unpackSuccessful = unpacker->unpack(unpacker);
@@ -173,6 +179,7 @@ TEST(json_unpacker, edge_cases){
     ASSERT_EQ(unpackSuccessful, false);
 
     stream->write(stream,(uint8_t*) faultyData, strlen(faultyData));
+    stream->writeByte(stream, '\0');
     unpacker->unpack(unpacker);
 
     CommandFetchingInformation info = {
