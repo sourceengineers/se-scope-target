@@ -22,11 +22,10 @@
 void ScopeRunner_run(ScopeObject scope){
 
     scope.runCommunicationRx->run(scope.runCommunicationRx);
-    scope.runSerializerRx->run(scope.runSerializerRx);
-    scope.runControlRx->run(scope.runControlRx);
+    scope.runUnpacker->run(scope.runUnpacker);
+    scope.runCommandParser->run(scope.runCommandParser);
     scope.runScope->run(scope.runScope);
-    scope.runControlTx->run(scope.runControlTx);
-    scope.runSerializerTx->run(scope.runSerializerTx);
+    scope.runDataAggregator->run(scope.runDataAggregator);
+    scope.runPacker->run(scope.runPacker);
     scope.runCommunicationTx->run(scope.runCommunicationTx);
-
 }

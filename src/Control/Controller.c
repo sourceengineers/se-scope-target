@@ -9,6 +9,7 @@
 
 #include <Scope/Control/Controller.h>
 #include <stdlib.h>
+#include <Scope/Control/Command/CommandPack.h>
 
 /******************************************************************************
  Define private data
@@ -23,6 +24,8 @@ typedef struct __ControllerPrivateData{
     IUnpackerHandle unpacker;
     IPackerHandle packer;
     CommandParserDispatcherHandle commandParserDispatcher;
+    CommandPackHandle commandPack;
+
 } ControllerPrivateData;
 
 /* Fetches all commands from the Parser */
@@ -60,8 +63,7 @@ static void runTx(IRunnableHandle runnable){
         return;
     }
 
-    ICommandHandle packCommand;
-    packCommand = CommandParserDispatcher_run(self->commandParserDispatcher, (const char*) "ev_pack");
+    ICommandHandle packCommand = CommandPack_getICommand(self->commandPack);
 
     if(packCommand == NULL){
         return;
@@ -104,6 +106,7 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->packer = packer;
     self->scope = scope;
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, packer, unpacker);
+    self->commandPack = CommandPack_create(scope, packer);
 
     return self;
 }
@@ -118,6 +121,7 @@ IRunnableHandle Controller_getTxRunnable(ControllerHandle self){
 
 void Controller_destroy(ControllerHandle self){
     CommandParserDispatcher_destroy(self->commandParserDispatcher);
+    CommandPack_destroy(self->commandPack);
 
     free(self);
     self = NULL;

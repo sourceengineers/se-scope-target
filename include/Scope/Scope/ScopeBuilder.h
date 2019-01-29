@@ -34,10 +34,10 @@ typedef struct ScopeObjectStruct {
 
     IRunnableHandle runCommunicationRx;
     IRunnableHandle runCommunicationTx;
-    IRunnableHandle runSerializerRx;
-    IRunnableHandle runSerializerTx;
-    IRunnableHandle runControlRx;
-    IRunnableHandle runControlTx;
+    IRunnableHandle runUnpacker;
+    IRunnableHandle runPacker;
+    IRunnableHandle runCommandParser;
+    IRunnableHandle runDataAggregator;
     IRunnableHandle runScope;
 
 } ScopeObject ;

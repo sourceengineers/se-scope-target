@@ -77,10 +77,10 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     obj.scope = self->scope;
     obj.input = BufferedByteStream_getIByteStream(self->inputStream);
     obj.runScope = Scope_getIRunnable(self->scope);
-    obj.runControlRx = Controller_getRxRunnable(self->controller);
-    obj.runControlTx = Controller_getTxRunnable(self->controller);
-    obj.runSerializerRx = Serializer_getRxRunnable(self->serializer);
-    obj.runSerializerTx = Serializer_getTxRunnable(self->serializer);
+    obj.runCommandParser = Controller_getRxRunnable(self->controller);
+    obj.runDataAggregator = Controller_getTxRunnable(self->controller);
+    obj.runUnpacker = Serializer_getRxRunnable(self->serializer);
+    obj.runPacker = Serializer_getTxRunnable(self->serializer);
     obj.runCommunicationRx = Communicator_getRxRunnable(self->communicator);
     obj.runCommunicationTx = Communicator_getTxRunnable(self->communicator);
 

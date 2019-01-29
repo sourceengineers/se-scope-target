@@ -9,7 +9,6 @@
 
 #include <Scope/Control/CommandParserDispatcher.h>
 #include <string.h>
-#include <Scope/Control/CommandParser/CommandPackParser.h>
 
 /******************************************************************************
  Define private data
@@ -24,7 +23,6 @@ typedef struct __CommandParserDispatcherPrivateData{
     CommandAnnounceParserHandle commandAnnounceParser;
     CommandTransParserHandle commandTransParser;
     CommandClearParserHandle commandClearParser;
-    CommandPackParserHandle commandPackParser;
 } CommandParserDispatcherPrivateData;
 
 
@@ -46,7 +44,6 @@ CommandParserDispatcher_create(IScopeHandle scope, IPackerHandle packer, IUnpack
     self->commandAnnounceParser = CommandAnnounceParser_create(scope);
     self->commandTransParser = CommandTransParser_create(scope);
     self->commandClearParser = CommandClearParser_create(scope);
-    self->commandPackParser = CommandPackParser_create(scope, packer);
 
     return self;
 }
@@ -77,8 +74,6 @@ ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, c
     }else if(strncmp(command, CommandClearParser_getName(), MAX_COMMAND_LENGTH) == 0){
         return CommandClearParser_getCommand(self->commandClearParser);
 
-    }else if(strncmp(command, CommandPackParser_getName(), MAX_COMMAND_LENGTH) == 0){
-        return CommandPackParser_getCommand(self->commandPackParser);
     }
 
     return NULL;
@@ -94,7 +89,6 @@ void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self){
     CommandClearParser_destroy(self->commandClearParser);
     CommandAnnounceParser_destroy(self->commandAnnounceParser);
     CommandTransParser_destroy(self->commandTransParser);
-    CommandPackParser_destroy(self->commandPackParser);
 
     free(self);
     self = NULL;
