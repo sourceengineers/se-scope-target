@@ -558,8 +558,7 @@ void JsonPacker_destroy(JsonPackerHandle self){
     self = NULL;
 }
 
-size_t JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
-                                      size_t sizeOfChannels){
+size_t JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t sizeOfChannels, size_t maxAddressesToAnnounce){
 
 
     /* The channel buffer needs enough space to print all data points. This allows for all channels to have numbers whith MAX_LENGTH_OF_NUMBER digits.

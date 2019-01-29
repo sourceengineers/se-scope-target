@@ -34,7 +34,7 @@ void JsonPacker_destroy(JsonPackerHandle self);
 
 /* Calculates how much space the buffers need
  * This is used, so that the outbut byte buffer can be defined without having to be generated in the JsonPacker*/
-size_t JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce, size_t sizeOfChannels);
+size_t JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t sizeOfChannels, size_t maxAddressesToAnnounce);
 
 /* Returns the IPacker interface */
 IPackerHandle JsonPacker_getIPacker(JsonPackerHandle self);

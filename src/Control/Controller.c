@@ -41,6 +41,10 @@ static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
 static void runRx(IRunnableHandle runnable){
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
+    if(self->unpacker == NULL){
+        return;
+    }
+
     if(self->unpacker->dataPending(self->unpacker) == false){
         return;
     }

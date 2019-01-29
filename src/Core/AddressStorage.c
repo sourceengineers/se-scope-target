@@ -15,13 +15,13 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __AddressStoragePrivateData
-{
+typedef struct __AddressStoragePrivateData{
 
-  AddressDefinition* addresses;
-  size_t maxAmountOfAddresses;
+    AddressDefinition* addresses;
+    size_t maxAmountOfAddresses;
+    bool announcementIsReadyToSend;
 
-} AddressStoragePrivateData ;
+} AddressStoragePrivateData;
 
 /******************************************************************************
  Private functions
@@ -33,58 +33,64 @@ typedef struct __AddressStoragePrivateData
 ******************************************************************************/
 AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses){
 
-  AddressStorageHandle self = malloc(sizeof(AddressStoragePrivateData));
+    AddressStorageHandle self = malloc(sizeof(AddressStoragePrivateData));
 
-  self->addresses = malloc(sizeof(AddressDefinition) * maxAmountOfAddresses);
-  self->maxAmountOfAddresses = maxAmountOfAddresses;
+    self->addresses = malloc(sizeof(AddressDefinition) * maxAmountOfAddresses);
+    self->maxAmountOfAddresses = maxAmountOfAddresses;
+    self->announcementIsReadyToSend = false;
 
-  /* Initialize all addresses to have a defined state */
-  for (int i = 0; i < maxAmountOfAddresses; ++i) {
-    self->addresses[i].type = FLOAT;
-    self->addresses[i].address = 0;
-    self->addresses[i].name[0] = '\0';
-    self->addresses[i].hasToBeSent = false;
-  }
+    /* Initialize all addresses to have a defined state */
+    for(int i = 0; i < maxAmountOfAddresses; ++i){
+        self->addresses[i].type = FLOAT;
+        self->addresses[i].address = 0;
+        self->addresses[i].name[0] = '\0';
+        self->addresses[i].hasToBeSent = false;
+    }
 
-  return self;
+    return self;
 }
 
 size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self){
-  return self->maxAmountOfAddresses;
+    return self->maxAmountOfAddresses;
 }
 
 AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const uint32_t addressId){
-  return &self->addresses[addressId];
+    return &self->addresses[addressId];
 }
 
-void AddressStorage_flagAddressesAsSend(AddressStorageHandle self){
+void AddressStorage_announce(AddressStorageHandle self){
+    self->announcementIsReadyToSend = true;
+}
 
-  for (int i = 0; i < self->maxAmountOfAddresses; ++i) {
-    self->addresses[i].hasToBeSent = false;
-  }
+bool AddressStorage_hasToBeSent(AddressStorageHandle self){
+    return self->announcementIsReadyToSend;
+}
+
+void AddressStorage_hasBeenSent(AddressStorageHandle self){
+    self->announcementIsReadyToSend = false;
 }
 
 void AddressStorage_addAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
-                                    const DATA_TYPES type,
-                                    const uint32_t addressId){
+                                       const DATA_TYPES type,
+                                       const uint32_t addressId){
 
-  if(addressId >= self->maxAmountOfAddresses){
-    return;
-  }
+    if(addressId >= self->maxAmountOfAddresses){
+        return;
+    }
 
-  if(strnlen(name, maxAddrNameLength + 1) > maxAddrNameLength){
-    return;
-  }
+    if(strnlen(name, maxAddrNameLength + 1) > maxAddrNameLength){
+        return;
+    }
 
-  self->addresses[addressId].type = type;
-  self->addresses[addressId].address = (const ADDRESS_DATA_TYPE) address;
-  strncpy(self->addresses[addressId].name, name, maxAddrNameLength);
-  self->addresses[addressId].hasToBeSent = true;
+    self->addresses[addressId].type = type;
+    self->addresses[addressId].address = (const ADDRESS_DATA_TYPE) address;
+    strncpy(self->addresses[addressId].name, name, maxAddrNameLength);
+    self->addresses[addressId].hasToBeSent = true;
 }
 
 void AddressStorage_destroy(AddressStorageHandle self){
-  free(self->addresses);
-  self->addresses = NULL;
-  free(self);
-  self = NULL;
+    free(self->addresses);
+    self->addresses = NULL;
+    free(self);
+    self = NULL;
 }

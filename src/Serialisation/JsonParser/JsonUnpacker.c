@@ -208,6 +208,10 @@ static bool jsoneq(const char* json, jsmntok_t* tok, const char* key){
 static bool unpack(IUnpackerHandle unpacker){
     JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
 
+    if(self->stream == NULL){
+        return false;
+    }
+
     size_t length = self->stream->length(self->stream);
 
     if(length <= 0){
@@ -482,6 +486,10 @@ static void dataRead(IUnpackerHandle unpacker){
 
 static bool streamIsEmpty(IUnpackerHandle unpacker){
     JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
+
+    if(self->stream == NULL){
+        return false;
+    }
 
     return !self->stream->byteIsReady(self->stream);
 }

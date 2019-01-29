@@ -31,7 +31,7 @@ typedef struct __ScopePrivateData* ScopeHandle;
 /* Constructor: Creates a new instance of the channel */
 ScopeHandle Scope_create(size_t channelSize,
                          size_t amountOfChannels,
-                         size_t maxNumberOfAddresses,
+                         AddressStorageHandle addressStorage,
                          uint32_t* referenceTimestamp);
 
 /* Deconstructor: Deletes the instance of the channel */

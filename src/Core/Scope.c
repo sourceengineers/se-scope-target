@@ -34,7 +34,6 @@ typedef struct __ScopePrivateData{
     /* Flags */
     bool scopeIsReadyToSend;
     bool dataIsReadyToSend;
-    bool announcementIsReadyToSend;
 
 } ScopePrivateData;
 
@@ -121,7 +120,11 @@ bool dataIsReadyToSend(IScopeHandle scope){
 bool announcementIsReadyToSend(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
-    return self->announcementIsReadyToSend;
+    if(self->addressStorage == NULL){
+        return false;
+    }
+
+    return AddressStorage_hasToBeSent(self->addressStorage);
 }
 
 void dataIsTransmitted(IScopeHandle scope){
@@ -129,7 +132,7 @@ void dataIsTransmitted(IScopeHandle scope){
 
     self->dataIsReadyToSend = false;
     self->scopeIsReadyToSend = false;
-    self->announcementIsReadyToSend = false;
+    AddressStorage_hasBeenSent(self->addressStorage);
 }
 
 
@@ -194,6 +197,10 @@ AddressDefinition* getAnnounceAddressToTransmit(IScopeHandle scope, uint32_t add
 size_t getMaxAmmountOfAnnounceAddresses(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
+    if(self->addressStorage == NULL){
+        return 0;
+    }
+
     return AddressStorage_getMaxAmountOfAddresses(self->addressStorage);
 }
 
@@ -208,7 +215,7 @@ size_t getMaxSizeOfChannel(IScopeHandle scope){
 ******************************************************************************/
 ScopeHandle Scope_create(size_t channelSize,
                          size_t amountOfChannels,
-                         size_t maxNumberOfAddresses,
+                         AddressStorageHandle addressStorage,
                          uint32_t* referenceTimestamp){
 
     ScopeHandle self = malloc(sizeof(ScopePrivateData));
@@ -216,9 +223,9 @@ ScopeHandle Scope_create(size_t channelSize,
     self->referenceTimestamp = referenceTimestamp;
     self->lastTimestamp = 0;
     self->scopeIsReadyToSend = false;
-    self->announcementIsReadyToSend = false;
     self->dataIsReadyToSend = false;
     self->channelSize = channelSize;
+    self->addressStorage = addressStorage;
 
     self->scope.handle = self;
     self->scope.poll = &scopePoll;
@@ -248,8 +255,6 @@ ScopeHandle Scope_create(size_t channelSize,
     self->runnable.handle = self;
     self->runnable.run = &run;
 
-    self->addressStorage = AddressStorage_create(maxNumberOfAddresses);
-
     self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
     self->amountOfChannels = amountOfChannels;
 
@@ -268,10 +273,13 @@ void Scope_destroy(ScopeHandle self){
 
     for(size_t i = 0; i < self->amountOfChannels; ++i){
         Channel_destroy(self->channels[i]);
+        free(self->channels[i]);
+        self->channels[i] = NULL;
     }
 
+    BufferedIntStream_destroy(self->timeStamp);
+
     Trigger_destroy(self->trigger);
-    AddressStorage_destroy(self->addressStorage);
 
     free(self);
     self = NULL;
@@ -285,8 +293,12 @@ void Scope_transmit(ScopeHandle self){
 
 void Scope_announce(ScopeHandle self){
 
+    if(self->addressStorage == NULL){
+        return;
+    }
+
     self->scopeIsReadyToSend = true;
-    self->announcementIsReadyToSend = true;
+    AddressStorage_announce(self->addressStorage);
 }
 
 void Scope_poll(ScopeHandle self){
@@ -368,6 +380,11 @@ void Scope_clear(ScopeHandle self){
 void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
                                 const DATA_TYPES type,
                                 const uint32_t addressId){
+
+    if(self->addressStorage == NULL){
+        return;
+    }
+
     AddressStorage_addAnnounceAddress(self->addressStorage, name, address, type, addressId);
 }
 

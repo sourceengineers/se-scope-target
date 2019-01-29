@@ -31,6 +31,10 @@ typedef struct __SerializerPrivateData{
 static void runRx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
+    if(self->unpacker == NULL){
+        return;
+    }
+
     if(self->unpacker->streamIsEmpty(self->unpacker) == true){
         return;
     }
