@@ -22,7 +22,7 @@ typedef struct __CommandPackPrivateData{
     IPackerHandle packer;
 
     float** channelData; // Buffers to safe data from channels. This might not be the most ideal solution,
-                         // since it takes up as much space as the channels themselves
+    // since it takes up as much space as the channels themselves
 } CommandPackPrivateData;
 
 /******************************************************************************
@@ -57,9 +57,12 @@ static void run(ICommandHandle command){
 
         for(uint32_t i = 0; i < maxAddresses; ++i){
             AddressDefinition* addr = self->scope->getAnnounceAddressToTransmit(self->scope, i);
-            if(addr->hasToBeSent == true){
-                self->packer->prepareAddressAnnouncement(self->packer, addr->name, getDataTypeName(addr->type),
-                                                         addr->address);
+
+            if(addr != NULL){
+                if(addr->hasToBeSent == true){
+                    self->packer->prepareAddressAnnouncement(self->packer, addr->name, getDataTypeName(addr->type),
+                                                             addr->address);
+                }
             }
         }
     }

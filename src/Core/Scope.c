@@ -132,6 +132,11 @@ void dataIsTransmitted(IScopeHandle scope){
 
     self->dataIsReadyToSend = false;
     self->scopeIsReadyToSend = false;
+
+    if(self->addressStorage ==  NULL){
+        return;
+    }
+
     AddressStorage_hasBeenSent(self->addressStorage);
 }
 
@@ -187,7 +192,11 @@ size_t getAmountOfUsedChannelData(IScopeHandle scope, uint32_t channelId){
 AddressDefinition* getAnnounceAddressToTransmit(IScopeHandle scope, uint32_t addressId){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
-    if(addressId >= self->amountOfChannels){
+    if(self->addressStorage == NULL){
+        return NULL;
+    }
+
+    if(addressId >= AddressStorage_getMaxAmountOfAddresses(self->addressStorage)){
         return NULL;
     }
 
