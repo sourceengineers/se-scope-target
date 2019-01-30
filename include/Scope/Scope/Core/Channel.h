@@ -49,9 +49,6 @@ bool Channel_setStateRunning(ChannelHandle self);
    Returns -1 if the channel wasn't in CHANNEL_RUNNING */
 bool Channel_setStateStopped(ChannelHandle self);
 
-/* Returns the state of the channel */
-CHANNEL_STATES Channel_getState(ChannelHandle self);
-
 /* Returns true if the channel is running */
 bool Channel_isRunning(ChannelHandle self);
 

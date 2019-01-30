@@ -14,18 +14,19 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __TriggerPrivateData
-{
-  float level;
-  int edge;
-  uint32_t triggerIndex;
-  IFloatStreamHandle stream;
-  TriggerStrategy triggerStrategies[3];
-  TriggerStrategy run;
-  uint32_t activeChannelId;
-  ChannelHandle* channels;
-  size_t amountOfChannels;
-  bool isTriggered;
+typedef struct __TriggerPrivateData{
+    float level;
+    int edge;
+    uint32_t triggerIndex;
+    IFloatStreamHandle stream;
+    TriggerStrategy triggerStrategies[3];
+    TriggerStrategy run;
+    uint32_t activeChannelId;
+    ChannelHandle* channels;
+    size_t amountOfChannels;
+    bool isTriggered;
+
+    bool dataIsReadyToSend;
 } TriggerPrivateData;
 
 /* Checks if the trigger criteria matches the current data */
@@ -58,99 +59,99 @@ static void writeConfig(TriggerHandle self, TriggerConfiguration conf);
 ******************************************************************************/
 static bool checkCurrentData(TriggerHandle self, float* triggerData){
 
-  const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
-  const float dataLast = triggerData[CHANNEL_CURRENT_DATA];
-  const float triggerLevel = self->level;
-  const int edge = (const int) dataCurrent > dataLast ? 1 : -1;
+    const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
+    const float dataLast = triggerData[CHANNEL_CURRENT_DATA];
+    const float triggerLevel = self->level;
+    const int edge = (const int) dataCurrent > dataLast ? 1 : -1;
 
-  if(dataCurrent == dataLast){
-    return false;
-  }
-  
-  if(edge != self->edge){
-    return false;
-  }
-  
-  /* Sort the two values to check if the triggerLevel is between them */
-  const float levelLower = dataCurrent > dataLast ? dataLast : dataCurrent;
-  const float levelHigher = dataCurrent > dataLast ? dataCurrent : dataLast;
-  if(triggerLevel < levelLower || triggerLevel > levelHigher){
-    return false;
-  }
+    if(dataCurrent == dataLast){
+        return false;
+    }
 
-  return true;
+    if(edge != self->edge){
+        return false;
+    }
+
+    /* Sort the two values to check if the triggerLevel is between them */
+    const float levelLower = dataCurrent > dataLast ? dataLast : dataCurrent;
+    const float levelHigher = dataCurrent > dataLast ? dataCurrent : dataLast;
+    if(triggerLevel < levelLower || triggerLevel > levelHigher){
+        return false;
+    }
+
+    return true;
 }
 
 static bool getTriggerData(TriggerHandle self, float* data){
 
-  if(self->stream->length(self->stream) != 2){
-    return false;
-  }
+    if(self->stream->length(self->stream) != 2){
+        return false;
+    }
 
-  self->stream->read(self->stream, data, 2);
+    self->stream->read(self->stream, data, 2);
 
-  return true;
+    return true;
 }
 
 static bool triggerContinuous(TriggerHandle self, const uint32_t index){
-  return false;
+    return false;
 }
 
 static bool triggerNormal(TriggerHandle self, const uint32_t index){
-  float triggerData[2];
-  bool streamSuccessfull = getTriggerData(self, triggerData);
-  
-  if(streamSuccessfull == false){
-    return false;
-  }
+    float triggerData[2];
+    bool streamSuccessfull = getTriggerData(self, triggerData);
 
-  bool isTriggered = checkCurrentData(self, triggerData);
+    if(streamSuccessfull == false){
+        return false;
+    }
 
-  /* If the trigger is already triggered, it shouldn't overwrite this status
-   * But is should still be able to update the trigger index if a new trigger event occurred */
-  if(isTriggered == true){
-    self->triggerIndex = index;
-  }
-  if(self->isTriggered == true){
-    isTriggered = true;
-  }
+    bool isTriggered = checkCurrentData(self, triggerData);
 
-  return isTriggered;
+    /* If the trigger is already triggered, it shouldn't overwrite this status
+     * But is should still be able to update the trigger index if a new trigger event occurred */
+    if(isTriggered == true){
+        self->triggerIndex = index;
+    }
+    if(self->isTriggered == true){
+        isTriggered = true;
+    }
+
+    return isTriggered;
 }
 
 static bool triggerOneShot(TriggerHandle self, const uint32_t index){
-  return false;
+    return false;
 }
 
 static bool configSanityCheck(TriggerHandle self, TriggerConfiguration conf){
-  if((conf.mode != TRIGGER_NORMAL) 
-      && (conf.mode != TRIGGER_CONTINUOUS) 
-      && (conf.mode != TRIGGER_ONESHOT)){
-    return false;
-  }
-  if((conf.edge != TRIGGER_EDGE_NEGATIVE)
-      && (conf.edge != TRIGGER_EDGE_POSITIVE)){
-    return false;
-  }
-  if(conf.channelId < 0){
-    return false;
-  }
-  if(conf.channelId >= self->amountOfChannels){
-    return false;
-  }
-  return true;
+    if((conf.mode != TRIGGER_NORMAL)
+       && (conf.mode != TRIGGER_CONTINUOUS)
+       && (conf.mode != TRIGGER_ONESHOT)){
+        return false;
+    }
+    if((conf.edge != TRIGGER_EDGE_NEGATIVE)
+       && (conf.edge != TRIGGER_EDGE_POSITIVE)){
+        return false;
+    }
+    if(conf.channelId < 0){
+        return false;
+    }
+    if(conf.channelId >= self->amountOfChannels){
+        return false;
+    }
+    return true;
 }
 
 static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode){
-  return self->triggerStrategies[mode];
+    return self->triggerStrategies[mode];
 }
 
 static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
-  self->level = conf.level;
-  self->edge = conf.edge;
-  self->stream = Channel_getTriggerDataStream(self->channels[conf.channelId]);
-  self->run = getTriggerStrategy(self, conf.mode);
-  self->activeChannelId = conf.channelId;
+    self->level = conf.level;
+    self->edge = conf.edge;
+    self->stream = Channel_getTriggerDataStream(self->channels[conf.channelId]);
+    self->run = getTriggerStrategy(self, conf.mode);
+    self->activeChannelId = conf.channelId;
 }
 
 /******************************************************************************
@@ -158,26 +159,28 @@ static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
 ******************************************************************************/
 TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels){
 
-  TriggerHandle self = malloc(sizeof(TriggerPrivateData));
-  self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
-  self->channels = channels;
-  self->amountOfChannels = amountOfChannels;
-  /* Writing all strategies into a array to easier load it when the trigger 
-     is reconfigured */
-  self->triggerStrategies[TRIGGER_CONTINUOUS] = &triggerContinuous;
-  self->triggerStrategies[TRIGGER_NORMAL] = &triggerNormal;
-  self->triggerStrategies[TRIGGER_ONESHOT] = &triggerOneShot;
-  self->activeChannelId = 0;
-  self->isTriggered = false;
-  
-  self->run = &triggerContinuous;
-  
-  return self;
+    TriggerHandle self = malloc(sizeof(TriggerPrivateData));
+    self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
+    self->channels = channels;
+    self->amountOfChannels = amountOfChannels;
+    /* Writing all strategies into a array to easier load it when the trigger
+       is reconfigured */
+    self->triggerStrategies[TRIGGER_CONTINUOUS] = &triggerContinuous;
+    self->triggerStrategies[TRIGGER_NORMAL] = &triggerNormal;
+    self->triggerStrategies[TRIGGER_ONESHOT] = &triggerOneShot;
+    self->activeChannelId = 0;
+    self->isTriggered = false;
+
+    self->run = &triggerContinuous;
+
+    return self;
 }
 
 void Trigger_destroy(TriggerHandle self){
-  free(self);
-  self = NULL;
+    free(self->channels);
+    self->channels = NULL;
+    free(self);
+    self = NULL;
 }
 
 uint32_t Trigger_getTriggerIndex(TriggerHandle self){
@@ -185,28 +188,28 @@ uint32_t Trigger_getTriggerIndex(TriggerHandle self){
 }
 
 bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
-    
+
     if(configSanityCheck(self, conf) == false){
-      return false;
+        return false;
     }
     writeConfig(self, conf);
     return true;
 }
 
 bool Trigger_run(TriggerHandle self, const uint32_t timestamp){
-  self->isTriggered = self->run(self, timestamp);
-  return self->isTriggered;
+    self->isTriggered = self->run(self, timestamp);
+    return self->isTriggered;
 }
 
 bool Trigger_isTriggered(TriggerHandle self){
-  return self->isTriggered;
+    return self->dataIsReadyToSend;
 }
 
 void Trigger_release(TriggerHandle self){
-  self->isTriggered = false;
-  self->triggerIndex = 0;
+    self->isTriggered = false;
+    self->triggerIndex = 0;
 }
 
 uint32_t Trigger_getChannelId(TriggerHandle self){
-  return self->activeChannelId;
+    return self->activeChannelId;
 }

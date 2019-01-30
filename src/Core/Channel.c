@@ -36,6 +36,8 @@ static void prepareTriggerData(ChannelHandle self, float triggerData);
 /* Sets a new state */
 static void setState(ChannelHandle self, CHANNEL_STATES state);
 
+/* Returns the state of the channel */
+static CHANNEL_STATES getState(ChannelHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -94,6 +96,9 @@ static void setState(ChannelHandle self, CHANNEL_STATES state) {
     self->state = state;
 }
 
+static CHANNEL_STATES getState(ChannelHandle self) {
+    return self->state;
+}
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -127,7 +132,7 @@ bool Channel_isRunning(ChannelHandle self) {
 void Channel_setPollAddress(ChannelHandle self, void *pollAddress, DATA_TYPES pollDataType) {
     self->pollAddress = pollAddress;
     self->pollDataType = pollDataType;
-    if (Channel_getState(self) == CHANNEL_INIT) {
+    if (getState(self) == CHANNEL_INIT) {
         setState(self, CHANNEL_STOPPED);
     }
 }
@@ -137,7 +142,7 @@ void *Channel_getPollAddress(ChannelHandle self) {
 }
 
 bool Channel_setStateRunning(ChannelHandle self) {
-    if (Channel_getState(self) == CHANNEL_STOPPED) {
+    if (getState(self) == CHANNEL_STOPPED) {
         setState(self, CHANNEL_RUNNING);
         return true;
     } else {
@@ -146,7 +151,7 @@ bool Channel_setStateRunning(ChannelHandle self) {
 }
 
 bool Channel_setStateStopped(ChannelHandle self) {
-    if (Channel_getState(self) == CHANNEL_RUNNING) {
+    if (getState(self) == CHANNEL_RUNNING) {
         setState(self, CHANNEL_STOPPED);
         return true;
     } else {
@@ -154,16 +159,12 @@ bool Channel_setStateStopped(ChannelHandle self) {
     }
 }
 
-CHANNEL_STATES Channel_getState(ChannelHandle self) {
-    return self->state;
-}
-
 IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self) {
     return self->stream;
 }
 
 int Channel_poll(ChannelHandle self) {
-    if (Channel_getState(self) == CHANNEL_RUNNING) {
+    if (getState(self) == CHANNEL_RUNNING) {
         const float polledData = castDataToFloat(self);
         prepareTriggerData(self, polledData);
 

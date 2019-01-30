@@ -38,9 +38,10 @@ typedef struct {
     uint32_t triggerTimestamp;
 } TriggeredValues;
 
-/* Channel definitions */
+/* Channel definitions
 /* Channels States */
 typedef enum {CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;
+
 
 /* Definitions for the addressannouncement */
 #define maxAddrNameLength 30
