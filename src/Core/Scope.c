@@ -9,6 +9,7 @@
 
 #include <Scope/Core/Scope.h>
 #include <Scope/GeneralPurpose/BufferedIntStream.h>
+#include <Scope/Core/Timestamper.h>
 
 /******************************************************************************
  Define private data
@@ -25,11 +26,7 @@ typedef struct __ScopePrivateData{
     size_t channelSize;
     AddressStorageHandle addressStorage;
 
-    /* Timestamping data */
-    uint32_t timeIncrement;
-    BufferedIntStreamHandle timeStamp;
-    uint32_t* referenceTimestamp;
-    uint32_t lastTimestamp;
+    TimestamperHandle timestamper;
 
     /* Flags */
     bool scopeIsReadyToSend;
@@ -37,59 +34,69 @@ typedef struct __ScopePrivateData{
 
 } ScopePrivateData;
 
+bool allChannelsAreStopped(ScopeHandle self);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
 static void scopePoll(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
+
     Scope_poll(self);
 }
 
 static void scopeClear(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
+
     Scope_clear(self);
 }
 
 static void scopeSetTimeIncrement(IScopeHandle scope, uint32_t timeIncrement){
     ScopeHandle self = (ScopeHandle) scope->handle;
+
     Scope_configureTimestampIncrement(self, timeIncrement);
 }
 
 static uint32_t getTimeIncrement(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
-    return self->timeIncrement;
+
+    return Timerstamper_getTimeIncrement(self->timestamper);
 }
 
 static size_t getAmountOfChannels(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
+
     return self->amountOfChannels;
 }
 
 static IIntStreamHandle getTimestamp(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
-    return BufferedIntStream_getIIntStream(self->timeStamp);
+
+    return Timestamper_getStream(self->timestamper);
 }
 
 static void configureTrigger(IScopeHandle scope, TriggerConfiguration conf){
     ScopeHandle self = (ScopeHandle) scope->handle;
+
     Trigger_configure(self->trigger, conf);
 }
 
 static void setChannelRunning(IScopeHandle scope, uint32_t idOfChangedChannel){
     ScopeHandle self = (ScopeHandle) scope->handle;
+
     Scope_setChannelRunning(self, idOfChangedChannel);
 }
 
 static void setChannelStopped(IScopeHandle scope, uint32_t idOfChangedChannel){
     ScopeHandle self = (ScopeHandle) scope->handle;
+
     Scope_setChannelStopped(self, idOfChangedChannel);
 }
 
 static void configureChannelAddress(IScopeHandle scope, void* address,
                                     uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress){
-
     ScopeHandle self = (ScopeHandle) scope->handle;
+
     Scope_configureChannel(self, idOfChangedChannel, address, typeOfAddress);
 }
 
@@ -132,6 +139,7 @@ void dataIsTransmitted(IScopeHandle scope){
 
     self->dataIsReadyToSend = false;
     self->scopeIsReadyToSend = false;
+    Trigger_dataIsTransmitted(self->trigger);
 
     if(self->addressStorage ==  NULL){
         return;
@@ -159,14 +167,14 @@ TriggeredValues getTriggerData(IScopeHandle scope){
     return values;
 }
 
-bool channelIsRunning(IScopeHandle scope, uint32_t channelId){
+bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
     if(channelId >= self->amountOfChannels){
         return false;
     }
 
-    return Channel_isRunning(self->channels[channelId]);
+    return Channel_getAmountOfUsedData(self->channels[channelId]) > 0;
 }
 
 int readChannelData(IScopeHandle scope, float data[], size_t size, uint32_t channelId){
@@ -219,6 +227,18 @@ size_t getMaxSizeOfChannel(IScopeHandle scope){
     return self->channelSize;
 }
 
+bool allChannelsAreStopped(ScopeHandle self){
+    bool channelIsRunning = false;
+
+    for(int i = 0; i < self->amountOfChannels; ++i){
+       channelIsRunning = Channel_isRunning(self->channels[i]);
+       if(channelIsRunning == true){
+           break;
+       }
+    }
+    return !channelIsRunning;
+}
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -228,9 +248,7 @@ ScopeHandle Scope_create(size_t channelSize,
                          uint32_t* referenceTimestamp){
 
     ScopeHandle self = malloc(sizeof(ScopePrivateData));
-    self->timeIncrement = 1;
-    self->referenceTimestamp = referenceTimestamp;
-    self->lastTimestamp = 0;
+
     self->scopeIsReadyToSend = false;
     self->dataIsReadyToSend = false;
     self->channelSize = channelSize;
@@ -252,7 +270,7 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.dataIsReadyToSend = &dataIsReadyToSend;
     self->scope.dataIsTransmitted = &dataIsTransmitted;
     self->scope.getTriggerData = &getTriggerData;
-    self->scope.channelIsRunning = &channelIsRunning;
+    self->scope.channelHasToBePacked = &channelHasToBePacked;
     self->scope.readChannelData = &readChannelData;
     self->scope.getAmountOfUsedChannelData = &getAmountOfUsedChannelData;
     self->scope.getAnnounceAddressToTransmit = &getAnnounceAddressToTransmit;
@@ -270,9 +288,9 @@ ScopeHandle Scope_create(size_t channelSize,
     for(size_t i = 0; i < amountOfChannels; i++){
         self->channels[i] = Channel_create(channelSize);
     }
-    self->timeStamp = BufferedIntStream_create(channelSize);
 
-    self->trigger = Trigger_create(self->channels, self->amountOfChannels);
+    self->timestamper = Timestamper_create(channelSize, referenceTimestamp);
+    self->trigger = Trigger_create(self->channels, self->amountOfChannels, self->channelSize, self->timestamper);
 
 
     return self;
@@ -286,8 +304,7 @@ void Scope_destroy(ScopeHandle self){
         self->channels[i] = NULL;
     }
 
-    BufferedIntStream_destroy(self->timeStamp);
-
+    Timestamper_destroy(self->timestamper);
     Trigger_destroy(self->trigger);
 
     free(self);
@@ -314,21 +331,21 @@ void Scope_poll(ScopeHandle self){
 
 
     /* Check if the scope is ready to poll again, according to the set timeIncrement */
-    if(*self->referenceTimestamp < (self->lastTimestamp + self->timeIncrement)){
+    if(Timestamper_updateElapsedTime(self->timestamper) == false){
         return;
     }
 
-    IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timeStamp);
-    stream->write(stream, self->referenceTimestamp, 1);
+    /* Update timestamp */
+    Timestamper_stamp(self->timestamper);
 
     for(size_t i = 0; i < self->amountOfChannels; i++){
         Channel_poll(self->channels[i]);
     }
 
-    Trigger_run(self->trigger, *self->referenceTimestamp);
-
-    /* Update the last timestmap */
-    self->lastTimestamp = *self->referenceTimestamp;
+    bool readyToSend = Trigger_run(self->trigger);
+    if(readyToSend == true){
+        Scope_transmit(self);
+    }
 }
 
 void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* pollAddress, DATA_TYPES type){
@@ -357,7 +374,7 @@ void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGG
 }
 
 void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrement){
-    self->timeIncrement = timstampIncrement;
+    Timestamper_configureTimestampIncrement(self->timestamper, timstampIncrement);
 }
 
 void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId){
@@ -367,6 +384,12 @@ void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId){
     }
 
     Channel_setStateRunning(self->channels[channelId]);
+
+    /* Check if the timestamper has to be stopped too */
+    if(allChannelsAreStopped(self) == false){
+        Timestamper_setStateRunning(self->timestamper);
+        Trigger_activate(self->trigger);
+    }
 }
 
 void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
@@ -376,14 +399,20 @@ void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
     }
 
     Channel_setStateStopped(self->channels[channelId]);
+
+    /* Check if the timestamper has to be stopped too */
+    if(allChannelsAreStopped(self) == true){
+        Timestamper_setStateStopped(self->timestamper);
+        Trigger_deactivate(self->trigger);
+    }
 }
 
 void Scope_clear(ScopeHandle self){
     for(size_t i = 0; i < self->amountOfChannels; i++){
         Channel_clear(self->channels[i]);
     }
-    IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timeStamp);
-    stream->flush(stream);
+    Timestamper_clear(self->timestamper);
+    Trigger_clear(self->trigger);
 }
 
 void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,

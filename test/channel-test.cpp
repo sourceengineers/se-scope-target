@@ -85,7 +85,6 @@ TEST(Channel, test_states) {
     /* Create Instanzes */
     ChannelHandle channel = Channel_create(shortCapacity);
 
-    EXPECT_EQ(Channel_poll(channel), -1);
     bool isRunning = Channel_setStateRunning(channel);
     EXPECT_EQ(isRunning, false);
     bool isStopped = Channel_setStateStopped(channel);
@@ -96,10 +95,8 @@ TEST(Channel, test_states) {
     isRunning = Channel_setStateRunning(channel);
     EXPECT_EQ(isRunning, true);
     data = 5.5f;
-    EXPECT_EQ(Channel_poll(channel), 1);
     isStopped = Channel_setStateStopped(channel);
     EXPECT_EQ(isStopped, true);
-    EXPECT_EQ(Channel_poll(channel), -1);
 }
 
 TEST(Channel, test_trigger_stream) {

@@ -36,6 +36,8 @@ static void prepareTriggerData(ChannelHandle self, float triggerData);
 /* Sets a new state */
 static void setState(ChannelHandle self, CHANNEL_STATES state);
 
+/* Returns the state of the channel */
+static CHANNEL_STATES getState(ChannelHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -94,6 +96,9 @@ static void setState(ChannelHandle self, CHANNEL_STATES state) {
     self->state = state;
 }
 
+static CHANNEL_STATES getState(ChannelHandle self) {
+    return self->state;
+}
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -108,6 +113,10 @@ ChannelHandle Channel_create(size_t capacity) {
     self->oldTriggerData = 0.0f;
 
     return self;
+}
+
+size_t Channel_getCapacity(ChannelHandle self){
+    return FloatRingBuffer_getCapacity(self->buffer);
 }
 
 void Channel_destroy(ChannelHandle self) {
@@ -127,7 +136,7 @@ bool Channel_isRunning(ChannelHandle self) {
 void Channel_setPollAddress(ChannelHandle self, void *pollAddress, DATA_TYPES pollDataType) {
     self->pollAddress = pollAddress;
     self->pollDataType = pollDataType;
-    if (Channel_getState(self) == CHANNEL_INIT) {
+    if (getState(self) == CHANNEL_INIT) {
         setState(self, CHANNEL_STOPPED);
     }
 }
@@ -137,7 +146,7 @@ void *Channel_getPollAddress(ChannelHandle self) {
 }
 
 bool Channel_setStateRunning(ChannelHandle self) {
-    if (Channel_getState(self) == CHANNEL_STOPPED) {
+    if (getState(self) == CHANNEL_STOPPED) {
         setState(self, CHANNEL_RUNNING);
         return true;
     } else {
@@ -146,7 +155,7 @@ bool Channel_setStateRunning(ChannelHandle self) {
 }
 
 bool Channel_setStateStopped(ChannelHandle self) {
-    if (Channel_getState(self) == CHANNEL_RUNNING) {
+    if (getState(self) == CHANNEL_RUNNING) {
         setState(self, CHANNEL_STOPPED);
         return true;
     } else {
@@ -154,27 +163,29 @@ bool Channel_setStateStopped(ChannelHandle self) {
     }
 }
 
-CHANNEL_STATES Channel_getState(ChannelHandle self) {
-    return self->state;
-}
-
 IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self) {
     return self->stream;
 }
 
-int Channel_poll(ChannelHandle self) {
-    if (Channel_getState(self) == CHANNEL_RUNNING) {
+void Channel_poll(ChannelHandle self) {
+    if (getState(self) == CHANNEL_RUNNING) {
         const float polledData = castDataToFloat(self);
         prepareTriggerData(self, polledData);
 
-        return FloatRingBuffer_write(self->buffer, &polledData, 1);
+        /* Channel start reading data out of the buffer if it is full */
+        if(FloatRingBuffer_write(self->buffer, &polledData, 1) == -1){
+            float dump;
+            FloatRingBuffer_read(self->buffer, &dump, 1);
+            FloatRingBuffer_write(self->buffer, &polledData, 1);
+        }
     } else {
-        return -1;
+        return;
     }
 }
 
 void Channel_clear(ChannelHandle self) {
     FloatRingBuffer_clear(self->buffer);
+    self->stream->flush(self->stream);
 }
 
 int Channel_read(ChannelHandle self, float data[], size_t size) {

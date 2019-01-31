@@ -29,6 +29,8 @@ typedef struct {
     CHANNEL_STATES* newStates;
     uint32_t* changedChannels;
     uint32_t numberOfChangedChannels;
+    bool triggerChanged;
+    bool triggerRunning;
 } CommandRunningConf;
 
 /******************************************************************************

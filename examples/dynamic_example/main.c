@@ -62,7 +62,7 @@ int main(int argc, char* argv[]){
 /***********************************************************************************************************************
 * Build Scope
 ***********************************************************************************************************************/
-    size_t amountOfChannels = 2;
+    size_t amountOfChannels = 4;
     size_t sizeOfChannels = 100;
     size_t addressesInAddressAnnouncer = 3;
     size_t outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]){
     BufferedByteStreamHandle input = BufferedByteStream_create(inputBufferSize);
     BufferedByteStreamHandle output = BufferedByteStream_create(outputBufferSize);
     JsonUnpackerHandle unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(input));
-    JsonPackerHandle packer = JsonPacker_create(3, 3, BufferedByteStream_getIByteStream(output));
+    JsonPackerHandle packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer, BufferedByteStream_getIByteStream(output));
     EthernetJsonHandle ethernetJson = EthernetJson_create(print, BufferedByteStream_getIByteStream(input),
                                                           BufferedByteStream_getIByteStream(output));
     uint32_t timestamp = 0;

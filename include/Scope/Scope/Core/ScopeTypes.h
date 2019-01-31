@@ -42,6 +42,7 @@ typedef struct {
 /* Channels States */
 typedef enum {CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;
 
+
 /* Definitions for the addressannouncement */
 #define maxAddrNameLength 30
 typedef struct {

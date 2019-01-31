@@ -34,6 +34,9 @@ ChannelHandle Channel_create(size_t capacity);
 /* Deconstructor: Deletes the instance of the channel */
 void Channel_destroy(ChannelHandle self);
 
+/* Return the maximum capacity of the channel */
+size_t Channel_getCapacity(ChannelHandle self);
+
 /* Sets the address which the channel will poll from
    Sets the state to CHANNEL_RUNNING */
 void Channel_setPollAddress(ChannelHandle self, void* pollAddress, DATA_TYPES pollDataType);
@@ -49,9 +52,6 @@ bool Channel_setStateRunning(ChannelHandle self);
    Returns -1 if the channel wasn't in CHANNEL_RUNNING */
 bool Channel_setStateStopped(ChannelHandle self);
 
-/* Returns the state of the channel */
-CHANNEL_STATES Channel_getState(ChannelHandle self);
-
 /* Returns true if the channel is running */
 bool Channel_isRunning(ChannelHandle self);
 
@@ -59,7 +59,7 @@ bool Channel_isRunning(ChannelHandle self);
    Returns the responce of the buffer->write() functions 
    Will be written data point in a success case and a -1 if something went 
    wrong */
-int Channel_poll(ChannelHandle self);
+void Channel_poll(ChannelHandle self);
 
 /* Safes to data points into the triggerData and returns the amount of points
    written */
