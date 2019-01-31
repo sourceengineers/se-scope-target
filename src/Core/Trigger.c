@@ -358,13 +358,10 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
     self->triggerStrategies[TRIGGER_NORMAL] = normal;
     self->triggerStrategies[TRIGGER_ONESHOT] = oneshot;
     self->activeChannelId = 0;
-    self->isTriggered = false;
-    self->dataIsReadyToSend = false;
-    self->sendStillPending = true;
-    self->fillUpPollCount = 0;
 
     self->activeStrategy = continuous;
 
+    Trigger_clear(self);
     return self;
 }
 
@@ -427,6 +424,7 @@ uint32_t Trigger_getChannelId(TriggerHandle self){
 void Trigger_activate(TriggerHandle self){
     restoreChannelStates(self);
     setState(self, TRIGGER_DETECTING);
+    Trigger_clear(self);
 }
 
 void Trigger_deactivate(TriggerHandle self){
@@ -434,4 +432,12 @@ void Trigger_deactivate(TriggerHandle self){
     stopChannelsAndTimestamp(self);
     setState(self, TRIGGER_IDLE);
     self->fillUpPollCount = 0;
+}
+
+void Trigger_clear(TriggerHandle self){
+   self->isTriggered = false;
+   self->triggerIndex = 0;
+   self->dataIsReadyToSend = false;
+   self->fillUpPollCount = 0;
+   self->sendStillPending = false;
 }

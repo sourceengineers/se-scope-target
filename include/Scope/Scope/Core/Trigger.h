@@ -62,4 +62,5 @@ void Trigger_activate(TriggerHandle self);
 
 void Trigger_deactivate(TriggerHandle self);
 
+void Trigger_clear(TriggerHandle self);
 #endif

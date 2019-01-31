@@ -412,8 +412,7 @@ void Scope_clear(ScopeHandle self){
         Channel_clear(self->channels[i]);
     }
     Timestamper_clear(self->timestamper);
-    Trigger_deactivate(self->trigger);
-    Trigger_activate(self->trigger);
+    Trigger_clear(self->trigger);
 }
 
 void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,

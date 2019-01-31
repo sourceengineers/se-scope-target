@@ -185,6 +185,7 @@ void Channel_poll(ChannelHandle self) {
 
 void Channel_clear(ChannelHandle self) {
     FloatRingBuffer_clear(self->buffer);
+    self->stream->flush(self->stream);
 }
 
 int Channel_read(ChannelHandle self, float data[], size_t size) {
