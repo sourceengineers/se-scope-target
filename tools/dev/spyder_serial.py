@@ -30,13 +30,13 @@ def config():
     global figure_name
     global x_width
     global map_file
-
+    global trigger_conf
     ##########################################################################
     ### Serial optionen
     ##########################################################################
-    serial_file = '/dev/tty.usbmodem14203' # z.B.: COM1 bei Windows 
+    serial_file = '/dev/tty.usbmodem14103' # z.B.: COM1 bei Windows 
     baudrate = 57600
-    timeout = 1.5
+    timeout = 2 
     
     ##########################################################################
     ### Pfade
@@ -57,9 +57,15 @@ def config():
     # als statisch deklariert sind, oder manuell eigetragen werden.
     channels.append({'name' : "Address_32", 'address' : get_address_from_map("intVar"), 'type' :  "UINT32"})
     channels.append({'name' : "Address_FLOAT", 'address' : get_address_from_map("floatVar"), 'type' :  "FLOAT"})
-    channels.append({'name' : "Double Byte Value", 'address' : 536969198, 'type' :  "UINT16"})
+    channels.append({'name' : "Double Byte Value", 'address' : 536969154, 'type' :  "UINT16"})
     channels.append({'name' : "Byte Value", 'address' : get_address_from_map("byteVar"), 'type' :  "UINT8"})
-    
+ 
+    ##########################################################################
+    ### Trigger Konfiguration
+    ##########################################################################   
+    #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1} 
+    trigger_conf = {'mode' : 'Normal', 'level' : 40000, 'edge' : 'rising', 'cl_id' : 1} 
+
     ##########################################################################
     ### Grafik Konfiguration
     ##########################################################################   
@@ -72,23 +78,9 @@ def config():
 
     # wenn die x_width auf None gesetzt wird, wird die Achse automatisch 
     # skaliert
-#    x_width = 2000
-    x_width = None
+    x_width = 200
+    #x_width = None
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-##############################################################################
 ## Don't change any code after this line, or you might cause the code to break!
 ##############################################################################
     
@@ -141,11 +133,9 @@ def init_periph():
         ids.append(str(i))
         new_state.append("true")
     
+    send_command(cf_tgr.getCommand(str(trigger_conf['cl_id']), trigger_conf['mode'], str(trigger_conf['level']), str(trigger_conf['edge'])), True);
     send_command(cf_addr.getCommand(ids, addresses, types, len(channels)), True)
     send_command(cf_running.getCommand(ids, new_state, len(channels)), True)
-    
-    #Clear data
-   # send_command(ev_clear.getCommand())
 
 ##############################################################################
 
@@ -169,6 +159,7 @@ def process_data(data):
         try:
             data = data.decode("utf-8")
             data = json.loads(data);
+            #print(data)    # Uncomment this print if you want to see the parsed output of the scope
             return data
         except:
             sys.stdout.write("\nCouldn't parse: ");
@@ -230,23 +221,35 @@ def channel_data_is_present(index, ans):
 
 ##############################################################################
 
+def append_to_channel(channel, data):
+    for d in data:
+        channel.append(d)
+    return channel;
+
+##############################################################################
+
 def prepare_data(data):
     ans = process_data(data)
     if ans is None:
         return;    
-    #print(ans)
     
     if not data_is_present(ans):
         return;
     
-    # load timestamp data
-    device_data[len(channels)].append(ans["payload"]["sc_data"]["t_stmp"][0])
+    trigger_data = get_trigger_data(ans)
+
+    if not trigger_data['found'] == True:
+        clear_data();
         
+    # load tmestamp data
+    device_data[len(channels)] = append_to_channel(device_data[len(channels)], ans["payload"]["sc_data"]["t_stmp"])
+    
+
     # load channel data
     for i in range(len(channels)):
         if channel_data_is_present(i, ans) == True:
-            device_data[i].append(ans["payload"]["sc_data"]["cl_data"][str(i)][0])
-    
+            device_data[i] = append_to_channel(device_data[i], ans["payload"]["sc_data"]["cl_data"][str(i)])
+
 ##############################################################################
 def clear_data():
     for data in device_data:
@@ -258,26 +261,53 @@ def read_data():
     prepare_data(answer)
 
 ##############################################################################
+
+def get_trigger_data(data):
+    trigger_data['found'] = data["payload"]["sc_data"]["tgr"]["found"]
+    if(trigger_data['found'] == True):
+        trigger_data['cl_data_ind'] = data["payload"]["sc_data"]["tgr"]["cl_data_ind"]
+        trigger_data['cl_id'] = data["payload"]["sc_data"]["tgr"]["cl_id"]
+    else:
+        trigger_data['cl_data_ind'] = 0
+        trigger_data['cl_id'] = 0 
+    return trigger_data;
+
+##############################################################################
+
+def get_trigger_point():
+    index = list(device_data[len(channels)]).index(trigger_data['cl_data_ind'])
     
+    return {'x' : trigger_data['cl_data_ind'], 'y' : list(device_data[trigger_data['cl_id']])[index]}
+
+##############################################################################
 def plot_data(): 
     
     for i in range(len(plot_conf)):
         for ch in plot_conf[i][0]:
             if len(device_data[len(channels)]) == len(device_data[ch]):
-                lines[ch].set_xdata(list(device_data[len(channels)]))
-                lines[ch].set_ydata(list(device_data[ch]))
+                if len(device_data[len(channels)]) > 0:
+                    lines[ch].set_xdata(list(device_data[len(channels)]))
+                    lines[ch].set_ydata(list(device_data[ch]))
+                    
+                    # Plot Trigger on the correct axis if found 
+                    if trigger_data['found'] == True and trigger_data['cl_id'] == ch:
+                        trigger_point = get_trigger_point()
+                        ax[i].plot(trigger_point['x'], trigger_point['y'], 'rx');
 
-            # if not the same amount of data is present in the channels,
+           # if not the same amount of data is present in the channels,
            # the data gets resetted, until they match
             else:
                 clear_data()
 
-        ax[i].relim()
-        ax[i].autoscale_view()
+        # Manual or autoschaling
         if not x_width == None and len(list(device_data[len(channels)])) > 0:
             last_time_stamp = device_data[len(channels)].pop()
             device_data[len(channels)].append(last_time_stamp)
             ax[i].set_xlim(last_time_stamp - x_width, last_time_stamp)
+        else:
+            ax[i].relim()
+            ax[i].autoscale_view()
+
 
     plt.draw()
     plt.pause(1e-17)
@@ -329,6 +359,8 @@ if __name__ == "__main__":
     channels = []
     plot_conf = []
     device_data = []
+    global trigger_data;
+    trigger_data = {'found' : False, 'cl_data_ind' : 0, 'cl_id' : 0};
 
     config()
     init_periph()

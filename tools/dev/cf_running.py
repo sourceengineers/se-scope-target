@@ -11,14 +11,14 @@ def addState(index, id, isRunning, first_element):
     return package;
 
 def getCommand(id, isRunning, amount):
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_running\":{";
     for i in range(amount):
         command += addState(i, id[i], isRunning[0], 0)
     command += "}}}}";
     return command;
 
 def main():
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_running\":{";
     for i in range(2,  len(sys.argv), 2):
         command += addState(i, sys.argv[i], sys.argv[i+1], 2)
     command += "}}}}";

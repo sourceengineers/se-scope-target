@@ -439,6 +439,7 @@ static bool packPayloadMap(JsonPackerHandle self){
     commaIsNeeded = packFlowControl(self, commaIsNeeded);
 
     appendData(self->byteStream, "}", "");
+    appendData(self->byteStream, "}", "");
 
     return commaIsNeeded;
 }

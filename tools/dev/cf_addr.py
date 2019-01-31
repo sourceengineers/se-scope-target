@@ -11,7 +11,7 @@ def addAddr(index, id, addr, type, first_element):
     return package;
 
 def getCommand(id, addr, type, amount):
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
     
     for i in range(amount):
         command += addAddr(i, id[i], addr[i], type[i], 0)
@@ -20,7 +20,7 @@ def getCommand(id, addr, type, amount):
 
 
 def main():
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
 
     for i in range(2,  len(sys.argv), 3):
         command += addAddr(i, sys.argv[i], sys.argv[i+1], sys.argv[i+2], 2)
