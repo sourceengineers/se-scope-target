@@ -139,6 +139,7 @@ void dataIsTransmitted(IScopeHandle scope){
 
     self->dataIsReadyToSend = false;
     self->scopeIsReadyToSend = false;
+    Trigger_dataIsTransmitted(self->trigger);
 
     if(self->addressStorage ==  NULL){
         return;
@@ -166,14 +167,14 @@ TriggeredValues getTriggerData(IScopeHandle scope){
     return values;
 }
 
-bool channelIsRunning(IScopeHandle scope, uint32_t channelId){
+bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
     if(channelId >= self->amountOfChannels){
         return false;
     }
 
-    return Channel_isRunning(self->channels[channelId]);
+    return Channel_getAmountOfUsedData(self->channels[channelId]) > 0;
 }
 
 int readChannelData(IScopeHandle scope, float data[], size_t size, uint32_t channelId){
@@ -237,6 +238,7 @@ bool allChannelsAreStopped(ScopeHandle self){
     }
     return !channelIsRunning;
 }
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -268,7 +270,7 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.dataIsReadyToSend = &dataIsReadyToSend;
     self->scope.dataIsTransmitted = &dataIsTransmitted;
     self->scope.getTriggerData = &getTriggerData;
-    self->scope.channelIsRunning = &channelIsRunning;
+    self->scope.channelHasToBePacked = &channelHasToBePacked;
     self->scope.readChannelData = &readChannelData;
     self->scope.getAmountOfUsedChannelData = &getAmountOfUsedChannelData;
     self->scope.getAnnounceAddressToTransmit = &getAnnounceAddressToTransmit;
@@ -288,7 +290,7 @@ ScopeHandle Scope_create(size_t channelSize,
     }
 
     self->timestamper = Timestamper_create(channelSize, referenceTimestamp);
-    self->trigger = Trigger_create(self->channels, self->amountOfChannels);
+    self->trigger = Trigger_create(self->channels, self->amountOfChannels, self->channelSize, self->timestamper);
 
 
     return self;
@@ -302,7 +304,7 @@ void Scope_destroy(ScopeHandle self){
         self->channels[i] = NULL;
     }
 
-
+    Timestamper_destroy(self->timestamper);
     Trigger_destroy(self->trigger);
 
     free(self);
@@ -329,7 +331,7 @@ void Scope_poll(ScopeHandle self){
 
 
     /* Check if the scope is ready to poll again, according to the set timeIncrement */
-    if(Timestamper_checkElapsedTime(self->timestamper) == false){
+    if(Timestamper_updateElapsedTime(self->timestamper) == false){
         return;
     }
 
@@ -340,8 +342,10 @@ void Scope_poll(ScopeHandle self){
         Channel_poll(self->channels[i]);
     }
 
-    Trigger_run(self->trigger, Timestamper_getCurrentTime(self->timestamper));
-
+    bool readyToSend = Trigger_run(self->trigger);
+    if(readyToSend == true){
+        Scope_transmit(self);
+    }
 }
 
 void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* pollAddress, DATA_TYPES type){
@@ -380,7 +384,12 @@ void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId){
     }
 
     Channel_setStateRunning(self->channels[channelId]);
-    Timestamper_setStateRunning(self->timestamper);
+
+    /* Check if the timestamper has to be stopped too */
+    if(allChannelsAreStopped(self) == false){
+        Timestamper_setStateRunning(self->timestamper);
+        Trigger_activate(self->trigger);
+    }
 }
 
 void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
@@ -394,6 +403,7 @@ void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
     /* Check if the timestamper has to be stopped too */
     if(allChannelsAreStopped(self) == true){
         Timestamper_setStateStopped(self->timestamper);
+        Trigger_deactivate(self->trigger);
     }
 }
 
@@ -402,6 +412,8 @@ void Scope_clear(ScopeHandle self){
         Channel_clear(self->channels[i]);
     }
     Timestamper_clear(self->timestamper);
+    Trigger_deactivate(self->trigger);
+    Trigger_activate(self->trigger);
 }
 
 void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,

@@ -28,7 +28,7 @@ typedef struct __CommandRunningPrivateData
 ******************************************************************************/
 static void run(ICommandHandle command){
   CommandRunningHandle self = (CommandRunningHandle) command->handle;
-  
+
   for (size_t i = 0; i < self->config.numberOfChangedChannels; i++) {
     const uint32_t idOfChannelChanged = self->config.changedChannels[i];
 

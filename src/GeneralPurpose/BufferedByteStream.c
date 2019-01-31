@@ -56,13 +56,17 @@ static size_t streamLength(IByteStreamHandle parent) {
 static void writeData(IByteStreamHandle parent, const uint8_t data) {
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
-    ByteRingBuffer_write(self->buffer, &data, 1);
+    if(ByteRingBuffer_write(self->buffer, &data, 1) == -1){
+        uint8_t dump;
+        ByteRingBuffer_read(self->buffer, &dump, 1);
+        ByteRingBuffer_write(self->buffer, &data, 1);
+    }
 }
 
 static void writeAll(IByteStreamHandle parent, const uint8_t *data, const size_t length) {
-    BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
-
-    ByteRingBuffer_write(self->buffer, data, length);
+    for(int i = 0; i < length; ++i){
+        parent->writeByte(parent, data[i]);
+    }
 }
 
 static void flush(IByteStreamHandle parent) {

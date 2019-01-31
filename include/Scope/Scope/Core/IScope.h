@@ -54,7 +54,7 @@ typedef struct IScopeStruct {
 
     /* Data fetcher functions */
     TriggeredValues (*getTriggerData)(IScopeHandle scope);
-    bool (*channelIsRunning)(IScopeHandle scope, uint32_t channelId);
+    bool (*channelHasToBePacked)(IScopeHandle scope, uint32_t channelId);
     int (*readChannelData)(IScopeHandle scope, float data[], size_t size, uint32_t channelId);
     size_t (*getAmountOfUsedChannelData)(IScopeHandle scope, uint32_t channelId);
     AddressDefinition* (*getAnnounceAddressToTransmit)(IScopeHandle scope, uint32_t addressId);

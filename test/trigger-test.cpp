@@ -24,7 +24,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     bool isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, false);
-    Trigger_release(trigger);
 
     var = 1.1f;
     Channel_poll(channel);
@@ -34,7 +33,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, true);
-    Trigger_release(trigger);
 
     var = 5.5f;
     Channel_poll(channel);
@@ -44,7 +42,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, false);
-    Trigger_release(trigger);
 
     var = 5.5f;
     Channel_poll(channel);
@@ -55,7 +52,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, true);
-    Trigger_release(trigger);
 
     var = 5.5f;
     Channel_poll(channel);
@@ -66,7 +62,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, false);
-    Trigger_release(trigger);
 
     var = -5.5f;
     Channel_poll(channel);
@@ -77,7 +72,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, false);
-    Trigger_release(trigger);
 
     var = -5.5f;
     Channel_poll(channel);
@@ -88,7 +82,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, true);
-    Trigger_release(trigger);
 
     var = -5.5f;
     Channel_poll(channel);
@@ -98,7 +91,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, true);
-    Trigger_release(trigger);
 
     var = -5.5f;
     Channel_poll(channel);
@@ -109,7 +101,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, false);
-    Trigger_release(trigger);
 
     var = -5.5f;
     Channel_poll(channel);
@@ -120,7 +111,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, true);
-    Trigger_release(trigger);
 
     var = -5.5f;
     Channel_poll(channel);
@@ -131,7 +121,6 @@ TEST(Trigger, test_normal){
     Trigger_configure(trigger, conf);
     isTriggered = Trigger_run(trigger, 1);
     EXPECT_EQ(isTriggered, true);
-    Trigger_release(trigger);
 }
 
 TEST(Trigger, test_continuous){
@@ -142,6 +131,5 @@ TEST(Trigger, test_continuous){
     bool isTriggered = Trigger_run(trigger, 1);
 
     EXPECT_EQ(isTriggered, false);
-    Trigger_release(trigger);
 
 }

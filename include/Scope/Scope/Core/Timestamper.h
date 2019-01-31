@@ -31,7 +31,7 @@ TimestamperHandle Timestamper_create(size_t capacity, uint32_t* referenceTimesta
 /* Deconstructor: Deletes the instance of the channel */
 void Timestamper_destroy(TimestamperHandle self);
 
-bool Timestamper_checkElapsedTime(TimestamperHandle self) ;
+bool Timestamper_updateElapsedTime(TimestamperHandle self) ;
 
 void Timestamper_stamp(TimestamperHandle self);
 
