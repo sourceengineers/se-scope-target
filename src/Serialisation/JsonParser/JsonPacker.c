@@ -11,7 +11,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <Scope/Serialisation/JsonParser/JsonCommon.h>
-#include <Scope/Serialisation/SerializerDefinitions.h>
+#include <Scope/Control/ParserDefinitions.h>
 //#include <math.h>
 
 #define FLOWCONTROL_BUFFER_SIZE 30

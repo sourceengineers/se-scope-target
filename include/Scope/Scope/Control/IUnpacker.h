@@ -41,8 +41,8 @@ static const size_t MAX_FIELD_LENGTH = 30;
 
 /* Struct which is used to clean up the amount of parameters passed to the fetcher functions */
 typedef struct{
-    char* commandName;
-    char* fieldName;
+    const char* commandName;
+    const char* fieldName;
     bool isInArray;     // Set to true if the value is in a array. Like cf_addr as example
     size_t arrayIndex;  // Set the correct array index if isInArray is set to true
 } CommandFetchingInformation;

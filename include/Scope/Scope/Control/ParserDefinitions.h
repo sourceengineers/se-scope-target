@@ -27,3 +27,13 @@ static const char* KEYWORD_SC_CMD = "sc_cmd";
 static const char* FLOWCONTROL_ACK = "ACK";
 static const char* FLOWCONTROL_NAK = "NAK";
 
+
+static const char* KEYWORD_CF_TGR_MODE_CONTINOUS = "Continous";
+static const char* KEYWORD_CF_TGR_MODE_NORMAL = "Normal";
+static const char* KEYWORD_CF_TGR_MODE_ONESHOT = "OneShot";
+static const char* KEYWORD_CF_TGR_EDGE_RISING = "rising";
+static const char* KEYWORD_CF_TGR_EDGE_FALLING = "falling";
+static const char* KEYWORD_CF_TGR_EDGE = "edge";
+static const char* KEYWORD_CF_TGR_CL_ID = "cl_id";
+static const char* KEYWORD_CF_TGR_MODE = "mode";
+static const char* KEYWORD_CF_TGR_LEVEL = "level";

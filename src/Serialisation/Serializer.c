@@ -9,7 +9,7 @@
 
 #include <Scope/Serialisation/Serializer.h>
 #include <stdlib.h>
-#include <Scope/Serialisation/SerializerDefinitions.h>
+#include <Scope/Control/ParserDefinitions.h>
 
 /******************************************************************************
  Define private data

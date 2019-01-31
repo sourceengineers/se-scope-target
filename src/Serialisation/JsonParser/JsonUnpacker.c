@@ -11,7 +11,7 @@
 #include <string.h>
 #include <Scope/GeneralPurpose/Memory.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/Serialisation/SerializerDefinitions.h>
+#include <Scope/Control/ParserDefinitions.h>
 #include <Scope/Serialisation/JsonParser/JsonCommon.h>
 #include <stdlib.h>
 
