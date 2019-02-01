@@ -12,12 +12,7 @@ import sys
 import json
 import cf_addr
 import cf_running
-import cf_t_inc
 import cf_tgr
-import ev_announce
-import ev_clear
-import ev_poll
-import ev_trans
 import matplotlib.pyplot as plt
 import collections
 import os
@@ -34,7 +29,7 @@ def config():
     ##########################################################################
     ### Serial optionen
     ##########################################################################
-    serial_file = '/dev/tty.usbmodem14103' # z.B.: COM1 bei Windows 
+    serial_file = '/dev/ttyACM0' # z.B.: COM1 bei Windows 
     baudrate = 57600
     timeout = 2 
     
@@ -47,7 +42,7 @@ def config():
     #image_path = "/Users/USER/Documents"
    
     # Pfad zum map file
-    map_file = "/Users/schuepbs/Documents/Projects/nucleo/cmake-build-debug/nucleo.map"
+    map_file = "/home/schuepbs/Desktop/nucleo.map"
 
     ##########################################################################
     ### Channel Konfiguration
@@ -57,7 +52,7 @@ def config():
     # als statisch deklariert sind, oder manuell eigetragen werden.
     channels.append({'name' : "Address_32", 'address' : get_address_from_map("intVar"), 'type' :  "UINT32"})
     channels.append({'name' : "Address_FLOAT", 'address' : get_address_from_map("floatVar"), 'type' :  "FLOAT"})
-    channels.append({'name' : "Double Byte Value", 'address' : 536969154, 'type' :  "UINT16"})
+    #channels.append({'name' : "Double Byte Value", 'address' : get_address_from_map("doubleByteVar"), 'type' :  "UINT16"})
     channels.append({'name' : "Byte Value", 'address' : get_address_from_map("byteVar"), 'type' :  "UINT8"})
  
     ##########################################################################
@@ -71,7 +66,7 @@ def config():
     ##########################################################################   
     add_subplot(["Address_FLOAT", "Address_32"], \
              {'title' : 'Float values', 'y_label' : 'Voltage', 'x_label' : 'Time'})
-    add_subplot(["Double Byte Value", "Byte Value"], \
+    add_subplot(["Byte Value"], \
              {'title' : 'Integer values', 'y_label' : 'Bytes', 'x_label' : 'Time'})
      
     figure_name = "Device data"
@@ -79,8 +74,44 @@ def config():
     # wenn die x_width auf None gesetzt wird, wird die Achse automatisch 
     # skaliert
     x_width = 100
+    
     #x_width = None
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+##############################################################################
 ## Don't change any code after this line, or you might cause the code to break!
 ##############################################################################
     
@@ -92,6 +123,7 @@ def send_command(command, wait_for_ack):
         print(command)
         ser.write(command)
         time.sleep(3)
+        ser.reset_output_buffer();
         if wait_for_ack == False:
             break;
         if found_flow_ctrl() == "ACK" :
@@ -114,7 +146,7 @@ def found_flow_ctrl():
 
 ##############################################################################
 
-def init_periph():
+def init_periph(send_commands):
     global ser
 
     ser = serial.Serial(serial_file, baudrate, timeout=timeout)
@@ -125,6 +157,9 @@ def init_periph():
     types = []
     new_state = []
     ids = []
+
+    if(send_commands == False):
+        return;
 
     #channels konfigurieren
     for i in range(len(channels)):
@@ -173,21 +208,30 @@ def init_plots():
     global ax
     global anim
     global lines
+    global trigger_lines
+    global trigger_on_axis
     lines = []
+    trigger_lines = {'vline' : [], 'hline' : []}
     
     figure, ax = plt.subplots(len(plot_conf), 1)
     figure.suptitle(figure_name)    
     ax = list(ax)
 
+    trigger_on_axis = 0;
+
     for i in range(len(ax)):
         ax[i].set_title(plot_conf[i][1]['title'])
-        ax[i].set_autoscaley_on(True)
         ax[i].set_xlabel(plot_conf[i][1]['x_label'])
         ax[i].set_ylabel(plot_conf[i][1]['y_label'])
         ax[i].grid()
-        for j in range(len(plot_conf[i][0])):
+        for ch in plot_conf[i][0]:
             lines = lines + ax[i].plot([], [])
-
+            if(trigger_data['cl_id'] == ch):
+                trigger_on_axis = ch;
+    
+    trigger_lines['vline'] = ax[trigger_on_axis].axvline(0, linestyle='dashed', color='r');
+    trigger_lines['hline'] = ax[trigger_on_axis].axhline(0, linestyle='dashed', color='r');
+                
     for i in range(len(channels) + 1):
        device_data.append(collections.deque(maxlen=x_width))
     
@@ -279,38 +323,44 @@ def get_trigger_point():
 
 ##############################################################################
 def plot_data(): 
-    
+ 
     for i in range(len(plot_conf)):
         for ch in plot_conf[i][0]:
             if len(device_data[len(channels)]) == len(device_data[ch]):
                 if len(device_data[len(channels)]) > 0:
                     
-                    # Plot Trigger on the correct axis if found 
-                    if trigger_data['found'] == True:
-                        if(trigger_data['cl_id'] == ch):
-                            trigger_point = get_trigger_point()
-                            ax[i].plot(trigger_point['x'], trigger_point['y'], 'rx');
-                        lines[ch].plot(list(device_data[len(channels)]), list(device_data[ch]))
-                    else:
-                        lines[ch].set_xdata(list(device_data[len(channels)]))
-                        lines[ch].set_ydata(list(device_data[ch]))
+                    # Plot all lines
+                    lines[ch].set_xdata(list(device_data[len(channels)]))
+                    lines[ch].set_ydata(list(device_data[ch]))
 
            # if not the same amount of data is present in the channels,
            # the data gets resetted, until they match
             else:
                 clear_data()
 
+    # Plot the trigger point
+    if trigger_data['found'] == True:
+        trigger_point = get_trigger_point()            
+        ymin, ymax = ax[trigger_on_axis].get_ylim()        
+        xmin, xmax = ax[trigger_on_axis].get_xlim() 
+        trigger_lines['vline'].remove()
+        trigger_lines['hline'].remove()
+        trigger_lines['hline'] = ax[trigger_on_axis].axhline(trigger_point['y'], color='r', linestyle='dashed');   
+        trigger_lines['vline'] = ax[trigger_on_axis].axvline(trigger_point['x'], color='r', linestyle='dashed');   
+ 
+    for i in range(len(plot_conf)):
         # Manual or autoschaling
         if not x_width == None and len(list(device_data[len(channels)])) > 0:
             last_time_stamp = device_data[len(channels)].pop()
             device_data[len(channels)].append(last_time_stamp)
             ax[i].set_xlim(last_time_stamp - x_width, last_time_stamp)
+            ax[i].autoscale_view(tight=None, scalex=False, scaley=True)
             ax[i].relim()
         else:
             ax[i].relim()
-            ax[i].autoscale_view()
+            ax[i].autoscale_view(tight=None, scalex=True, scaley=True)
 
-
+           
     plt.draw()
     plt.pause(1e-17)
 
@@ -365,7 +415,13 @@ if __name__ == "__main__":
     trigger_data = {'found' : False, 'cl_data_ind' : 0, 'cl_id' : 0};
 
     config()
-    init_periph()
+   
+    try:
+        print("Reinitialize preipherie: " + sys.argv[1]);
+        init_periph(eval(sys.argv[1]))
+    except:
+        init_periph(True)
+    
     init_plots()
    
     try:
