@@ -64,7 +64,7 @@ def config():
     ### Trigger Konfiguration
     ##########################################################################   
     #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1} 
-    trigger_conf = {'mode' : 'Normal', 'level' : 40000, 'edge' : 'rising', 'cl_id' : 1} 
+    trigger_conf = {'mode' : 'Normal', 'level' : 10000, 'edge' : 'rising', 'cl_id' : 1} 
 
     ##########################################################################
     ### Grafik Konfiguration
@@ -78,7 +78,7 @@ def config():
 
     # wenn die x_width auf None gesetzt wird, wird die Achse automatisch 
     # skaliert
-    x_width = 200
+    x_width = 100
     #x_width = None
 
 ## Don't change any code after this line, or you might cause the code to break!
@@ -275,9 +275,7 @@ def get_trigger_data(data):
 ##############################################################################
 
 def get_trigger_point():
-    index = list(device_data[len(channels)]).index(trigger_data['cl_data_ind'])
-    
-    return {'x' : trigger_data['cl_data_ind'], 'y' : list(device_data[trigger_data['cl_id']])[index]}
+    return {'x' : trigger_data['cl_data_ind'], 'y' : trigger_conf['level']}
 
 ##############################################################################
 def plot_data(): 
@@ -286,13 +284,16 @@ def plot_data():
         for ch in plot_conf[i][0]:
             if len(device_data[len(channels)]) == len(device_data[ch]):
                 if len(device_data[len(channels)]) > 0:
-                    lines[ch].set_xdata(list(device_data[len(channels)]))
-                    lines[ch].set_ydata(list(device_data[ch]))
                     
                     # Plot Trigger on the correct axis if found 
-                    if trigger_data['found'] == True and trigger_data['cl_id'] == ch:
-                        trigger_point = get_trigger_point()
-                        ax[i].plot(trigger_point['x'], trigger_point['y'], 'rx');
+                    if trigger_data['found'] == True:
+                        if(trigger_data['cl_id'] == ch):
+                            trigger_point = get_trigger_point()
+                            ax[i].plot(trigger_point['x'], trigger_point['y'], 'rx');
+                        lines[ch].plot(list(device_data[len(channels)]), list(device_data[ch]))
+                    else:
+                        lines[ch].set_xdata(list(device_data[len(channels)]))
+                        lines[ch].set_ydata(list(device_data[ch]))
 
            # if not the same amount of data is present in the channels,
            # the data gets resetted, until they match
@@ -304,6 +305,7 @@ def plot_data():
             last_time_stamp = device_data[len(channels)].pop()
             device_data[len(channels)].append(last_time_stamp)
             ax[i].set_xlim(last_time_stamp - x_width, last_time_stamp)
+            ax[i].relim()
         else:
             ax[i].relim()
             ax[i].autoscale_view()
