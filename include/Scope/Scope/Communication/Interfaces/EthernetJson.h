@@ -11,6 +11,7 @@
 
 #include <Scope/Communication/ICommunicator.h>
 #include <Scope/Communication/CommunicationTypes.h>
+#include <Scope/Serialisation/IComValidator.h>
 
 /******************************************************************************
  Define class handle data
@@ -23,6 +24,8 @@ typedef struct __EthernetJsonPrivateData* EthernetJsonHandle;
 EthernetJsonHandle EthernetJson_create(TransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
 
 ICommunicatorHandle EthernetJson_getCommunicator(EthernetJsonHandle self);
+
+IComValidatorHandle EthernetJson_getValidator(EthernetJsonHandle self);
 
 void EthernetJson_destroy(EthernetJsonHandle self);
 

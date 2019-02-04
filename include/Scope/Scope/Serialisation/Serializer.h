@@ -12,6 +12,7 @@
 #include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/Control/IPacker.h>
 #include <Scope/Control/IUnpacker.h>
+#include <Scope/Serialisation/IComValidator.h>
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
@@ -21,7 +22,8 @@ typedef struct __SerializerPrivateData* SerializerHandle;
  Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker);
+SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker,\
+																		IComValidatorHandle validator);
 
 IRunnableHandle Serializer_getRxRunnable(SerializerHandle self);
 

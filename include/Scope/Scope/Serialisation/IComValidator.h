@@ -1,34 +1,27 @@
 /*!*****************************************************************************
- * @file         Communicator.h
+ * @file         IComValidator.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ *
  ******************************************************************************/
 
-#ifndef COMMUNICATOR_H
-#define COMMUNICATOR_H
-
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/Communication/ICommunicator.h>
-#include <Scope/Serialisation/IComValidator.h>
+#ifndef ICOMVALIDATOR_H
+#define ICOMVALIDATOR_H
 
 /******************************************************************************
- Define class handle data
+ Define interface handle data
 ******************************************************************************/
-typedef struct __CommunicatorPrivateData* CommunicatorHandle;
+typedef struct IComValidatorStruct* IComValidatorHandle;
 
 /******************************************************************************
- Public functions
+ Define interface
 ******************************************************************************/
-CommunicatorHandle Communicator_create(ICommunicatorHandle communicator);
+typedef struct IComValidatorStruct {
+  GenericReference handle;
+  bool (*rxDataReady)(IComValidatorHandle validator);
+  void (*txReadyToValidate)(IComValidatorHandle validator);
 
-IRunnableHandle Communicator_getRxRunnable(CommunicatorHandle self);
-
-IRunnableHandle Communicator_getTxRunnable(CommunicatorHandle self);
-
-void Communicator_destroy(CommunicatorHandle self);
-
+} IComValidator ;
 #endif
-
-
