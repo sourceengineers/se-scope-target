@@ -123,7 +123,7 @@ def send_command(command, wait_for_ack):
         print(command)
         ser.write(command)
         time.sleep(3)
-        ser.reset_output_buffer();
+        ser.flush()
         if wait_for_ack == False:
             break;
         if found_flow_ctrl() == "ACK" :
