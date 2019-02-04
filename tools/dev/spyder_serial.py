@@ -30,8 +30,8 @@ def config():
     ### Serial optionen
     ##########################################################################
     serial_file = '/dev/ttyACM0' # z.B.: COM1 bei Windows 
-    baudrate = 57600
-    timeout = 2 
+    baudrate = 115200
+    timeout = 0.4
     
     ##########################################################################
     ### Pfade
@@ -42,7 +42,7 @@ def config():
     #image_path = "/Users/USER/Documents"
    
     # Pfad zum map file
-    map_file = "/home/schuepbs/Desktop/nucleo.map"
+    map_file = "/home/schuepbs/Documents/Projects/cmake_embedded/cmake-build-debug/nucleo.map"
 
     ##########################################################################
     ### Channel Konfiguration
@@ -122,7 +122,7 @@ def send_command(command, wait_for_ack):
     while True:
         print(command)
         ser.write(command)
-        time.sleep(3)
+        time.sleep(1)
         ser.flush()
         if wait_for_ack == False:
             break;
@@ -134,8 +134,7 @@ def send_command(command, wait_for_ack):
 
 def found_flow_ctrl(): 
     while True:
-        answer = ser.read_until(b'\0');
-        data = process_data(answer)
+        data = process_data(ser.read_until(b'\0')[:-1])
         if not data == None:
             if ("flow_ctrl" in data["payload"]) == True:
                 print(data)
@@ -190,11 +189,9 @@ def add_subplot(new_plot, labels):
     
 def process_data(data):
     if len(data) > 2:
-        data = data[0:-1]
         try:
             data = data.decode("utf-8")
             data = json.loads(data);
-            #print(data)    # Uncomment this print if you want to see the parsed output of the scope
             return data
         except:
             sys.stdout.write("\nCouldn't parse: ");
@@ -272,28 +269,30 @@ def append_to_channel(channel, data):
 
 ##############################################################################
 
-def prepare_data(data):
-    ans = process_data(data)
-    if ans is None:
-        return;    
-    
-    if not data_is_present(ans):
-        return;
-    
-    trigger_data = get_trigger_data(ans)
-
-    if not trigger_data['found'] == True:
-        clear_data();
+def prepare_data(data):    
+    for data_package in data.split(b'\0'):
         
-    # load tmestamp data
-    device_data[len(channels)] = append_to_channel(device_data[len(channels)], ans["payload"]["sc_data"]["t_stmp"])
+        ans = process_data(data_package)
+        if ans is None:
+            continue;    
+        if not data_is_present(ans):
+            continue;    
+    
+        trigger_data = get_trigger_data(ans)
+
+        if not trigger_data['found'] == True:
+            clear_data();
+       
+        # load tmestamp data
+        device_data[len(channels)] = append_to_channel(device_data[len(channels)], ans["payload"]["sc_data"]["t_stmp"])
     
 
-    # load channel data
-    for i in range(len(channels)):
-        if channel_data_is_present(i, ans) == True:
-            device_data[i] = append_to_channel(device_data[i], ans["payload"]["sc_data"]["cl_data"][str(i)])
+        # load channel data
+        for i in range(len(channels)):
+            if channel_data_is_present(i, ans) == True:
+                device_data[i] = append_to_channel(device_data[i], ans["payload"]["sc_data"]["cl_data"][str(i)])
 
+    return True
 ##############################################################################
 def clear_data():
     for data in device_data:
@@ -302,7 +301,12 @@ def clear_data():
 
 def read_data():
     answer = ser.read_until(b'\0');
-    prepare_data(answer)
+   
+    #print(answer)    # Uncomment this print if you want to see the complete
+    # output of the scope
+    if ((b'{\"payload' in answer[0:10]) and (b"}}\0" in answer)):
+        return prepare_data(answer)
+    return False
 
 ##############################################################################
 
@@ -401,9 +405,9 @@ def main():
     ser.flushOutput()
 
     while True:
-        read_data()
-        plot_data()
-        time.sleep(0.001)
+        data_ready_to_plot = read_data()
+        if(data_ready_to_plot == True):
+            plot_data()
 
 ##############################################################################
 
