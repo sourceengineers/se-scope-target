@@ -15,7 +15,7 @@ def getCommand(id, addr, type, amount):
     
     for i in range(amount):
         command += addAddr(i, id[i], addr[i], type[i], 0)
-    command += "}}}}";
+    command += "}}}}\0";
     return command;
 
 

@@ -14,14 +14,14 @@ def getCommand(id, isRunning, amount):
     command = "{\"payload\":{\"sc_cmd\":{\"cf_running\":{";
     for i in range(amount):
         command += addState(i, id[i], isRunning[0], 0)
-    command += "}}}}";
+    command += "}}}}\0";
     return command;
 
 def main():
     command = "{\"payload\":{\"sc_cmd\":{\"cf_running\":{";
     for i in range(2,  len(sys.argv), 2):
         command += addState(i, sys.argv[i], sys.argv[i+1], 2)
-    command += "}}}}";
+    command += "}}}}\0";
     print(command);
     filename = os.path.abspath(sys.argv[1])
     file = open(filename, 'w')
