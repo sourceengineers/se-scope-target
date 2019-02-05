@@ -209,6 +209,7 @@ void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
 }
 
 void UartJson_destroy(UartJsonHandle self){
+    ByteRingBuffer_destroy(self->transportBuffer);
 
     free(self);
     self = NULL;
