@@ -177,14 +177,14 @@ bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId){
     return Channel_getAmountOfUsedData(self->channels[channelId]) > 0;
 }
 
-int readChannelData(IScopeHandle scope, float data[], size_t size, uint32_t channelId){
+FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t channelId){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
     if(channelId >= self->amountOfChannels){
         return false;
     }
 
-    return Channel_read(self->channels[channelId], data, size);
+    return Channel_getBuffer(self->channels[channelId]);
 }
 
 size_t getAmountOfUsedChannelData(IScopeHandle scope, uint32_t channelId){
@@ -271,7 +271,7 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.dataIsTransmitted = &dataIsTransmitted;
     self->scope.getTriggerData = &getTriggerData;
     self->scope.channelHasToBePacked = &channelHasToBePacked;
-    self->scope.readChannelData = &readChannelData;
+    self->scope.getChannelBuffer = &getChannelBuffer;
     self->scope.getAmountOfUsedChannelData = &getAmountOfUsedChannelData;
     self->scope.getAnnounceAddressToTransmit = &getAnnounceAddressToTransmit;
     self->scope.getMaxAmmountOfAnnounceAddresses = &getMaxAmmountOfAnnounceAddresses;

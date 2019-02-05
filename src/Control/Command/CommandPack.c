@@ -35,9 +35,8 @@ static void run(ICommandHandle command){
 
         for(uint32_t i = 0; i < self->scope->getAmountOfChannels(self->scope); ++i){
             if(self->scope->channelHasToBePacked(self->scope, i) == true){
-                size_t length = self->scope->getAmountOfUsedChannelData(self->scope, i);
-                self->scope->readChannelData(self->scope, self->channelData[i], length, i);
-                self->packer->prepareChannel(self->packer, self->channelData[i], length, i);
+                FloatRingBufferHandle buffer = self->scope->getChannelBuffer(self->scope, i);
+                self->packer->prepareChannel(self->packer, buffer, i);
             }
         }
 

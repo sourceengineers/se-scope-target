@@ -75,6 +75,9 @@ void Channel_clear(ChannelHandle self);
  * @return -1 if the requested amount of data is not big enough. Else the amount of actaully written data points */
 int Channel_read(ChannelHandle self, float data[], size_t size);
 
+/* Returns the handle of the buffer */
+FloatRingBufferHandle Channel_getBuffer(ChannelHandle self);
+
 /* Returns the capacity of the Channel */
 size_t Channel_getAmountOfUsedData(ChannelHandle self);
 

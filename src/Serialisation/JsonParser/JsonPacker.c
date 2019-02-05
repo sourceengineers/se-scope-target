@@ -43,8 +43,7 @@ typedef struct __JsonPackerPrivateData{
     bool channelsReady;
     size_t amountOfChannelsToSend;
     uint32_t* channelIds;
-    float** channelsData;
-    size_t* channelSizes;
+    FloatRingBufferHandle* channelBuffers;
 
     /* Timestamp increment data */
     bool tIncReady;
@@ -146,7 +145,7 @@ inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE
     }
 }
 
-static void prepareChannel(IPackerHandle packer, float* data, size_t length, const uint32_t channelId){
+static void prepareChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId){
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     if(channelId >= self->maxNumberOfChannels){
@@ -158,8 +157,7 @@ static void prepareChannel(IPackerHandle packer, float* data, size_t length, con
     }
 
     self->channelIds[self->amountOfChannelsToSend] = channelId;
-    self->channelsData[self->amountOfChannelsToSend] = data;
-    self->channelSizes[self->amountOfChannelsToSend] = length;
+    self->channelBuffers[self->amountOfChannelsToSend] = buffer;
 
     self->amountOfChannelsToSend++;
 
@@ -367,7 +365,7 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
     appendString(self->byteStream, KEYWORD_CL_DATA, ":{");
 
     for(size_t i = 0; i < self->amountOfChannelsToSend; ++i){
-        if(self->channelsData[i] != NULL){
+        if(self->channelBuffers[i] != NULL){
             char id[MAX_LENGTH_OF_NUMBER];
 #if (ARCH_SIZE_32)
             sprintf(id, "%u", self->channelIds[i]);
@@ -380,15 +378,18 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
                 appendData(self->byteStream, ",", "");
             }
             appendString(self->byteStream, id, ":[");
-
-            for(int j = 0; j < self->channelSizes[i]; ++j){
+            size_t amountOfDataToWrite = FloatRingBuffer_getNumberOfUsedData(self->channelBuffers[i]);
+            for(int j = 0; j < amountOfDataToWrite; ++j){
                 char formatedData[MAX_LENGTH_OF_NUMBER];
+                float data = 0.0f;
+
+                FloatRingBuffer_read(self->channelBuffers[i], &data, 1);
 
                 /* add a comma in front of the number, if it is not the first number in the array */
                 if(j != 0){
                     appendData(self->byteStream, ",", "");
                 }
-                snprintf(formatedData, MAX_LENGTH_OF_NUMBER, "%.4g", self->channelsData[i][j]);
+                snprintf(formatedData, MAX_LENGTH_OF_NUMBER, "%.4g", data);
                 appendData(self->byteStream, formatedData, "");
             }
         }
@@ -444,21 +445,6 @@ static bool packPayloadMap(JsonPackerHandle self){
     return commaIsNeeded;
 }
 
-/*static void formatCheck(char* formatedCheck, uint8_t* check, size_t checkLength){
-  formatedCheck[0] = '\0';
-
-  // format the check to be in a hex representation
-  for (int i = 0; i < checkLength; ++i) {
-    char formatedByte[4];
-
-    if(i != checkLength - 1){
-      strcat(formatedByte, " ");
-    }
-
-    strcat(formatedCheck, formatedByte);
-  }
-}*/
-
 static void packData(IPackerHandle packer){
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
@@ -480,7 +466,7 @@ static void reset(IPackerHandle packer){
     self->amountOfChannelsToSend = 0;
 
     for(int i = 0; i < self->maxNumberOfChannels; ++i){
-        self->channelsData[i] = NULL;
+        self->channelBuffers[i] = NULL;
     }
 
     self->tIncReady = false;
@@ -508,8 +494,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
 
     JsonPackerHandle self = (JsonPackerHandle) malloc(sizeof(JsonPackerPrivateData));
 
-    self->channelsData = malloc(sizeof(float*) * maxNumberOfChannels);
-    self->channelSizes = malloc(sizeof(size_t) * maxNumberOfChannels);
+    self->channelBuffers = malloc(sizeof(float*) * maxNumberOfChannels);
     self->channelIds = malloc(sizeof(uint32_t) * maxNumberOfChannels);
     self->amountOfChannelsToSend = 0;
     self->maxNumberOfChannels = maxNumberOfChannels;
@@ -545,10 +530,8 @@ void JsonPacker_destroy(JsonPackerHandle self){
     self->namesOfAddresses = NULL;
     free(self->typesOfAddresses);
     self->typesOfAddresses = NULL;
-    free(self->channelSizes);
-    self->channelSizes = NULL;
-    free(self->channelsData);
-    self->channelsData = NULL;
+    free(self->channelBuffers);
+    self->channelBuffers = NULL;
     free(self->channelIds);
     self->channelIds = NULL;
 

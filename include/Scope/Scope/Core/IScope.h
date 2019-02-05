@@ -18,6 +18,7 @@
 #include <Scope/GeneralPurpose/IIntStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/FloatRingBuffer.h>
 
 /******************************************************************************
  Define interface handle data
@@ -55,7 +56,7 @@ typedef struct IScopeStruct {
     /* Data fetcher functions */
     TriggeredValues (*getTriggerData)(IScopeHandle scope);
     bool (*channelHasToBePacked)(IScopeHandle scope, uint32_t channelId);
-    int (*readChannelData)(IScopeHandle scope, float data[], size_t size, uint32_t channelId);
+    FloatRingBufferHandle (*getChannelBuffer)(IScopeHandle scope, uint32_t channelId);
     size_t (*getAmountOfUsedChannelData)(IScopeHandle scope, uint32_t channelId);
     AddressDefinition* (*getAnnounceAddressToTransmit)(IScopeHandle scope, uint32_t addressId);
     size_t (*getMaxAmmountOfAnnounceAddresses)(IScopeHandle scope);
