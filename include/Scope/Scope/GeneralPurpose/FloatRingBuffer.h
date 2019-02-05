@@ -58,5 +58,9 @@ int FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const s
    will return -1 */
 int FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length);
 
+/* Same as a normal read operation, but resets the tail pointer to its original position.
+ * therefore data can be read without being destroyed. */
+int FloatRingBuffer_readNoPosInc(FloatRingBufferHandle self, float* data, const size_t length);
+
 
 #endif

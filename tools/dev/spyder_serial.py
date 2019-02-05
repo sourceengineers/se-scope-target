@@ -42,7 +42,7 @@ def config():
     #image_path = "/Users/USER/Documents"
    
     # Pfad zum map file
-    map_file = "/home/schuepbs/Documents/Projects/cmake_embedded/cmake-build-debug/nucleo.map"
+    map_file = "/home/schuepbs/Documents/Projects/cmake_embedded/build/nucleo.map"
 
     ##########################################################################
     ### Channel Konfiguration
@@ -114,14 +114,22 @@ def config():
 ##############################################################################
 ## Don't change any code after this line, or you might cause the code to break!
 ##############################################################################
+def transmit_data(data):
+    checksum = 0;
+    for d in data:
+        ord(d);
     
+    data_to_send = data + "transport:" + checksum[-2:]
+    data_to_send = data_to_send.encode("utf-8")
+    set.write(data_to_send)
+    
+##############################################################################
+
 def send_command(command, wait_for_ack):
-    
-    command = command.encode("utf-8")
 
     while True:
         print(command)
-        ser.write(command)
+        transmit_data(command)
         time.sleep(1)
         ser.flush()
         if wait_for_ack == False:
@@ -134,7 +142,7 @@ def send_command(command, wait_for_ack):
 
 def found_flow_ctrl(): 
     while True:
-        data = process_data(ser.read_until(b'\0')[:-1])
+        data = process_data(ser.read_until(b'\0')[:-1].split(b'transport'))
         if not data == None:
             if ("flow_ctrl" in data["payload"]) == True:
                 print(data)
@@ -271,7 +279,7 @@ def append_to_channel(channel, data):
 
 def prepare_data(data):    
     for data_package in data.split(b'\0'):
-        
+        data_package.split(b'transport') 
         ans = process_data(data_package)
         if ans is None:
             continue;    
@@ -304,7 +312,7 @@ def read_data():
    
     #print(answer)    # Uncomment this print if you want to see the complete
     # output of the scope
-    if ((b'{\"payload' in answer[0:10]) and (b"}}\0" in answer)):
+    if ((b'{\"payload' in answer[0:10]) and (b"transport" in answer)):
         return prepare_data(answer)
     return False
 

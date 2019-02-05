@@ -13,6 +13,10 @@
 #ifndef DATATYPES_H_
 #define DATATYPES_H_
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+
 /* Define the string names of the data types */
 #define UINT8_NAME "UINT8"
 #define UINT16_NAME "UINT16"

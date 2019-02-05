@@ -13,8 +13,7 @@
 #ifndef COMMUNICATIONTYPES_H_
 #define COMMUNICATIONTYPES_H_
 
-#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/Communication/Communicator.h>
 
-typedef void(*TransmitCallback)(IByteStreamHandle stream);
 
 #endif

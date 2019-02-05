@@ -450,7 +450,6 @@ static bool packPayloadMap(JsonPackerHandle self){
   // format the check to be in a hex representation
   for (int i = 0; i < checkLength; ++i) {
     char formatedByte[4];
-    sprintf(formatedByte, "%02X", check[i]);
 
     if(i != checkLength - 1){
       strcat(formatedByte, " ");
@@ -468,9 +467,7 @@ static void packData(IPackerHandle packer){
     }
 
     self->byteStream->flush(self->byteStream);
-
     packPayloadMap(self);
-    self->byteStream->writeByte(self->byteStream, (uint8_t) '\0');
     packer->reset(packer);
 }
 

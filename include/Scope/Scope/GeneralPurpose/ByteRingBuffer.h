@@ -60,4 +60,8 @@ int ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, const s
    will return -1 */
 int ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size_t length);
 
+/* Same as a normal read operation, but resets the tail pointer to its original position.
+ * therefore data can be read without being destroyed. */
+int ByteRingBuffer_readNoPosInc(ByteRingBufferHandle self, uint8_t* data, const size_t length);
+
 #endif

@@ -58,4 +58,7 @@ int IntRingBuffer_write(IntRingBufferHandle self, const uint32_t* data, const si
    will return -1 */
 int IntRingBuffer_read(IntRingBufferHandle self, uint32_t* data, const size_t length);
 
+/* Same as a normal read operation, but resets the tail pointer to its original position.
+ * therefore data can be read without being destroyed. */
+int IntRingBuffer_readNoPosInc(IntRingBufferHandle self, uint32_t* data, const size_t length);
 #endif

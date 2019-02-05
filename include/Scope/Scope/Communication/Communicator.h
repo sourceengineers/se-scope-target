@@ -11,7 +11,6 @@
 
 #include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/Communication/ICommunicator.h>
-#include <Scope/Serialisation/IComValidator.h>
 
 /******************************************************************************
  Define class handle data

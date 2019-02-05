@@ -13,7 +13,6 @@
 #define SCOPEBUILDER_H
 
 #include <Scope/Core/Scope.h>
-#include <Scope/Communication/CommunicationTypes.h>
 #include <Scope/Control/Controller.h>
 #include <Scope/Communication/Communicator.h>
 #include <Scope/Serialisation/Serializer.h>

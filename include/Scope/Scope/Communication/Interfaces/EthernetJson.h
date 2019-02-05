@@ -10,22 +10,26 @@
 #define ETHERNETJSON_H
 
 #include <Scope/Communication/ICommunicator.h>
-#include <Scope/Communication/CommunicationTypes.h>
-#include <Scope/Serialisation/IComValidator.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
 
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
 typedef struct __EthernetJsonPrivateData* EthernetJsonHandle;
 
+typedef void(*EthernetTransmitCallback)(EthernetJsonHandle self);
 /******************************************************************************
  Public functions
 ******************************************************************************/
-EthernetJsonHandle EthernetJson_create(TransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
+EthernetJsonHandle EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
 
 ICommunicatorHandle EthernetJson_getCommunicator(EthernetJsonHandle self);
 
-IComValidatorHandle EthernetJson_getValidator(EthernetJsonHandle self);
+void EthernetJson_getTxData(EthernetJsonHandle self, uint8_t* data, size_t length);
+
+size_t EthernetJson_amountOfTxDataPending(EthernetJsonHandle self);
+
+void EthernetJson_putRxData(EthernetJsonHandle self, uint8_t* data, size_t length);
 
 void EthernetJson_destroy(EthernetJsonHandle self);
 

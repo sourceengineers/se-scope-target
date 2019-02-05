@@ -13,7 +13,6 @@
 #define SCOPERUNNER_H
 
 #include <Scope/Core/Scope.h>
-#include <Scope/Communication/CommunicationTypes.h>
 #include <Scope/ScopeBuilder.h>
 
 /******************************************************************************

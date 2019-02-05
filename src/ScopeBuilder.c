@@ -119,7 +119,7 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
 
     self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->addressStorage, self->timestamp);
     self->controller = Controller_create(Scope_getIScope(self->scope), self->packer, self->unpacker);
-    self->serializer = Serializer_create(self->packer, self->unpacker);
+    self->serializer = Serializer_create(self->packer, self->unpacker, self->interface);
     self->communicator = Communicator_create(self->interface);
 
     obj.scope = self->scope;

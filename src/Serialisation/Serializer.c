@@ -22,7 +22,7 @@ typedef struct __SerializerPrivateData{
 
     IPackerHandle packer;
     IUnpackerHandle unpacker;
-    IComValidatorHandle validator;
+    ICommunicatorHandle communicator;
 } SerializerPrivateData;
 
 /******************************************************************************
@@ -31,7 +31,7 @@ typedef struct __SerializerPrivateData{
 static void runRx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
-    if(self->validator->rxDataReady(self->validator) == false){
+    if(self->communicator->rxDataReady(self->communicator) == false){
         return;
     }
 
@@ -50,25 +50,27 @@ static void runRx(IRunnableHandle runnable){
     } else {
         self->packer->prepareFlowControl(self->packer, FLOWCONTROL_ACK);
     }
+
+    self->communicator->rxDataHasBeenFetched(self->communicator);
 }
 
 static void runTx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
     self->packer->pack(self->packer);
-    self->validator->txReadyToValidate(self->validator);
+    self->communicator->txReadyToValidate(self->communicator);
 }
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
 SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker,\
-																		IComValidatorHandle validator){
+																		ICommunicatorHandle communicator){
 
     SerializerHandle self = malloc(sizeof(SerializerPrivateData));
 
     self->packer = packer;
     self->unpacker = unpacker;
-    self->validator = validator;
+    self->communicator = communicator;
 
     self->runRx.handle = self;
     self->runTx.handle = self;

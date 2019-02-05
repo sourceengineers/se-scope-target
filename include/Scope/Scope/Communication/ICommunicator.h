@@ -32,6 +32,9 @@ typedef struct ICommunicatorStruct {
   GenericReference handle;
   void (*runRx)(ICommunicatorHandle communicator);
   void (*runTx)(ICommunicatorHandle communicator);
+  bool (*rxDataReady)(ICommunicatorHandle communicator);
+  void (*rxDataHasBeenFetched)(ICommunicatorHandle communicator);
+  void (*txReadyToValidate)(ICommunicatorHandle communicator);
 
 } ICommunicator ;
 
