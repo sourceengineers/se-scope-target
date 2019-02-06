@@ -31,7 +31,7 @@ def config():
     ##########################################################################
     serial_file = '/dev/ttyACM0' # z.B.: COM1 bei Windows 
     baudrate = 115200
-    timeout = 0.4
+    timeout = 0.5
     
     ##########################################################################
     ### Pfade
@@ -50,24 +50,24 @@ def config():
     # typ = UINT8, UINT16, UINT32, FLOAT)
     # Die Addressen koennen entweder aus der map File ausgelesen werden, falls sie
     # als statisch deklariert sind, oder manuell eigetragen werden.
-    channels.append({'name' : "Address_32", 'address' : get_address_from_map("intVar"), 'type' :  "UINT32"})
-    channels.append({'name' : "Address_FLOAT", 'address' : get_address_from_map("floatVar"), 'type' :  "FLOAT"})
-    #channels.append({'name' : "Double Byte Value", 'address' : get_address_from_map("doubleByteVar"), 'type' :  "UINT16"})
-    channels.append({'name' : "Byte Value", 'address' : get_address_from_map("byteVar"), 'type' :  "UINT8"})
+    channels.append({'name' : "Sinus", 'address' : get_address_from_map("sinus"), 'type' :  "FLOAT"})
+    channels.append({'name' : "Cosinus", 'address' : get_address_from_map("cosinus"), 'type' :  "FLOAT"})
+    channels.append({'name' : "Leistung", 'address' : get_address_from_map("leistung"), 'type' :  "FLOAT"})
+    channels.append({'name' : "Schmitt triggered", 'address' : get_address_from_map("schmitttriggered"), 'type' :  "UINT8"})
  
     ##########################################################################
     ### Trigger Konfiguration
     ##########################################################################   
     #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1} 
-    trigger_conf = {'mode' : 'Normal', 'level' : 10000, 'edge' : 'rising', 'cl_id' : 1} 
+    trigger_conf = {'mode' : 'Normal', 'level' : 0.75, 'edge' : 'rising', 'cl_id' : 0} 
 
     ##########################################################################
     ### Grafik Konfiguration
     ##########################################################################   
-    add_subplot(["Address_FLOAT", "Address_32"], \
-             {'title' : 'Float values', 'y_label' : 'Voltage', 'x_label' : 'Time'})
-    add_subplot(["Byte Value"], \
-             {'title' : 'Integer values', 'y_label' : 'Bytes', 'x_label' : 'Time'})
+    add_subplot(["Sinus", "Cosinus"], \
+             {'title' : 'Sin and Cos', 'y_label' : 'Value', 'x_label' : 'Time [ms]'})
+    add_subplot(["Leistung", "Schmitt triggered"], \
+             {'title' : 'Power and bool', 'y_label' : 'Strange values', 'x_label' : 'Time [ms]'})
      
     figure_name = "Device data"
 
@@ -117,32 +117,35 @@ def config():
 def transmit_data(data):
     checksum = 0;
     for d in data:
-        ord(d);
+        checksum = checksum + ord(d);
     
-    data_to_send = data + "transport:" + checksum[-2:]
+    data_to_send = data + "transport:" + ''.join('{:02X}'.format(checksum))[-2:] + '\0'
     data_to_send = data_to_send.encode("utf-8")
-    set.write(data_to_send)
+    print(data_to_send)
+    ser.write(data_to_send)
     
 ##############################################################################
 
 def send_command(command, wait_for_ack):
 
     while True:
-        print(command)
         transmit_data(command)
-        time.sleep(1)
+        time.sleep(0.5)
         ser.flush()
         if wait_for_ack == False:
             break;
         if found_flow_ctrl() == "ACK" :
             break;
-        print("NAK was received. Trying to send again")
+        print("Something went wrong. Trying to send again")
    
 ##############################################################################
 
 def found_flow_ctrl(): 
     while True:
-        data = process_data(ser.read_until(b'\0')[:-1].split(b'transport'))
+        received_data = ser.read_until(b'\0')
+        received_data = received_data[:-1].split(b'transport')[0];
+        #print(received_data) # uncomment this to line to see reived ack nak data
+        data = process_data(received_data)
         if not data == None:
             if ("flow_ctrl" in data["payload"]) == True:
                 print(data)
@@ -150,6 +153,10 @@ def found_flow_ctrl():
                     return "ACK";
                 if(data["payload"]["flow_ctrl"] == "NAK"):
                     return "NAK";
+            else:
+                return "NAK";
+            return "NAK";
+        return "NAK";
 
 ##############################################################################
 
@@ -234,8 +241,9 @@ def init_plots():
             if(trigger_data['cl_id'] == ch):
                 trigger_on_axis = ch;
     
-    trigger_lines['vline'] = ax[trigger_on_axis].axvline(0, linestyle='dashed', color='r');
-    trigger_lines['hline'] = ax[trigger_on_axis].axhline(0, linestyle='dashed', color='r');
+    if not trigger_conf['mode'] =='Continous':
+        trigger_lines['vline'] = ax[trigger_on_axis].axvline(0, linestyle='dashed', color='r');
+        trigger_lines['hline'] = ax[trigger_on_axis].axhline(0, linestyle='dashed', color='r');
                 
     for i in range(len(channels) + 1):
        device_data.append(collections.deque(maxlen=x_width))
@@ -279,7 +287,7 @@ def append_to_channel(channel, data):
 
 def prepare_data(data):    
     for data_package in data.split(b'\0'):
-        data_package.split(b'transport') 
+        data_package = data_package.split(b'transport')[0];
         ans = process_data(data_package)
         if ans is None:
             continue;    
@@ -288,7 +296,7 @@ def prepare_data(data):
     
         trigger_data = get_trigger_data(ans)
 
-        if not trigger_data['found'] == True:
+        if trigger_data['found'] == True:
             clear_data();
        
         # load tmestamp data
@@ -351,7 +359,7 @@ def plot_data():
                 clear_data()
 
     # Plot the trigger point
-    if trigger_data['found'] == True:
+    if trigger_data['found'] == True and not trigger_conf['mode'] =='Continous':
         trigger_point = get_trigger_point()            
         ymin, ymax = ax[trigger_on_axis].get_ylim()        
         xmin, xmax = ax[trigger_on_axis].get_xlim() 

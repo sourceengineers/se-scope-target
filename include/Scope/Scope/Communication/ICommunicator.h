@@ -35,6 +35,7 @@ typedef struct ICommunicatorStruct {
   bool (*rxDataReady)(ICommunicatorHandle communicator);
   void (*rxDataHasBeenFetched)(ICommunicatorHandle communicator);
   void (*txReadyToValidate)(ICommunicatorHandle communicator);
+  bool (*txSendingPending)(ICommunicatorHandle communicator);
 
 } ICommunicator ;
 

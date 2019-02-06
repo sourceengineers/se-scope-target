@@ -36,7 +36,7 @@ typedef struct __UartJsonPrivateData{
     uint8_t inputChecksum;
 
     bool rxIsValid;
-    bool txPendingToValidate;
+    bool txPendingToValidateAndTransmit;
 } UartJsonPrivateData;
 
 ChecksumCheck validateInput(UartJsonHandle self);
@@ -53,7 +53,7 @@ bool rxDataReady(ICommunicatorHandle communicator){
 
 void txReadyToValidate(ICommunicatorHandle communicator){
     UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    self->txPendingToValidate = true;
+    self->txPendingToValidateAndTransmit = true;
 }
 
 void rxDataHasBeenFetched(ICommunicatorHandle communicator){
@@ -66,10 +66,15 @@ void runRx(ICommunicatorHandle communicator){
     UartJsonHandle self = (UartJsonHandle) communicator->handle;
 }
 
+bool txSendingPending(ICommunicatorHandle communicator){
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    return self->txPendingToValidateAndTransmit;
+}
+
 void runTx(ICommunicatorHandle communicator){
     UartJsonHandle self = (UartJsonHandle) communicator->handle;
 
-    if(self->txPendingToValidate == false){
+    if(self->txPendingToValidateAndTransmit == false){
         return;
     }
 
@@ -77,13 +82,12 @@ void runTx(ICommunicatorHandle communicator){
         return;
     }
 
-    char formatedChecksum[CHECKSUM_LENGTH + 1];
+    char formatedChecksum[3];
     createOutputChecksum(self, formatedChecksum);
     self->output->write(self->output, (const uint8_t*) KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH);
     self->output->write(self->output, (const uint8_t*)  formatedChecksum, CHECKSUM_LENGTH + 1);
 
     self->callback(self);
-    UartJson_resetRx(self);
 }
 
 void createOutputChecksum(UartJsonHandle self, char* data){
@@ -105,7 +109,7 @@ ChecksumCheck validateInput(UartJsonHandle self){
 
     uint8_t checkData[KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH];
 
-    ByteRingBuffer_readNoPosInc(self->transportBuffer, checkData, KEYWORD_TRANSPORT_LENGTH);
+    ByteRingBuffer_readNoPosInc(self->transportBuffer, checkData, KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH);
 
     if(strncmp((const char*) checkData, KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH) != 0){
         return TRANSPORT_NOT_FOUND;
@@ -129,18 +133,20 @@ UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle 
 
     UartJsonHandle self = malloc(sizeof(UartJsonPrivateData));
 
+    self->communicator.handle = self;
     self->communicator.runRx = &runRx;
     self->communicator.runTx = &runTx;
     self->communicator.rxDataReady = &rxDataReady;
     self->communicator.rxDataHasBeenFetched = &rxDataHasBeenFetched;
     self->communicator.txReadyToValidate = &txReadyToValidate;
-
+    self->communicator.txSendingPending = &txSendingPending;
 
     self->transportBuffer = ByteRingBuffer_create(KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH);
     self->callback = callback;
     self->input = input;
     self->output = output;
 
+    self->rxIsValid = false;
     UartJson_resetTx(self);
     UartJson_resetRx(self);
     return self;
@@ -159,7 +165,6 @@ size_t UartJson_amountOfTxDataPending(UartJsonHandle self){
 }
 
 void UartJson_resetRx(UartJsonHandle self){
-    self->rxIsValid = false;
     ByteRingBuffer_clear(self->transportBuffer);
     self->input->flush(self->input);
     self->inputChecksum = 0;
@@ -167,7 +172,7 @@ void UartJson_resetRx(UartJsonHandle self){
 
 void UartJson_resetTx(UartJsonHandle self){
     self->output->flush(self->output);
-    self->txPendingToValidate = false;
+    self->txPendingToValidateAndTransmit = false;
 }
 
 void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
@@ -190,20 +195,20 @@ void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
             self->inputChecksum += transportByte;
 
             self->input->writeByte(self->input, transportByte);
-        }
 
-        ChecksumCheck res = validateInput(self);
+            ChecksumCheck res = validateInput(self);
 
-        if(res == CHECKSUM_OK){
-            self->input->writeByte(self->input, (uint8_t) '\0');
-            ByteRingBuffer_clear(self->transportBuffer);
-            self->rxIsValid = true;
-            break;
-        }else if(res == CHECKSUM_FAULTY){
-            UartJson_resetRx(self);
-            break;
-        }else{
-            continue;
+            if(res == CHECKSUM_OK){
+                self->input->writeByte(self->input, (uint8_t) '\0');
+                ByteRingBuffer_clear(self->transportBuffer);
+                self->rxIsValid = true;
+                break;
+            }else if(res == CHECKSUM_FAULTY){
+                UartJson_resetRx(self);
+                break;
+            }else{
+                continue;
+            }
         }
     }
 }

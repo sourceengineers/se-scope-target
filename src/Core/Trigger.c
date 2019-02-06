@@ -249,7 +249,7 @@ static bool checkCurrentData(TriggerHandle self, float* triggerData){
     const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
     const float dataLast = triggerData[CHANNEL_CURRENT_DATA];
     const float triggerLevel = self->level;
-    const int edge = (const int) dataCurrent > dataLast ? 1 : -1;
+    const int edge = dataCurrent > dataLast ? 1 : -1;
 
     if(dataCurrent == dataLast){
         return false;

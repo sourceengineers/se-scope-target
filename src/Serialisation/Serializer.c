@@ -56,6 +56,11 @@ static void runRx(IRunnableHandle runnable){
 
 static void runTx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
+
+    if(self->communicator->txSendingPending(self->communicator) == true){
+        return;
+    }
+
     self->packer->pack(self->packer);
     self->communicator->txReadyToValidate(self->communicator);
 }
