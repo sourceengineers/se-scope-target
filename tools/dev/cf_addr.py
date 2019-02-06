@@ -15,7 +15,7 @@ def getCommand(id, addr, type, amount):
     
     for i in range(amount):
         command += addAddr(i, id[i], addr[i], type[i], 0)
-    command += "}}}}\0";
+    command += "}}}}";
     return command;
 
 
@@ -25,7 +25,7 @@ def main():
     for i in range(2,  len(sys.argv), 3):
         command += addAddr(i, sys.argv[i], sys.argv[i+1], sys.argv[i+2], 2)
 
-    command += "}}}}\n\0";
+    command += "}}}}";
 
     print(command);
 
