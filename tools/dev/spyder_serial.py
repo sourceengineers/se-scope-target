@@ -31,7 +31,7 @@ def config():
     ##########################################################################
     serial_file = '/dev/ttyACM0' # z.B.: COM1 bei Windows 
     baudrate = 115200
-    timeout = 0.5
+    timeout = 1
     
     ##########################################################################
     ### Pfade
@@ -130,7 +130,7 @@ def send_command(command, wait_for_ack):
 
     while True:
         transmit_data(command)
-        time.sleep(0.5)
+        time.sleep(2)
         ser.flush()
         if wait_for_ack == False:
             break;
