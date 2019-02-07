@@ -88,26 +88,16 @@ void Timestamper_stamp(TimestamperHandle self) {
     stream->writeData(stream, self->lastTimestamp);
 }
 
-bool Timestamper_setStateRunning(TimestamperHandle self) {
-    if (getState(self) == TIMESTAMPER_STOPPED) {
-        setState(self, TIMESTAMPER_RUNNING);
-        return true;
-    } else {
-        return false;
-    }
+void Timestamper_setStateRunning(TimestamperHandle self) {
+    setState(self, TIMESTAMPER_RUNNING);
 }
 
 uint32_t Timestamper_getCurrentTime(TimestamperHandle self){
     return self->lastTimestamp;
 };
 
-bool Timestamper_setStateStopped(TimestamperHandle self) {
-    if (getState(self) == TIMESTAMPER_RUNNING) {
-        setState(self, TIMESTAMPER_STOPPED);
-        return true;
-    } else {
-        return false;
-    }
+void Timestamper_setStateStopped(TimestamperHandle self) {
+    setState(self, TIMESTAMPER_STOPPED);
 }
 
 uint32_t Timerstamper_getTimeIncrement(TimestamperHandle self){

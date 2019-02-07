@@ -35,9 +35,9 @@ bool Timestamper_updateElapsedTime(TimestamperHandle self) ;
 
 void Timestamper_stamp(TimestamperHandle self);
 
-bool Timestamper_setStateRunning(TimestamperHandle self);
+void Timestamper_setStateRunning(TimestamperHandle self);
 
-bool Timestamper_setStateStopped(TimestamperHandle self);
+void Timestamper_setStateStopped(TimestamperHandle self);
 
 uint32_t Timestamper_getCurrentTime(TimestamperHandle self);
 

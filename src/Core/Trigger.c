@@ -220,7 +220,11 @@ static void fillUpIfTriggered(TriggerHandle self){
 
     self->fillUpPollCount++;
 
-    if(self->fillUpPollCount < ((self->channelCapacity / 2) - 1)){
+    if(Channel_getAmountOfUsedData(self->channels[self->activeChannelId]) < self->channelCapacity){
+        return;
+    }
+
+    if(self->fillUpPollCount < ((self->channelCapacity / 2))){
         return;
     }
 

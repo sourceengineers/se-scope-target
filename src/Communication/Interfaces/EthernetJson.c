@@ -20,7 +20,7 @@ typedef struct __EthernetJsonPrivateData{
     IByteStreamHandle input;
     IByteStreamHandle output;
 
-    bool txPendingToValidate;
+    bool txPendingToValidateAndTransmit;
 
     EthernetTransmitCallback callback;
 } EthernetJsonPrivateData;
@@ -36,7 +36,7 @@ bool rxDataReady(ICommunicatorHandle communicator){
 
 void txReadyToValidate(ICommunicatorHandle communicator){
     EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
-    self->txPendingToValidate = true;
+    self->txPendingToValidateAndTransmit = true;
 }
 
 void rxDataHasBeenFetched(ICommunicatorHandle communicator){
@@ -48,10 +48,15 @@ void runRx(ICommunicatorHandle communicator){
     EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
 }
 
+bool txSendingPending(ICommunicatorHandle communicator){
+    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
+    return false;
+}
+
 void runTx(ICommunicatorHandle communicator){
     EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
 
-    if(self->txPendingToValidate == false){
+    if(self->txPendingToValidateAndTransmit == false){
         return;
     }
 
@@ -60,7 +65,7 @@ void runTx(ICommunicatorHandle communicator){
     }
 
     self->callback(self);
-    self->txPendingToValidate = false;
+    self->txPendingToValidateAndTransmit = false;
 }
 
 /******************************************************************************
@@ -76,8 +81,9 @@ EthernetJsonHandle EthernetJson_create(EthernetTransmitCallback callback, IByteS
     self->communicator.rxDataReady = &rxDataReady;
     self->communicator.rxDataHasBeenFetched = &rxDataHasBeenFetched;
     self->communicator.txReadyToValidate = &txReadyToValidate;
+    self->communicator.txSendingPending = &txSendingPending;
 
-    self->txPendingToValidate = false;
+    self->txPendingToValidateAndTransmit = false;
     self->input = input;
     self->output = output;
 
