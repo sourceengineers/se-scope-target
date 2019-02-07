@@ -15,17 +15,6 @@ The channelId must not exceed the maximum amount of channels.
 void Scope_poll(ScopeHandle self, uint32_t timeStamp);
 ```
 If the scope is set to TIMESTAMP_AUTOMATIC, the Scope_poll function ignores the timestamp value supplied.
-# ev_trans
-```c
-/* Packs all the necessary data into a package ready to be sent */
-void Scope_transmitData(ScopeHandle self);
-```
-This function works only if the transmitCallback is properly implemented. This is the same as for the normal ev_trans command.
-# ev_announce
-```c
-/* Sends all configured watch addresses to the host */
-void Scope_announceAddresses(ScopeHandle self);
-```
 # cf_addr
 ```c
 /* Configures the channel with the given id, with the wanted address */
