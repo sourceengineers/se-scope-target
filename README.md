@@ -7,7 +7,7 @@ The target can be configured with the help of multiple pre defined commands, and
 The library is build upon cmake, and is therefore able to be compiled on pretty much anything.
 Additionally there is a release package which contains the sources, to be included into what ever IDE and project is used.
 
-If the library is to be compiled with cmake, the process is slightly different if the host system is a Windows or \*nix system. 
+If the library is to be compiled with cmake, the process is slightly different if the host system is a Windows or \*nix system.
 
 For detailed instructions, take a look at the doc folder and pick the documentation for what ever operating system the library is build on, or for what ever IDE is used.
 
@@ -17,92 +17,130 @@ For detailed instructions, take a look at the doc folder and pick the documentat
 ## IDE's
 - [IDE's](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-ide.md)
 # Usage
-The Scope can either be controlled through a number of commands, which are sent to the target, or by corresponding functions on the target itself.
+## Generate
+The scope is builded with the help of a dedicated builder class. An example usage of this might look like the following code sample.
 
-The following chapter explains all the functions, which are available on the target itself and cannot be controlled through a command.
-
-Out of these functions, Scope_create() is the only one needed. The other two are optionally.
-## Initialisation
-Generate the scope. 
 ```c
-#include <Gemmi.h>
+AddressStorageHandle addressStorage;
+ScopeBuilderHandle builder;
+ScopeObject scope_obj;
+size_t inputBufferSize = 0;
+size_t amountOfChannels;
+size_t sizeOfChannels;
+size_t outputBufferSize;
+size_t addressesInAddressAnnouncer;
+BufferedByteStreamHandle input;
+BufferedByteStreamHandle output;
+JsonUnpackerHandle unpacker;
+JsonPackerHandle packer;
+UartJsonHandle uartJson;
+UartTransmitCallback callback;
+uint32_t timestamp;
 
-/*
-Definition of the Scope_create
-ScopeHandle Scope_create(const size_t channelSize,
-                         const size_t amountOfChannels,
-                         const size_t maxNumberOfAddresses,
-                         const COM_TYPE comType,
-                         const PROT_TYPE protType,
-                         const TIMESTAMPING_MODE timestampingMode,
-                         ScopeTransmitCallback transmitCallback); */
+/* Specify amount of channels, the size of channels and the maximum amount of addresses in the announcer */
+amountOfChannels = 4;
+sizeOfChannels = 100;
+addressesInAddressAnnouncer = 3;
 
-/* Create the scope */
-ScopeHandle scope = Scope_create(500, 3, 3, ETHERNET, JSON, TIMESTAMP_AUTOMATIC, print);
+/* Let the Packer and Unpacker calculate how much buffer space they are going to use */
+outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
+                                                         addressesInAddressAnnouncer);
+inputBufferSize = JsonUnpacker_calculateBufferSize();
+
+/* Generate the input and output buffers, based on the previously calculated sizes */
+input = BufferedByteStream_create(inputBufferSize);
+output = BufferedByteStream_create(outputBufferSize);
+
+/* Generate the desired packer and unpacker */
+unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(input));
+packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer,
+                                            BufferedByteStream_getIByteStream(output));
+
+/* Generate the communication handler */
+uartJson = UartJson_create(callback, BufferedByteStream_getIByteStream(input),
+                                                      BufferedByteStream_getIByteStream(output));
+
+/* Generate the address storage. The address storage is optional and doesn't have to be used */
+addressStorage = AddressStorage_create(addressesInAddressAnnouncer);
+
+/* Create the builder itself */
+builder = ScopeBuilder_create();
+
+/* Pass all the wanted elements into the builder */
+ScopeBuilder_setChannels(builder, amountOfChannels, sizeOfChannels);
+ScopeBuilder_setStreams(builder, BufferedByteStream_getIByteStream(input),
+                        BufferedByteStream_getIByteStream(output));
+ScopeBuilder_setTimestampReference(builder, timestamp);
+ScopeBuilder_setCommunication(builder, UartJson_getCommunicator(uartJson));
+ScopeBuilder_setParser(builder, JsonPacker_getIPacker(packer), JsonUnpacker_getIUnpacker(unpacker));
+ScopeBuilder_setAddressStorage(builder, addressStorage);
+
+/* Build the scope */
+scope_obj = ScopeBuilder_build(builder);
 ```
-There are a few configurations that have to be set on the target side.
-
-| Param | Values | Description |
-| -- | -- | -- |
-| comType | ETHERNET / UART | Adjusts the scope for the specified communication interface. This mainly affects data in the transport field |
-| protType | JSON / MSGPACK | Adjusts the scope for the specified protocol |
-| timestampingMode | TIMESTAMP_AUTOMATIC / TIMESTAMP_MANUAL | Configures the protocol to either timestamp automatically, or manually. In the manual mode, the index passed to the ev_poll command will be used. In the automatic mode, the scope will timestamp itself, according to configured timestamp increment. |
-
-If a transmitCallback function is supplied, the scope will be able to send messages to the host automatically. 
-This callback has to be a function in the form of:
+Building the scope like this, allows to specify what ever protocol or communication interface should be used very easily.
+The input objects, as well as the address storage are optional. The builder will still be able to generate the scope, but it will only have limited functionalities.
+## Running
+To run the scope, just call the ScopeRunner with the object generated by the builder.
 ```c
-void ScopeTransmitCallback(IByteStreamHandle stream);
+/* Run the scope */
+ScopeRunner_run(scope_obj);
 ```
-## Watch addresses
-The watch addresses can be defined during compile time, and tell the host, what their names and addresses are during runtime.
-This can be useful if the variables are not static.
-
+Note, that the timestamp will not be automatically be increased. This should happen somewhere externally, to be able to supply an as accurate timestamp as possible.
+As example through a systick on a embedded device.
+## Communication
+Every communication interface class should supply functions, through which data can be passed into the scope, and be read out of it.
+Following examples will show how these behave with the UartJson class. Other interfaces should work similarly.
+### Input
 ```c
-
-/*void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
-                             const DATA_TYPES type,
-                             const uint32_t addressId);*/
-
-/* Registers the addresses */
-uint8_t var;
-Scope_addAnnounceAddresses(scope,(const char*) "NAME_OF_VAR", &var, UINT8, 0);
-
-/* Announces the addresses to the host. This only works if the transmitCallback is set correctly */
-Scope_announceAddresses(scope);
+UartJson_putRxData(uartJson, data, length);
 ```
-
-| Param | Values | Description |
-| -- | -- | -- |
-| type | UINT8 / UINT16 / UINT32 / FLOAT | Registers what type of address should be announce. |
-| addressId | int | Tells the scope on which index it should save the address. This index can not exceed the maxNumberOfAddresses |
-
-## Commands
-It is possible to control the scope entirely through commands send by the host. 
-To see all available commands are and their functions, check the [protocol](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md) description.
-For this to work, the Scope_receiveData() function has to be used.
-
-Alternatively, every command has a corresponding function defined in Scope.h. For a detailed description of the corresponding functions check this [page](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/command-api.md).
-### Command execution
-If commands should be sent to the scope, the Scope_receiveData() function has to be used.
-This function reads the data from the input stream and interprets it. Meaning, the data has to be received, written into the input stream and afterwards, Scope_receiveData(scope) can be called.
-
+The underlying UartJson class will accept the bytes, sanitize the input and pass the command forward if the input is ok.
+### Output
+When ever the trigger criteria are fulfilled, a transmit event will be triggered and the callback function will be called. This can be used to start a transmission event, or just send the data right away.
+An example could look like the following code.
 ```c
-IByteStreamHandle input_stream = Scope_getInputStream(scope);
+void callback(UartJsonHandle self){
+  size_t length = UartJson_amountOfTxDataPending(self);
+  uint8_t data[length];
+  UartJson_getTxData(self, data, length);
+  UartJson_resetTx(self);  
+}
+```
+Note that you can also get the data out of the class at a later time through the earlier defined uartJson object. The transmission doesn't have to happen in the callback. This might be useful if the transmission should happen in a interrupted state or in a separate thread.
+As example
+```c
+static hasToBeSent = false;
 
-/* Feed data in to the stream. Through what ever communication interface needed.
-    As example through scanf: */
-char data[100];
-scanf(&data);
+void callback(UartJsonHandle self){
+  hasToBeSent = true;
+}
 
-input_stream->write(input_stream, data, 100);
+if(hasToBeSent == true){
+  size_t length = UartJson_amountOfTxDataPending(uartJson);
+  uint8_t data[length];
+  UartJson_getTxData(uartJson, data, length);
+  hasToBeSent = false;
+  UartJson_resetTx(uartJson);  
+}
+```
+## Destroy
+If the scope isn't used anymore, it can be destroyed.
+Every class should supply a destroy function. Therefore everything created for the builder can be destroyed again.
+```c
+BufferedByteStream_destroy(input);
+BufferedByteStream_destroy(output);
+JsonUnpacker_destroy(unpacker);
+JsonPacker_destroy(packer);
+UartJson_destroy(uartJson);
+AddressStorage_destroy(addressStorage);
+ScopeBuilder_destroy(builder);
 
-/* After the data is written to the stream, the command function can be executed */
-Scope_receiveData(scope);
 ```
 # Protocol
-The host and the target are communicating through a custom defined protocol. 
+The host and the target are communicating through a custom defined protocol.
 The specification can be checked, in the dedicated [documentation](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md).
-This protocol will be parsed in what ever protocol is chosen to be sent between host and target.
+This protocol will be parsed in what ever protocol (Json/Msgpack) is chosen to be sent between host and target.
 # Desktop client
 A desktop client which is able to control the target and display the data, is currently under work.
 For the moment, the developer tools in tools have to be used to communicate with the target have to be used. These will be extended before the work at the desktop client continue.
