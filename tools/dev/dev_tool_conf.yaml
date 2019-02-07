@@ -1,6 +1,0 @@
-DataOutputFile: /Users/schuepbs/Documents/Projects/iot-scope-target/build/examples/dynamic_example/s_out
-DataInputFile: /Users/schuepbs/Documents/Projects/iot-scope-target/build/examples/dynamic_example/s_in
-
-Legend:
-  "0": "Name1"
-  "1": "Name2"

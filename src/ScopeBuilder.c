@@ -140,5 +140,4 @@ void ScopeBuilder_destroy(ScopeBuilderHandle self){
     Controller_destroy(self->controller);
     Serializer_destroy(self->serializer);
     Communicator_destroy(self->communicator);
-
 }

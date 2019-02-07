@@ -18,14 +18,14 @@
  *  read from s_in
  */
 
-void print(IByteStreamHandle stream){
+void print(EthernetJsonHandle self){
 
     FILE* file = fopen("s_out", "w+");
 
-    const size_t length = stream->length(stream);
+    const size_t length = EthernetJson_amountOfTxDataPending(self);
     uint8_t data[length];
 
-    stream->read(stream, data, length);
+    EthernetJson_getTxData(self, data, length);
 
     fprintf(file, "\nMessage: %s", data);
 
@@ -36,7 +36,7 @@ void print(IByteStreamHandle stream){
 
 
 /* The data hast to be written into the input buffer for the scope to be interpreted */
-void readFile(IByteStreamHandle stream, const char* filename){
+void readFile(EthernetJsonHandle self, const char* filename){
 
     FILE* file = fopen(filename, "rb");
 
@@ -49,8 +49,7 @@ void readFile(IByteStreamHandle stream, const char* filename){
     buffer[0] = '\0';
 
     if(fgets(buffer, 200, file) != NULL){
-        stream->write(stream, (uint8_t*) buffer, strlen(buffer));
-        stream->writeByte(stream, (uint8_t) '\0');
+        EthernetJson_putRxData(self,  (uint8_t*) buffer, strlen(buffer));
     }
     fclose(file);
     fopen(filename, "w");
@@ -112,7 +111,7 @@ int main(int argc, char* argv[]){
         var2 = (float) var3 * 1.5f;
         var1 = var3 / 10;
 
-        readFile(BufferedByteStream_getIByteStream(input), filename);
+        readFile(ethernetJson, filename);
 
         ScopeRunner_run(obj);
 

@@ -168,6 +168,7 @@ void UartJson_resetRx(UartJsonHandle self){
     ByteRingBuffer_clear(self->transportBuffer);
     self->input->flush(self->input);
     self->inputChecksum = 0;
+    self->rxIsValid = false;
 }
 
 void UartJson_resetTx(UartJsonHandle self){
@@ -202,6 +203,7 @@ void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
                 self->input->writeByte(self->input, (uint8_t) '\0');
                 ByteRingBuffer_clear(self->transportBuffer);
                 self->rxIsValid = true;
+                self->inputChecksum = 0;
                 break;
             }else if(res == CHECKSUM_FAULTY){
                 UartJson_resetRx(self);

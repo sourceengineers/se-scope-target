@@ -64,6 +64,8 @@ void runTx(ICommunicatorHandle communicator){
         return;
     }
 
+    self->output->writeByte(self->output, '\0');
+
     self->callback(self);
     self->txPendingToValidateAndTransmit = false;
 }
@@ -82,6 +84,7 @@ EthernetJsonHandle EthernetJson_create(EthernetTransmitCallback callback, IByteS
     self->communicator.rxDataHasBeenFetched = &rxDataHasBeenFetched;
     self->communicator.txReadyToValidate = &txReadyToValidate;
     self->communicator.txSendingPending = &txSendingPending;
+    self->callback = callback;
 
     self->txPendingToValidateAndTransmit = false;
     self->input = input;
@@ -104,6 +107,7 @@ size_t EthernetJson_amountOfTxDataPending(EthernetJsonHandle self){
 
 void EthernetJson_putRxData(EthernetJsonHandle self, uint8_t* data, size_t length){
     self->input->write(self->input, data, length);
+    self->input->writeByte(self->input, '\0');
 }
 
 void EthernetJson_destroy(EthernetJsonHandle self){

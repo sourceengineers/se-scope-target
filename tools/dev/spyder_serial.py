@@ -58,8 +58,8 @@ def config():
     ##########################################################################
     ### Trigger Konfiguration
     ##########################################################################   
-    #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1} 
-    trigger_conf = {'mode' : 'Normal', 'level' : 0.75, 'edge' : 'rising', 'cl_id' : 0} 
+    trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1} 
+    #trigger_conf = {'mode' : 'Normal', 'level' : 0.75, 'edge' : 'rising', 'cl_id' : 0} 
 
     ##########################################################################
     ### Grafik Konfiguration
@@ -73,7 +73,7 @@ def config():
 
     # wenn die x_width auf None gesetzt wird, wird die Achse automatisch 
     # skaliert
-    x_width = 100
+    x_width = 500
     
     #x_width = None
     
