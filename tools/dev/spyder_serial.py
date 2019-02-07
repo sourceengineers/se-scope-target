@@ -17,6 +17,7 @@ import cf_tgr
 import matplotlib.pyplot as plt
 import collections
 import os
+import numpy as np
 
 def config():
     # Do not change these definitions!
@@ -34,7 +35,7 @@ def config():
     ##########################################################################
     serial_file = '/dev/ttyACM0' # z.B.: COM1 bei Windows
     baudrate = 115200
-    timeout = 1
+    timeout = 1.5
 
     ##########################################################################
     ### Pfade
@@ -62,62 +63,29 @@ def config():
     ### Trigger Konfiguration
     ##########################################################################
     #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1}
-    trigger_conf = {'mode' : 'Normal', 'level' : 0.75, 'edge' : 'rising', 'cl_id' : 0}
+    trigger_conf = {'mode' : 'Normal', 'level' : 0.75, 'edge' : 'rising', 'cl_id' : 3}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
     # Wird z.B. der timestmap pro Millisekunde incrementiert, und die step_size ist 10,
     # so wird nur jede 10. Millisekunde gepollt.
-    step_size = 5
+    step_size = 1
 
     ##########################################################################
     ### Grafik Konfiguration
     ##########################################################################
-    add_subplot(["Sinus", "Cosinus"], \
+    add_subplot(["Sinus", "Cosinus", "Leistung"], \
              {'title' : 'Sin and Cos', 'y_label' : 'Value', 'x_label' : 'Time [ms]'})
-    add_subplot(["Leistung", "Schmitt triggered"], \
-             {'title' : 'Power and bool', 'y_label' : 'Strange values', 'x_label' : 'Time [ms]'})
+    add_subplot(["Schmitt triggered"], \
+             {'title' : 'Schmitt triggered', 'y_label' : 'Strange values', 'x_label' : 'Time [ms]'})
 
     figure_name = "Device data"
 
     # wenn die x_width auf None gesetzt wird, wird die Achse automatisch
     # skaliert
-    x_width = 100
-
     #x_width = None
+
+    x_width = 200
     x_width = x_width * step_size
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 ##############################################################################
 ## Don't change any code after this line, or you might cause the code to break!
@@ -138,7 +106,7 @@ def send_command(command, wait_for_ack):
 
     while True:
         transmit_data(command)
-        time.sleep(2)
+        time.sleep(1)
         ser.flush()
         if wait_for_ack == False:
             break;
@@ -238,17 +206,18 @@ def init_plots():
     figure.suptitle(figure_name)
     ax = list(ax)
 
-    trigger_on_axis = 0;
+    trigger_on_axis = None;
 
     for i in range(len(ax)):
         ax[i].set_title(plot_conf[i][1]['title'])
         ax[i].set_xlabel(plot_conf[i][1]['x_label'])
         ax[i].set_ylabel(plot_conf[i][1]['y_label'])
-        ax[i].grid()
+        ax[i].grid(which='minor', alpha=0.2)
+        ax[i].grid(which='major', alpha=0.5)
         for ch in plot_conf[i][0]:
             lines = lines + ax[i].plot([], [])
-            if(trigger_data['cl_id'] == ch):
-                trigger_on_axis = ch;
+            if(trigger_conf['cl_id'] == ch):
+                trigger_on_axis = i;
 
     if not trigger_conf['mode'] =='Continous':
         trigger_lines['vline'] = ax[trigger_on_axis].axvline(0, linestyle='dashed', color='r');
@@ -330,6 +299,9 @@ def read_data():
     # output of the scope
     if ((b'{\"payload' in answer[0:10]) and (b"transport" in answer)):
         return prepare_data(answer)
+    else:
+        print("Data pack corrupted...")
+        print(answer);
     return False
 
 ##############################################################################
@@ -351,6 +323,7 @@ def get_trigger_point():
 
 ##############################################################################
 def plot_data():
+
 
     for i in range(len(plot_conf)):
         for ch in plot_conf[i][0]:
@@ -376,18 +349,48 @@ def plot_data():
         trigger_lines['hline'] = ax[trigger_on_axis].axhline(trigger_point['y'], color='r', linestyle='dashed');
         trigger_lines['vline'] = ax[trigger_on_axis].axvline(trigger_point['x'], color='r', linestyle='dashed');
 
+    # Scale the plot
     for i in range(len(plot_conf)):
-        # Manual or autoschaling
-        if not x_width == None and len(list(device_data[len(channels)])) > 0:
-            last_time_stamp = device_data[len(channels)].pop()
-            device_data[len(channels)].append(last_time_stamp)
-            ax[i].set_xlim(last_time_stamp - x_width, last_time_stamp)
-            ax[i].autoscale_view(tight=None, scalex=False, scaley=True)
-            ax[i].relim()
-        else:
-            ax[i].relim()
-            ax[i].autoscale_view(tight=None, scalex=True, scaley=True)
 
+        # Calculate values vor x and y lim
+        last_time_stamp = device_data[len(channels)].pop()
+        device_data[len(channels)].append(last_time_stamp)
+
+        extrem_values = []
+
+        for ch in plot_conf[i][0]:
+            extrem_values.append(max(list(device_data[ch])));
+            extrem_values.append(min(list(device_data[ch])));
+
+        y_min = min(extrem_values);
+        y_max = max(extrem_values);
+        d_y = np.absolute(y_max - y_min)
+        y_min = y_min - (d_y / 10);
+        y_max = y_max + (d_y / 10);
+        ax[i].set_ylim(y_min, y_max)
+
+        # Manual or autoscaling
+        if not x_width == None and len(list(device_data[len(channels)])) > 0:
+            ax[i].set_xlim(last_time_stamp - x_width, last_time_stamp)
+        else:
+            x_max = max(device_data[len(channels)])
+            x_min = min(device_data[len(channels)])
+            ax[i].set_xlim(x_min, x_max)
+
+        # Draw grid
+        left, right = ax[i].get_xlim()
+        x_major_ticks = np.arange(left, right, (right-left)/10)
+        x_minor_ticks = np.arange(left, right, (right-left)/50)
+        bottom, top = ax[i].get_ylim()
+        y_major_ticks = np.arange(bottom, top, (top-bottom)/10)
+        y_minor_ticks = np.arange(bottom, top, np.absolute(top-bottom)/50)
+
+        ax[i].set_xticks(x_major_ticks)
+        ax[i].set_xticks(x_minor_ticks, minor=True)
+        ax[i].set_yticks(y_major_ticks)
+        ax[i].set_yticks(y_minor_ticks, minor=True)
+        ax[i].grid(which='minor', alpha=0.5, linestyle='--')
+        ax[i].grid(which='major', alpha=1, linestyle='--')
 
     plt.draw()
     plt.pause(1e-17)
@@ -440,7 +443,7 @@ if __name__ == "__main__":
     plot_conf = []
     device_data = []
     global trigger_data;
-    trigger_data = {'found' : False, 'cl_data_ind' : 0, 'cl_id' : 0};
+    trigger_data = {'found' : None, 'cl_data_ind' : None, 'cl_id' : None};
 
     config()
 

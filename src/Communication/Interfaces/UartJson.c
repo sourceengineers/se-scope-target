@@ -36,7 +36,8 @@ typedef struct __UartJsonPrivateData{
     uint8_t inputChecksum;
 
     bool rxIsValid;
-    bool txPendingToValidateAndTransmit;
+    bool txPendingToValidate;
+    bool txPendingToTransmit;
 } UartJsonPrivateData;
 
 ChecksumCheck validateInput(UartJsonHandle self);
@@ -53,7 +54,7 @@ bool rxDataReady(ICommunicatorHandle communicator){
 
 void txReadyToValidate(ICommunicatorHandle communicator){
     UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    self->txPendingToValidateAndTransmit = true;
+    self->txPendingToValidate = true;
 }
 
 void rxDataHasBeenFetched(ICommunicatorHandle communicator){
@@ -68,13 +69,17 @@ void runRx(ICommunicatorHandle communicator){
 
 bool txSendingPending(ICommunicatorHandle communicator){
     UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    return self->txPendingToValidateAndTransmit;
+    return self->txPendingToTransmit;
 }
 
 void runTx(ICommunicatorHandle communicator){
     UartJsonHandle self = (UartJsonHandle) communicator->handle;
 
-    if(self->txPendingToValidateAndTransmit == false){
+    if(self->txPendingToValidate == false){
+        return;
+    }
+
+    if(self->txPendingToTransmit == true){
         return;
     }
 
@@ -86,6 +91,8 @@ void runTx(ICommunicatorHandle communicator){
     createOutputChecksum(self, formatedChecksum);
     self->output->write(self->output, (const uint8_t*) KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH);
     self->output->write(self->output, (const uint8_t*)  formatedChecksum, CHECKSUM_LENGTH + 1);
+    self->txPendingToValidate = false;
+    self->txPendingToTransmit = true;
 
     self->callback(self);
 }
@@ -173,7 +180,8 @@ void UartJson_resetRx(UartJsonHandle self){
 
 void UartJson_resetTx(UartJsonHandle self){
     self->output->flush(self->output);
-    self->txPendingToValidateAndTransmit = false;
+    self->txPendingToValidate = false;
+    self->txPendingToTransmit = false;
 }
 
 void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
