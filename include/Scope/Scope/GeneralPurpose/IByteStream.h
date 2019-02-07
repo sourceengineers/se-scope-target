@@ -34,8 +34,7 @@ typedef struct IByteStreamStruct* IByteStreamHandle;
  Define interface
 ******************************************************************************/
 typedef struct IByteStreamStruct {
-  void* implementer;
-  void (*open)(IByteStreamHandle bytestream, uint8_t* data, const size_t capacity);
+  GenericReference handle;
   bool (*byteIsReady)(IByteStreamHandle self);
   uint8_t (*readByte)(IByteStreamHandle self);
   size_t (*length)(IByteStreamHandle self);
@@ -52,7 +51,6 @@ typedef struct IByteStreamStruct {
 	 * @param length Amount of data which should be written
 	 */
   void (*write)(IByteStreamHandle self, const uint8_t* data, const size_t length);
-  void (*close)(IByteStreamHandle self);
   void (*flush)(IByteStreamHandle self);
 } IByteStream ;
 

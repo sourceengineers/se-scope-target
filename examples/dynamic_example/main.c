@@ -3,7 +3,11 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <Scope/MsgpackParser/MsgpackCommon.h>
+#include <string.h>
+#include <zconf.h>
+#include <Scope/Communication/Interfaces/EthernetJson.h>
+#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+#include <Scope/Serialisation/JsonParser/JsonPacker.h>
 
 /*
  * watch the s_out file with:
@@ -16,74 +20,119 @@
 
 void print(IByteStreamHandle stream){
 
-  FILE* file = fopen("s_out", "w+");
+    FILE* file = fopen("s_out", "w+");
 
-  const size_t length = stream->length(stream);
-  uint8_t data[length];
+    const size_t length = stream->length(stream);
+    uint8_t data[length];
 
-  stream->read(stream, data, length);
+    stream->read(stream, data, length);
 
-  fprintf(file, "\nMessage: %s", data);
+    fprintf(file, "\nMessage: %s", data);
 
-  //Msgpack_printObjFromByte(file, data,length);
-  fprintf(file, "\n");
+    fprintf(file, "\n");
 
-  fclose(file);
+    fclose(file);
 }
 
+
+/* The data hast to be written into the input buffer for the scope to be interpreted */
 void readFile(IByteStreamHandle stream, const char* filename){
 
-  FILE* file = fopen(filename, "rb");
+    FILE* file = fopen(filename, "rb");
 
-  if(file == NULL){
-    return;
-  }
-
-  uint8_t byte = 0;
-
-  while(fread(&byte, 1, 1, file) != 0){
-    stream->writeByte(stream, byte);
-  }
-  fclose(file);
-  fopen(filename, "w");
-  fclose(file);
-}
-
-int main(int argc, char *argv[] ){
-
-  ScopeHandle scope = Scope_create(500, 3, 3, ETHERNET, TIMESTAMP_AUTOMATIC, print);
-  IByteStreamHandle stream = Scope_getInputStream(scope);
-
-
-  const char* filename = argc > 1 ? argv[1] : (const char*) "s_in";
-
-  uint8_t var1;
-  float var2;
-  uint32_t var3;
-
-  Scope_setAnnounceAddresses(scope,(const char*) "VAR1", &var1, UINT8, 0);
-  Scope_setAnnounceAddresses(scope,(const char*) "VAR2", &var2, FLOAT, 1);
-  Scope_setAnnounceAddresses(scope,(const char*) "VAR3", &var3, UINT32, 2);
-
-  Scope_announceAddresses(scope);
-
-  while (1) {
-
-
-    var3 = rand() % 100;
-    var2 = (float) var3 * 1.5f;
-    var1 = var3 / 10;
-
-    readFile(stream, filename);
-
-    if(stream->length(stream) > 0){
-      Scope_command(scope);
+    if(file == NULL){
+        return;
     }
 
-    Scope_poll(scope, 0);
-    Scope_transmitData(scope);
-    usleep(10000);
-  }
+    char buffer[200];
 
-  return 0;
+    buffer[0] = '\0';
+
+    if(fgets(buffer, 200, file) != NULL){
+        stream->write(stream, (uint8_t*) buffer, strlen(buffer));
+        stream->writeByte(stream, (uint8_t) '\0');
+    }
+    fclose(file);
+    fopen(filename, "w");
+    fclose(file);
+}
+
+int main(int argc, char* argv[]){
+
+/***********************************************************************************************************************
+* Build Scope
+***********************************************************************************************************************/
+    size_t amountOfChannels = 4;
+    size_t sizeOfChannels = 100;
+    size_t addressesInAddressAnnouncer = 3;
+    size_t outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
+                                                             addressesInAddressAnnouncer);
+    size_t inputBufferSize = JsonUnpacker_calculateBufferSize();
+
+    BufferedByteStreamHandle input = BufferedByteStream_create(inputBufferSize);
+    BufferedByteStreamHandle output = BufferedByteStream_create(outputBufferSize);
+    JsonUnpackerHandle unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(input));
+    JsonPackerHandle packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer, BufferedByteStream_getIByteStream(output));
+    EthernetJsonHandle ethernetJson = EthernetJson_create(print, BufferedByteStream_getIByteStream(input),
+                                                          BufferedByteStream_getIByteStream(output));
+    uint32_t timestamp = 0;
+
+    AddressStorageHandle addressStorage = AddressStorage_create(addressesInAddressAnnouncer);
+
+    ScopeBuilderHandle builder = ScopeBuilder_create();
+    ScopeBuilder_setChannels(builder, amountOfChannels, sizeOfChannels);
+    ScopeBuilder_setStreams(builder, BufferedByteStream_getIByteStream(input), BufferedByteStream_getIByteStream(output));
+    ScopeBuilder_setTimestampReference(builder, &timestamp);
+    ScopeBuilder_setCommunication(builder, EthernetJson_getCommunicator(ethernetJson));
+    ScopeBuilder_setParser(builder, JsonPacker_getIPacker(packer), JsonUnpacker_getIUnpacker(unpacker));
+    ScopeBuilder_setAddressStorage(builder, addressStorage);
+
+    ScopeObject obj = ScopeBuilder_build(builder);
+
+
+/***********************************************************************************************************************
+* User code
+***********************************************************************************************************************/
+
+    const char* filename = argc > 1 ? argv[1] : (const char*) "s_in";
+
+    uint8_t var1;
+    float var2;
+    uint32_t var3;
+
+    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR1", &var1, UINT8, 0);
+    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR2", &var2, FLOAT, 1);
+    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR3", &var3, UINT32, 2);
+    AddressStorage_announce(addressStorage);
+
+    while(1){
+
+
+        var3 = rand() % 100;
+        var2 = (float) var3 * 1.5f;
+        var1 = var3 / 10;
+
+        readFile(BufferedByteStream_getIByteStream(input), filename);
+
+        ScopeRunner_run(obj);
+
+        timestamp++;
+
+        usleep(50);
+    }
+
+/***********************************************************************************************************************
+* Destroy objects
+***********************************************************************************************************************/
+
+    ScopeBuilder_destroy(builder);
+
+    JsonUnpacker_destroy(unpacker);
+    JsonPacker_destroy(packer);
+    EthernetJson_destroy(ethernetJson);
+    BufferedByteStream_destroy(input);
+    BufferedByteStream_destroy(output);
+    AddressStorage_destroy(addressStorage);
+
+    return 0;
 }

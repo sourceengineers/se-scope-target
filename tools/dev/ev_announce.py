@@ -4,7 +4,7 @@ import os
 import json
 
 def main():
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"ev_announce\":null}}}";
+    command = "{\"payload\":{\"sc_cmd\":{\"ev_announce\":null}}}";
 
     print(command);
 
@@ -14,7 +14,7 @@ def main():
     file.close()
 
 def getCommand():
-    return "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"ev_announce\":null}}}";
+    return "{\"payload\":{\"sc_cmd\":{\"ev_announce\":null}}}";
 
 if __name__ == "__main__":
     

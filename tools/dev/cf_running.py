@@ -3,23 +3,24 @@ import sys
 import os
 import json
 
-def addState(index, id, isRunning):
+def addState(index, id, isRunning, first_element):
     package = "";
-    if index != 2:
+    if index != first_element:
         package = ","
     package += "\"" + id + "\" : " + isRunning + "";
     return package;
 
-def getCommand(index, id, isRunning):
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
-     command += addState(index, id, isRunning)
+def getCommand(id, isRunning, amount):
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_running\":{";
+    for i in range(amount):
+        command += addState(i, id[i], isRunning[0], 0)
     command += "}}}}";
     return command;
 
 def main():
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_running\":{";
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_running\":{";
     for i in range(2,  len(sys.argv), 2):
-        command += addState(i, sys.argv[i], sys.argv[i+1])
+        command += addState(i, sys.argv[i], sys.argv[i+1], 2)
     command += "}}}}";
     print(command);
     filename = os.path.abspath(sys.argv[1])

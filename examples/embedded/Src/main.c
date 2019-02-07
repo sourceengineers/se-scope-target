@@ -100,7 +100,7 @@ void receive(ScopeHandle scope){
 
 		IByteStreamHandle stream  = Scope_getInputStream(scope);
 		stream->write(stream, data, 200);
-		Scope_command(scope);
+		Scope_receiveData(scope);
 	}
 }
 
@@ -135,8 +135,8 @@ int main(void)
 
   ScopeHandle scope = Scope_create(600,3,3,ETHERNET,TIMESTAMP_MANUAL, &printHandle);
 
-  Scope_setAnnounceAddresses(scope, "INT_VALUE", &intVar, UINT32, 0);
-  Scope_setAnnounceAddresses(scope, "FLOAT_VALUE", &floatVar, FLOAT, 1);
+  Scope_addAnnounceAddresses(scope, "INT_VALUE", &intVar, UINT32, 0);
+  Scope_addAnnounceAddresses(scope, "FLOAT_VALUE", &floatVar, FLOAT, 1);
 
   Scope_announceAddresses(scope);
 

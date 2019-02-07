@@ -3,25 +3,27 @@ import sys
 import os
 import json
 
-def addAddr(index, id, addr, type):
+def addAddr(index, id, addr, type, first_element):
     package = "";
-    if index != 2:
+    if index != first_element:
         package = ","
     package += "\"" + id + "\":[" + addr +", \"" + type + "\"]"
     return package;
 
-def getCommand(index, id, addr, type):
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
-    command += addAddr(index, id, addr, type)
+def getCommand(id, addr, type, amount):
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
+    
+    for i in range(amount):
+        command += addAddr(i, id[i], addr[i], type[i], 0)
     command += "}}}}";
     return command;
 
 
 def main():
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_addr\":{";
 
     for i in range(2,  len(sys.argv), 3):
-        command += addAddr(i, sys.argv[i], sys.argv[i+1], sys.argv[i+2])
+        command += addAddr(i, sys.argv[i], sys.argv[i+1], sys.argv[i+2], 2)
 
     command += "}}}}";
 

@@ -4,7 +4,7 @@ import os
 import json
 
 def main():
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_tgr\":{\"cl_id\":" + sys.argv[2] + ",\"mode\": \"" + sys.argv[3] + "\",\"level\": " + sys.argv[4] + ",\"edge\": \"" + sys.argv[5] + "\"}}}}";
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_tgr\":{\"cl_id\":" + sys.argv[2] + ",\"mode\": \"" + sys.argv[3] + "\",\"level\": " + sys.argv[4] + ",\"edge\": \"" + sys.argv[5] + "\"}}}}";
     
     print(command);
     
@@ -14,7 +14,7 @@ def main():
     file.close()
 
 def getCommand(id, mode, level, edge):
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"cf_tgr\":{\"cl_id\":" + id + ",\"mode\": \"" + mode + "\",\"level\": " + level + ",\"edge\": \"" + edge + "\"}}}}";
+    command = "{\"payload\":{\"sc_cmd\":{\"cf_tgr\":{\"cl_id\":" + id + ",\"mode\": \"" + mode + "\",\"level\": " + level + ",\"edge\": \"" + edge + "\"}}}}";
     return command;
 
 if __name__ == "__main__":

@@ -13,6 +13,10 @@
 #ifndef DATATYPES_H_
 #define DATATYPES_H_
 
+#include <stdbool.h>
+#include <stdint.h>
+#include <stddef.h>
+
 /* Define the string names of the data types */
 #define UINT8_NAME "UINT8"
 #define UINT16_NAME "UINT16"
@@ -32,10 +36,12 @@ typedef enum {UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE} DATA_TYPES;
 
 /* Choose the right integer length */
 #if (ARCH_SIZE_32)
-  #define gemmi_uint uint32_t
+  #define ADDRESS_DATA_TYPE uint32_t
 #else
-  #define gemmi_uint uint64_t
+  #define ADDRESS_DATA_TYPE uint64_t
 #endif
+
+#define GenericReference void*
 
 
 

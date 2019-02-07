@@ -2,14 +2,14 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include <Scope/GeneralPurpose/ByteStream.h>
+    #include <Scope/GeneralPurpose/BufferedByteStream.h>
 }
 
 using namespace std;
 
 TEST(Bytestream, test_read_write_single)
 {
-  IByteStreamHandle stream = ByteStream_getIByteStream(ByteStream_create(4));
+  IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(4));
 
   stream->writeByte(stream, '\x11');
   stream->writeByte(stream, '\x22');
@@ -46,7 +46,7 @@ TEST(Bytestream, test_read_write_single)
 
 TEST(Bytestream, test_read_write_packets)
 {
-  IByteStreamHandle stream = ByteStream_getIByteStream(ByteStream_create(4));
+  IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(4));
 
   stream->write(stream, (const uint8_t*) "\x11\x22\x33\x44",4);
 
@@ -61,7 +61,7 @@ TEST(Bytestream, test_read_write_packets)
 
 TEST(Bytestream, test_flush)
 {
-  IByteStreamHandle stream = ByteStream_getIByteStream(ByteStream_create(4));
+  IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(4));
 
   stream->write(stream, (const uint8_t*) "\x11\x22\x33\x44",4);
 

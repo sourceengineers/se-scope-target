@@ -2,161 +2,108 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-    #include <Scope/Trigger.h>
-    #include <Scope/GeneralPurpose/FloatStream.h>
+#include <Scope/Core/Trigger.h>
+#include <Scope/GeneralPurpose/BufferedFloatStream.h>
 }
 using namespace std;
 
-/* Mocking of the stream */
-float* globalFloatStream;
 
-float globalTriggerDataActive;
-float globalTriggerDataOld;
+bool testCondition(float* var, float var1, float var2, TriggerConfiguration conf, ChannelHandle channel, TriggerHandle trigger){
 
-/* Functions for the IFloatStream interface */
-static size_t streamGetSize(IFloatStreamHandle iFloatStream){
-  return 2;
+    Channel_clear(channel);
+    Trigger_clear(trigger);
+
+    Trigger_configure(trigger, conf);
+    Trigger_activate(trigger);
+
+    *var = 0;
+    for(int i = 0; i < (Channel_getCapacity(channel) / 2)-2 ; ++i){
+        Channel_poll(channel);
+        Trigger_run(trigger);
+    }
+
+    *var = var1;
+    Channel_poll(channel);
+    Trigger_run(trigger);
+    *var = var2;
+    Channel_poll(channel);
+    Trigger_run(trigger);
+
+    bool isTriggered = Trigger_isTriggered(trigger);
+    Trigger_deactivate(trigger);
+    return isTriggered;
+
 }
 
-static void streamOpen(IFloatStreamHandle iFloatStream, float* floatStream){
-  globalFloatStream = floatStream;
+TEST(Trigger, test_normal){
+    ChannelHandle channel = Channel_create(200);
+    float var = 0;
+    Channel_setPollAddress(channel, &var, FLOAT);
+    Channel_setStateRunning(channel);
+    uint32_t timestamp = 0;
+    TimestamperHandle timestamper = Timestamper_create(200, &timestamp);
+
+    TriggerHandle trigger = Trigger_create(&channel, 1, 200, timestamper);
+    TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_ONESHOT, .channelId = 0};
+    Trigger_activate(trigger);
+
+    bool isTriggered = testCondition(&var, 1.1f, 5.5f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, false);
+
+    conf.level = 4.4f;
+    isTriggered = testCondition(&var, 1.1f, 5.5f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, true);
+
+    conf.level = 3.3f;
+    isTriggered = testCondition(&var, 5.5f, 1.1f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, false);
+
+    conf.level = 3.3f;
+    conf.edge = TRIGGER_EDGE_NEGATIVE;
+    isTriggered = testCondition(&var, 5.5f, 1.1f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, true);
+
+    conf.level = 6.6f;
+    conf.edge = TRIGGER_EDGE_NEGATIVE;
+    isTriggered = testCondition(&var, 5.5f, 1.1f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, false);
+
+    conf.level = -4.4f;
+    conf.edge = TRIGGER_EDGE_NEGATIVE;
+    isTriggered = testCondition(&var, -5.5f, -1.1f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, false);
+
+    conf.level = -4.4f;
+    conf.edge = TRIGGER_EDGE_POSITIVE;
+    isTriggered = testCondition(&var, -5.5f, -1.1f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, true);
+
+    conf.level = -6.6f;
+    conf.edge = TRIGGER_EDGE_POSITIVE;
+    isTriggered = testCondition(&var, -5.5f, -1.1f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, false);
+
+    conf.level = 3.3f;
+    conf.edge = TRIGGER_EDGE_POSITIVE;
+    isTriggered = testCondition(&var, -5.5f, 5.5f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, true);
+
+    conf.level = -3.3f;
+    conf.edge = TRIGGER_EDGE_POSITIVE;
+    isTriggered = testCondition(&var, -5.5f, 5.5f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, true);
 }
 
-static void streamClose(IFloatStreamHandle iFloatStream){
-  globalFloatStream = NULL;
-}
+TEST(Trigger, test_continuous){
+    ChannelHandle channel = Channel_create(200);
+    float var = 0;
+    Channel_setPollAddress(channel, &var, FLOAT);
+    Channel_setStateRunning(channel);
+    uint32_t timestamp = 0;
+    TimestamperHandle timestamper = Timestamper_create(200, &timestamp);
+    TriggerHandle trigger = Trigger_create(&channel, 1, 200, timestamper);
+    TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_CONTINUOUS, .channelId = 1};
 
-static void streamGetData(IFloatStreamHandle iFloatStream, float* data, const size_t length){
-  globalFloatStream[CHANNEL_CURRENT_DATA] = globalTriggerDataActive;
-  globalFloatStream[CHANNEL_OLD_DATA] = globalTriggerDataOld;
-}
-
-TEST(Trigger, test_normal)
-{
-  IFloatStream stream = *FloatStream_getIFloatStream(FloatStream_create(4));
-
-  TriggerHandle trigger = Trigger_create();
-  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_NORMAL, .stream = stream, .channelId = 1};
-
-  stream.flush(&stream);
-  stream.writeData(&stream, 1.1f);
-  stream.writeData(&stream, 5.5f);
-  Trigger_configure(trigger, conf);
-  bool isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, false);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, 1.1f);
-  stream.writeData(&stream, 5.5f);
-  conf.level = 4.4f;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, true);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, 5.5f);
-  stream.writeData(&stream, 1.1f);
-  conf.level = 3.3f;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, false);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, 5.5f);
-  stream.writeData(&stream, 1.1f);
-  conf.level = 3.3f;
-  conf.edge = TRIGGER_EDGE_NEGATIVE;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, true);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, 5.5f);
-  stream.writeData(&stream, 1.1f);
-  conf.level = 6.6f;
-  conf.edge = TRIGGER_EDGE_NEGATIVE;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, false);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, -5.5f);
-  stream.writeData(&stream, -1.1f);
-  conf.level = -4.4f;
-  conf.edge = TRIGGER_EDGE_NEGATIVE;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, false);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, -5.5f);
-  stream.writeData(&stream, -1.1f);
-  conf.level = -4.4f;
-  conf.edge = TRIGGER_EDGE_POSITIVE;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, true);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, -5.5f);
-  stream.writeData(&stream, -1.1f);
-  conf.level = -4.4f;
-  conf.edge = TRIGGER_EDGE_POSITIVE;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, true);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, -5.5f);
-  stream.writeData(&stream, -1.1f);
-  conf.level = -6.6f;
-  conf.edge = TRIGGER_EDGE_POSITIVE;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, false);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, -5.5f);
-  stream.writeData(&stream, 5.5f);
-  conf.level = 3.3f;
-  conf.edge = TRIGGER_EDGE_POSITIVE;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, true);
-  Trigger_release(trigger);
-
-  stream.flush(&stream);
-  stream.writeData(&stream, -5.5f);
-  stream.writeData(&stream, 5.5f);
-  conf.level = -3.3f;
-  conf.edge = TRIGGER_EDGE_POSITIVE;
-  Trigger_configure(trigger, conf);
-  isTriggered = Trigger_run(trigger, 1);
-  EXPECT_EQ(isTriggered, true);
-  Trigger_release(trigger);
-}
-
-TEST(Trigger, test_continuous)
-{
-  IFloatStream stream;
-  stream.length = &streamGetSize;
-  stream.read = &streamGetData;
-
-  TriggerHandle trigger = Trigger_create();
-  TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_CONTINUOUS, .stream = stream, .channelId = 1};
-
-  bool isTriggered = Trigger_run(trigger, 1);
-
-  EXPECT_EQ(isTriggered, false);
-  Trigger_release(trigger);
-
+    bool isTriggered = testCondition(&var, 1.1f, 5.5f, conf, channel, trigger);
+    EXPECT_EQ(isTriggered, false);
 }

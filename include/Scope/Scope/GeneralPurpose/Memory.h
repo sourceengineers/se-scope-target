@@ -14,10 +14,7 @@
 
 #include <stddef.h>
 
-/* Copies memory from source to destination */
-void copyMemory(char* dest, const char* src, size_t length);
-
-/* Copies the msgpack_object key to key and adds a delimited */
+/* Copies the string key to key and adds a delimited */
 void copyString(char *str, const char *data, size_t size);
 
 #endif

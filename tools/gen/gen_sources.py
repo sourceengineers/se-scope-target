@@ -21,9 +21,7 @@ def main():
         print("Usage: python gen_sources.py PATH_TO_PROJECT PATH_TO_DESTINATION");
     
     copy_tree(os.path.join(input_folder, "src"), os.path.join(output_folder, "src"))
-    copy_tree(os.path.join(input_folder, "3party/msgpackc/src"), os.path.join(output_folder, "src"))
     copy_tree(os.path.join(input_folder, "include/Scope"), os.path.join(output_folder, "include"))
-    copy_tree(os.path.join(input_folder, "3party/msgpackc/include"), os.path.join(output_folder, "include"))
     copy_tree(os.path.join(input_folder, "doc"), os.path.join(output_folder, "doc"))
     copy_tree(os.path.join(input_folder, "tools/dev"), os.path.join(output_folder, "tools"))
         
