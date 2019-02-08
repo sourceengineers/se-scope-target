@@ -87,7 +87,8 @@ void runTx(ICommunicatorHandle communicator){
         return;
     }
 
-    char formatedChecksum[3];
+    char* formatedChecksum;
+    formatedChecksum = (char*) "00\0";
     createOutputChecksum(self, formatedChecksum);
     self->output->write(self->output, (const uint8_t*) KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH);
     self->output->write(self->output, (const uint8_t*)  formatedChecksum, CHECKSUM_LENGTH + 1);
