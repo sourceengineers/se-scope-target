@@ -35,7 +35,7 @@ def config():
     ##########################################################################
     serial_file = '/dev/ttyACM0' # z.B.: COM1 bei Windows
     baudrate = 115200
-    timeout = 1.5
+    timeout = 2
 
     ##########################################################################
     ### Pfade
@@ -84,7 +84,7 @@ def config():
     # skaliert
     #x_width = None
 
-    x_width = 200
+    x_width = 100
     x_width = x_width * step_size
 
 ##############################################################################
@@ -299,7 +299,7 @@ def read_data():
     # output of the scope
     if ((b'{\"payload' in answer[0:10]) and (b"transport" in answer)):
         return prepare_data(answer)
-    else:
+    elif len(answer) > 0:
         print("Data pack corrupted...")
         print(answer);
     return False
@@ -324,7 +324,6 @@ def get_trigger_point():
 ##############################################################################
 def plot_data():
 
-
     for i in range(len(plot_conf)):
         for ch in plot_conf[i][0]:
             if len(device_data[len(channels)]) == len(device_data[ch]):
@@ -339,22 +338,10 @@ def plot_data():
             else:
                 clear_data()
 
-    # Plot the trigger point
-    if trigger_data['found'] == True and not trigger_conf['mode'] =='Continous':
-        trigger_point = get_trigger_point()
-        ymin, ymax = ax[trigger_on_axis].get_ylim()
-        xmin, xmax = ax[trigger_on_axis].get_xlim()
-        trigger_lines['vline'].remove()
-        trigger_lines['hline'].remove()
-        trigger_lines['hline'] = ax[trigger_on_axis].axhline(trigger_point['y'], color='r', linestyle='dashed');
-        trigger_lines['vline'] = ax[trigger_on_axis].axvline(trigger_point['x'], color='r', linestyle='dashed');
-
     # Scale the plot
     for i in range(len(plot_conf)):
 
         # Calculate values vor x and y lim
-        last_time_stamp = device_data[len(channels)].pop()
-        device_data[len(channels)].append(last_time_stamp)
 
         extrem_values = []
 
@@ -371,19 +358,23 @@ def plot_data():
 
         # Manual or autoscaling
         if not x_width == None and len(list(device_data[len(channels)])) > 0:
-            ax[i].set_xlim(last_time_stamp - x_width, last_time_stamp)
+            if x_width < len(device_data[len(channels)]):
+                ax[i].set_xlim(device_data[len(channels)][-x_width], device_data[len(channels)][-1])
+            else:
+                ax[i].set_xlim(device_data[len(channels)][0], device_data[len(channels)][-1])
+
         else:
-            x_max = max(device_data[len(channels)])
-            x_min = min(device_data[len(channels)])
-            ax[i].set_xlim(x_min, x_max)
+            ax[i].set_xlim(device_data[len(channels)][0], device_data[len(channels)][-1])
 
         # Draw grid
         left, right = ax[i].get_xlim()
-        x_major_ticks = np.arange(left, right, (right-left)/10)
-        x_minor_ticks = np.arange(left, right, (right-left)/50)
+        dx = (right-left)/10
+        x_major_ticks = np.arange(left, right, dx)
+        x_minor_ticks = np.arange(left, right, dx/5)
         bottom, top = ax[i].get_ylim()
-        y_major_ticks = np.arange(bottom, top, (top-bottom)/10)
-        y_minor_ticks = np.arange(bottom, top, np.absolute(top-bottom)/50)
+        dy = np.absolute(top-bottom)/10
+        y_major_ticks = np.arange(bottom, top, dy)
+        y_minor_ticks = np.arange(bottom, top, dy/5)
 
         ax[i].set_xticks(x_major_ticks)
         ax[i].set_xticks(x_minor_ticks, minor=True)
@@ -391,6 +382,19 @@ def plot_data():
         ax[i].set_yticks(y_minor_ticks, minor=True)
         ax[i].grid(which='minor', alpha=0.5, linestyle='--')
         ax[i].grid(which='major', alpha=1, linestyle='--')
+
+        for text in ax[i].texts:
+            text.remove();
+
+        ax[i].text(0, 0, "dx:{:10.2f}, dy:{:10.2f}".format(dx,dy), size=10, ha="left", transform=ax[i].transAxes)
+
+        # Plot the trigger point
+    if trigger_data['found'] == True and not trigger_conf['mode'] =='Continous':
+        trigger_point = get_trigger_point()
+        trigger_lines['vline'].remove()
+        trigger_lines['hline'].remove()
+        trigger_lines['hline'] = ax[trigger_on_axis].axhline(trigger_point['y'], color='r', linestyle='dashed');
+        trigger_lines['vline'] = ax[trigger_on_axis].axvline(trigger_point['x'], color='r', linestyle='dashed');
 
     plt.draw()
     plt.pause(1e-17)
