@@ -383,17 +383,18 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
     for(size_t i = 0; i < self->amountOfChannelsToSend; ++i){
         if(self->channelBuffers[i] != NULL){
             char id[MAX_LENGTH_OF_NUMBER];
+            size_t len = 0;
 #if (ARCH_SIZE_32)
-            sprintf(id, "%u", self->channelIds[i]);
+            len = sprintf(id, "%u", self->channelIds[i]);
 #else
-            sprintf(id, "%llu", (long long unsigned int) self->channelIds[i]);
+            len = sprintf(id, "%llu", (long long unsigned int) self->channelIds[i]);
 #endif
 
             /* Add a , in front of the channel data in case it isn't the first one */
             if(i != 0){
                 appendData(self->byteStream, ",", 1, "", 0);
             }
-            appendString(self->byteStream, id, strlen(id), ":[", 2);
+            appendString(self->byteStream, id, len, ":[", 2);
             FloatRingBufferHandle buffer = self->channelBuffers[i];
             size_t amountOfDataToWrite = FloatRingBuffer_getNumberOfUsedData(buffer);
             float data = 0.0f;
