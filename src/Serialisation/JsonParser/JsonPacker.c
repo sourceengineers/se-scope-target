@@ -152,7 +152,7 @@ inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE
     length = sprintf(buffer, "%u", origin);
 
 #else
-    length = sprintf(number, "%llu", (long long unsigned int) origin);
+    length = sprintf(buffer, "%llu", (long long unsigned int) origin);
 #endif
     destination->write(destination, buffer, length);
 
@@ -234,7 +234,7 @@ static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded){
     data = self->timestamp->readData(self->timestamp);
     appendNumber(self->byteStream, data, "", 0);
 
-    for(int i = 0; i < dataLength; ++i){
+    for(int i = 1; i < dataLength; ++i){
 
         self->byteStream->writeByte(self->byteStream, ',');
         data = self->timestamp->readData(self->timestamp);
