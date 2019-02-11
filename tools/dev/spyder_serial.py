@@ -264,7 +264,7 @@ def append_to_channel(channel, data):
 ##############################################################################
 
 def prepare_data(data):
-    for data_package in data.split(b'\0'):
+    for data_package in data.split(b'transport:00\0'):
         data_package = data_package.split(b'transport')[0];
         ans = process_data(data_package)
         if ans is None:
@@ -293,11 +293,11 @@ def clear_data():
 ##############################################################################
 
 def read_data():
-    answer = ser.read_until(b'\0');
+    answer = ser.read_until(b'transport:00\0');
 
     #print(answer)    # Uncomment this print if you want to see the complete
     # output of the scope
-    if ((b'{\"payload' in answer[0:10]) and (b"transport" in answer)):
+    if ((b'{\"payload' in answer[0:10]) and (b'transport:00\0' in answer)):
         return prepare_data(answer)
     elif len(answer) > 0:
         print("Data pack corrupted...")

@@ -44,11 +44,10 @@ static void run(ICommandHandle command){
   }
 }
 
-
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningHandle CommandRunning_create(IScopeHandle scope){//ChannelHandle* channels, const size_t amountOfChannels){
+CommandRunningHandle CommandRunning_create(IScopeHandle scope){
 
   CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));
 
