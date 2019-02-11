@@ -27,9 +27,7 @@ void print(EthernetJsonHandle self){
 
     EthernetJson_getTxData(self, data, length);
 
-    fprintf(file, "\nMessage: %s", data);
-
-    fprintf(file, "\n");
+    fprintf(file, "%s\n", data);
 
     fclose(file);
 }

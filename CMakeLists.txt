@@ -51,7 +51,7 @@ elseif(ARCHITECTURE STREQUAL "EMBEDDED")
 
 endif()
 
-project(${PROJECT_NAME})
+project(${PROJECT_NAME} C ASM)
 
 ################################################################################
 # Set options

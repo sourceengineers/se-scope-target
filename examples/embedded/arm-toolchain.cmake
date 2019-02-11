@@ -7,20 +7,23 @@
 
 # name of the target OS on which the built artifacts will run and the
 # toolchain prefix. if target is an embedded system without an OS, set
+SET(CMAKE_C_COMPILER_WORKS 1)
 # CMAKE_SYSTEM_NAME to `Generic`
-set(CMAKE_SYSTEM_NAME Linux)
-set(TOOLCHAIN_PREFIX arm-linux-gnueabi)
+set(CMAKE_SYSTEM_NAME 'Generic')
+set(TOOLCHAIN_PREFIX arm-none-gnueabi)
 SET(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
-# cross compilers to use for C and C++
-set(CMAKE_C_COMPILER /usr/bin/${TOOLCHAIN_PREFIX}-gcc)
-set(CMAKE_CXX_COMPILER /usr/bin/${TOOLCHAIN_PREFIX}-g++)
+# Project specific flags
+SET(FPU_FLAGS "-mfloat-abi=hard -mfpu=fpv4-sp-d16")
+add_definitions(-DARM_MATH_CM4 -DARM_MATH_MATRIX_CHECK -DARM_MATH_ROUNDING -D__FPU_PRESENT=1 )
+SET(COMMON_FLAGS "-mcpu=cortex-m4 ${FPU_FLAGS} -mthumb -mthumb-interwork -ffunction-sections -fdata-sections -g -fno-common -fmessage-length=0 -specs=nosys.specs -specs=nano.specs")
+SET(CMAKE_EXE_LINKER_FLAGS_INIT "-Wl,-gc-sections -T ${LINKER_SCRIPT}")
+add_definitions(-D__weak=__attribute__\(\(weak\)\) -D__packed=__attribute__\(\(__packed__\)\) -DUSE_HAL_DRIVER -DSTM32F407xx )
+
+SET(CMAKE_C_COMPILER arm-none-eabi-gcc)
+SET(CMAKE_CXX_COMPILER arm-none-eabi-g++)
 
 include_directories(${TOOLCHAIN_PREFIX}/include)
-
-# target environment on the build host system
-#   set 1st to dir with the cross compiler's C/C++ headers/libs
-set(CMAKE_FIND_ROOT_PATH /usr/${TOOLCHAIN_PREFIX})
 
 # modify default behavior of FIND_XXX() commands to
 # search for headers/libs in the target environment and

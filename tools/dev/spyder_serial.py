@@ -234,6 +234,9 @@ def init_plots():
             legend_list.append(lines[ch])
         ax[i].legend(handles=list(legend_list), loc='upper left')
 
+    plt.draw()
+    plt.pause(1e-17)
+
 ##############################################################################
 
 def data_is_present(data):

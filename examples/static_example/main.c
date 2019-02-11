@@ -3,10 +3,9 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include <zconf.h>
 #include <Scope/Communication/Interfaces/EthernetJson.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+#include <unistd.h>
 
 /*
  * watch the s_out file with:
@@ -15,16 +14,16 @@
  *  make it more readable)
  */
 
-void print(IByteStreamHandle stream){
+void print(EthernetJsonHandle ethernetJson){
 
     FILE* file = fopen("s_out", "w+");
 
-    const size_t length = stream->length(stream);
+    const size_t length = EthernetJson_amountOfTxDataPending(ethernetJson);
     uint8_t data[length];
 
-    stream->read(stream, data, length);
-    fprintf(file, "%s", data);
+    EthernetJson_getTxData(ethernetJson, data, length);
 
+    fprintf(file, "%s", data);
     fclose(file);
 }
 
@@ -36,17 +35,13 @@ int main(){
 ***********************************************************************************************************************/
     size_t amountOfChannels = 2;
     size_t sizeOfChannels = 100;
-    size_t addressesInAddressAnnouncer = 3;
-    size_t outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
-                                                             addressesInAddressAnnouncer);
+    size_t outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels, 0);
 
     BufferedByteStreamHandle output = BufferedByteStream_create(outputBufferSize);
-    JsonPackerHandle packer = JsonPacker_create(3, 3, BufferedByteStream_getIByteStream(output));
+    JsonPackerHandle packer = JsonPacker_create(3, 0, BufferedByteStream_getIByteStream(output));
     EthernetJsonHandle ethernetJson = EthernetJson_create(print, NULL,
                                                           BufferedByteStream_getIByteStream(output));
     uint32_t timestamp = 0;
-
-    AddressStorageHandle addressStorage = AddressStorage_create(addressesInAddressAnnouncer);
 
     ScopeBuilderHandle builder = ScopeBuilder_create();
     ScopeBuilder_setChannels(builder, amountOfChannels, sizeOfChannels);
@@ -54,7 +49,6 @@ int main(){
     ScopeBuilder_setTimestampReference(builder, &timestamp);
     ScopeBuilder_setCommunication(builder, EthernetJson_getCommunicator(ethernetJson));
     ScopeBuilder_setParser(builder, JsonPacker_getIPacker(packer), NULL);
-    ScopeBuilder_setAddressStorage(builder, addressStorage);
 
     ScopeObject obj = ScopeBuilder_build(builder);
 
@@ -80,11 +74,9 @@ int main(){
     }
 
     ScopeBuilder_destroy(builder);
-
     JsonPacker_destroy(packer);
     EthernetJson_destroy(ethernetJson);
     BufferedByteStream_destroy(output);
-    AddressStorage_destroy(addressStorage);
 
     return 0;
 }
