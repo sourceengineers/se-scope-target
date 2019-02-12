@@ -425,8 +425,11 @@ def get_address_from_map(var_name):
     with open(map_file, 'r') as f:
         for line in f:
             if var_name in line:
-                value = next(f).split()[0]
-                return int(value, 0)
+                for word in line.split('.'):
+                    # Make sure the varaible is EXACTLY the searched name
+                    if word == var_name:
+                        value = next(f).split()[0]
+                        return int(value, 0)
 
     raise Exception("""The searched value \"" + var_name + "\" couldn't be
                         found in the map file. Sending a faulty address
