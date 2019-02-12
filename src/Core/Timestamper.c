@@ -11,6 +11,7 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/BufferedFloatStream.h>
 #include <Scope/GeneralPurpose/BufferedIntStream.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

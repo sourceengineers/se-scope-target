@@ -63,7 +63,7 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self){
         return NULL;
     }
 
-    const uint32_t numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, commandName);
+    const int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, commandName);
 
     if(numberOfFields == -1){
         return NULL;
@@ -75,14 +75,19 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self){
 
     char nameOfField[MAX_FIELD_LENGTH];
 
-    for(size_t i = 0; i < numberOfFields; i++){
+    for(uint32_t i = 0; i < numberOfFields; i++){
 
         const bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField,
                                                                MAX_FIELD_LENGTH, i);
 
         /* Only start parsing if the field was found, and its not a data type field */
         if(foundField == true){
-            channelIds[i] = (uint32_t) atoi(nameOfField);
+            char* endPtr;
+            channelIds[i] = (uint32_t) strtoul(nameOfField, &endPtr, 10);
+
+            if(*endPtr != '\0'){
+                return NULL;
+            }
 
             CommandFetchingInformation information = {.commandName = commandName, .fieldName = nameOfField,
                     .isInArray = true, .arrayIndex = 0};

@@ -14,7 +14,6 @@
  *               To configure the trigger, the specific Trigger has to be passed
  *               to the trigger and the trigger mode has to be choosen. 
  *
- *               TODO - OneShot tigger has to be implemented
  *
  ******************************************************************************/
 

@@ -54,7 +54,12 @@ ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
         bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField, MAX_FIELD_LENGTH, i);
 
         if(foundField == true){
-            channelIds[i] = atoi(nameOfField);
+            char* endPtr;
+            channelIds[i] = (uint32_t) strtoul(nameOfField, &endPtr, 10);
+
+            if(*endPtr != '\0'){
+                return NULL;
+            }
 
             CommandFetchingInformation information = {.commandName = commandName, .fieldName = nameOfField,
                     .isInArray = false, .arrayIndex = 0};

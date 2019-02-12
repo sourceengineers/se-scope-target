@@ -145,13 +145,11 @@ inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE
     char buffer[MAX_LENGTH_OF_NUMBER];
     size_t length = 0;
 #if (ARCH_SIZE_32)
-
-    length = sprintf(buffer, "%u", origin);
-
+    length = sprintf(buffer, "%u", (unsigned int) origin);
 #else
     length = sprintf(buffer, "%llu", (long long unsigned int) origin);
 #endif
-    destination->write(destination, buffer, length);
+    destination->write(destination, (uint8_t*) buffer, length);
 
     if(endWithSize != 0){
         destination->write(destination, (uint8_t*) endWith, endWithSize);
@@ -382,7 +380,7 @@ static bool packChannel(JsonPackerHandle self, bool commaIsNeeded){
             char id[MAX_LENGTH_OF_NUMBER];
             size_t len = 0;
 #if (ARCH_SIZE_32)
-            len = sprintf(id, "%u", self->channelIds[i]);
+            len = sprintf(id, "%u", (unsigned int) self->channelIds[i]);
 #else
             len = sprintf(id, "%llu", (long long unsigned int) self->channelIds[i]);
 #endif

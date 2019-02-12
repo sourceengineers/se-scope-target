@@ -15,7 +15,7 @@
 #include <stdlib.h>
 #include <jsmn/jsmn.h>
 
-#define INPUT_BUFFER_SIZE 500
+#define INPUT_BUFFER_SIZE 250
 #define TOKEN_BUFFER_SIZE 100
 
 /******************************************************************************
@@ -55,7 +55,7 @@ void copyString(char* str, const char* data, size_t size){
 
 static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t* tok, size_t index){
 
-    uint32_t startPosition = tok->start;
+    int startPosition = tok->start;
     uint32_t foundNextTokens = 0;
 
     for(int i = 0; i < TOKEN_BUFFER_SIZE - 1; ++i){
@@ -70,7 +70,7 @@ static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t* tok, si
 
             /* The next field starts with one character shifted more, if its a string field,
              * because of the used " of the string. */
-            size_t positionOffset = (&self->storageTokens[i] + 1)->type == JSMN_STRING ? 3 : 2;
+            uint32_t positionOffset = (&self->storageTokens[i] + 1)->type == JSMN_STRING ? 3 : 2;
 
             startPosition = (&self->storageTokens[i] + 1)->end + positionOffset;
         }
@@ -139,17 +139,17 @@ static jsmntok_t* getField(JsonUnpackerHandle self, jsmntok_t* command, const ch
         return NULL;
     }
 
-    size_t numberOfFields = field->size;
+    int numberOfFields = field->size;
 
-    for(int i = 0; i < numberOfFields; ++i){
-        jsmntok_t* field = getElementInObject(self, command + 2, i);
+    for(uint32_t i = 0; i < numberOfFields; ++i){
+        jsmntok_t* object = getElementInObject(self, command + 2, i);
 
-        if(field == NULL){
+        if(object == NULL){
             return NULL;
         }
 
         char name[MAX_LENGTH_OF_FIELD_NAME];
-        copyString(name, self->storageString + field->start, field->end - field->start);
+        copyString(name, self->storageString + field->start, (size_t) (object->end - object->start));
 
         if(strncmp(name, fieldName, MAX_LENGTH_OF_FIELD_NAME) == 0){
             return field + 1;
@@ -171,7 +171,7 @@ static jsmntok_t* getCommand(JsonUnpackerHandle self, const char* commandName){
         return false;
     }
 
-    for(int i = 0; i < self->numberOfCommands; ++i){
+    for(uint32_t i = 0; i < self->numberOfCommands; ++i){
 
         jsmntok_t* command = getElementInObject(self, tok + 1, i);
 
@@ -180,7 +180,7 @@ static jsmntok_t* getCommand(JsonUnpackerHandle self, const char* commandName){
         }
 
         char name[MAX_LENGTH_OF_FIELD_NAME];
-        copyString(name, self->storageString + command->start, command->end - command->start);
+        copyString(name, self->storageString + command->start, (size_t) (command->end - command->start));
 
         if(strncmp(name, commandName, MAX_LENGTH_OF_FIELD_NAME) == 0){
             return command;
@@ -203,7 +203,7 @@ static int matchKeyToIndex(const char* json, jsmntok_t* tok, const char* key, in
 
 static bool jsoneq(const char* json, jsmntok_t* tok, const char* key){
     if(tok->type == JSMN_STRING && (int) strlen(key) == tok->end - tok->start &&
-       strncmp(json + tok->start, key, tok->end - tok->start) == 0){
+       strncmp(json + tok->start, key, (size_t) (tok->end - tok->start)) == 0){
         return true;
     }
     return false;
@@ -286,7 +286,7 @@ static bool getNameOfCommand(IUnpackerHandle unpacker, char* name, const int max
         return false;
     }
 
-    jsmntok_t* field = getElementInObject(self, tok + 1, index);
+    jsmntok_t* field = getElementInObject(self, tok + 1, (uint32_t) index);
 
     if(field == NULL){
         return false;
@@ -300,7 +300,7 @@ static bool getNameOfCommand(IUnpackerHandle unpacker, char* name, const int max
         return false;
     }
 
-    copyString(name, self->storageString + field->start, field->end - field->start);
+    copyString(name, self->storageString + field->start, (size_t) (field->end - field->start));
 
     return true;
 }
@@ -333,7 +333,7 @@ static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle unpacker, CommandFetc
     }
 
     char value[MAX_LENGTH_OF_NUMBER];
-    copyString(value, self->storageString + field->start, field->end - field->start);
+    copyString(value, self->storageString + field->start, (size_t) (field->end - field->start));
 
 #if (ARCH_SIZE_32)
     return strtoul(value, NULL, 0);
@@ -366,9 +366,9 @@ static float getFloatFromCommand(IUnpackerHandle unpacker, CommandFetchingInform
     }
 
     char value[MAX_LENGTH_OF_NUMBER];
-    copyString(value, self->storageString + field->start, field->end - field->start);
+    copyString(value, self->storageString + field->start, (size_t) (field->end - field->start));
 
-    return atof(value);
+    return strtof(value, NULL);
 }
 
 static bool getBoolFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information){
@@ -394,7 +394,7 @@ static bool getBoolFromCommand(IUnpackerHandle unpacker, CommandFetchingInformat
     }
 
     char value[MAX_LENGTH_OF_NUMBER];
-    copyString(value, self->storageString + field->start, field->end - field->start);
+    copyString(value, self->storageString + field->start, (size_t) (field->end - field->start));
 
     return strncmp(value, "true", MAX_LENGTH_OF_NUMBER) == 0 ? true : false;
 }
@@ -445,7 +445,7 @@ static bool getNameOfField(IUnpackerHandle unpacker, const char* commandName, ch
         return false;
     }
 
-    jsmntok_t* field = getElementInObject(self, command + 1, index);
+    jsmntok_t* field = getElementInObject(self, command + 1, (uint32_t) index);
 
     if(field == NULL){
         return false;
@@ -547,6 +547,12 @@ JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
 }
 
 void JsonUnpacker_destroy(JsonUnpackerHandle self){
+    free(self->inputTokens);
+    self->inputTokens = NULL;
+    free(self->storageTokens);
+    self->storageTokens = NULL;
+    free(self->storageString);
+    self->storageString = NULL;
     free(self);
     self = NULL;
 }

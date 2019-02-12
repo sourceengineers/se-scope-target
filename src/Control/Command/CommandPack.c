@@ -21,9 +21,6 @@ typedef struct __CommandPackPrivateData{
     IScopeHandle scope;
     IPackerHandle packer;
 
-    float** channelData; // Buffers to safe data from channels. This might not be the most ideal solution,
-    // since it takes up as much space as the channels themselves
-
 } CommandPackPrivateData;
 
 /******************************************************************************
@@ -79,16 +76,6 @@ CommandPackHandle CommandPack_create(IScopeHandle scope, IPackerHandle packer){
     self->scope = scope;
     self->packer = packer;
 
-    const size_t maxSizeOfChannels = self->scope->getMaxSizeOfChannel(self->scope);
-    const size_t amountOfChannels = self->scope->getAmountOfChannels(self->scope);
-
-    // Todo: this takes up unnecessary space. Maybe streams would be a better option?
-    self->channelData = malloc(sizeof(float**) * amountOfChannels);
-
-    for(size_t i = 0; i < amountOfChannels; i++){
-        self->channelData[i] = malloc(sizeof(float*) * maxSizeOfChannels);
-    }
-
     self->command.handle = self;
     self->command.run = &run;
 
@@ -100,8 +87,6 @@ ICommandHandle CommandPack_getICommand(CommandPackHandle self){
 }
 
 void CommandPack_destroy(CommandPackHandle self){
-    free(self->channelData);
-    self = NULL;
     free(self);
     self = NULL;
 }

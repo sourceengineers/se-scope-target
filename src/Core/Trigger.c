@@ -63,7 +63,7 @@ static void setState(TriggerHandle self, TRIGGER_STATES state);
 static TRIGGER_STATES getState(TriggerHandle self);
 
 /* Checks if the trigger criteria matches the current data */
-static bool checkCurrentData(TriggerHandle self, float* triggerData);
+static bool checkCurrentData(TriggerHandle self, const float* triggerData);
 
 /* Fetches the current trigger values from the stream */
 static bool getTriggerData(TriggerHandle self, float* data);
@@ -248,7 +248,7 @@ static void stopIntoIdle(TriggerHandle self){
     setState(self, TRIGGER_IDLE);
 }
 
-static bool checkCurrentData(TriggerHandle self, float* triggerData){
+static bool checkCurrentData(TriggerHandle self, const float* triggerData){
 
     const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
     const float dataLast = triggerData[CHANNEL_CURRENT_DATA];
