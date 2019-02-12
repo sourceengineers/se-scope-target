@@ -38,7 +38,7 @@ ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
         return NULL;
     }
 
-    const uint32_t numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) commandName);
+    const int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) commandName);
 
     if(numberOfFields == -1){
         return NULL;

@@ -63,7 +63,6 @@ IRunnableHandle Communicator_getTxRunnable(CommunicatorHandle self){
 }
 
 void Communicator_destroy(CommunicatorHandle self){
-
     free(self);
     self = NULL;
 }

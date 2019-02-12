@@ -370,6 +370,8 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
 }
 
 void Trigger_destroy(TriggerHandle self){
+    free(self->channelIsRunning);
+    self->channelIsRunning = NULL;
     free(self->channels);
     self->channels = NULL;
     free(self);
@@ -390,7 +392,6 @@ bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
 }
 
 bool Trigger_run(TriggerHandle self){
-
 
     if(getState(self) == TRIGGER_IDLE){
         return false;

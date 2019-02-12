@@ -149,10 +149,10 @@ static jsmntok_t* getField(JsonUnpackerHandle self, jsmntok_t* command, const ch
         }
 
         char name[MAX_LENGTH_OF_FIELD_NAME];
-        copyString(name, self->storageString + field->start, (size_t) (object->end - object->start));
+        copyString(name, self->storageString + object->start, (size_t) (object->end - object->start));
 
         if(strncmp(name, fieldName, MAX_LENGTH_OF_FIELD_NAME) == 0){
-            return field + 1;
+            return object + 1;
         }
     }
 
