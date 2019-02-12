@@ -10,7 +10,7 @@
  *               Starts a sending event, provided by the IScope interface
  * 
  ******************************************************************************/
- 
+
 #ifndef COMMANDPACK_H_
 #define COMMANDPACK_H_
 

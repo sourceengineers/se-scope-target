@@ -47,7 +47,7 @@ void readFile(EthernetJsonHandle self, const char* filename){
     buffer[0] = '\0';
 
     if(fgets(buffer, 200, file) != NULL){
-        EthernetJson_putRxData(self,  (uint8_t*) buffer, strlen(buffer));
+        EthernetJson_putRxData(self, (uint8_t*) buffer, strlen(buffer));
     }
     fclose(file);
     fopen(filename, "w");
@@ -69,7 +69,8 @@ int main(int argc, char* argv[]){
     BufferedByteStreamHandle input = BufferedByteStream_create(inputBufferSize);
     BufferedByteStreamHandle output = BufferedByteStream_create(outputBufferSize);
     JsonUnpackerHandle unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(input));
-    JsonPackerHandle packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer, BufferedByteStream_getIByteStream(output));
+    JsonPackerHandle packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer,
+                                                BufferedByteStream_getIByteStream(output));
     EthernetJsonHandle ethernetJson = EthernetJson_create(print, BufferedByteStream_getIByteStream(input),
                                                           BufferedByteStream_getIByteStream(output));
     uint32_t timestamp = 0;
@@ -78,7 +79,8 @@ int main(int argc, char* argv[]){
 
     ScopeBuilderHandle builder = ScopeBuilder_create();
     ScopeBuilder_setChannels(builder, amountOfChannels, sizeOfChannels);
-    ScopeBuilder_setStreams(builder, BufferedByteStream_getIByteStream(input), BufferedByteStream_getIByteStream(output));
+    ScopeBuilder_setStreams(builder, BufferedByteStream_getIByteStream(input),
+                            BufferedByteStream_getIByteStream(output));
     ScopeBuilder_setTimestampReference(builder, &timestamp);
     ScopeBuilder_setCommunication(builder, EthernetJson_getCommunicator(ethernetJson));
     ScopeBuilder_setParser(builder, JsonPacker_getIPacker(packer), JsonUnpacker_getIUnpacker(unpacker));

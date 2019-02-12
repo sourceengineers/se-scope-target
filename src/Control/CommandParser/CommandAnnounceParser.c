@@ -25,22 +25,22 @@ typedef struct __CommandAnnounceParserPrivateData{
  Public functions
 ******************************************************************************/
 CommandAnnounceParserHandle CommandAnnounceParser_create(IScopeHandle scope){
-  CommandAnnounceParserHandle self = malloc(sizeof(CommandAnnounceParserPrivateData));
-  self->command = CommandAnnounce_create(scope);
-  return self;
+    CommandAnnounceParserHandle self = malloc(sizeof(CommandAnnounceParserPrivateData));
+    self->command = CommandAnnounce_create(scope);
+    return self;
 }
 
 ICommandHandle CommandAnnounceParser_getCommand(CommandAnnounceParserHandle self){
-  return CommandAnnounce_getICommand(self->command);
+    return CommandAnnounce_getICommand(self->command);
 }
 
 char* CommandAnnounceParser_getName(){
-  return commandName;
+    return commandName;
 }
 
 void CommandAnnounceParser_destroy(CommandAnnounceParserHandle self){
-  CommandAnnounce_destroy(self->command);
+    CommandAnnounce_destroy(self->command);
 
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

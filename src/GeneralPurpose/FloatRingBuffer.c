@@ -8,6 +8,7 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
@@ -18,6 +19,7 @@ typedef struct __FloatRingBufferPrivateData{
     float* head;
     float* tail;
     size_t capacity;
+
 } FloatRingBufferPrivateData;
 
 /* Returns the next index of the given index */

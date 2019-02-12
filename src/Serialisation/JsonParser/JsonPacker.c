@@ -9,15 +9,14 @@
 
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <Scope/Serialisation/JsonParser/JsonCommon.h>
 #include <Scope/Control/ParserDefinitions.h>
-//#include <math.h>
 
 #define FLOWCONTROL_BUFFER_SIZE 30
 #define TINC_BUFFER_SIZE 30
 #define TRIGGER_BUFFER_SIZE 60
-
 #define MAX_CONTROL_SIGN_SIZE 30
 
 /******************************************************************************
@@ -25,9 +24,8 @@
 ******************************************************************************/
 /* Class data */
 typedef struct __JsonPackerPrivateData{
-    size_t maxNumberOfChannels;
-
     IPacker packer;
+    size_t maxNumberOfChannels;
 
     /* Data for the Announce address feature */
     size_t maxAddressesToAnnounce;
@@ -36,7 +34,6 @@ typedef struct __JsonPackerPrivateData{
     ADDRESS_DATA_TYPE* addresses;
     uint32_t numberOfAddressesToAnnounce;
     bool addressesReady;
-
     IByteStreamHandle byteStream;
 
     /* Channel preparation data */
@@ -62,7 +59,6 @@ typedef struct __JsonPackerPrivateData{
     /* Flow control data */
     bool flowcontrolReady;
     char flowcontrol[4];
-
     bool dataPendingToBePacked;
 
 } JsonPackerPrivateData;
@@ -101,6 +97,7 @@ static bool packChannelMap(JsonPackerHandle self);
 static bool packPayloadMap(JsonPackerHandle self);
 
 static void appendFloat(float data, IByteStreamHandle stream);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -142,7 +139,7 @@ inline static void addComma(IByteStreamHandle destination, bool commaIsNeeded){
 }
 
 inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE origin, const char* endWith,
-                                    size_t endWithSize){
+                                size_t endWithSize){
 
 
     char buffer[MAX_LENGTH_OF_NUMBER];
@@ -197,7 +194,7 @@ static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded){
     }
 
     addComma(self->byteStream, commaIsNeeded);
-    appendString(self->byteStream, KEYWORD_T_INC, KEYWORD_T_INC_LENGTH,  ":", 1);
+    appendString(self->byteStream, KEYWORD_T_INC, KEYWORD_T_INC_LENGTH, ":", 1);
     appendNumber(self->byteStream, self->timeIncrement, "", 0);
 
     self->tIncReady = false;

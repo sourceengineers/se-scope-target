@@ -9,15 +9,11 @@
  *                through the read function, or through the implementation of
  *                stream interface.
  ******************************************************************************/
- 
+
 #ifndef FLOATRINGBUFFER_H_
 #define FLOATRINGBUFFER_H_
 
 #include <Scope/GeneralPurpose/IFloatStream.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

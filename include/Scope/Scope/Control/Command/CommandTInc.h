@@ -41,5 +41,4 @@ void CommandTInc_setAttributes(CommandTIncHandle self, uint32_t timeIncrement);
 ICommandHandle CommandTInc_getICommand(CommandTIncHandle self);
 
 
-
 #endif

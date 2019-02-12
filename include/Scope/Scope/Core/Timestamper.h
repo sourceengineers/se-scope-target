@@ -8,13 +8,11 @@
  * @brief        Impelments the channels, which will be attached to the scope
  * 
  ******************************************************************************/
- 
+
 #ifndef TIMESTAMPER_H_
 #define TIMESTAMPER_H_
 
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/Core/ScopeTypes.h>
 #include <Scope/GeneralPurpose/IIntStream.h>
 
 /******************************************************************************
@@ -31,7 +29,7 @@ TimestamperHandle Timestamper_create(size_t capacity, uint32_t* referenceTimesta
 /* Deconstructor: Deletes the instance of the channel */
 void Timestamper_destroy(TimestamperHandle self);
 
-bool Timestamper_updateElapsedTime(TimestamperHandle self) ;
+bool Timestamper_updateElapsedTime(TimestamperHandle self);
 
 void Timestamper_stamp(TimestamperHandle self);
 

@@ -30,7 +30,7 @@ static const char* data = (const char*) "{\"payload\": {"
 TEST(json_unpacker, unpack_test){
 
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream,(uint8_t*) data, strlen(data));
+    stream->write(stream, (uint8_t*) data, strlen(data));
     stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
     bool unpackSuccessful = unpacker->unpack(unpacker);
@@ -45,7 +45,7 @@ TEST(json_unpacker, unpack_test){
 TEST(json_unpacker, command_name){
 
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream,(uint8_t*) data, strlen(data));
+    stream->write(stream, (uint8_t*) data, strlen(data));
     stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
     bool unpackSuccessful = unpacker->unpack(unpacker);
@@ -63,7 +63,7 @@ TEST(json_unpacker, command_name){
 
 TEST(json_unpacker, values_from_commands){
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream,(uint8_t*) data, strlen(data));
+    stream->write(stream, (uint8_t*) data, strlen(data));
     stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
     bool unpackSuccessful = unpacker->unpack(unpacker);
@@ -106,7 +106,7 @@ TEST(json_unpacker, values_from_commands){
 
 TEST(json_unpacker, values_from_array){
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream,(uint8_t*) data, strlen(data));
+    stream->write(stream, (uint8_t*) data, strlen(data));
     stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
     bool unpackSuccessful = unpacker->unpack(unpacker);
@@ -170,7 +170,7 @@ static const char* notParsingData = (const char*) "\"payload\": {"
 
 TEST(json_unpacker, edge_cases){
     IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream,(uint8_t*) notParsingData, strlen(notParsingData));
+    stream->write(stream, (uint8_t*) notParsingData, strlen(notParsingData));
     stream->writeByte(stream, '\0');
     IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
 
@@ -178,7 +178,7 @@ TEST(json_unpacker, edge_cases){
 
     ASSERT_EQ(unpackSuccessful, false);
 
-    stream->write(stream,(uint8_t*) faultyData, strlen(faultyData));
+    stream->write(stream, (uint8_t*) faultyData, strlen(faultyData));
     stream->writeByte(stream, '\0');
     unpacker->unpack(unpacker);
 

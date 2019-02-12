@@ -20,9 +20,6 @@
 #ifndef IByteStream_H_
 #define IByteStream_H_
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -33,25 +30,32 @@ typedef struct IByteStreamStruct* IByteStreamHandle;
 /******************************************************************************
  Define interface
 ******************************************************************************/
-typedef struct IByteStreamStruct {
-  GenericReference handle;
-  bool (*byteIsReady)(IByteStreamHandle self);
-  uint8_t (*readByte)(IByteStreamHandle self);
-  size_t (*length)(IByteStreamHandle self);
-	/**
-	 *
-	 * @param data array into which the data gets written. The size of this should be what ever "length" returned
-	 * @param length Amount of bytes which should be read
-	 */
-  void (*read)(IByteStreamHandle self, uint8_t* data, const size_t length);
-  void (*writeByte)(IByteStreamHandle self, const uint8_t data);
-	/**
-	 *
-	 * @param data Data which should be written into the Stream
-	 * @param length Amount of data which should be written
-	 */
-  void (*write)(IByteStreamHandle self, const uint8_t* data, const size_t length);
-  void (*flush)(IByteStreamHandle self);
-} IByteStream ;
+typedef struct IByteStreamStruct{
+    GenericReference handle;
+
+    bool (* byteIsReady)(IByteStreamHandle self);
+
+    uint8_t (* readByte)(IByteStreamHandle self);
+
+    size_t (* length)(IByteStreamHandle self);
+
+    /**
+     *
+     * @param data array into which the data gets written. The size of this should be what ever "length" returned
+     * @param length Amount of bytes which should be read
+     */
+    void (* read)(IByteStreamHandle self, uint8_t* data, const size_t length);
+
+    void (* writeByte)(IByteStreamHandle self, const uint8_t data);
+
+    /**
+     *
+     * @param data Data which should be written into the Stream
+     * @param length Amount of data which should be written
+     */
+    void (* write)(IByteStreamHandle self, const uint8_t* data, const size_t length);
+
+    void (* flush)(IByteStreamHandle self);
+} IByteStream;
 
 #endif

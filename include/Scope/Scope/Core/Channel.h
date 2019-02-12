@@ -8,7 +8,7 @@
  * @brief        Impelments the channels, which will be attached to the scope
  * 
  ******************************************************************************/
- 
+
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
 

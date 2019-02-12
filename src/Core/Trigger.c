@@ -10,19 +10,16 @@
 #include <Scope/Core/Trigger.h>
 #include <math.h>
 #include <Scope/Core/Timestamper.h>
+#include <stdlib.h>
 
 
 /******************************************************************************
  Trigger definitions
 ******************************************************************************/
 typedef struct TriggerStrategyStruct{
-
     void (* start)(TriggerHandle self);
-
     void (* stop)(TriggerHandle self);
-
     void (* fillUp)(TriggerHandle self);
-
     void (* detecting)(TriggerHandle self);
 
 } TriggerStrategy;
@@ -90,6 +87,7 @@ static void safeChannelStates(TriggerHandle self);
 static void restoreChannelStates(TriggerHandle self);
 
 static void stopChannelsAndTimestamp(TriggerHandle self);
+
 /******************************************************************************
  Trigger strategies
 ******************************************************************************/
@@ -118,7 +116,7 @@ static void stopIntoIdle(TriggerHandle self);
 ******************************************************************************/
 static void stopChannelsAndTimestamp(TriggerHandle self){
     for(int i = 0; i < self->amountOfChannels; ++i){
-       Channel_setStateStopped(self->channels[i]);
+        Channel_setStateStopped(self->channels[i]);
     }
     Timestamper_setStateStopped(self->timestamper);
 }
@@ -138,6 +136,7 @@ static void restoreChannelStates(TriggerHandle self){
     }
     Timestamper_setStateRunning(self->timestamper);
 }
+
 static void transmit(TriggerHandle self){
     self->sendStillPending = true;
     self->dataIsReadyToSend = true;
@@ -248,6 +247,7 @@ static void stopIntoIdle(TriggerHandle self){
     stopChannelsAndTimestamp(self);
     setState(self, TRIGGER_IDLE);
 }
+
 static bool checkCurrentData(TriggerHandle self, float* triggerData){
 
     const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
@@ -402,7 +402,7 @@ bool Trigger_run(TriggerHandle self){
         self->triggerIndex = 0;
         self->isTriggered = false;
         self->activeStrategy.detecting(self);
-    } else if(getState(self) == TRIGGER_FILLUP){
+    }else if(getState(self) == TRIGGER_FILLUP){
         self->activeStrategy.fillUp(self);
     }
     if(getState(self) == TRIGGER_CLEANUP){
@@ -439,9 +439,9 @@ void Trigger_deactivate(TriggerHandle self){
 }
 
 void Trigger_clear(TriggerHandle self){
-   self->isTriggered = false;
-   self->triggerIndex = 0;
-   self->dataIsReadyToSend = false;
-   self->fillUpPollCount = 0;
-   self->sendStillPending = false;
+    self->isTriggered = false;
+    self->triggerIndex = 0;
+    self->dataIsReadyToSend = false;
+    self->fillUpPollCount = 0;
+    self->sendStillPending = false;
 }

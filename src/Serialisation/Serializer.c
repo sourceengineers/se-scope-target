@@ -16,13 +16,12 @@
 ******************************************************************************/
 /* Class data */
 typedef struct __SerializerPrivateData{
-
     IRunnable runRx;
     IRunnable runTx;
-
     IPackerHandle packer;
     IUnpackerHandle unpacker;
     ICommunicatorHandle communicator;
+
 } SerializerPrivateData;
 
 /******************************************************************************
@@ -46,8 +45,8 @@ static void runRx(IRunnableHandle runnable){
     bool parsingIsValid = self->unpacker->unpack(self->unpacker);
 
     if(parsingIsValid == false){
-       self->packer->prepareFlowControl(self->packer, FLOWCONTROL_NAK);
-    } else {
+        self->packer->prepareFlowControl(self->packer, FLOWCONTROL_NAK);
+    }else{
         self->packer->prepareFlowControl(self->packer, FLOWCONTROL_ACK);
     }
 
@@ -68,8 +67,8 @@ static void runTx(IRunnableHandle runnable){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker,\
-																		ICommunicatorHandle communicator){
+SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker, \
+                                                                        ICommunicatorHandle communicator){
 
     SerializerHandle self = malloc(sizeof(SerializerPrivateData));
 

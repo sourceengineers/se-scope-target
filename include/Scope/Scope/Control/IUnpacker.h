@@ -26,9 +26,6 @@
 #ifndef IUNPACKER_H_
 #define IUNPACKER_H_
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -56,20 +53,28 @@ typedef struct IUnpackerStruct{
     bool (* unpack)(IUnpackerHandle unpacker);
 
     bool (* dataPending)(IUnpackerHandle unpacker);
+
     void (* dataRead)(IUnpackerHandle unpacker);
+
     bool (* streamIsEmpty)(IUnpackerHandle unpacker);
 
     /* Functions to fetch commands and fields */
     size_t (* getNumberOfCommands)(IUnpackerHandle unpacker);
+
     bool (* getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
     /* Functions to fetch the data from commands */
     ADDRESS_DATA_TYPE (* getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
     float (* getFloatFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
     bool (* getBoolFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
     void (* getStringFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information, char* targetStr,
                                   const int maxLenght);
+
     /* Functions to help the communication validators */
     int (* getNumberOfFields)(IUnpackerHandle unpacker, const char* commandName);
+
     bool (* getNameOfField)(IUnpackerHandle unpacker, const char* commandName, char* fieldName, const int maxLenght,
                             const int index);
 

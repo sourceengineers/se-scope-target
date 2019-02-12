@@ -21,10 +21,11 @@ typedef struct IRunnableStruct* IRunnableHandle;
 /******************************************************************************
  Define interface
 ******************************************************************************/
-typedef struct IRunnableStruct {
+typedef struct IRunnableStruct{
     GenericReference handle;
-    void (*run)(IRunnableHandle runnable);
 
-} IRunnable ;
+    void (* run)(IRunnableHandle runnable);
+
+} IRunnable;
 
 #endif

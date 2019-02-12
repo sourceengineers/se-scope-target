@@ -16,7 +16,7 @@
 #include <Scope/Control/Controller.h>
 #include <Scope/Communication/Communicator.h>
 #include <Scope/Serialisation/Serializer.h>
-#include <Scope/Core/Scope.h>
+
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
@@ -25,7 +25,7 @@ typedef struct __ScopeBuilderPrivateData* ScopeBuilderHandle;
 /******************************************************************************
  Define interface
 ******************************************************************************/
-typedef struct ScopeObjectStruct {
+typedef struct ScopeObjectStruct{
 
     ScopeHandle scope;
 
@@ -37,7 +37,7 @@ typedef struct ScopeObjectStruct {
     IRunnableHandle runDataAggregator;
     IRunnableHandle runScope;
 
-} ScopeObject ;
+} ScopeObject;
 
 /******************************************************************************
  Public functions
@@ -68,7 +68,6 @@ void ScopeBuilder_setAddressStorage(ScopeBuilderHandle self, AddressStorageHandl
 
 /* Deconstructor: Deletes the instance of the channel */
 void ScopeBuilder_destroy(ScopeBuilderHandle self);
-
 
 
 #endif

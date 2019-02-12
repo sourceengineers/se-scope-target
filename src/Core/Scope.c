@@ -10,6 +10,7 @@
 #include <Scope/Core/Scope.h>
 #include <Scope/GeneralPurpose/BufferedIntStream.h>
 #include <Scope/Core/Timestamper.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
@@ -25,7 +26,6 @@ typedef struct __ScopePrivateData{
     TriggerHandle trigger;
     size_t channelSize;
     AddressStorageHandle addressStorage;
-
     TimestamperHandle timestamper;
 
     /* Flags */
@@ -141,7 +141,7 @@ void dataIsTransmitted(IScopeHandle scope){
     self->scopeIsReadyToSend = false;
     Trigger_dataIsTransmitted(self->trigger);
 
-    if(self->addressStorage ==  NULL){
+    if(self->addressStorage == NULL){
         return;
     }
 
@@ -231,10 +231,10 @@ bool allChannelsAreStopped(ScopeHandle self){
     bool channelIsRunning = false;
 
     for(int i = 0; i < self->amountOfChannels; ++i){
-       channelIsRunning = Channel_isRunning(self->channels[i]);
-       if(channelIsRunning == true){
-           break;
-       }
+        channelIsRunning = Channel_isRunning(self->channels[i]);
+        if(channelIsRunning == true){
+            break;
+        }
     }
     return !channelIsRunning;
 }

@@ -14,8 +14,8 @@
 
 #include <Scope/Control/IPacker.h>
 #include <Scope/Communication/ICommunicator.h>
-#include <Scope/Core/AddressStorage.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Core/ScopeTypes.h>
 
 /******************************************************************************
  Define class handle data
@@ -38,4 +38,5 @@ size_t JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t sizeOfC
 
 /* Returns the IPacker interface */
 IPackerHandle JsonPacker_getIPacker(JsonPackerHandle self);
+
 #endif

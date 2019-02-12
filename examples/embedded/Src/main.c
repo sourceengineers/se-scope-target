@@ -117,7 +117,7 @@ void USART2_IRQHandler(void){
         *****************************************************/
         data = huart2.Instance->RDR;
         while(((huart2.Instance->ISR & USART_ISR_RXNE_Msk) >> USART_ISR_RXNE_Pos) == 1);
-        UartJson_putRxData(uartJson, (uint8_t*) &data, 1);
+        UartJson_putRxData(uartJson, (uint8_t * ) & data, 1);
     }
 
     /* Interrupt error handling */
@@ -224,7 +224,7 @@ int main(void){
             float t_in_s = timestamp / 1000.0f;
 
             float noise = ((float) rand() / RAND_MAX) / 10; // -20dB noise
-            float amp =  (sinf(2 * PI * frequency / 10 * t_in_s) + noise) * 2; // up to 3dB signal amplification
+            float amp = (sinf(2 * PI * frequency / 10 * t_in_s) + noise) * 2; // up to 3dB signal amplification
 
             sinus = amp * sinf(2 * PI * frequency * t_in_s) + noise;
             cosinus = amp * cosf(2 * PI * frequency * t_in_s) + noise;

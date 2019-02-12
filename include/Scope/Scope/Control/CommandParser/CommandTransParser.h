@@ -13,9 +13,7 @@
 #ifndef COMMANDTRANSPARSER_H_
 #define COMMANDTRANSPARSER_H_
 
-#include <Scope/Control/Command/ICommand.h>
 #include <Scope/Control/Command/CommandTrans.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

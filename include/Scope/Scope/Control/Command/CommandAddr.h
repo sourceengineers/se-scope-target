@@ -29,7 +29,7 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Definition of the configuration struct */
-typedef struct {
+typedef struct{
     void** newAddresses;          // Array to keep track on witch channels have changed
     uint32_t* changedChannels;         // Id's of the channels stored in "newAddresses"
     uint32_t numberOfChangedChannels;

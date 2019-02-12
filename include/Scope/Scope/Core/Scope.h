@@ -8,7 +8,7 @@
  * @brief        Implementation of the Scope.
  * 
  ******************************************************************************/
- 
+
 #ifndef SCOPE_H_
 #define SCOPE_H_
 
@@ -83,8 +83,8 @@ void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
 
 /* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
 void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
-                             const DATA_TYPES type,
-                             const uint32_t addressId);
+                                const DATA_TYPES type,
+                                const uint32_t addressId);
 
 /* Clears the data in the channels, as well as the timestamp buffer */
 void Scope_clear(ScopeHandle self);

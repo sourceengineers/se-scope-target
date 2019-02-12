@@ -9,6 +9,7 @@
 
 #include <Scope/GeneralPurpose/BufferedFloatStream.h>
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
@@ -17,6 +18,7 @@
 typedef struct __BufferedFloatStreamPrivateData{
     IFloatStream parent;
     FloatRingBufferHandle buffer;
+
 } BufferedFloatStreamPrivateData;
 
 /******************************************************************************

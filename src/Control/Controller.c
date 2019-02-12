@@ -18,9 +18,7 @@
 typedef struct __ControllerPrivateData{
     IRunnable rxRunnable;
     IRunnable txRunnable;
-
     IScopeHandle scope;
-
     IUnpackerHandle unpacker;
     IPackerHandle packer;
     CommandParserDispatcherHandle commandParserDispatcher;
@@ -109,7 +107,7 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->unpacker = unpacker;
     self->packer = packer;
     self->scope = scope;
-    self->commandParserDispatcher = CommandParserDispatcher_create(scope, packer, unpacker);
+    self->commandParserDispatcher = CommandParserDispatcher_create(scope, unpacker);
     self->commandPack = CommandPack_create(scope, packer);
 
     return self;

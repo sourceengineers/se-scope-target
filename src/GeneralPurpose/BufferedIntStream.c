@@ -9,6 +9,7 @@
 
 #include <Scope/GeneralPurpose/BufferedIntStream.h>
 #include <Scope/GeneralPurpose/IntRingBuffer.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
@@ -17,6 +18,7 @@
 typedef struct __BufferedIntStreamPrivateData{
     IIntStream parent;
     IntRingBufferHandle buffer;
+
 } BufferedIntStreamPrivateData;
 
 /******************************************************************************

@@ -25,22 +25,22 @@ typedef struct __CommandClearParserPrivateData{
  Public functions
 ******************************************************************************/
 CommandClearParserHandle CommandClearParser_create(IScopeHandle scope){
-  CommandClearParserHandle self = malloc(sizeof(CommandClearParserPrivateData));
-  self->command = CommandClear_create(scope);
-  return self;
+    CommandClearParserHandle self = malloc(sizeof(CommandClearParserPrivateData));
+    self->command = CommandClear_create(scope);
+    return self;
 }
 
 ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self){
-  return CommandClear_getICommand(self->command);
+    return CommandClear_getICommand(self->command);
 }
 
 char* CommandClearParser_getName(){
-  return commandName;
+    return commandName;
 }
 
 void CommandClearParser_destroy(CommandClearParserHandle self){
-  CommandClear_destroy(self->command);
+    CommandClear_destroy(self->command);
 
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

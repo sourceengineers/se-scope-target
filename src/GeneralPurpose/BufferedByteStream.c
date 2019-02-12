@@ -9,30 +9,32 @@
 
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __BufferedByteStreamPrivateData {
+typedef struct __BufferedByteStreamPrivateData{
     IByteStream parent;
     ByteRingBufferHandle buffer;
+
 } BufferedByteStreamPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-static bool dataIsReady(IByteStreamHandle parent) {
+static bool dataIsReady(IByteStreamHandle parent){
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
-    if (ByteRingBuffer_getNumberOfUsedData(self->buffer) > 0) {
+    if(ByteRingBuffer_getNumberOfUsedData(self->buffer) > 0){
         return true;
-    } else {
+    }else{
         return false;
     }
 }
 
-static uint8_t readData(IByteStreamHandle parent) {
+static uint8_t readData(IByteStreamHandle parent){
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     uint8_t data;
@@ -41,19 +43,19 @@ static uint8_t readData(IByteStreamHandle parent) {
     return data;
 }
 
-static void readAll(IByteStreamHandle parent, uint8_t *data, const size_t length) {
+static void readAll(IByteStreamHandle parent, uint8_t* data, const size_t length){
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     ByteRingBuffer_read(self->buffer, data, length);
 }
 
-static size_t streamLength(IByteStreamHandle parent) {
+static size_t streamLength(IByteStreamHandle parent){
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     return ByteRingBuffer_getNumberOfUsedData(self->buffer);
 }
 
-static void writeData(IByteStreamHandle parent, const uint8_t data) {
+static void writeData(IByteStreamHandle parent, const uint8_t data){
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     if(ByteRingBuffer_write(self->buffer, &data, 1) == -1){
@@ -63,19 +65,19 @@ static void writeData(IByteStreamHandle parent, const uint8_t data) {
     }
 }
 
-static void writeAll(IByteStreamHandle parent, const uint8_t *data, const size_t length) {
+static void writeAll(IByteStreamHandle parent, const uint8_t* data, const size_t length){
     for(int i = 0; i < length; ++i){
         parent->writeByte(parent, data[i]);
     }
 }
 
-static void flush(IByteStreamHandle parent) {
+static void flush(IByteStreamHandle parent){
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
 
     ByteRingBuffer_clear(self->buffer);
 }
 
-BufferedByteStreamHandle BufferedByteStream_create(size_t capacity) {
+BufferedByteStreamHandle BufferedByteStream_create(size_t capacity){
 
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) malloc(sizeof(BufferedByteStreamPrivateData));
 
@@ -93,7 +95,7 @@ BufferedByteStreamHandle BufferedByteStream_create(size_t capacity) {
     return self;
 }
 
-void BufferedByteStream_destroy(BufferedByteStreamHandle self) {
+void BufferedByteStream_destroy(BufferedByteStreamHandle self){
     ByteRingBuffer_destroy(self->buffer);
 
     free(self);

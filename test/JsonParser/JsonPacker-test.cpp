@@ -10,7 +10,7 @@ extern "C" {
 using namespace testing;
 using namespace std;
 
-TEST(json_packer, unpack_test) {
+TEST(json_packer, unpack_test){
 
     size_t channelSize = 400;
     size_t sizes = JsonPacker_calculateBufferSize(5, 10, channelSize);
@@ -23,7 +23,7 @@ TEST(json_packer, unpack_test) {
     FloatRingBufferHandle buf1 = FloatRingBuffer_create(channelSize);
     FloatRingBufferHandle buf2 = FloatRingBuffer_create(channelSize);
 
-    IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(5, 10,  outputStream));
+    IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(5, 10, outputStream));
 
     packer->prepareAddressAnnouncement(packer, "VAR_1", "UINT32", 11111);
     packer->prepareAddressAnnouncement(packer, "VAR_2", "FLOAT", 22222);
@@ -73,7 +73,7 @@ TEST(json_packer, unpack_test) {
     size_t dataPending = outputStream->length(outputStream);
     char data[dataPending + 1];
 
-    outputStream->read(outputStream, (uint8_t *) data, dataPending);
+    outputStream->read(outputStream, (uint8_t*) data, dataPending);
     data[dataPending] = '\0';
 
     EXPECT_STREQ(data,

@@ -10,7 +10,7 @@
  *               Starts a sending sending the pending addresses
  * 
  ******************************************************************************/
- 
+
 #ifndef COMMANDCLEAR_H_
 #define COMMANDCLEAR_H_
 
@@ -34,7 +34,6 @@ void CommandClear_destroy(CommandClearHandle self);
 
 /* Returns the command interface */
 ICommandHandle CommandClear_getICommand(CommandClearHandle self);
-
 
 
 #endif

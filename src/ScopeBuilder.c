@@ -11,29 +11,24 @@
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
 #include <Scope/Communication/Interfaces/EthernetJson.h>
+
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
 typedef struct __ScopeBuilderPrivateData{
-
-
     IByteStreamHandle input;
     IByteStreamHandle output;
-
     IPackerHandle packer;
     IUnpackerHandle unpacker;
-
     ICommunicatorHandle interface;
-
     ScopeHandle scope;
     ControllerHandle controller;
     SerializerHandle serializer;
     CommunicatorHandle communicator;
-
-    uint32_t* timestamp;
     AddressStorageHandle addressStorage;
 
+    uint32_t* timestamp;
     size_t amountOfChannels;
     size_t sizeOfChannels;
 

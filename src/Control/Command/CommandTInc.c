@@ -16,6 +16,7 @@
 /* Class data */
 typedef struct __CommandTIncPrivateData{
     ICommand command;
+
     IScopeHandle scope;
 
     uint32_t timeIncrement;
@@ -25,8 +26,8 @@ typedef struct __CommandTIncPrivateData{
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandTIncHandle self = (CommandTIncHandle) command->handle;
-  self->scope->setTimeIncrement(self->scope, self->timeIncrement);
+    CommandTIncHandle self = (CommandTIncHandle) command->handle;
+    self->scope->setTimeIncrement(self->scope, self->timeIncrement);
 }
 
 /******************************************************************************
@@ -34,25 +35,25 @@ static void run(ICommandHandle command){
 ******************************************************************************/
 CommandTIncHandle CommandTInc_create(IScopeHandle scope){
 
-  CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));
-  self->scope = scope;
-  self->timeIncrement = 0;
+    CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));
+    self->scope = scope;
+    self->timeIncrement = 0;
 
-  self->command.handle = self;
-  self->command.run = &run;
+    self->command.handle = self;
+    self->command.run = &run;
 
-  return self;
+    return self;
 }
 
 ICommandHandle CommandTInc_getICommand(CommandTIncHandle self){
-  return &self->command;
+    return &self->command;
 }
 
 void CommandTInc_setAttributes(CommandTIncHandle self, uint32_t timeIncrement){
-  self->timeIncrement = timeIncrement;
+    self->timeIncrement = timeIncrement;
 }
 
 void CommandTInc_destroy(CommandTIncHandle self){
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

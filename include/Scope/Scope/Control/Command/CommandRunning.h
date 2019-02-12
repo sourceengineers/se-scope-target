@@ -25,7 +25,7 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Struct used to help the command configure the channels */
-typedef struct {
+typedef struct{
     CHANNEL_STATES* newStates;
     uint32_t* changedChannels;
     uint32_t numberOfChangedChannels;

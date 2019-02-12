@@ -13,9 +13,7 @@
 #ifndef COMMANDPOLLPARSER_H_
 #define COMMANDPOLLPARSER_H_
 
-#include <Scope/Control/Command/ICommand.h>
 #include <Scope/Control/Command/CommandPoll.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

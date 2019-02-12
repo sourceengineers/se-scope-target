@@ -12,12 +12,8 @@
 #ifndef ADDRESSSTORAGE_H_
 #define ADDRESSSTORAGE_H_
 
-#include <stddef.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <Scope/Core/ScopeTypes.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data
@@ -35,8 +31,8 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses);
 /* Sets a new definition of a address. If the addressId is bigger than the maximum amount of elements,
  * the function will return without doing anything */
 void AddressStorage_addAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
-                                    const DATA_TYPES type,
-                                    const uint32_t addressId);
+                                       const DATA_TYPES type,
+                                       const uint32_t addressId);
 
 /* Returns how many addresses can be configured at maximum */
 size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self);

@@ -26,64 +26,64 @@ typedef struct __CommandRunningParserPrivateData{
  Public functions
 ******************************************************************************/
 CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
-  CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
-  self->command = CommandRunning_create(scope);
-  self->unpacker = unpacker;
-  return self;
+    CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
+    self->command = CommandRunning_create(scope);
+    self->unpacker = unpacker;
+    return self;
 }
 
 ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
 
-  if(self->unpacker == NULL){
-    return NULL;
-  }
-
-  const uint32_t numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) commandName);
-
-  if(numberOfFields == -1){
-    return NULL;
-  }
-
-  uint32_t channelIds[numberOfFields];
-  CHANNEL_STATES newStates[numberOfFields];
-
-  char nameOfField[MAX_FIELD_LENGTH];
-
-  for(size_t i = 0; i < numberOfFields; ++i){
-
-    bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField, MAX_FIELD_LENGTH, i);
-
-    if(foundField == true){
-      channelIds[i] = atoi(nameOfField);
-
-      CommandFetchingInformation information = {.commandName = commandName, .fieldName = nameOfField,
-              .isInArray = false, .arrayIndex = 0};
-
-      bool newState = self->unpacker->getBoolFromCommand(self->unpacker, &information);
-      if(newState == true){
-        newStates[i] = CHANNEL_RUNNING;
-      } else{
-        newStates[i] = CHANNEL_STOPPED;
-      }
+    if(self->unpacker == NULL){
+        return NULL;
     }
-  }
 
-  CommandRunningConf conf = {.newStates = newStates, \
+    const uint32_t numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) commandName);
+
+    if(numberOfFields == -1){
+        return NULL;
+    }
+
+    uint32_t channelIds[numberOfFields];
+    CHANNEL_STATES newStates[numberOfFields];
+
+    char nameOfField[MAX_FIELD_LENGTH];
+
+    for(size_t i = 0; i < numberOfFields; ++i){
+
+        bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField, MAX_FIELD_LENGTH, i);
+
+        if(foundField == true){
+            channelIds[i] = atoi(nameOfField);
+
+            CommandFetchingInformation information = {.commandName = commandName, .fieldName = nameOfField,
+                    .isInArray = false, .arrayIndex = 0};
+
+            bool newState = self->unpacker->getBoolFromCommand(self->unpacker, &information);
+            if(newState == true){
+                newStates[i] = CHANNEL_RUNNING;
+            }else{
+                newStates[i] = CHANNEL_STOPPED;
+            }
+        }
+    }
+
+    CommandRunningConf conf = {.newStates = newStates, \
                           .changedChannels = channelIds, \
                           .numberOfChangedChannels = numberOfFields};
 
-  CommandRunning_setAttributes(self->command, conf);
+    CommandRunning_setAttributes(self->command, conf);
 
-  return CommandRunning_getICommand(self->command);
+    return CommandRunning_getICommand(self->command);
 }
 
 char* CommandRunningParser_getName(){
-  return commandName;
+    return commandName;
 }
 
 void CommandRunningParser_destroy(CommandRunningParserHandle self){
-  CommandRunning_destroy(self->command);
+    CommandRunning_destroy(self->command);
 
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

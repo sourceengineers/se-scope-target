@@ -15,10 +15,11 @@
 ******************************************************************************/
 /* Class data */
 typedef struct __CommunicatorPrivateData{
+    ICommunicatorHandle communicator;
+
     IRunnable rxRunnable;
     IRunnable txRunnable;
 
-    ICommunicatorHandle communicator;
 } CommunicatorPrivateData;
 
 /******************************************************************************

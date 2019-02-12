@@ -26,22 +26,22 @@ typedef struct __CommandPackParserPrivateData{
  Public functions
 ******************************************************************************/
 CommandPackParserHandle CommandPackParser_create(IScopeHandle scope, IPackerHandle packer){
-  CommandPackParserHandle self = malloc(sizeof(CommandPackParserPrivateData));
-  self->command = CommandPack_create(scope, packer);
-  return self;
+    CommandPackParserHandle self = malloc(sizeof(CommandPackParserPrivateData));
+    self->command = CommandPack_create(scope, packer);
+    return self;
 }
 
 ICommandHandle CommandPackParser_getCommand(CommandPackParserHandle self){
-  return CommandPack_getICommand(self->command);
+    return CommandPack_getICommand(self->command);
 }
 
 char* CommandPackParser_getName(){
-  return commandName;
+    return commandName;
 }
 
 void CommandPackParser_destroy(CommandPackParserHandle self){
-  CommandPack_destroy(self->command);
+    CommandPack_destroy(self->command);
 
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

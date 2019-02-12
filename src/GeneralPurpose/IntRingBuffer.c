@@ -8,6 +8,7 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/GeneralPurpose/IntRingBuffer.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
@@ -18,6 +19,7 @@ typedef struct __IntRingBufferPrivateData{
     uint32_t* head;
     uint32_t* tail;
     size_t capacity;
+
 } IntRingBufferPrivateData;
 
 /* Returns the next index of the given index */

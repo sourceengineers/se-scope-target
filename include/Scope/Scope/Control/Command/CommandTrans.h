@@ -10,7 +10,7 @@
  *               Starts a sending event, provided by the IScope interface
  * 
  ******************************************************************************/
- 
+
 #ifndef COMMANDTRANS_H_
 #define COMMANDTRANS_H_
 

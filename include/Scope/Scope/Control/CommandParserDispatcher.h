@@ -11,8 +11,8 @@
  *               not permitted, all objects returned by the commandParserDispatcher are pre-
  *               generated during the construction process.
  *
- ******************************************************************************/ 
- 
+ ******************************************************************************/
+
 #ifndef COMMANDFACTORY_H_
 #define COMMANDFACTORY_H_
 
@@ -25,11 +25,6 @@
 #include <Scope/Control/CommandParser/CommandTransParser.h>
 #include <Scope/Control/CommandParser/CommandClearParser.h>
 
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Control/IPacker.h>
-
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
@@ -39,7 +34,8 @@ typedef struct __CommandParserDispatcherPrivateData* CommandParserDispatcherHand
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the commandParserDispatcher */
-CommandParserDispatcherHandle CommandParserDispatcher_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker);
+CommandParserDispatcherHandle
+CommandParserDispatcher_create(IScopeHandle scope, IUnpackerHandle unpacker);
 
 /* Deconstructor: Deletes the instance of the commandParserDispatcher */
 void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self);

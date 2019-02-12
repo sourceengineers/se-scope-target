@@ -7,7 +7,7 @@ extern "C" {
 
 using namespace std;
 
-TEST(Channel, test_polling) {
+TEST(Channel, test_polling){
     const size_t shortCapacity = 10;
 
     const size_t shortVectorLength = 6;
@@ -24,7 +24,7 @@ TEST(Channel, test_polling) {
     Channel_setStateRunning(channel);
 
     /* Simulate polling */
-    for (size_t i = 0; i < shortVectorLength; i++) {
+    for(size_t i = 0; i < shortVectorLength; i++){
         data = shortTestVector[i];
         Channel_poll(channel);
     }
@@ -35,7 +35,7 @@ TEST(Channel, test_polling) {
 }
 
 
-TEST(Channel, test_data_types) {
+TEST(Channel, test_data_types){
     const size_t shortCapacity = 10;
 
     const size_t shortVectorLength = 6;
@@ -73,7 +73,7 @@ TEST(Channel, test_data_types) {
 
 }
 
-TEST(Channel, test_states) {
+TEST(Channel, test_states){
     const size_t shortCapacity = 10;
 
     const size_t shortVectorLength = 6;
@@ -99,7 +99,7 @@ TEST(Channel, test_states) {
     EXPECT_EQ(isStopped, true);
 }
 
-TEST(Channel, test_trigger_stream) {
+TEST(Channel, test_trigger_stream){
     const size_t shortCapacity = 10;
 
     const size_t shortVectorLength = 6;
@@ -115,7 +115,7 @@ TEST(Channel, test_trigger_stream) {
     Channel_setStateRunning(channel);
 
     /* Simulate polling */
-    for (size_t i = 0; i < shortVectorLength; i++) {
+    for(size_t i = 0; i < shortVectorLength; i++){
         data = shortTestVector[i];
         Channel_poll(channel);
     }

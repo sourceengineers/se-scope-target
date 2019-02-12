@@ -18,6 +18,7 @@
 typedef struct __UartJsonPrivateData* UartJsonHandle;
 
 typedef void(*UartTransmitCallback)(UartJsonHandle self);
+
 /******************************************************************************
  Public functions
 ******************************************************************************/

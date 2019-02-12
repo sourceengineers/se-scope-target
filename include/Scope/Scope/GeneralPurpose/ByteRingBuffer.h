@@ -9,14 +9,10 @@
  *                through the read function, or through the implementation of
  *                stream interface.
  ******************************************************************************/
- 
+
 #ifndef BYTERINGBUFFER_H_
 #define BYTERINGBUFFER_H_
 
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 

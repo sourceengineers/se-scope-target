@@ -15,6 +15,7 @@
 /* Class data */
 typedef struct __CommandAnnouncePrivateData{
     ICommand command;
+
     IScopeHandle scope;
 
 } CommandAnnouncePrivateData;
@@ -23,8 +24,8 @@ typedef struct __CommandAnnouncePrivateData{
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandAnnounceHandle self = (CommandAnnounceHandle) command->handle;
-  self->scope->announce(self->scope);
+    CommandAnnounceHandle self = (CommandAnnounceHandle) command->handle;
+    self->scope->announce(self->scope);
 }
 
 /******************************************************************************
@@ -32,20 +33,20 @@ static void run(ICommandHandle command){
 ******************************************************************************/
 CommandAnnounceHandle CommandAnnounce_create(IScopeHandle scope){
 
-  CommandAnnounceHandle self = malloc(sizeof(CommandAnnouncePrivateData));
-  self->scope = scope;
+    CommandAnnounceHandle self = malloc(sizeof(CommandAnnouncePrivateData));
+    self->scope = scope;
 
-  self->command.handle = self;
-  self->command.run = &run;
+    self->command.handle = self;
+    self->command.run = &run;
 
-  return self;
+    return self;
 }
 
 ICommandHandle CommandAnnounce_getICommand(CommandAnnounceHandle self){
-  return &self->command;
+    return &self->command;
 }
 
 void CommandAnnounce_destroy(CommandAnnounceHandle self){
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

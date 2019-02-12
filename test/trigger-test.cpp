@@ -8,7 +8,8 @@ extern "C" {
 using namespace std;
 
 
-bool testCondition(float* var, float var1, float var2, TriggerConfiguration conf, ChannelHandle channel, TriggerHandle trigger){
+bool testCondition(float* var, float var1, float var2, TriggerConfiguration conf, ChannelHandle channel,
+                   TriggerHandle trigger){
 
     Channel_clear(channel);
     Trigger_clear(trigger);
@@ -17,7 +18,7 @@ bool testCondition(float* var, float var1, float var2, TriggerConfiguration conf
     Trigger_activate(trigger);
 
     *var = 0;
-    for(int i = 0; i < (Channel_getCapacity(channel) / 2)-2 ; ++i){
+    for(int i = 0; i < (Channel_getCapacity(channel) / 2) - 2; ++i){
         Channel_poll(channel);
         Trigger_run(trigger);
     }

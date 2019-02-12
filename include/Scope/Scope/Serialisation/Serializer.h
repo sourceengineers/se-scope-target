@@ -23,8 +23,8 @@ typedef struct __SerializerPrivateData* SerializerHandle;
  Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker,\
-																		ICommunicatorHandle communicator);
+SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker, \
+                                                                        ICommunicatorHandle communicator);
 
 IRunnableHandle Serializer_getRxRunnable(SerializerHandle self);
 

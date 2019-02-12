@@ -13,9 +13,7 @@
 #ifndef COMMANDTRIGGERPARSER_H_
 #define COMMANDTRIGGERPARSER_H_
 
-#include <Scope/Control/Command/ICommand.h>
 #include <Scope/Control/Command/CommandTrigger.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Control/IUnpacker.h>
 
 /******************************************************************************

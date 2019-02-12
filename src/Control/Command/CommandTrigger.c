@@ -14,7 +14,7 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandTriggerPrivateData {
+typedef struct __CommandTriggerPrivateData{
     ICommand command;
 
     IScopeHandle scope;
@@ -25,36 +25,36 @@ typedef struct __CommandTriggerPrivateData {
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void run(ICommandHandle command) {
-  CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
+static void run(ICommandHandle command){
+    CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
 
-  self->scope->configureTrigger(self->scope, self->config);
+    self->scope->configureTrigger(self->scope, self->config);
 }
 
 /******************************************************************************
 Public functions
 ******************************************************************************/
-CommandTriggerHandle CommandTrigger_create(IScopeHandle scope) {
+CommandTriggerHandle CommandTrigger_create(IScopeHandle scope){
 
-  CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
+    CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
 
-  self->command.handle = self;
-  self->scope = scope;
-  self->command.run = &run;
+    self->command.handle = self;
+    self->scope = scope;
+    self->command.run = &run;
 
-  return self;
+    return self;
 }
 
-ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self) {
-  return &self->command;
+ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self){
+    return &self->command;
 }
 
-void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf) {
+void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf){
 
-  self->config = conf;
+    self->config = conf;
 }
 
-void CommandTrigger_destroy(CommandTriggerHandle self) {
-  free(self);
-  self = NULL;
+void CommandTrigger_destroy(CommandTriggerHandle self){
+    free(self);
+    self = NULL;
 }

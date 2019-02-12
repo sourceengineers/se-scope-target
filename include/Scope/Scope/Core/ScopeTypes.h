@@ -11,8 +11,7 @@
 
 #ifndef SCOPETYPES_H
 #define SCOPETYPES_H
-#include <stdint.h>
-#include <stdbool.h>
+
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /* Trigger definitions */
@@ -22,17 +21,19 @@ static const int TRIGGER_EDGE_POSITIVE = 1;
 static const int TRIGGER_EDGE_NEGATIVE = -1;
 
 /* Enum to represent different trigger types */
-typedef enum {TRIGGER_NORMAL, TRIGGER_CONTINUOUS, TRIGGER_ONESHOT} TRIGGER_MODE;
+typedef enum{
+    TRIGGER_NORMAL, TRIGGER_CONTINUOUS, TRIGGER_ONESHOT
+} TRIGGER_MODE;
 
 /* Struct purely used to configure the trigger */
-typedef struct {
- float level;
- int edge;
- TRIGGER_MODE mode;
- uint32_t channelId;
+typedef struct{
+    float level;
+    int edge;
+    TRIGGER_MODE mode;
+    uint32_t channelId;
 } TriggerConfiguration;
 
-typedef struct {
+typedef struct{
     bool isTriggered;
     uint32_t channelId;
     uint32_t triggerTimestamp;
@@ -40,12 +41,14 @@ typedef struct {
 
 /* Channel definitions */
 /* Channels States */
-typedef enum {CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING} CHANNEL_STATES;
+typedef enum{
+    CHANNEL_NONE, CHANNEL_INIT, CHANNEL_STOPPED, CHANNEL_RUNNING
+} CHANNEL_STATES;
 
 
 /* Definitions for the addressannouncement */
 #define maxAddrNameLength 30
-typedef struct {
+typedef struct{
     char name[maxAddrNameLength];
     DATA_TYPES type;
     ADDRESS_DATA_TYPE address;

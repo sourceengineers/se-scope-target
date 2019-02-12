@@ -15,9 +15,6 @@
 #ifndef ICOMMUNICATOR_H_
 #define ICOMMUNICATOR_H_
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <stdint.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -28,15 +25,21 @@ typedef struct ICommunicatorStruct* ICommunicatorHandle;
 /******************************************************************************
  Define interface
 ******************************************************************************/
-typedef struct ICommunicatorStruct {
-  GenericReference handle;
-  void (*runRx)(ICommunicatorHandle communicator);
-  void (*runTx)(ICommunicatorHandle communicator);
-  bool (*rxDataReady)(ICommunicatorHandle communicator);
-  void (*rxDataHasBeenFetched)(ICommunicatorHandle communicator);
-  void (*txReadyToValidate)(ICommunicatorHandle communicator);
-  bool (*txSendingPending)(ICommunicatorHandle communicator);
+typedef struct ICommunicatorStruct{
+    GenericReference handle;
 
-} ICommunicator ;
+    void (* runRx)(ICommunicatorHandle communicator);
+
+    void (* runTx)(ICommunicatorHandle communicator);
+
+    bool (* rxDataReady)(ICommunicatorHandle communicator);
+
+    void (* rxDataHasBeenFetched)(ICommunicatorHandle communicator);
+
+    void (* txReadyToValidate)(ICommunicatorHandle communicator);
+
+    bool (* txSendingPending)(ICommunicatorHandle communicator);
+
+} ICommunicator;
 
 #endif

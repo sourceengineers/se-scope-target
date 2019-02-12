@@ -8,21 +8,21 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Communication/Interfaces/EthernetJson.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
 typedef struct __EthernetJsonPrivateData{
-
     ICommunicator communicator;
 
     IByteStreamHandle input;
     IByteStreamHandle output;
 
     bool txPendingToValidateAndTransmit;
-
     EthernetTransmitCallback callback;
+
 } EthernetJsonPrivateData;
 
 /******************************************************************************
@@ -30,7 +30,6 @@ typedef struct __EthernetJsonPrivateData{
 ******************************************************************************/
 bool rxDataReady(ICommunicatorHandle communicator){
     EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
-
     return self->input->length(self->input) > 0;
 }
 
@@ -45,7 +44,7 @@ void rxDataHasBeenFetched(ICommunicatorHandle communicator){
 }
 
 void runRx(ICommunicatorHandle communicator){
-    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
+    return;
 }
 
 bool txSendingPending(ICommunicatorHandle communicator){
@@ -73,7 +72,8 @@ void runTx(ICommunicatorHandle communicator){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-EthernetJsonHandle EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output){
+EthernetJsonHandle
+EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output){
 
     EthernetJsonHandle self = malloc(sizeof(EthernetJsonPrivateData));
 
@@ -111,7 +111,6 @@ void EthernetJson_putRxData(EthernetJsonHandle self, uint8_t* data, size_t lengt
 }
 
 void EthernetJson_destroy(EthernetJsonHandle self){
-
     free(self);
     self = NULL;
 }

@@ -9,7 +9,7 @@
  *               of programming.
  *
  *****************************************************************************************************************************************/
- 
+
 #ifndef DATATYPES_H_
 #define DATATYPES_H_
 
@@ -29,20 +29,21 @@
 static const char* DATA_TYPE_NAMES[6] = {UINT8_NAME, UINT16_NAME, UINT32_NAME, UINT64_NAME, FLOAT_NAME, DOUBLE_NAME};
 
 /* Define dataypes themselves */
-typedef enum {UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE} DATA_TYPES;
+typedef enum{
+    UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE
+} DATA_TYPES;
 
 /* Define macro to fetch the right data type name */
 #define getDataTypeName(type) DATA_TYPE_NAMES[type]
 
 /* Choose the right integer length */
 #if (ARCH_SIZE_32)
-  #define ADDRESS_DATA_TYPE uint32_t
+#define ADDRESS_DATA_TYPE uint32_t
 #else
-  #define ADDRESS_DATA_TYPE uint64_t
+#define ADDRESS_DATA_TYPE uint64_t
 #endif
 
 #define GenericReference void*
-
 
 
 #endif

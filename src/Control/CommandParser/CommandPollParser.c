@@ -25,23 +25,23 @@ typedef struct __CommandPollParserPrivateData{
  Public functions
 ******************************************************************************/
 CommandPollParserHandle CommandPollParser_create(IScopeHandle scope){
-  CommandPollParserHandle self = malloc(sizeof(CommandPollParserPrivateData));
-  self->command = CommandPoll_create(scope);
-  return self;
+    CommandPollParserHandle self = malloc(sizeof(CommandPollParserPrivateData));
+    self->command = CommandPoll_create(scope);
+    return self;
 }
 
 ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self){
 
-  return CommandPoll_getICommand(self->command);
+    return CommandPoll_getICommand(self->command);
 }
 
 char* CommandPollParser_getName(){
-  return commandName;
+    return commandName;
 }
 
 void CommandPollParser_destroy(CommandPollParserHandle self){
-  CommandPoll_destroy(self->command);
+    CommandPoll_destroy(self->command);
 
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

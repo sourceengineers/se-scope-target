@@ -13,9 +13,7 @@
 #ifndef COMMANDTINCPARSER_H_
 #define COMMANDTINCPARSER_H_
 
-#include <Scope/Control/Command/ICommand.h>
 #include <Scope/Control/Command/CommandTInc.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Control/IUnpacker.h>
 
 /******************************************************************************

@@ -17,7 +17,7 @@
  *               TODO - OneShot tigger has to be implemented
  *
  ******************************************************************************/
- 
+
 #ifndef TRIGGER_H_
 #define TRIGGER_H_
 
@@ -63,4 +63,5 @@ void Trigger_activate(TriggerHandle self);
 void Trigger_deactivate(TriggerHandle self);
 
 void Trigger_clear(TriggerHandle self);
+
 #endif

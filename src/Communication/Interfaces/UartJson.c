@@ -12,8 +12,11 @@
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
 #include <memory.h>
 #include <stdio.h>
+#include <stdlib.h>
 
-typedef enum {TRANSPORT_NOT_FOUND, CHECKSUM_FAULTY, CHECKSUM_OK} ChecksumCheck;
+typedef enum{
+    TRANSPORT_NOT_FOUND, CHECKSUM_FAULTY, CHECKSUM_OK
+} ChecksumCheck;
 
 /******************************************************************************
  Define private data
@@ -24,20 +27,18 @@ static const size_t CHECKSUM_LENGTH = 2;
 
 /* Class data */
 typedef struct __UartJsonPrivateData{
-
     ICommunicator communicator;
 
     UartTransmitCallback callback;
     IByteStreamHandle input;
     IByteStreamHandle output;
-
     ByteRingBufferHandle transportBuffer;
 
     uint8_t inputChecksum;
-
     bool rxIsValid;
     bool txPendingToValidate;
     bool txPendingToTransmit;
+
 } UartJsonPrivateData;
 
 ChecksumCheck validateInput(UartJsonHandle self);
@@ -91,7 +92,7 @@ void runTx(ICommunicatorHandle communicator){
     formatedChecksum = (char*) "00\0";
     //createOutputChecksum(self, formatedChecksum);
     self->output->write(self->output, (const uint8_t*) KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH);
-    self->output->write(self->output, (const uint8_t*)  formatedChecksum, CHECKSUM_LENGTH + 1);
+    self->output->write(self->output, (const uint8_t*) formatedChecksum, CHECKSUM_LENGTH + 1);
     self->txPendingToValidate = false;
     self->txPendingToTransmit = true;
 

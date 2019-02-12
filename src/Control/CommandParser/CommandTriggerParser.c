@@ -20,6 +20,7 @@ static char* commandName = "cf_tgr";
 /* Class data */
 typedef struct __CommandTriggerParserPrivateData{
     CommandTriggerHandle command;
+
     IUnpackerHandle unpacker;
 
 } CommandTriggerParserPrivateData;

@@ -17,12 +17,13 @@
 /* Class data */
 typedef struct __CommandPackPrivateData{
     ICommand command;
-    IScopeHandle scope;
 
+    IScopeHandle scope;
     IPackerHandle packer;
 
     float** channelData; // Buffers to safe data from channels. This might not be the most ideal solution,
     // since it takes up as much space as the channels themselves
+
 } CommandPackPrivateData;
 
 /******************************************************************************

@@ -18,10 +18,12 @@
 typedef struct __EthernetJsonPrivateData* EthernetJsonHandle;
 
 typedef void(*EthernetTransmitCallback)(EthernetJsonHandle self);
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
-EthernetJsonHandle EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
+EthernetJsonHandle
+EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
 
 ICommunicatorHandle EthernetJson_getCommunicator(EthernetJsonHandle self);
 

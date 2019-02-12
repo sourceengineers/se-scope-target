@@ -13,19 +13,19 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandClearPrivateData
-{
-  ICommand command;
-  IScopeHandle scope;
+typedef struct __CommandClearPrivateData{
+    ICommand command;
 
-} CommandClearPrivateData ;
+    IScopeHandle scope;
+
+} CommandClearPrivateData;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandClearHandle self = (CommandClearHandle) command->handle;
-  self->scope->clear(self->scope);
+    CommandClearHandle self = (CommandClearHandle) command->handle;
+    self->scope->clear(self->scope);
 }
 
 /******************************************************************************
@@ -33,20 +33,20 @@ static void run(ICommandHandle command){
 ******************************************************************************/
 CommandClearHandle CommandClear_create(IScopeHandle scope){
 
-  CommandClearHandle self = malloc(sizeof(CommandClearPrivateData));
-  self->scope = scope;
-  
-  self->command.handle = self;
-  self->command.run = &run;
+    CommandClearHandle self = malloc(sizeof(CommandClearPrivateData));
+    self->scope = scope;
 
-  return self;
+    self->command.handle = self;
+    self->command.run = &run;
+
+    return self;
 }
 
 ICommandHandle CommandClear_getICommand(CommandClearHandle self){
-  return &self->command;
+    return &self->command;
 }
 
 void CommandClear_destroy(CommandClearHandle self){
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

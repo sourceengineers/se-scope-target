@@ -12,7 +12,6 @@
 #ifndef SCOPERUNNER_H
 #define SCOPERUNNER_H
 
-#include <Scope/Core/Scope.h>
 #include <Scope/ScopeBuilder.h>
 
 /******************************************************************************

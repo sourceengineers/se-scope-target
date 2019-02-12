@@ -8,7 +8,7 @@ extern "C" {
 
 using namespace std;
 
-TEST(FloatRingBuffer, test_write_read) {
+TEST(FloatRingBuffer, test_write_read){
 
     const size_t shortCapacity = 10;
 
@@ -26,7 +26,7 @@ TEST(FloatRingBuffer, test_write_read) {
 }
 
 
-TEST(FloatRingBuffer, test_helper_functions) {
+TEST(FloatRingBuffer, test_helper_functions){
     const size_t shortCapacity = 10;
 
     const size_t shortVectorLength = 6;
@@ -48,7 +48,7 @@ TEST(FloatRingBuffer, test_helper_functions) {
 }
 
 
-TEST(FloatRingBuffer, test_exceptions) {
+TEST(FloatRingBuffer, test_exceptions){
 
     const size_t shortCapacity = 10;
 

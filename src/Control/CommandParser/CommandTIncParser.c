@@ -18,6 +18,7 @@ static char* commandName = "cf_t_inc";
 /* Class data */
 typedef struct __CommandTIncParserPrivateData{
     CommandTIncHandle command;
+
     IUnpackerHandle unpacker;
 
 } CommandTIncParserPrivateData;
@@ -26,35 +27,35 @@ typedef struct __CommandTIncParserPrivateData{
  Public functions
 ******************************************************************************/
 CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
-  CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
-  self->command = CommandTInc_create(scope);
-  self->unpacker = unpacker;
-  return self;
+    CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
+    self->command = CommandTInc_create(scope);
+    self->unpacker = unpacker;
+    return self;
 }
 
 ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self){
 
-  if(self->unpacker == NULL){
-    return NULL;
-  }
+    if(self->unpacker == NULL){
+        return NULL;
+    }
 
-  CommandFetchingInformation information = {.commandName = commandName, .fieldName = (char*) "",
-          .isInArray = false, .arrayIndex = 0};
+    CommandFetchingInformation information = {.commandName = commandName, .fieldName = (char*) "",
+            .isInArray = false, .arrayIndex = 0};
 
-  const uint32_t timeIncrement = self->unpacker->getIntFromCommand(self->unpacker, &information);
+    const uint32_t timeIncrement = self->unpacker->getIntFromCommand(self->unpacker, &information);
 
-  CommandTInc_setAttributes(self->command, timeIncrement);
+    CommandTInc_setAttributes(self->command, timeIncrement);
 
-  return CommandTInc_getICommand(self->command);
+    return CommandTInc_getICommand(self->command);
 }
 
 char* CommandTIncParser_getName(){
-  return commandName;
+    return commandName;
 }
 
 void CommandTIncParser_destroy(CommandTIncParserHandle self){
-  CommandTInc_destroy(self->command);
+    CommandTInc_destroy(self->command);
 
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }

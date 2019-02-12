@@ -9,11 +9,11 @@
 
 #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
 #include <string.h>
-#include <Scope/GeneralPurpose/Memory.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Control/ParserDefinitions.h>
 #include <Scope/Serialisation/JsonParser/JsonCommon.h>
 #include <stdlib.h>
+#include <jsmn/jsmn.h>
 
 #define INPUT_BUFFER_SIZE 500
 #define TOKEN_BUFFER_SIZE 100
@@ -23,28 +23,32 @@
 ******************************************************************************/
 /* Class data */
 typedef struct __JsonUnpackerPrivateData{
-
     IUnpacker unpacker;
 
     size_t numberOfCommands;
-
     jsmn_parser parser;
     jsmntok_t* inputTokens;
     char* storageString;
     jsmntok_t* storageTokens;
-
     bool dataPending;
-
     IByteStreamHandle stream;
+
 } JsonUnpackerPrivateData;
 
 static int matchKeyToIndex(const char* json, jsmntok_t* tok, const char* key, int msgLength);
 
 static bool jsoneq(const char* json, jsmntok_t* tok, const char* key);
+
 static void activateNewMessage(JsonUnpackerHandle self, char* data);
+
+void copyString(char* str, const char* data, size_t size);
 /******************************************************************************
  Private functions
 ******************************************************************************/
+void copyString(char* str, const char* data, size_t size){
+    memcpy(str, data, size);
+    str[size] = '\0';
+}
 
 /* The function matches the end of a field to a start of another one. With this, fields at a specific index can
  * be found */
@@ -505,6 +509,7 @@ static void activateNewMessage(JsonUnpackerHandle self, char* data){
 
     self->dataPending = true;
 }
+
 /******************************************************************************
  Public functions
 ******************************************************************************/

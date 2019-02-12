@@ -14,10 +14,6 @@
 #define INTRINGBUFFER_H_
 
 #include <Scope/GeneralPurpose/IIntStream.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
-#include <stdlib.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -61,4 +57,5 @@ int IntRingBuffer_read(IntRingBufferHandle self, uint32_t* data, const size_t le
 /* Same as a normal read operation, but resets the tail pointer to its original position.
  * therefore data can be read without being destroyed. */
 int IntRingBuffer_readNoPosInc(IntRingBufferHandle self, uint32_t* data, const size_t length);
+
 #endif

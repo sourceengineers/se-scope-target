@@ -12,7 +12,6 @@
 #ifndef JSONUNPACKER_H_
 #define JSONUNPACKER_H_
 
-#include <jsmn/jsmn.h>
 #include <Scope/Control/IUnpacker.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/BufferedByteStream.h>

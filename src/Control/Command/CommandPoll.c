@@ -15,6 +15,7 @@
 /* Class data */
 typedef struct __CommandPollPrivateData{
     ICommand command;
+
     IScopeHandle scope;
 
 } CommandPollPrivateData;

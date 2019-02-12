@@ -13,9 +13,7 @@
 #ifndef COMMANDRUNNINGPARSER_H_
 #define COMMANDRUNNINGPARSER_H_
 
-#include <Scope/Control/Command/ICommand.h>
 #include <Scope/Control/Command/CommandRunning.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Control/IUnpacker.h>
 
 /******************************************************************************

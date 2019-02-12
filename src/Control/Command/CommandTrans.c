@@ -15,6 +15,7 @@
 /* Class data */
 typedef struct __CommandTransPrivateData{
     ICommand command;
+
     IScopeHandle scope;
 
 } CommandTransPrivateData;
@@ -23,8 +24,8 @@ typedef struct __CommandTransPrivateData{
  Private functions
 ******************************************************************************/
 static void run(ICommandHandle command){
-  CommandTransHandle self = (CommandTransHandle) command->handle;
-  self->scope->transmit(self->scope);
+    CommandTransHandle self = (CommandTransHandle) command->handle;
+    self->scope->transmit(self->scope);
 }
 
 /******************************************************************************
@@ -32,20 +33,20 @@ static void run(ICommandHandle command){
 ******************************************************************************/
 CommandTransHandle CommandTrans_create(IScopeHandle scope){
 
-  CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));
-  self->scope = scope;
+    CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));
+    self->scope = scope;
 
-  self->command.handle = self;
-  self->command.run = &run;
+    self->command.handle = self;
+    self->command.run = &run;
 
-  return self;
+    return self;
 }
 
 ICommandHandle CommandTrans_getICommand(CommandTransHandle self){
-  return &self->command;
+    return &self->command;
 }
 
 void CommandTrans_destroy(CommandTransHandle self){
-  free(self);
-  self = NULL;
+    free(self);
+    self = NULL;
 }
