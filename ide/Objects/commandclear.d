@@ -1,0 +1,10 @@
+.\objects\commandclear.o: ..\src\Command\CommandClear.c
+.\objects\commandclear.o: ..\include\Scope\Scope/Command/CommandClear.h
+.\objects\commandclear.o: ..\include\Scope\Scope/IScope.h
+.\objects\commandclear.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\commandclear.o: ..\include\Scope\Scope/GeneralPurpose/IIntStream.h
+.\objects\commandclear.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\commandclear.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\commandclear.o: ..\include\Scope\Scope/GeneralPurpose/DataTypes.h
+.\objects\commandclear.o: ..\include\Scope\Scope/Command/ICommand.h
+.\objects\commandclear.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

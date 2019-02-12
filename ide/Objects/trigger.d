@@ -1,0 +1,11 @@
+.\objects\trigger.o: ..\src\Trigger.c
+.\objects\trigger.o: ..\include\Scope\Scope/Trigger.h
+.\objects\trigger.o: ..\include\Scope\Scope/Channel.h
+.\objects\trigger.o: ..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h
+.\objects\trigger.o: ..\include\Scope\Scope/GeneralPurpose/IFloatStream.h
+.\objects\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\trigger.o: ..\include\Scope\Scope/GeneralPurpose/DataTypes.h
+.\objects\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\math.h

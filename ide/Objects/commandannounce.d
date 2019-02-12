@@ -1,0 +1,10 @@
+.\objects\commandannounce.o: ..\src\Command\CommandAnnounce.c
+.\objects\commandannounce.o: ..\include\Scope\Scope/Command/CommandAnnounce.h
+.\objects\commandannounce.o: ..\include\Scope\Scope/IScope.h
+.\objects\commandannounce.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\commandannounce.o: ..\include\Scope\Scope/GeneralPurpose/IIntStream.h
+.\objects\commandannounce.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\commandannounce.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\commandannounce.o: ..\include\Scope\Scope/GeneralPurpose/DataTypes.h
+.\objects\commandannounce.o: ..\include\Scope\Scope/Command/ICommand.h
+.\objects\commandannounce.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h

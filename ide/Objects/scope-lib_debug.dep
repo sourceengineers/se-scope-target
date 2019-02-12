@@ -1,0 +1,623 @@
+Dependencies for Project 'scope-lib', Target 'debug': (DO NOT MODIFY !)
+F (..\src\Command\CommandAddr.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandaddr.o --omf_browse .\objects\commandaddr.crf --depend .\objects\commandaddr.d)
+I (..\include\Scope\Scope/Command/CommandAddr.h)(0x5C18B770)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+F (..\src\Command\CommandAddrParser.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandaddrparser.o --omf_browse .\objects\commandaddrparser.crf --depend .\objects\commandaddrparser.d)
+I (..\include\Scope\Scope/Command/CommandAddrParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandAddr.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+F (..\src\Command\CommandAnnounce.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandannounce.o --omf_browse .\objects\commandannounce.crf --depend .\objects\commandannounce.d)
+I (..\include\Scope\Scope/Command/CommandAnnounce.h)(0x5C18B770)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+F (..\src\Command\CommandClear.c)(0x5C18D404)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandclear.o --omf_browse .\objects\commandclear.crf --depend .\objects\commandclear.d)
+I (..\include\Scope\Scope/Command/CommandClear.h)(0x5C18D3F7)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+F (..\src\Command\CommandFactory.c)(0x5C18B763)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandfactory.o --omf_browse .\objects\commandfactory.crf --depend .\objects\commandfactory.d)
+I (..\include\Scope\Scope/Command/CommandFactory.h)(0x5C18B763)
+I (..\include\Scope\Scope/Command/CommandRunning.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandPoll.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandAddr.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandTInc.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandTrans.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandTrigger.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandAddrParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandRunningParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandTIncParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandTriggerParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandAnnounce.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandPollParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandClear.h)(0x5C18D3F7)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+F (..\src\Command\CommandPoll.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandpoll.o --omf_browse .\objects\commandpoll.crf --depend .\objects\commandpoll.d)
+I (..\include\Scope\Scope/Command/CommandPoll.h)(0x5C18B770)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+F (..\src\Command\CommandPollParser.c)(0x5BFA76B5)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandpollparser.o --omf_browse .\objects\commandpollparser.crf --depend .\objects\commandpollparser.d)
+I (..\include\Scope\Scope/Command/CommandPollParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandPoll.h)(0x5C18B770)
+F (..\src\Command\CommandRunning.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandrunning.o --omf_browse .\objects\commandrunning.crf --depend .\objects\commandrunning.d)
+I (..\include\Scope\Scope/Command/CommandRunning.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+F (..\src\Command\CommandRunningParser.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandrunningparser.o --omf_browse .\objects\commandrunningparser.crf --depend .\objects\commandrunningparser.d)
+I (..\include\Scope\Scope/Command/CommandRunningParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandRunning.h)(0x5C18B770)
+F (..\src\Command\CommandTInc.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandtinc.o --omf_browse .\objects\commandtinc.crf --depend .\objects\commandtinc.d)
+I (..\include\Scope\Scope/Command/CommandTInc.h)(0x5C18B770)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+F (..\src\Command\CommandTIncParser.c)(0x5BD34E0C)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandtincparser.o --omf_browse .\objects\commandtincparser.crf --depend .\objects\commandtincparser.d)
+I (..\include\Scope\Scope/Command/CommandTIncParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandTInc.h)(0x5C18B770)
+F (..\src\Command\CommandTrans.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandtrans.o --omf_browse .\objects\commandtrans.crf --depend .\objects\commandtrans.d)
+I (..\include\Scope\Scope/Command/CommandTrans.h)(0x5C18B770)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+F (..\src\Command\CommandTrigger.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandtrigger.o --omf_browse .\objects\commandtrigger.crf --depend .\objects\commandtrigger.d)
+I (..\include\Scope\Scope/Command/CommandTrigger.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+F (..\src\Command\CommandTriggerParser.c)(0x5C18B763)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\commandtriggerparser.o --omf_browse .\objects\commandtriggerparser.crf --depend .\objects\commandtriggerparser.d)
+I (..\include\Scope\Scope/Command/CommandTriggerParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandTrigger.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+F (..\src\Communication\CommunicationFactory.c)(0x5BD34E0C)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\communicationfactory.o --omf_browse .\objects\communicationfactory.crf --depend .\objects\communicationfactory.d)
+I (..\include\Scope\Scope/Communication/CommunicationFactory.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/EthernetValidator.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/UartValidator.h)(0x5BFA76B5)
+F (..\src\Communication\EthernetValidator.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\ethernetvalidator.o --omf_browse .\objects\ethernetvalidator.crf --depend .\objects\ethernetvalidator.d)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/Communication/EthernetValidator.h)(0x5BFA76B5)
+F (..\src\Communication\Receiver.c)(0x5BD34E0C)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\receiver.o --omf_browse .\objects\receiver.crf --depend .\objects\receiver.d)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+F (..\src\Communication\Sender.c)(0x5BFA76B5)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\sender.o --omf_browse .\objects\sender.crf --depend .\objects\sender.d)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+F (..\src\Communication\UartValidator.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\uartvalidator.o --omf_browse .\objects\uartvalidator.crf --depend .\objects\uartvalidator.d)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/Communication/UartValidator.h)(0x5BFA76B5)
+F (..\src\GeneralPurpose\ByteRingBuffer.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\byteringbuffer.o --omf_browse .\objects\byteringbuffer.crf --depend .\objects\byteringbuffer.d)
+I (..\include\Scope\Scope/GeneralPurpose/ByteRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+F (..\src\GeneralPurpose\ByteStream.c)(0x5BFA76B5)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\bytestream.o --omf_browse .\objects\bytestream.crf --depend .\objects\bytestream.d)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/ByteRingBuffer.h)(0x5C18B770)
+F (..\src\GeneralPurpose\FloatRingBuffer.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\floatringbuffer.o --omf_browse .\objects\floatringbuffer.crf --depend .\objects\floatringbuffer.d)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+F (..\src\GeneralPurpose\FloatStream.c)(0x5BFA76B5)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\floatstream.o --omf_browse .\objects\floatstream.crf --depend .\objects\floatstream.d)
+I (..\include\Scope\Scope/GeneralPurpose/FloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+F (..\src\GeneralPurpose\IntRingBuffer.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\intringbuffer.o --omf_browse .\objects\intringbuffer.crf --depend .\objects\intringbuffer.d)
+I (..\include\Scope\Scope/GeneralPurpose/IntRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+F (..\src\GeneralPurpose\IntStream.c)(0x5C18D376)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\intstream.o --omf_browse .\objects\intstream.crf --depend .\objects\intstream.d)
+I (..\include\Scope\Scope/GeneralPurpose/IntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/IntRingBuffer.h)(0x5C18B770)
+F (..\src\GeneralPurpose\Memory.c)(0x5C18D37D)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\memory.o --omf_browse .\objects\memory.crf --depend .\objects\memory.d)
+I (..\include\Scope\Scope/GeneralPurpose/Memory.h)(0x5BD34E0C)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+F (..\src\MsgpackParser\MsgpackCommon.c)(0x5C18E3EA)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\msgpackcommon.o --omf_browse .\objects\msgpackcommon.crf --depend .\objects\msgpackcommon.d)
+I (..\include\Scope\Scope/MsgpackParser/MsgpackCommon.h)(0x5C18E432)
+I (..\3party\msgpackc\include\msgpack.h)(0x5BD34E18)
+I (..\3party\msgpackc\include\msgpack/util.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/object.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/pack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_define.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x599F3DAA)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/timestamp.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_template.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/unpack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/sbuffer.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/vrefbuffer.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version_master.h)(0x5BD34E1A)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+F (..\src\MsgpackParser\MsgpackPacker.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\msgpackpacker.o --omf_browse .\objects\msgpackpacker.crf --depend .\objects\msgpackpacker.d)
+I (..\include\Scope\Scope/MsgpackParser/MsgpackPacker.h)(0x5BFA76B5)
+I (..\3party\msgpackc\include\msgpack.h)(0x5BD34E18)
+I (..\3party\msgpackc\include\msgpack/util.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/object.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/pack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_define.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x599F3DAA)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/timestamp.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_template.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/unpack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/sbuffer.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/vrefbuffer.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version_master.h)(0x5BD34E1A)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/Memory.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/MsgpackParser/MsgpackCommon.h)(0x5C18E432)
+I (..\include\Scope\Scope/Communication/Keywords.h)(0x5C18B770)
+F (..\src\MsgpackParser\MsgpackUnpacker.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\msgpackunpacker.o --omf_browse .\objects\msgpackunpacker.crf --depend .\objects\msgpackunpacker.d)
+I (..\include\Scope\Scope/MsgpackParser/MsgpackUnpacker.h)(0x5BFA76B5)
+I (..\3party\msgpackc\include\msgpack.h)(0x5BD34E18)
+I (..\3party\msgpackc\include\msgpack/util.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/object.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/pack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_define.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x599F3DAA)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/timestamp.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_template.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/unpack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/sbuffer.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/vrefbuffer.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version_master.h)(0x5BD34E1A)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/GeneralPurpose/Memory.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+F (..\src\AddressStorage.c)(0x5C18C497)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\addressstorage.o --omf_browse .\objects\addressstorage.crf --depend .\objects\addressstorage.d)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+F (..\src\Channel.c)(0x5C18B770)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\channel.o --omf_browse .\objects\channel.crf --depend .\objects\channel.d)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/GeneralPurpose/FloatStream.h)(0x5C18B770)
+F (..\src\Scope.c)(0x5C18B763)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\scope.o --omf_browse .\objects\scope.crf --depend .\objects\scope.d)
+I (..\include\Scope\Scope/Scope.h)(0x5C18B763)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (..\include\Scope\Scope/IScope.h)(0x5C18B763)
+I (..\include\Scope\Scope/GeneralPurpose/IIntStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandFactory.h)(0x5C18B763)
+I (..\include\Scope\Scope/Command/CommandRunning.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Receiver.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IUnpacker.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/CommunicationCommons.h)(0x5BD34E0C)
+I (..\include\Scope\Scope/GeneralPurpose/IByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IComValidator.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/Sender.h)(0x5C18B770)
+I (..\include\Scope\Scope/Communication/IPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/GeneralPurpose/ByteStream.h)(0x5C18B770)
+I (..\include\Scope\Scope/AddressStorage.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/ICommand.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandPoll.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandAddr.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandTInc.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandTrans.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandTrigger.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandAddrParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandRunningParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandTIncParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandTriggerParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandAnnounce.h)(0x5C18B770)
+I (..\include\Scope\Scope/Command/CommandPollParser.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Command/CommandClear.h)(0x5C18D3F7)
+I (..\include\Scope\Scope/MsgpackParser/MsgpackUnpacker.h)(0x5BFA76B5)
+I (..\3party\msgpackc\include\msgpack.h)(0x5BD34E18)
+I (..\3party\msgpackc\include\msgpack/util.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/object.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/pack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_define.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x599F3DAA)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/timestamp.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_template.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/unpack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/sbuffer.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/vrefbuffer.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version_master.h)(0x5BD34E1A)
+I (..\include\Scope\Scope/MsgpackParser/MsgpackPacker.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/CommunicationFactory.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Communication/EthernetValidator.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/GeneralPurpose/IntRingBuffer.h)(0x5C18B770)
+F (..\src\Trigger.c)(0x5C18BB3F)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\trigger.o --omf_browse .\objects\trigger.crf --depend .\objects\trigger.d)
+I (..\include\Scope\Scope/Trigger.h)(0x5BFA76B5)
+I (..\include\Scope\Scope/Channel.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h)(0x5C18B770)
+I (..\include\Scope\Scope/GeneralPurpose/IFloatStream.h)(0x5C18B770)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\include\Scope\Scope/GeneralPurpose/DataTypes.h)(0x5BFA76B5)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\math.h)(0x599F3DAE)
+F (..\3party\msgpackc\src\objectc.c)(0x5BD34E1A)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\objectc.o --omf_browse .\objects\objectc.crf --depend .\objects\objectc.d)
+I (..\3party\msgpackc\include\msgpack/object.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/pack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_define.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x599F3DAA)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/timestamp.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_template.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\ctype.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\inttypes.h)(0x599F3DAE)
+F (..\3party\msgpackc\src\unpack.c)(0x5BD34E1A)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\unpack.o --omf_browse .\objects\unpack.crf --depend .\objects\unpack.d)
+I (..\3party\msgpackc\include\msgpack/unpack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (..\3party\msgpackc\include\msgpack/object.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/unpack_define.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\assert.h)(0x599F3DAA)
+I (..\3party\msgpackc\include\msgpack/util.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/unpack_template.h)(0x5BD34E19)
+F (..\3party\msgpackc\src\version.c)(0x5BD34E1A)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\version.o --omf_browse .\objects\version.crf --depend .\objects\version.d)
+I (..\3party\msgpackc\include\msgpack.h)(0x5BD34E18)
+I (..\3party\msgpackc\include\msgpack/util.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/object.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/pack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_define.h)(0x5BD34E19)
+I (C:\Keil_v5\ARM\ARMCC\include\limits.h)(0x599F3DAA)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+I (..\3party\msgpackc\include\msgpack/timestamp.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/pack_template.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/unpack.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/sbuffer.h)(0x5BD34E19)
+I (..\3party\msgpackc\include\msgpack/vrefbuffer.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/version_master.h)(0x5BD34E1A)
+F (..\3party\msgpackc\src\vrefbuffer.c)(0x5BD34E1A)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\vrefbuffer.o --omf_browse .\objects\vrefbuffer.crf --depend .\objects\vrefbuffer.d)
+I (..\3party\msgpackc\include\msgpack/vrefbuffer.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)
+F (..\3party\msgpackc\src\zone.c)(0x5BD34E1A)(--c99 --gnu -c --cpu Cortex-M4.fp -D__EVAL -g -O3 --apcs=interwork --split_sections -I ..\include\Scope -I ..\3party\msgpackc\include\msgpack -I ..\3party\msgpackc\include-I.\RTE\_debug-IC:\Keil_v5\ARM\PACK\Keil\STM32L4xx_DFP\2.0.0\Drivers\CMSIS\Device\ST\STM32L4xx\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="526" -DSTM32L476xx -DMSGPACK_ENDIAN_LITTLE_BYTE -DARCH_SIZE_32="1" -DMSGPACK_ENABLE_CXX="OFF" -DMSGPACK_ENABLE_STATIC="ON" -DMSGPACK_ENABLE_SHARED="OFF"-o .\objects\zone.o --omf_browse .\objects\zone.crf --depend .\objects\zone.d)
+I (..\3party\msgpackc\include\msgpack/zone.h)(0x5BD34E1A)
+I (..\3party\msgpackc\include\msgpack/sysdep.h)(0x5C18DF94)
+I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x599F3DAC)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x599F3DAE)
+I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x599F3DAC)

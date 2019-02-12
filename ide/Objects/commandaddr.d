@@ -1,0 +1,11 @@
+.\objects\commandaddr.o: ..\src\Command\CommandAddr.c
+.\objects\commandaddr.o: ..\include\Scope\Scope/Command/CommandAddr.h
+.\objects\commandaddr.o: ..\include\Scope\Scope/Channel.h
+.\objects\commandaddr.o: ..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h
+.\objects\commandaddr.o: ..\include\Scope\Scope/GeneralPurpose/IFloatStream.h
+.\objects\commandaddr.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\commandaddr.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\commandaddr.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\commandaddr.o: ..\include\Scope\Scope/GeneralPurpose/DataTypes.h
+.\objects\commandaddr.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\commandaddr.o: ..\include\Scope\Scope/Command/ICommand.h

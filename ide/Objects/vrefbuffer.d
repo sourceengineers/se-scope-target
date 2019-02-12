@@ -1,0 +1,9 @@
+.\objects\vrefbuffer.o: ..\3party\msgpackc\src\vrefbuffer.c
+.\objects\vrefbuffer.o: ..\3party\msgpackc\include\msgpack/vrefbuffer.h
+.\objects\vrefbuffer.o: ..\3party\msgpackc\include\msgpack/zone.h
+.\objects\vrefbuffer.o: ..\3party\msgpackc\include\msgpack/sysdep.h
+.\objects\vrefbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\vrefbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\vrefbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\vrefbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\vrefbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

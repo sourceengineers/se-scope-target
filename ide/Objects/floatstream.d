@@ -1,0 +1,9 @@
+.\objects\floatstream.o: ..\src\GeneralPurpose\FloatStream.c
+.\objects\floatstream.o: ..\include\Scope\Scope/GeneralPurpose/FloatStream.h
+.\objects\floatstream.o: ..\include\Scope\Scope/GeneralPurpose/IFloatStream.h
+.\objects\floatstream.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\floatstream.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\floatstream.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\floatstream.o: ..\include\Scope\Scope/GeneralPurpose/DataTypes.h
+.\objects\floatstream.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\floatstream.o: ..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h

@@ -1,0 +1,17 @@
+.\objects\objectc.o: ..\3party\msgpackc\src\objectc.c
+.\objects\objectc.o: ..\3party\msgpackc\include\msgpack/object.h
+.\objects\objectc.o: ..\3party\msgpackc\include\msgpack/zone.h
+.\objects\objectc.o: ..\3party\msgpackc\include\msgpack/sysdep.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\objectc.o: ..\3party\msgpackc\include\msgpack/pack.h
+.\objects\objectc.o: ..\3party\msgpackc\include\msgpack/pack_define.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\limits.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\objects\objectc.o: ..\3party\msgpackc\include\msgpack/timestamp.h
+.\objects\objectc.o: ..\3party\msgpackc\include\msgpack/pack_template.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\ctype.h
+.\objects\objectc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
