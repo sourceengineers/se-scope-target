@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.0.0)
 
 # Set the Project name
 set(PROJECT_NAME
-    static_example
-)
+        static_example
+        )
 
 project(${PROJECT_NAME})
 
