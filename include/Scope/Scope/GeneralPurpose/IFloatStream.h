@@ -20,9 +20,6 @@
 #ifndef IFLOATSTREAM_H_
 #define IFLOATSTREAM_H_
 
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -33,17 +30,32 @@ typedef struct IFloatStreamStruct* IFloatStreamHandle;
 /******************************************************************************
  Define interface
 ******************************************************************************/
-typedef struct IFloatStreamStruct {
-    void* implementer;
-    void (*open)(IFloatStreamHandle self, float* stream, const size_t capacity);
-    bool (*dataIsReady)(IFloatStreamHandle self);
-    float (*readData)(IFloatStreamHandle self);
-    size_t (*length)(IFloatStreamHandle self);
-    void (*read)(IFloatStreamHandle self, float* data, const size_t length);
-    void (*writeData)(IFloatStreamHandle self, const float data);
-    void (*write)(IFloatStreamHandle self, const float* data, const size_t length);
-    void (*close)(IFloatStreamHandle self);
-    void (*flush)(IFloatStreamHandle self);
-} IFloatStream ;
+typedef struct IFloatStreamStruct{
+    GenericReference handle;
+
+    bool (* dataIsReady)(IFloatStreamHandle self);
+
+    float (* readData)(IFloatStreamHandle self);
+
+    size_t (* length)(IFloatStreamHandle self);
+
+    /**
+     *
+     * @param data array into which the data gets written. The size of this should be what ever "length" returned
+     * @param length Amount of bytes which should be read
+     */
+    void (* read)(IFloatStreamHandle self, float* data, const size_t length);
+
+    void (* writeData)(IFloatStreamHandle self, const float data);
+
+    /**
+     *
+     * @param data Data which should be written into the Stream
+     * @param length Amount of data which should be written
+     */
+    void (* write)(IFloatStreamHandle self, const float* data, const size_t length);
+
+    void (* flush)(IFloatStreamHandle self);
+} IFloatStream;
 
 #endif

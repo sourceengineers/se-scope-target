@@ -10,5 +10,14 @@ project(${PROJECT_NAME})
 
 add_library(${PROJECT_NAME} jsmn/jsmn.h jsmn/jsmn.c)
 
-install( FILES jsmn/jsmn.h DESTINATION "${CMAKE_INSTALL_PREFIX}/include" )
+TARGET_INCLUDE_DIRECTORIES (jsmn
+        PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+        $<INSTALL_INTERFACE:include>
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+
+install( FILES jsmn/jsmn.h DESTINATION "${CMAKE_INSTALL_PREFIX}/include/jsmn" )
 install( TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library )

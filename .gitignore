@@ -6,3 +6,13 @@ build/
 \.idea/
 
 cmake-build-debug/
+
+examples/embedded/atollic-toolchain\.cmake
+
+examples/embedded/dev_tool_conf\.yaml
+
+*.pyc
+
+tools/dev/rx
+
+tools/dev/tx

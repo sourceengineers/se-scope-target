@@ -1,146 +1,82 @@
 #include <gtest/gtest.h>
 
 extern "C" {
-    #include <Scope/JsonParser/JsonUnpacker.h>
+#include <Scope/Serialisation/JsonParser/JsonPacker.h>
+#include <Scope/GeneralPurpose/BufferedByteStream.h>
+#include <Scope/GeneralPurpose/BufferedIntStream.h>
+#include <Scope/GeneralPurpose/BufferedFloatStream.h>
 }
 
 using namespace testing;
 using namespace std;
 
+TEST(json_packer, unpack_test){
 
-static const char* data = (const char*) "{\"transport\": \"...\","
-                                          "\"payload\": {"
-                                            "\"sc_cmd\": {"
-                                              "\"ev_announce\": null,"
-                                              "\"ev_trans\": null,"
-                                              "\"cf_addr\": {"
-                                                "\"cl_id_1\": [111, \"UINT8\"],"
-                                                "\"cl_id_2\": [222,\"UINT16\"],"
-                                                "\"cl_id_3\": [333,\"FLOAT\"]"
-                                              "},"
-                                              "\"cf_tgr\": {"
-                                                "\"cl_id\": 15,"
-                                                "\"mode\": \"Continous\","
-                                                "\"level\": 1.75,"
-                                                "\"edge\": \"fallig\""
-                                              "}"
-                                            "}"
-                                          "}"
-                                        "}";
+    size_t channelSize = 400;
+    size_t sizes = JsonPacker_calculateBufferSize(5, 10, channelSize);
 
-TEST(json_packer, unpack_test)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+    float value;
 
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
+    IByteStreamHandle outputStream = BufferedByteStream_getIByteStream(BufferedByteStream_create(sizes));
 
-  EXPECT_EQ(unpackSuccessful, true);
-  unpacker->activateNewMessage(unpacker);
+    IIntStreamHandle timestamp = BufferedIntStream_getIIntStream(BufferedIntStream_create(channelSize));
+    FloatRingBufferHandle buf1 = FloatRingBuffer_create(channelSize);
+    FloatRingBufferHandle buf2 = FloatRingBuffer_create(channelSize);
 
-  int numberOfCommands = unpacker->getNumberOfCommands(unpacker);
+    IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(5, 10, outputStream));
 
-  EXPECT_EQ(numberOfCommands, 4);
-}
+    packer->prepareAddressAnnouncement(packer, "VAR_1", "UINT32", 11111);
+    packer->prepareAddressAnnouncement(packer, "VAR_2", "FLOAT", 22222);
 
-TEST(json_packer, command_name)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+    packer->prepareTrigger(packer, true, 1, 1000);
 
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
+    packer->prepareTimeIncrement(packer, 10);
+    packer->prepareFlowControl(packer, "ACK");
 
-  unpacker->activateNewMessage(unpacker);
+    value = -23.5354f;
+    FloatRingBuffer_write(buf1, &value, 1);
+    FloatRingBuffer_write(buf2, &value, 1);
+    timestamp->writeData(timestamp, 0);
 
-  char name[20];
-  unpacker->getNameOfCommand(unpacker, name, 20, 0);
-  EXPECT_STREQ(name, "ev_announce");
-  unpacker->getNameOfCommand(unpacker, name, 20, 1);
-  EXPECT_STREQ(name, "ev_trans");
-  unpacker->getNameOfCommand(unpacker, name, 20, 2);
-  EXPECT_STREQ(name, "cf_addr");
-  unpacker->getNameOfCommand(unpacker, name, 20, 3);
-  EXPECT_STREQ(name, "cf_tgr");
+    value = 234534523.5354f;
+    FloatRingBuffer_write(buf1, &value, 1);
+    FloatRingBuffer_write(buf2, &value, 1);
+    timestamp->writeData(timestamp, 1);
 
-}
+    value = 0.00000345;
+    FloatRingBuffer_write(buf1, &value, 1);
+    FloatRingBuffer_write(buf2, &value, 1);
+    timestamp->writeData(timestamp, 2);
 
-TEST(json_packer, values_from_commands)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
+    value = -0.00000345f;
+    FloatRingBuffer_write(buf1, &value, 1);
+    FloatRingBuffer_write(buf2, &value, 1);
+    timestamp->writeData(timestamp, 3);
 
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
+    value = 0.0f;
+    FloatRingBuffer_write(buf1, &value, 1);
+    FloatRingBuffer_write(buf2, &value, 1);
+    timestamp->writeData(timestamp, 4);
 
-  unpacker->activateNewMessage(unpacker);
+    value = 1.5f;
+    FloatRingBuffer_write(buf1, &value, 1);
+    FloatRingBuffer_write(buf2, &value, 1);
+    timestamp->writeData(timestamp, 5);
 
-  CommandFetchingInformation info = {
-      .commandName = (char*) "cf_tgr",
-      .fieldName = (char*)"cl_id",
-      .isInArray = false,
-      .arrayIndex = 0
-  };
+    packer->prepareTimestamp(packer, timestamp);
 
-  int data = unpacker->getIntFromCommand(unpacker, &info);
-  EXPECT_EQ(15, data);
+    packer->prepareChannel(packer, buf1, 0);
+    packer->prepareChannel(packer, buf2, 1);
 
-  info.fieldName = (char*)"level";
+    packer->pack(packer);
 
-  float fdata = unpacker->getFloatFromCommand(unpacker, &info);
-  EXPECT_EQ(1.75, fdata);
+    size_t dataPending = outputStream->length(outputStream);
+    char data[dataPending + 1];
 
-  char mode[20];
-  info.fieldName = (char*)"mode";
-  unpacker->getStringFromCommand(unpacker, &info, mode, 20);
-  EXPECT_STREQ(mode, "Continous");
+    outputStream->read(outputStream, (uint8_t*) data, dataPending);
+    data[dataPending] = '\0';
 
-}
-
-TEST(json_packer, values_from_array)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
-
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
-
-  unpacker->activateNewMessage(unpacker);
-
-  CommandFetchingInformation info = {
-          .commandName = (char*) "cf_addr",
-          .fieldName = (char*)"cl_id_1",
-          .isInArray = true,
-          .arrayIndex = 0
-  };
-
-  int data = unpacker->getIntFromCommand(unpacker, &info);
-  EXPECT_EQ(111, data);
-
-  info.fieldName = (char*)"cl_id_2";
-  info.arrayIndex = 1;
-
-  char dataType[20];
-  unpacker->getStringFromCommand(unpacker, &info, dataType, 20);
-  EXPECT_STREQ(dataType, "UINT16");
-
-}
-
-TEST(json_packer, transport_field)
-{
-  IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(400));
-
-  bool unpackSuccessful = unpacker->unpack(unpacker, data, strlen(data));
-
-  unpacker->activateNewMessage(unpacker);
-
-  size_t lengthCheck = unpacker->getLengthOfCheck(unpacker);
-  EXPECT_EQ(lengthCheck, 3);
-
-  size_t lengthOfDataToCheck = unpacker->getLengthOfBytesToCheck(unpacker);
-  EXPECT_EQ(lengthOfDataToCheck, 215);
-
-  uint8_t dataToCheck[300];
-  unpacker->getBytesToCheck(unpacker, dataToCheck);
-
-  EXPECT_STREQ((char*) dataToCheck, "{\"sc_cmd\": {\"ev_announce\": null,\"ev_trans\": null,\"cf_addr\": {\"cl_id_1\": [111, \"UINT8\"],\"cl_id_2\": [222,\"UINT16\"],\"cl_id_3\": [333,\"FLOAT\"]},\"cf_tgr\": {\"cl_id\": 15,\"mode\": \"Continous\",\"level\": 1.75,\"edge\": \"fallig\"}}}");
-
-  uint8_t checkData[30];
-  unpacker->getCheck(unpacker, checkData);
-
-  EXPECT_STREQ((char*) checkData, "...");
+    EXPECT_STREQ(data,
+                 "{\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5],\"1\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5]},\"t_stmp\":[0,1,2,3,4,5],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"UINT32\"],\"VAR_2\":[22222,\"FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");
 
 }

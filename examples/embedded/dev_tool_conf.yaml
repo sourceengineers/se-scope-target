@@ -1,8 +1,0 @@
-Serial:
-  Baudrate: 115200
-  File: /dev/tty.usbmodem14103
-  Timeout: 0.5
-  
-Legend:
-  "0": "Name1"
-  "1": "Name2"

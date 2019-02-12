@@ -2,25 +2,29 @@
 import sys
 import os
 import json
-import msgpack
+
 
 def main():
-    command = "{\"transport\":null,\"payload\":{\"sc_cmd\":{\"ev_announce\":null}}}";
+    command = "{\"payload\":{\"sc_cmd\":{\"ev_announce\":null}}}"
 
-    print(command);
+    print(command)
 
     filename = os.path.abspath(sys.argv[1])
-    file = open(filename, 'wb')
-    file.write(msgpack.dumps(json.loads(command)))
+    file = open(filename, 'w')
+    file.write(command)
     file.close()
 
 
+def getCommand():
+    return "{\"payload\":{\"sc_cmd\":{\"ev_announce\":null}}}"
+
+
 if __name__ == "__main__":
-    
-    if ((len(sys.argv) < 2) or (sys.argv[1]=="--help")):
+
+    if ((len(sys.argv) < 2) or (sys.argv[1] == "--help")):
         print(
-        """Commands the scope to send its pre defined addresses.
-        Usage: ./ev_announce INPUT_FILE """) 
-        sys.exit();
-    
+            """Commands the scope to send its pre defined addresses.
+            Usage: ./ev_announce INPUT_FILE """)
+        sys.exit()
+
     main()
