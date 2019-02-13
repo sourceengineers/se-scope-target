@@ -31,7 +31,7 @@ CommandTriggerParserHandle CommandTriggerParser_create(IScopeHandle scope, IUnpa
 ICommandHandle CommandTriggerParser_getCommand(CommandTriggerParserHandle self);
 
 /* Returns the name of the command */
-char* CommandTriggerParser_getName();
+char* CommandTriggerParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandTriggerParser_destroy(CommandTriggerParserHandle self);

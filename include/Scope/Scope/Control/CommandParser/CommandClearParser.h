@@ -30,7 +30,7 @@ CommandClearParserHandle CommandClearParser_create(IScopeHandle scope);
 ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self);
 
 /* Returns the name of the command */
-char* CommandClearParser_getName();
+char* CommandClearParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandClearParser_destroy(CommandClearParserHandle self);

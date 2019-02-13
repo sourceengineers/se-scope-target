@@ -30,7 +30,7 @@ CommandPollParserHandle CommandPollParser_create(IScopeHandle scope);
 ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self);
 
 /* Returns the name of the command */
-char* CommandPollParser_getName();
+char* CommandPollParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandPollParser_destroy(CommandPollParserHandle self);

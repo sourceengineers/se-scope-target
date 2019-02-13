@@ -35,7 +35,7 @@ ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self){
     return CommandPoll_getICommand(self->command);
 }
 
-char* CommandPollParser_getName(){
+char* CommandPollParser_getName(void){
     return commandName;
 }
 

@@ -30,7 +30,7 @@ CommandPackParserHandle CommandPackParser_create(IScopeHandle scope, IPackerHand
 ICommandHandle CommandPackParser_getCommand(CommandPackParserHandle self);
 
 /* Returns the name of the command */
-char* CommandPackParser_getName();
+char* CommandPackParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandPackParser_destroy(CommandPackParserHandle self);

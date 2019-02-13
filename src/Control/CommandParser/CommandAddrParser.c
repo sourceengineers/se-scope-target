@@ -121,6 +121,6 @@ void CommandAddrParser_destroy(CommandAddrParserHandle self){
     self = NULL;
 }
 
-char* CommandAddrParser_getName(){
+char* CommandAddrParser_getName(void){
     return commandName;
 }

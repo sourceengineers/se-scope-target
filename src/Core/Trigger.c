@@ -294,9 +294,6 @@ static bool configSanityCheck(TriggerHandle self, TriggerConfiguration conf){
        && (conf.edge != TRIGGER_EDGE_POSITIVE)){
         return false;
     }
-    if(conf.channelId < 0){
-        return false;
-    }
     if(conf.channelId >= self->amountOfChannels){
         return false;
     }

@@ -34,7 +34,7 @@ ICommandHandle CommandAnnounceParser_getCommand(CommandAnnounceParserHandle self
     return CommandAnnounce_getICommand(self->command);
 }
 
-char* CommandAnnounceParser_getName(){
+char* CommandAnnounceParser_getName(void){
     return commandName;
 }
 

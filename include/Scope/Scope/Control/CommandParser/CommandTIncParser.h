@@ -31,7 +31,7 @@ CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHa
 ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self);
 
 /* Returns the name of the command */
-char* CommandTIncParser_getName();
+char* CommandTIncParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandTIncParser_destroy(CommandTIncParserHandle self);

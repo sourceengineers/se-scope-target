@@ -49,7 +49,7 @@ ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self){
     return CommandTInc_getICommand(self->command);
 }
 
-char* CommandTIncParser_getName(){
+char* CommandTIncParser_getName(void){
     return commandName;
 }
 

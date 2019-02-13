@@ -48,7 +48,6 @@ void runRx(ICommunicatorHandle communicator){
 }
 
 bool txSendingPending(ICommunicatorHandle communicator){
-    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
     return false;
 }
 

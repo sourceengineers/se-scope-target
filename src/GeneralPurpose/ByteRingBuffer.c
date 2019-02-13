@@ -123,8 +123,9 @@ int ByteRingBuffer_write(ByteRingBufferHandle self, const uint8_t* data, const s
 int ByteRingBuffer_readNoPosInc(ByteRingBufferHandle self, uint8_t* data, const size_t length){
 
     uint8_t* tailBackup = self->tail;
-    ByteRingBuffer_read(self, data, length);
+    int ret = ByteRingBuffer_read(self, data, length);
     self->tail = tailBackup;
+		return ret;
 }
 
 int ByteRingBuffer_read(ByteRingBufferHandle self, uint8_t* data, const size_t length){

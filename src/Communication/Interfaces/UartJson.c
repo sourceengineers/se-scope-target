@@ -10,9 +10,9 @@
 #include <Scope/Communication/Interfaces/UartJson.h>
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
-#include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef enum{
     TRANSPORT_NOT_FOUND, CHECKSUM_FAULTY, CHECKSUM_OK
@@ -65,7 +65,7 @@ void rxDataHasBeenFetched(ICommunicatorHandle communicator){
 }
 
 void runRx(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+		return;
 }
 
 bool txSendingPending(ICommunicatorHandle communicator){

@@ -43,7 +43,7 @@ typedef struct ScopeObjectStruct{
  Public functions
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-ScopeBuilderHandle ScopeBuilder_create();
+ScopeBuilderHandle ScopeBuilder_create(void);
 
 /* Builds the scope with gives objects */
 ScopeObject ScopeBuilder_build(ScopeBuilderHandle self);

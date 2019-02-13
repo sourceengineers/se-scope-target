@@ -34,7 +34,7 @@ ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self){
     return CommandClear_getICommand(self->command);
 }
 
-char* CommandClearParser_getName(){
+char* CommandClearParser_getName(void){
     return commandName;
 }
 

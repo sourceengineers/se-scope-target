@@ -35,7 +35,7 @@ ICommandHandle CommandPackParser_getCommand(CommandPackParserHandle self){
     return CommandPack_getICommand(self->command);
 }
 
-char* CommandPackParser_getName(){
+char* CommandPackParser_getName(void){
     return commandName;
 }
 

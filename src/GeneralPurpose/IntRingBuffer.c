@@ -122,8 +122,9 @@ int IntRingBuffer_write(IntRingBufferHandle self, const uint32_t* data, const si
 int IntRingBuffer_readNoPosInc(IntRingBufferHandle self, uint32_t* data, const size_t length){
 
     uint32_t* tailBackup = self->tail;
-    IntRingBuffer_read(self, data, length);
+    int ret = IntRingBuffer_read(self, data, length);
     self->tail = tailBackup;
+		return ret;
 }
 
 int IntRingBuffer_read(IntRingBufferHandle self, uint32_t* data, const size_t length){

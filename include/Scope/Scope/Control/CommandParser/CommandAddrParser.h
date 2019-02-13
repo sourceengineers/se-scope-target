@@ -34,6 +34,6 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self);
 void CommandAddrParser_destroy(CommandAddrParserHandle self);
 
 /* Returns the name of the command */
-char* CommandAddrParser_getName();
+char* CommandAddrParser_getName(void);
 
 #endif

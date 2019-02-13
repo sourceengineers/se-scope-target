@@ -78,12 +78,12 @@ void AddressStorage_addAnnounceAddress(AddressStorageHandle self, const char* na
         return;
     }
 
-    if(strnlen(name, maxAddrNameLength + 1) > maxAddrNameLength){
+    if(strlen(name) > maxAddrNameLength){
         return;
     }
 
     self->addresses[addressId].type = type;
-    self->addresses[addressId].address = (const ADDRESS_DATA_TYPE) address;
+    self->addresses[addressId].address = (ADDRESS_DATA_TYPE) address;
     strncpy(self->addresses[addressId].name, name, maxAddrNameLength);
     self->addresses[addressId].hasToBeSent = true;
 }

@@ -8,12 +8,12 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
-#include <string.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Control/ParserDefinitions.h>
 #include <Scope/Serialisation/JsonParser/JsonCommon.h>
 #include <stdlib.h>
 #include <jsmn/jsmn.h>
+#include <string.h>
 
 #define INPUT_BUFFER_SIZE 250
 #define TOKEN_BUFFER_SIZE 100
@@ -225,7 +225,7 @@ static bool unpack(IUnpackerHandle unpacker){
     char data[length];
     self->stream->read(self->stream, (uint8_t*) data, length);
 
-    if(strnlen(data, INPUT_BUFFER_SIZE) >= INPUT_BUFFER_SIZE){
+    if(strlen(data) >= INPUT_BUFFER_SIZE){
         return false;
     }
 
@@ -561,6 +561,6 @@ IUnpackerHandle JsonUnpacker_getIUnpacker(JsonUnpackerHandle self){
     return &self->unpacker;
 }
 
-size_t JsonUnpacker_calculateBufferSize(){
+size_t JsonUnpacker_calculateBufferSize(void){
     return INPUT_BUFFER_SIZE;
 }

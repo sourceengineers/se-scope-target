@@ -30,7 +30,7 @@ CommandAnnounceParserHandle CommandAnnounceParser_create(IScopeHandle scope);
 ICommandHandle CommandAnnounceParser_getCommand(CommandAnnounceParserHandle self);
 
 /* Returns the name of the command */
-char* CommandAnnounceParser_getName();
+char* CommandAnnounceParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandAnnounceParser_destroy(CommandAnnounceParserHandle self);

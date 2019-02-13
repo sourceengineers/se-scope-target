@@ -121,8 +121,9 @@ int FloatRingBuffer_write(FloatRingBufferHandle self, const float* data, const s
 int FloatRingBuffer_readNoPosInc(FloatRingBufferHandle self, float* data, const size_t length){
 
     float* tailBackup = self->tail;
-    FloatRingBuffer_read(self, data, length);
+    int ret = FloatRingBuffer_read(self, data, length);
     self->tail = tailBackup;
+		return ret;
 }
 
 int FloatRingBuffer_read(FloatRingBufferHandle self, float* data, const size_t length){

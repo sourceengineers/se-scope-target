@@ -30,7 +30,7 @@ CommandTransParserHandle CommandTransParser_create(IScopeHandle scope);
 ICommandHandle CommandTransParser_getCommand(CommandTransParserHandle self);
 
 /* Returns the name of the command */
-char* CommandTransParser_getName();
+char* CommandTransParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandTransParser_destroy(CommandTransParserHandle self);

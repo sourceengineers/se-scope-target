@@ -16,3 +16,5 @@ examples/embedded/dev_tool_conf\.yaml
 tools/dev/rx
 
 tools/dev/tx
+
+ide/Objects/

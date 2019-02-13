@@ -31,7 +31,7 @@ CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpa
 ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self);
 
 /* Returns the name of the command */
-char* CommandRunningParser_getName();
+char* CommandRunningParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
 void CommandRunningParser_destroy(CommandRunningParserHandle self);

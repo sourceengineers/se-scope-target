@@ -106,7 +106,7 @@ ICommandHandle CommandTriggerParser_getCommand(CommandTriggerParserHandle self){
     return CommandTrigger_getICommand(self->command);
 }
 
-char* CommandTriggerParser_getName(){
+char* CommandTriggerParser_getName(void){
     return commandName;
 }
 

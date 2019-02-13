@@ -82,7 +82,7 @@ ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
     return CommandRunning_getICommand(self->command);
 }
 
-char* CommandRunningParser_getName(){
+char* CommandRunningParser_getName(void){
     return commandName;
 }
 
