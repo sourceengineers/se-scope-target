@@ -58,13 +58,14 @@ def config():
     channels.append({'name': "Sinus", 'address': get_address_from_map("sinus"), 'type': "FLOAT"})
     channels.append({'name': "Cosinus", 'address': get_address_from_map("cosinus"), 'type': "FLOAT"})
     channels.append({'name': "Leistung", 'address': get_address_from_map("leistung"), 'type': "FLOAT"})
-    channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
+    #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
+    channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "FLOAT"})
 
     ##########################################################################
     ### Trigger Konfiguration
     ##########################################################################
-    # trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1}
-    trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
+    trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1}
+    #trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id': 0}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
     # Wird z.B. der timestmap pro Millisekunde incrementiert, und die step_size ist 10,
@@ -76,8 +77,8 @@ def config():
     ##########################################################################
     add_subplot(["Sinus", "Cosinus", "Leistung"], \
                 {'title': 'Sin and Cos', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-    add_subplot(["Schmitt triggered"], \
-                {'title': 'Schmitt triggered', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
+    add_subplot(["Potty"], \
+                {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
 
     figure_name = "Device data"
 
@@ -87,65 +88,6 @@ def config():
 
     x_width = 100
     x_width = x_width * step_size
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ##############################################################################
@@ -403,84 +345,80 @@ def get_trigger_point():
 
 ##############################################################################
 def plot_data():
-    try:
-        for i in range(len(plot_conf)):
-            for ch in plot_conf[i][0]:
-                if len(device_data[len(channels)]) == len(device_data[ch]):
-                    if len(device_data[len(channels)]) > 0:
+    for i in range(len(plot_conf)):
+        for ch in plot_conf[i][0]:
+            if len(device_data[len(channels)]) == len(device_data[ch]):
+                if len(device_data[len(channels)]) > 0:
+                    # Plot all lines
+                    lines[ch].set_xdata(list(device_data[len(channels)]))
+                    lines[ch].set_ydata(list(device_data[ch]))
 
-                       # print("Channel id: {}\n, Data:{}".format(ch, list(device_data[ch])))
-                        # Plot all lines
-                        lines[ch].set_xdata(list(device_data[len(channels)]))
-                        lines[ch].set_ydata(list(device_data[ch]))
+            # if not the same amount of data is present in the channels,
+            # the data gets resetted, until they match
+            else:
+                clear_data()
 
-                # if not the same amount of data is present in the channels,
-                # the data gets resetted, until they match
-                else:
-                    clear_data()
+    # Scale the plot
+    for i in range(len(plot_conf)):
 
-        # Scale the plot
-        for i in range(len(plot_conf)):
+        # Calculate values vor x and y lim
 
-            # Calculate values vor x and y lim
-            extrem_values = []
+        extrem_values = []
 
-            for ch in plot_conf[i][0]:
-                extrem_values.append(max(list(device_data[ch])))
-                extrem_values.append(min(list(device_data[ch])))
+        for ch in plot_conf[i][0]:
+            extrem_values.append(max(list(device_data[ch])))
+            extrem_values.append(min(list(device_data[ch])))
 
-            y_min = min(extrem_values)
-            y_max = max(extrem_values)
-            d_y = np.absolute(y_max - y_min)
-            y_min = y_min - (d_y / 10)
-            y_max = y_max + (d_y / 10)
-            ax[i].set_ylim(y_min, y_max)
+        y_min = min(extrem_values)
+        y_max = max(extrem_values)
+        d_y = np.absolute(y_max - y_min)
+        y_min = y_min - (d_y / 10)
+        y_max = y_max + (d_y / 10)
+        ax[i].set_ylim(y_min, y_max)
 
-            # Manual or autoscaling
-            if not x_width == None and len(list(device_data[len(channels)])) > 0:
-                if x_width < len(device_data[len(channels)]):
-                    ax[i].set_xlim(device_data[len(channels)][-x_width], device_data[len(channels)][-1])
-                else:
-                    ax[i].set_xlim(device_data[len(channels)][0], device_data[len(channels)][-1])
-
+        # Manual or autoscaling
+        if not x_width == None and len(list(device_data[len(channels)])) > 0:
+            if x_width < len(device_data[len(channels)]):
+                ax[i].set_xlim(device_data[len(channels)][-x_width], device_data[len(channels)][-1])
             else:
                 ax[i].set_xlim(device_data[len(channels)][0], device_data[len(channels)][-1])
 
-            # Draw grid
-            left, right = ax[i].get_xlim()
-            dx = (right - left) / 10
-            x_major_ticks = np.arange(left, right, dx)
-            x_minor_ticks = np.arange(left, right, dx / 5)
-            bottom, top = ax[i].get_ylim()
-            dy = np.absolute(top - bottom) / 10
-            y_major_ticks = np.arange(bottom, top, dy)
-            y_minor_ticks = np.arange(bottom, top, dy / 5)
+        else:
+            ax[i].set_xlim(device_data[len(channels)][0], device_data[len(channels)][-1])
 
-            ax[i].set_xticks(x_major_ticks)
-            ax[i].set_xticks(x_minor_ticks, minor=True)
-            ax[i].set_yticks(y_major_ticks)
-            ax[i].set_yticks(y_minor_ticks, minor=True)
-            ax[i].grid(which='minor', alpha=0.5, linestyle='--')
-            ax[i].grid(which='major', alpha=1, linestyle='--')
+        # Draw grid
+        left, right = ax[i].get_xlim()
+        dx = (right - left) / 10
+        x_major_ticks = np.arange(left, right, dx)
+        x_minor_ticks = np.arange(left, right, dx / 5)
+        bottom, top = ax[i].get_ylim()
+        dy = np.absolute(top - bottom) / 10
+        y_major_ticks = np.arange(bottom, top, dy)
+        y_minor_ticks = np.arange(bottom, top, dy / 5)
 
-            for text in ax[i].texts:
-                text.remove()
+        ax[i].set_xticks(x_major_ticks)
+        ax[i].set_xticks(x_minor_ticks, minor=True)
+        ax[i].set_yticks(y_major_ticks)
+        ax[i].set_yticks(y_minor_ticks, minor=True)
+        ax[i].grid(which='minor', alpha=0.5, linestyle='--')
+        ax[i].grid(which='major', alpha=1, linestyle='--')
 
-            ax[i].text(0, 0, "dx:{:10.2f}, dy:{:10.2f}".format(dx, dy), size=10, ha="left", transform=ax[i].transAxes)
+        for text in ax[i].texts:
+            text.remove()
 
-            # Plot the trigger point
-        if trigger_data['found'] == True and not trigger_conf['mode'] == 'Continous':
-            trigger_point = get_trigger_point()
-            trigger_lines['vline'].remove()
-            trigger_lines['hline'].remove()
-            trigger_lines['hline'] = ax[trigger_on_axis].axhline(trigger_point['y'], color='r', linestyle='dashed')
-            trigger_lines['vline'] = ax[trigger_on_axis].axvline(trigger_point['x'], color='r', linestyle='dashed')
+        ax[i].text(0, 0, "dx:{:10.2f}, dy:{:10.2f}".format(dx, dy), size=10, ha="left", transform=ax[i].transAxes)
 
-        plt.draw()
-        plt.pause(1e-17)
-    except:
-        print("Couldn't plot.")
-        print(device_data)
+        # Plot the trigger point
+    if trigger_data['found'] == True and not trigger_conf['mode'] == 'Continous':
+        trigger_point = get_trigger_point()
+        trigger_lines['vline'].remove()
+        trigger_lines['hline'].remove()
+        trigger_lines['hline'] = ax[trigger_on_axis].axhline(trigger_point['y'], color='r', linestyle='dashed')
+        trigger_lines['vline'] = ax[trigger_on_axis].axvline(trigger_point['x'], color='r', linestyle='dashed')
+
+    plt.draw()
+    plt.pause(1e-17)
+
 
 ##############################################################################
 
