@@ -417,6 +417,10 @@ bool Trigger_isTriggered(TriggerHandle self){
 
 void Trigger_dataIsTransmitted(TriggerHandle self){
     self->dataIsReadyToSend = false;
+    self->triggerIndex = 0;
+    self->isTriggered = false;
+    self->fillUpPollCount = 0;
+    self->triggerIndex = 0;
 }
 
 uint32_t Trigger_getChannelId(TriggerHandle self){

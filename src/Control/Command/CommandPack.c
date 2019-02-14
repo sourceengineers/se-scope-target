@@ -29,6 +29,10 @@ typedef struct __CommandPackPrivateData{
 static void run(ICommandHandle command){
     CommandPackHandle self = (CommandPackHandle) command->handle;
 
+    if(self->packer->packerReady(self->packer) == false){
+        return;
+    }
+
     if(self->scope->dataIsReadyToSend(self->scope)){
 
         for(uint32_t i = 0; i < self->scope->getAmountOfChannels(self->scope); ++i){
@@ -47,6 +51,7 @@ static void run(ICommandHandle command){
 
         const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
         self->packer->prepareTimeIncrement(self->packer, timeIncrement);
+        self->scope->dataIsTransmitted(self->scope);
 
     }
     if(self->scope->announcementIsReadyToSend(self->scope)){
@@ -62,9 +67,8 @@ static void run(ICommandHandle command){
                 }
             }
         }
+        self->scope->dataIsTransmitted(self->scope);
     }
-
-    self->scope->dataIsTransmitted(self->scope);
 }
 
 /******************************************************************************
