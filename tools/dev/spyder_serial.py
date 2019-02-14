@@ -425,37 +425,23 @@ def plot_data():
 
 def get_address_from_map(var_name):
     with open(map_file, 'r') as f:
-        for line in f:
+        data=f.read()
+        data = '\n'.join(data.split())
+        data = '\n'.join(data.split('.'))
+        formatted_data = iter(data.splitlines())
+
+        for line in formatted_data:
             if var_name in line:
-                # Search Cmake/Make version of map files
-                for word in line.split('.'):
-                    # Make sure the varaible is EXACTLY the searched name
-                    if word == var_name:
+                for i in range(10):
+                    word = next(formatted_data)
+                    if '0x' in word:
                         try:
-                            word = next(f).split()[0]
                             value = int(word, 0)
                             return value
                         except:
-                            pass
-
-                    for d in word.split('  '):
-                        if d == var_name:
-                            try:
-                                d = word.split('  ')[1]
-                                value = int(d, 0)
-                                return value
-                            except:
-                                pass
-
-                # Windows/Keil produces different map files than cmake/make...
-                for word in line.split(' '):
-                    if word == var_name:
-                        for d in line.split(' '):
-                            try:
-                                value = int(d, 0)
-                                return value
-                            except:
-                                continue
+                            break
+            else:
+                continue
 
     raise Exception("""The searched value \"" + var_name + "\" couldn't be
                         found in the map file. Sending a faulty address
