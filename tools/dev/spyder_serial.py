@@ -487,7 +487,7 @@ def main():
         data_ready_to_plot = read_data()
         if (data_ready_to_plot == True):
             plot_data()
-
+        plt.pause(1e-17)
 
 ##############################################################################
 
