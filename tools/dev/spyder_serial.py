@@ -58,14 +58,15 @@ def config():
     channels.append({'name': "Sinus", 'address': get_address_from_map("sinus"), 'type': "FLOAT"})
     channels.append({'name': "Cosinus", 'address': get_address_from_map("cosinus"), 'type': "FLOAT"})
     channels.append({'name': "Leistung", 'address': get_address_from_map("leistung"), 'type': "FLOAT"})
-    #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
+    channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
     channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "FLOAT"})
 
     ##########################################################################
     ### Trigger Konfiguration
     ##########################################################################
-    trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1}
-    #trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id': 0}
+    #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1}
+    trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
+    #trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
     # Wird z.B. der timestmap pro Millisekunde incrementiert, und die step_size ist 10,
@@ -77,7 +78,7 @@ def config():
     ##########################################################################
     add_subplot(["Sinus", "Cosinus", "Leistung"], \
                 {'title': 'Sin and Cos', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-    add_subplot(["Potty"], \
+    add_subplot(["Potty", "Schmitt triggered"], \
                 {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
 
     figure_name = "Device data"
@@ -426,16 +427,39 @@ def get_address_from_map(var_name):
     with open(map_file, 'r') as f:
         for line in f:
             if var_name in line:
+                # Search Cmake/Make version of map files
                 for word in line.split('.'):
                     # Make sure the varaible is EXACTLY the searched name
                     if word == var_name:
-                        value = next(f).split()[0]
-                        return int(value, 0)
+                        try:
+                            word = next(f).split()[0]
+                            value = int(word, 0)
+                            return value
+                        except:
+                            pass
+
+                    for d in word.split('  '):
+                        if d == var_name:
+                            try:
+                                d = word.split('  ')[1]
+                                value = int(d, 0)
+                                return value
+                            except:
+                                pass
+
+                # Windows/Keil produces different map files than cmake/make...
+                for word in line.split(' '):
+                    if word == var_name:
+                        for d in line.split(' '):
+                            try:
+                                value = int(d, 0)
+                                return value
+                            except:
+                                continue
 
     raise Exception("""The searched value \"" + var_name + "\" couldn't be
                         found in the map file. Sending a faulty address
                         might break the controller""")
-
 
 ##############################################################################
 
