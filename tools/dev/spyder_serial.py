@@ -426,12 +426,14 @@ def plot_data():
 def get_address_from_map(var_name):
     with open(map_file, 'r') as f:
         data=f.read()
+        # formatting data to get rid of dots and multiple white spaces
         data = '\n'.join(data.split())
         data = '\n'.join(data.split('.'))
         formatted_data = iter(data.splitlines())
 
         for line in formatted_data:
             if var_name in line:
+                # The address might not be the next word. It should be in the next 10 ones at least.
                 for i in range(10):
                     word = next(formatted_data)
                     if '0x' in word:
