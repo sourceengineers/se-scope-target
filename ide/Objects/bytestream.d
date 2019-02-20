@@ -1,9 +1,0 @@
-.\objects\bytestream.o: ..\src\GeneralPurpose\ByteStream.c
-.\objects\bytestream.o: ..\include\Scope\Scope/GeneralPurpose/ByteStream.h
-.\objects\bytestream.o: ..\include\Scope\Scope/GeneralPurpose/IByteStream.h
-.\objects\bytestream.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\objects\bytestream.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\objects\bytestream.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\objects\bytestream.o: ..\include\Scope\Scope/GeneralPurpose/DataTypes.h
-.\objects\bytestream.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\objects\bytestream.o: ..\include\Scope\Scope/GeneralPurpose/ByteRingBuffer.h

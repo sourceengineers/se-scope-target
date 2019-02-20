@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>debug</TargetName>
+      <TargetName>scope</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>6100001::V6.10.1::.\ARMCLANG</pCCUsed>
@@ -18,12 +18,12 @@
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32L4xx_DFP.2.2.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IRAM(0x20000000,0x00018000) IRAM2(0x10000000,0x00008000) IROM(0x08000000,0x00100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000-0x20017FFF) IRAM2(0x10000000-0x10007FFF) IROM(0x8000000-0x80FFFFF)  CLOCK(8000000) FPU2 CPUTYPE("Cortex-M4")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32L4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32L476RGTx$CMSIS\Flash\STM32L4xx_1024.FLM))</FlashDriverDll>
-          <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32L476RGTx$Drivers\CMSIS\Device\ST\STM32L4xx\Include\stm32l4xx.h</RegisterFile>
+          <FlashDriverDll></FlashDriverDll>
+          <DeviceId></DeviceId>
+          <RegisterFile></RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -48,14 +48,14 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>.\Objects\</OutputDirectory>
-          <OutputName>scope-lib</OutputName>
-          <CreateExecutable>0</CreateExecutable>
-          <CreateLib>1</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <OutputDirectory>scope\</OutputDirectory>
+          <OutputName>scope</OutputName>
+          <CreateExecutable>1</CreateExecutable>
+          <CreateLib>0</CreateLib>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
-          <ListingPath>.\Listings\</ListingPath>
+          <ListingPath></ListingPath>
           <HexFormatSelection>1</HexFormatSelection>
           <Merge32K>0</Merge32K>
           <CreateBatchFile>0</CreateBatchFile>
@@ -106,15 +106,15 @@
           <StopOnExitCode>3</StopOnExitCode>
           <CustomArgument></CustomArgument>
           <IncludeLibraryModules></IncludeLibraryModules>
-          <ComprImg>1</ComprImg>
+          <ComprImg>0</ComprImg>
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments> -REMAP -MPU</SimDllArguments>
+          <SimDllArguments>-REMAP -MPU</SimDllArguments>
           <SimDlgDll>DCM.DLL</SimDlgDll>
           <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments>-MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
         </DllOption>
@@ -134,10 +134,10 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>-1</DriverSelection>
+            <DriverSelection>4107</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
-          <Flash2>BIN\UL2CM3.DLL</Flash2>
+          <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
           <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
@@ -188,12 +188,12 @@
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>4</RwSelD>
+            <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -275,7 +275,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x60000</Size>
+                <Size>0x100000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -300,12 +300,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x50000</Size>
+                <Size>0x18000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
                 <StartAddress>0x10000000</StartAddress>
-                <Size>0x80000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -323,11 +323,11 @@
             <Rwpi>0</Rwpi>
             <wLevel>3</wLevel>
             <uThumb>0</uThumb>
-            <uSurpInc>1</uSurpInc>
+            <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
-            <uGnu>1</uGnu>
+            <uGnu>0</uGnu>
             <useXO>1</useXO>
-            <v6Lang>6</v6Lang>
+            <v6Lang>5</v6Lang>
             <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
@@ -336,9 +336,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>ARCH_SIZE_32=1</Define>
+              <Define>USE_HAL_DRIVER,STM32L476xx ARM_MATH_CM4</Define>
               <Undefine></Undefine>
-              <IncludePath>..\include\Scope\;..\3party\jsmn\</IncludePath>
+              <IncludePath>..\Drivers\STM32L4xx_HAL_Driver\Inc;..\Drivers\STM32L4xx_HAL_Driver\Inc\Legacy;..\Drivers\CMSIS\Device\ST\STM32L4xx\Include;..\Drivers\CMSIS\Include;..\..\..\include\Scope;..\Inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -364,7 +364,7 @@
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
             <noStLib>0</noStLib>
-            <RepFail>0</RepFail>
+            <RepFail>1</RepFail>
             <useFile>0</useFile>
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
@@ -380,234 +380,182 @@
       </TargetOption>
       <Groups>
         <Group>
-          <GroupName>Communication</GroupName>
+          <GroupName>Application/MDK-ARM</GroupName>
           <Files>
             <File>
-              <FileName>Communicator.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Communication\Communicator.c</FilePath>
-            </File>
-            <File>
-              <FileName>UartJson.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Communication\Interfaces\UartJson.c</FilePath>
+              <FileName>startup_stm32l476xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>startup_stm32l476xx.s</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Control</GroupName>
+          <GroupName>Application/User</GroupName>
           <Files>
             <File>
-              <FileName>CommandParserDispatcher.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParserDispatcher.c</FilePath>
+              <FilePath>../Src/main.c</FilePath>
             </File>
             <File>
-              <FileName>Controller.c</FileName>
+              <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Controller.c</FilePath>
+              <FilePath>../Src/gpio.c</FilePath>
             </File>
             <File>
-              <FileName>CommandAddr.c</FileName>
+              <FileName>usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandAddr.c</FilePath>
+              <FilePath>../Src/usart.c</FilePath>
             </File>
             <File>
-              <FileName>CommandAnnounce.c</FileName>
+              <FileName>stm32l4xx_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandAnnounce.c</FilePath>
+              <FilePath>../Src/stm32l4xx_it.c</FilePath>
             </File>
             <File>
-              <FileName>CommandClear.c</FileName>
+              <FileName>stm32l4xx_hal_msp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandClear.c</FilePath>
+              <FilePath>../Src/stm32l4xx_hal_msp.c</FilePath>
             </File>
             <File>
-              <FileName>CommandPack.c</FileName>
+              <FileName>scope.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandPack.c</FilePath>
+              <FilePath>..\Src\scope.c</FilePath>
             </File>
             <File>
-              <FileName>CommandPoll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandPoll.c</FilePath>
+              <FileName>scope-lib.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\..\..\ide\Objects\scope-lib.lib</FilePath>
             </File>
             <File>
-              <FileName>CommandRunning.c</FileName>
+              <FileName>dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandRunning.c</FilePath>
+              <FilePath>..\Src\dma.c</FilePath>
             </File>
             <File>
-              <FileName>CommandTInc.c</FileName>
+              <FileName>adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandTInc.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTrans.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandTrans.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTrigger.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandTrigger.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandAddrParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandAddrParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandAnnounceParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandAnnounceParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandClearParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandClearParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandPackParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandPackParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandPollParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandPollParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandRunningParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandRunningParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTIncParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandTIncParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTransParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandTransParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTriggerParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandTriggerParser.c</FilePath>
+              <FilePath>..\Src\adc.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Core</GroupName>
+          <GroupName>Drivers/STM32L4xx_HAL_Driver</GroupName>
           <Files>
             <File>
-              <FileName>Channel.c</FileName>
+              <FileName>stm32l4xx_hal_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Core\Channel.c</FilePath>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c</FilePath>
             </File>
             <File>
-              <FileName>Scope.c</FileName>
+              <FileName>stm32l4xx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Core\Scope.c</FilePath>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c</FilePath>
             </File>
             <File>
-              <FileName>Timestamper.c</FileName>
+              <FileName>stm32l4xx_hal_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Core\Timestamper.c</FilePath>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart.c</FilePath>
             </File>
             <File>
-              <FileName>Trigger.c</FileName>
+              <FileName>stm32l4xx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Core\Trigger.c</FilePath>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_uart_ex.c</FilePath>
             </File>
             <File>
-              <FileName>AddressStorage.c</FileName>
+              <FileName>stm32l4xx_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Core\AddressStorage.c</FilePath>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_i2c_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_rcc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_flash_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_flash_ramfunc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_dma_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_pwr_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_cortex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32l4xx_hal_adc_ex.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Drivers\STM32L4xx_HAL_Driver\Src\stm32l4xx_hal_adc_ex.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>GeneralPurpose</GroupName>
+          <GroupName>Drivers/CMSIS</GroupName>
           <Files>
             <File>
-              <FileName>BufferedByteStream.c</FileName>
+              <FileName>system_stm32l4xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedByteStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>BufferedFloatStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedFloatStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>BufferedIntStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedIntStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>ByteRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\ByteRingBuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>FloatRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\FloatRingBuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>IntRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\IntRingBuffer.c</FilePath>
+              <FilePath>..//Src/system_stm32l4xx.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Serialisation</GroupName>
-          <Files>
-            <File>
-              <FileName>Serializer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\Serializer.c</FilePath>
-            </File>
-            <File>
-              <FileName>JsonPacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
-            </File>
-            <File>
-              <FileName>JsonUnpacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Builder</GroupName>
-          <Files>
-            <File>
-              <FileName>ScopeBuilder.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\ScopeBuilder.c</FilePath>
-            </File>
-            <File>
-              <FileName>ScopeRunner.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\ScopeRunner.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Json</GroupName>
-          <Files>
-            <File>
-              <FileName>jsmn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\3party\jsmn\jsmn\jsmn.c</FilePath>
-            </File>
-          </Files>
+          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>
@@ -615,7 +563,14 @@
 
   <RTE>
     <apis/>
-    <components/>
+    <components>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.1.2" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.4.0"/>
+        <targetInfos>
+          <targetInfo name="scope"/>
+        </targetInfos>
+      </component>
+    </components>
     <files/>
   </RTE>
 

@@ -18,3 +18,10 @@ tools/dev/rx
 tools/dev/tx
 
 ide/Objects/
+*.uvgui.*
+*.uvguix.*
+examples/embedded/MDK-ARM/scope/
+
+ide/Listings/scope-lib\.map
+
+*.schuepbs

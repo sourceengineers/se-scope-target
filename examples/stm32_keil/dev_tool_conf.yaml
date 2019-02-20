@@ -1,8 +1,0 @@
-Serial:
-  Baudrate: 115200
-  File: COM3
-  Timeout: 1
-
-Legend:
-  "0": "Name1"
-  "1": "Name2"
