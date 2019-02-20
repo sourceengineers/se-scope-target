@@ -16,6 +16,8 @@
 /******************************************************************************
  Trigger definitions
 ******************************************************************************/
+typedef enum {POLL_BUFFER, SWAP_BUFFER} BUFFER_TYPE;
+
 typedef struct TriggerStrategyStruct{
     void (* start)(TriggerHandle self);
     void (* stop)(TriggerHandle self);
@@ -34,7 +36,7 @@ typedef enum{
 typedef struct __TriggerPrivateData{
     float level;
     int edge;
-    uint32_t triggerIndex;
+    uint32_t triggerIndexes[2];
     IFloatStreamHandle stream;
     TriggerStrategy triggerStrategies[3];
     TriggerStrategy activeStrategy;
@@ -42,14 +44,12 @@ typedef struct __TriggerPrivateData{
 
     ChannelHandle* channels;
     size_t amountOfChannels;
-    bool isTriggered;
+    bool isTriggereds[2];
 
     bool* channelIsRunning;
 
     TRIGGER_STATES state;
 
-    bool dataIsReadyToSend;
-    bool sendStillPending;
     uint32_t fillUpPollCount;
 
     size_t channelCapacity;
@@ -78,10 +78,6 @@ static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode)
 /* Configures the trigger */
 static void writeConfig(TriggerHandle self, TriggerConfiguration conf);
 
-static void transmit(TriggerHandle self);
-
-static bool dataWasTransmitted(TriggerHandle self);
-
 static void safeChannelStates(TriggerHandle self);
 
 static void restoreChannelStates(TriggerHandle self);
@@ -94,8 +90,6 @@ static void stopChannelsAndTimestamp(TriggerHandle self);
 static void startNever(TriggerHandle self);
 
 static void startWhenPaused(TriggerHandle self);
-
-static void startWhenFlagCleared(TriggerHandle self);
 
 static void detectNever(TriggerHandle self);
 
@@ -114,6 +108,16 @@ static void stopIntoIdle(TriggerHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
+static void swapBuffers(TriggerHandle self){
+	for(int i = 0; i < self->amountOfChannels; ++i){
+		Channel_swapBuffers(self->channels[i]);
+	}
+	Timerstamper_swapBuffers(self->timestamper);
+
+	self->isTriggereds[SWAP_BUFFER] = self->isTriggereds[POLL_BUFFER];
+	self->triggerIndexes[SWAP_BUFFER] = self->triggerIndexes[POLL_BUFFER];
+}
+
 static void stopChannelsAndTimestamp(TriggerHandle self){
     for(int i = 0; i < self->amountOfChannels; ++i){
         Channel_setStateStopped(self->channels[i]);
@@ -137,33 +141,7 @@ static void restoreChannelStates(TriggerHandle self){
     Timestamper_setStateRunning(self->timestamper);
 }
 
-static void transmit(TriggerHandle self){
-    self->sendStillPending = true;
-    self->dataIsReadyToSend = true;
-}
-
-static bool dataWasTransmitted(TriggerHandle self){
-
-    /* dataIsReadyToSend will be cleared by the Scope. sendStillPending only by startWhenFlagCleared
-     * therefore the data was send, if sendStillPending == true and dataIsReadyToSend == false */
-    if(!((self->sendStillPending == true) && (self->dataIsReadyToSend == false))){
-        return false;
-    }
-    self->sendStillPending = false;
-
-    return true;
-}
-
 static void startWhenPaused(TriggerHandle self){
-    restoreChannelStates(self);
-    setState(self, TRIGGER_DETECTING);
-}
-
-static void startWhenFlagCleared(TriggerHandle self){
-    if(dataWasTransmitted(self) == false){
-        return;
-    }
-
     restoreChannelStates(self);
     setState(self, TRIGGER_DETECTING);
 }
@@ -173,7 +151,7 @@ static void startNever(TriggerHandle self){
 }
 
 static void detectNever(TriggerHandle self){
-    self->isTriggered = false;
+    self->isTriggereds[POLL_BUFFER] = false;
     setState(self, TRIGGER_FILLUP);
 }
 
@@ -182,7 +160,7 @@ static void detectNormal(TriggerHandle self){
     ChannelHandle activeChannel = self->channels[self->activeChannelId];
 
     /* Mache sure the channels is at least half filled. If this isn't the case, the resolution of the scope suffers */
-    if(Channel_getAmountOfUsedData(activeChannel) < (self->channelCapacity / 2)){
+    if(Channel_getAmountOfUsedPollData(activeChannel) < (self->channelCapacity / 2)){
         return;
     }
 
@@ -193,13 +171,13 @@ static void detectNormal(TriggerHandle self){
         return;
     }
 
-    self->isTriggered = checkCurrentData(self, triggerData);
+    self->isTriggereds[POLL_BUFFER] = checkCurrentData(self, triggerData);
 
-    if(self->isTriggered == false){
+    if(self->isTriggereds[POLL_BUFFER] == false){
         return;
     }
 
-    self->triggerIndex = Timestamper_getCurrentTime(self->timestamper);
+    self->triggerIndexes[POLL_BUFFER] = Timestamper_getCurrentTime(self->timestamper);
     setState(self, TRIGGER_FILLUP);
 }
 
@@ -207,11 +185,10 @@ static void fillUpTillChannelFull(TriggerHandle self){
 
     ChannelHandle activeChannel = self->channels[self->activeChannelId];
 
-    if(Channel_getAmountOfUsedData(activeChannel) < self->channelCapacity){
+    if(Channel_getAmountOfUsedPollData(activeChannel) < self->channelCapacity){
         return;
     }
 
-    transmit(self);
     setState(self, TRIGGER_CLEANUP);
 }
 
@@ -219,7 +196,7 @@ static void fillUpIfTriggered(TriggerHandle self){
 
     self->fillUpPollCount++;
 
-    if(Channel_getAmountOfUsedData(self->channels[self->activeChannelId]) < self->channelCapacity){
+    if(Channel_getAmountOfUsedPollData(self->channels[self->activeChannelId]) < self->channelCapacity){
         return;
     }
 
@@ -227,24 +204,32 @@ static void fillUpIfTriggered(TriggerHandle self){
         return;
     }
 
-    transmit(self);
     setState(self, TRIGGER_CLEANUP);
 }
 
 static void stopWithoutStoppingChannels(TriggerHandle self){
     safeChannelStates(self);
+    if(Channel_swapIsPending(self->channels[self->activeChannelId]) == true){
+        swapBuffers(self);
+    }
     setState(self, TRIGGER_PAUSED);
 }
 
 static void stopIntoPause(TriggerHandle self){
     safeChannelStates(self);
     stopChannelsAndTimestamp(self);
+    if(Channel_swapIsPending(self->channels[self->activeChannelId]) == true){
+        swapBuffers(self);
+    }
     setState(self, TRIGGER_PAUSED);
 }
 
 static void stopIntoIdle(TriggerHandle self){
     safeChannelStates(self);
     stopChannelsAndTimestamp(self);
+    if(Channel_swapIsPending(self->channels[self->activeChannelId]) == true){
+        swapBuffers(self);
+    }
     setState(self, TRIGGER_IDLE);
 }
 
@@ -343,7 +328,7 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
 
     /* Normal trigger strategy */
     TriggerStrategy normal;
-    normal.start = &startWhenFlagCleared;
+    normal.start = &startWhenPaused;
     normal.detecting = &detectNormal;
     normal.fillUp = &fillUpIfTriggered;
     normal.stop = &stopIntoPause;
@@ -363,6 +348,7 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
     self->activeStrategy = continuous;
 
     Trigger_clear(self);
+		Trigger_deactivate(self);
     return self;
 }
 
@@ -376,7 +362,7 @@ void Trigger_destroy(TriggerHandle self){
 }
 
 uint32_t Trigger_getTriggerIndex(TriggerHandle self){
-    return self->triggerIndex;
+    return self->triggerIndexes[SWAP_BUFFER];
 }
 
 bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
@@ -395,10 +381,8 @@ bool Trigger_run(TriggerHandle self){
     }
     if(getState(self) == TRIGGER_PAUSED){
         self->activeStrategy.start(self);
-    }
-    if(getState(self) == TRIGGER_DETECTING){
-        self->triggerIndex = 0;
-        self->isTriggered = false;
+        Trigger_clear(self);
+    }else if(getState(self) == TRIGGER_DETECTING){
         self->activeStrategy.detecting(self);
     }else if(getState(self) == TRIGGER_FILLUP){
         self->activeStrategy.fillUp(self);
@@ -406,21 +390,14 @@ bool Trigger_run(TriggerHandle self){
     if(getState(self) == TRIGGER_CLEANUP){
         self->activeStrategy.stop(self);
         self->fillUpPollCount = 0;
+        return true;
+    } else {
+        return false;
     }
-
-    return self->dataIsReadyToSend;
 }
 
 bool Trigger_isTriggered(TriggerHandle self){
-    return self->isTriggered;
-}
-
-void Trigger_dataIsTransmitted(TriggerHandle self){
-    self->dataIsReadyToSend = false;
-    self->triggerIndex = 0;
-    self->isTriggered = false;
-    self->fillUpPollCount = 0;
-    self->triggerIndex = 0;
+    return self->isTriggereds[POLL_BUFFER];
 }
 
 uint32_t Trigger_getChannelId(TriggerHandle self){
@@ -441,9 +418,7 @@ void Trigger_deactivate(TriggerHandle self){
 }
 
 void Trigger_clear(TriggerHandle self){
-    self->isTriggered = false;
-    self->triggerIndex = 0;
-    self->dataIsReadyToSend = false;
+    self->isTriggereds[POLL_BUFFER] = false;
+    self->triggerIndexes[POLL_BUFFER] = 0;
     self->fillUpPollCount = 0;
-    self->sendStillPending = false;
 }

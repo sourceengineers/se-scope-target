@@ -75,10 +75,17 @@ void Channel_clear(ChannelHandle self);
  * @return -1 if the requested amount of data is not big enough. Else the amount of actaully written data points */
 int Channel_read(ChannelHandle self, float data[], size_t size);
 
+/* Returns true, if the poll buffer is full, and the swap buffer is empty. */
+bool Channel_swapIsPending(ChannelHandle self);
+
+/* Swaps the two internal buffers with each other */
+void Channel_swapBuffers(ChannelHandle self);
+
 /* Returns the handle of the buffer */
 FloatRingBufferHandle Channel_getBuffer(ChannelHandle self);
 
-/* Returns the capacity of the Channel */
-size_t Channel_getAmountOfUsedData(ChannelHandle self);
+size_t Channel_getAmountOfUsedSwapData(ChannelHandle self);
+
+size_t Channel_getAmountOfUsedPollData(ChannelHandle self);
 
 #endif

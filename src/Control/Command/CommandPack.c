@@ -35,24 +35,28 @@ static void run(ICommandHandle command){
 
     if(self->scope->dataIsReadyToSend(self->scope)){
 
+	      bool anyChannelIsReady = false;
+
         for(uint32_t i = 0; i < self->scope->getAmountOfChannels(self->scope); ++i){
             if(self->scope->channelHasToBePacked(self->scope, i) == true){
                 FloatRingBufferHandle buffer = self->scope->getChannelBuffer(self->scope, i);
                 self->packer->prepareChannel(self->packer, buffer, i);
+	              anyChannelIsReady = true;
             }
         }
 
-        TriggeredValues triggeredValues = self->scope->getTriggerData(self->scope);
-        self->packer->prepareTrigger(self->packer, triggeredValues.isTriggered, triggeredValues.channelId, \
-                                     triggeredValues.triggerTimestamp);
+	      if(anyChannelIsReady == true){
+			      TriggeredValues triggeredValues = self->scope->getTriggerData(self->scope);
+			      self->packer->prepareTrigger(self->packer, triggeredValues.isTriggered, triggeredValues.channelId, \
+	                                     triggeredValues.triggerTimestamp);
 
-        IIntStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
-        self->packer->prepareTimestamp(self->packer, scopeTimestamp);
+			      IIntStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
+			      self->packer->prepareTimestamp(self->packer, scopeTimestamp);
 
-        const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
-        self->packer->prepareTimeIncrement(self->packer, timeIncrement);
-        self->scope->dataIsTransmitted(self->scope);
-
+			      const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
+			      self->packer->prepareTimeIncrement(self->packer, timeIncrement);
+			      self->scope->dataIsTransmitted(self->scope);
+	      }
     }
     if(self->scope->announcementIsReadyToSend(self->scope)){
         const size_t maxAddresses = self->scope->getMaxAmmountOfAnnounceAddresses(self->scope);

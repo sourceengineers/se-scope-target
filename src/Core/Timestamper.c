@@ -16,6 +16,8 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
+typedef enum {POLL_BUFFER, SWAP_BUFFER} BUFFER_TYPE;
+
 typedef enum{
     TIMESTAMPER_STOPPED, TIMESTAMPER_RUNNING
 } TIMESTAMPER_STATES;
@@ -26,7 +28,7 @@ typedef struct __TimestamperPrivateData{
 
     /* Timestamping data */
     uint32_t timeIncrement;
-    BufferedIntStreamHandle timestamp;
+    BufferedIntStreamHandle timestamps[2];
     uint32_t* referenceTimestamp;
     uint32_t lastTimestamp;
 
@@ -59,7 +61,8 @@ TimestamperHandle Timestamper_create(size_t capacity, uint32_t* referenceTimesta
     self->referenceTimestamp = referenceTimestamp;
     self->lastTimestamp = 0;
 
-    self->timestamp = BufferedIntStream_create(capacity);
+    self->timestamps[SWAP_BUFFER] = BufferedIntStream_create(capacity);
+    self->timestamps[POLL_BUFFER] = BufferedIntStream_create(capacity);
 
     Timestamper_setStateStopped(self);
 
@@ -67,7 +70,9 @@ TimestamperHandle Timestamper_create(size_t capacity, uint32_t* referenceTimesta
 }
 
 void Timestamper_destroy(TimestamperHandle self){
-    BufferedIntStream_destroy(self->timestamp);
+    BufferedIntStream_destroy(self->timestamps[SWAP_BUFFER]);
+    BufferedIntStream_destroy(self->timestamps[POLL_BUFFER]);
+
     free(self);
     self = NULL;
 }
@@ -88,7 +93,7 @@ void Timestamper_stamp(TimestamperHandle self){
         return;
     }
 
-    IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timestamp);
+    IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timestamps[POLL_BUFFER]);
     stream->writeData(stream, self->lastTimestamp);
 }
 
@@ -113,10 +118,20 @@ void Timestamper_configureTimestampIncrement(TimestamperHandle self, uint32_t ti
 }
 
 void Timestamper_clear(TimestamperHandle self){
-    IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timestamp);
+    IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timestamps[POLL_BUFFER]);
+    stream->flush(stream);
+    stream = BufferedIntStream_getIIntStream(self->timestamps[SWAP_BUFFER]);
     stream->flush(stream);
 }
 
+void Timerstamper_swapBuffers(TimestamperHandle self){
+    BufferedIntStreamHandle buffer = self->timestamps[SWAP_BUFFER];
+    self->timestamps[SWAP_BUFFER] = self->timestamps[POLL_BUFFER];
+    self->timestamps[POLL_BUFFER] = buffer;
+		IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timestamps[POLL_BUFFER]);
+		stream->flush(stream);
+}
+
 IIntStreamHandle Timestamper_getStream(TimestamperHandle self){
-    return BufferedIntStream_getIIntStream(self->timestamp);
+    return BufferedIntStream_getIIntStream(self->timestamps[SWAP_BUFFER]);
 }
