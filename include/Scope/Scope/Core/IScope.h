@@ -72,8 +72,6 @@ typedef struct IScopeStruct{
 
     FloatRingBufferHandle (* getChannelBuffer)(IScopeHandle scope, uint32_t channelId);
 
-    size_t (* getAmountOfUsedChannelData)(IScopeHandle scope, uint32_t channelId);
-
     AddressDefinition* (* getAnnounceAddressToTransmit)(IScopeHandle scope, uint32_t addressId);
 
     size_t (* getMaxAmmountOfAnnounceAddresses)(IScopeHandle scope);

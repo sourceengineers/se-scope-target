@@ -35,8 +35,8 @@ def config():
     ### Serial optionen
     ##########################################################################
     serial_file = '/dev/ttyACM0'  # z.B.: COM1 bei Windows
-    baudrate = 115200
-    timeout = 2
+    baudrate = 57600
+    timeout = 4
 
     ##########################################################################
     ### Pfade
@@ -58,14 +58,14 @@ def config():
     channels.append({'name': "Sinus", 'address': get_address_from_map("sinus"), 'type': "FLOAT"})
     channels.append({'name': "Cosinus", 'address': get_address_from_map("cosinus"), 'type': "FLOAT"})
     channels.append({'name': "Leistung", 'address': get_address_from_map("leistung"), 'type': "FLOAT"})
-    channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
+    #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
     channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "FLOAT"})
 
     ##########################################################################
     ### Trigger Konfiguration
     ##########################################################################
-    #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 1}
-    trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
+    #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 0}
+    trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id': 1}
     #trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
@@ -78,7 +78,7 @@ def config():
     ##########################################################################
     add_subplot(["Sinus", "Cosinus", "Leistung"], \
                 {'title': 'Sin and Cos', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-    add_subplot(["Potty", "Schmitt triggered"], \
+    add_subplot(["Potty"], \
                 {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
 
     figure_name = "Device data"
@@ -100,6 +100,8 @@ def transmit_data(data):
         checksum = checksum + ord(d)
 
     data_to_send = data + "transport:" + ''.join('{:02X}'.format(checksum))[-2:] + '\0'
+    data_to_append = "\0" * (300 - len(data_to_send))
+    data_to_send = data_to_send + data_to_append
     data_to_send = data_to_send.encode("utf-8")
     print(data_to_send)
     ser.write(data_to_send)
@@ -110,7 +112,6 @@ def transmit_data(data):
 def send_command(command, wait_for_ack):
     while True:
         transmit_data(command)
-        time.sleep(1)
         ser.flush()
         if wait_for_ack == False:
             break
@@ -281,6 +282,7 @@ def append_to_channel(channel, data):
 
 def prepare_data(data):
     for data_package in data.split(b'transport:00\0'):
+        print(data_package)
         data_package = data_package.split(b'transport')[0]
         ans = process_data(data_package)
         if ans is None:
@@ -359,6 +361,9 @@ def plot_data():
             else:
                 clear_data()
 
+    if(len(list(device_data[len(channels)])) == 0):
+        return
+
     # Scale the plot
     for i in range(len(plot_conf)):
 
@@ -432,7 +437,7 @@ def get_address_from_map(var_name):
         formatted_data = iter(data.splitlines())
 
         for line in formatted_data:
-            if var_name in line:
+            if var_name == line:
                 # The address might not be the next word. It should be in the next 10 ones at least.
                 for i in range(10):
                     word = next(formatted_data)

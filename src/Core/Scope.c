@@ -139,7 +139,6 @@ void dataIsTransmitted(IScopeHandle scope){
 
     self->dataIsReadyToSend = false;
     self->scopeIsReadyToSend = false;
-    Trigger_dataIsTransmitted(self->trigger);
 
     if(self->addressStorage == NULL){
         return;
@@ -174,7 +173,7 @@ bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId){
         return false;
     }
 
-    return Channel_getAmountOfUsedData(self->channels[channelId]) > 0;
+    return Channel_getAmountOfUsedSwapData(self->channels[channelId]) ==  Channel_getCapacity(self->channels[channelId]);
 }
 
 FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t channelId){
@@ -185,16 +184,6 @@ FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t channelId){
     }
 
     return Channel_getBuffer(self->channels[channelId]);
-}
-
-size_t getAmountOfUsedChannelData(IScopeHandle scope, uint32_t channelId){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    if(channelId >= self->amountOfChannels){
-        return false;
-    }
-
-    return Channel_getAmountOfUsedData(self->channels[channelId]);
 }
 
 AddressDefinition* getAnnounceAddressToTransmit(IScopeHandle scope, uint32_t addressId){
@@ -272,7 +261,6 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.getTriggerData = &getTriggerData;
     self->scope.channelHasToBePacked = &channelHasToBePacked;
     self->scope.getChannelBuffer = &getChannelBuffer;
-    self->scope.getAmountOfUsedChannelData = &getAmountOfUsedChannelData;
     self->scope.getAnnounceAddressToTransmit = &getAnnounceAddressToTransmit;
     self->scope.getMaxAmmountOfAnnounceAddresses = &getMaxAmmountOfAnnounceAddresses;
     self->scope.getMaxSizeOfChannel = &getMaxSizeOfChannel;

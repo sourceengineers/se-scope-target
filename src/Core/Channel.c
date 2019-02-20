@@ -16,8 +16,10 @@
  Define private data
 ******************************************************************************/
 /* Class data */
+typedef enum {POLL_BUFFER, SWAP_BUFFER} BUFFER_TYPE;
+
 typedef struct __ChannelPrivateData{
-    FloatRingBufferHandle buffer;
+    FloatRingBufferHandle buffers[2];
     IFloatStreamHandle stream;
     CHANNEL_STATES state;
     DATA_TYPES pollDataType;
@@ -112,19 +114,22 @@ ChannelHandle Channel_create(size_t capacity){
 
     /* Set private variables */
     self->state = CHANNEL_INIT;
-    self->buffer = FloatRingBuffer_create(capacity);
+    self->buffers[POLL_BUFFER] = FloatRingBuffer_create(capacity);
+    self->buffers[SWAP_BUFFER] = FloatRingBuffer_create(capacity);
     self->oldTriggerData = 0.0f;
 
     return self;
 }
 
 size_t Channel_getCapacity(ChannelHandle self){
-    return FloatRingBuffer_getCapacity(self->buffer);
+    return FloatRingBuffer_getCapacity(self->buffers[POLL_BUFFER]);
 }
 
 void Channel_destroy(ChannelHandle self){
-    FloatRingBuffer_destroy(self->buffer);
-    self->buffer = NULL;
+    FloatRingBuffer_destroy(self->buffers[POLL_BUFFER]);
+    self->buffers[POLL_BUFFER] = NULL;
+    FloatRingBuffer_destroy(self->buffers[SWAP_BUFFER]);
+    self->buffers[SWAP_BUFFER] = NULL;
     free(self);
     self = NULL;
 }
@@ -176,10 +181,10 @@ void Channel_poll(ChannelHandle self){
         prepareTriggerData(self, polledData);
 
         /* Channel start reading data out of the buffer if it is full */
-        if(FloatRingBuffer_write(self->buffer, &polledData, 1) == -1){
+        if(FloatRingBuffer_write(self->buffers[POLL_BUFFER], &polledData, 1) == -1){
             float dump;
-            FloatRingBuffer_read(self->buffer, &dump, 1);
-            FloatRingBuffer_write(self->buffer, &polledData, 1);
+            FloatRingBuffer_read(self->buffers[POLL_BUFFER], &dump, 1);
+            FloatRingBuffer_write(self->buffers[POLL_BUFFER], &polledData, 1);
         }
     }else{
         return;
@@ -187,18 +192,38 @@ void Channel_poll(ChannelHandle self){
 }
 
 void Channel_clear(ChannelHandle self){
-    FloatRingBuffer_clear(self->buffer);
+    FloatRingBuffer_clear(self->buffers[POLL_BUFFER]);
+    FloatRingBuffer_clear(self->buffers[SWAP_BUFFER]);
     self->stream->flush(self->stream);
 }
 
 int Channel_read(ChannelHandle self, float data[], size_t size){
-    return FloatRingBuffer_read(self->buffer, data, size);
+    return FloatRingBuffer_read(self->buffers[SWAP_BUFFER], data, size);
 }
 
 FloatRingBufferHandle Channel_getBuffer(ChannelHandle self){
-    return self->buffer;
+    return self->buffers[SWAP_BUFFER];
 }
 
-size_t Channel_getAmountOfUsedData(ChannelHandle self){
-    return FloatRingBuffer_getNumberOfUsedData(self->buffer);
+bool Channel_swapIsPending(ChannelHandle self) {
+
+	bool pollBufferIsFull = FloatRingBuffer_getNumberOfFreeData(self->buffers[POLL_BUFFER]) == 0;
+	bool swapBufferIsEmpty = FloatRingBuffer_getNumberOfUsedData(self->buffers[SWAP_BUFFER]) == 0;
+
+	return pollBufferIsFull && swapBufferIsEmpty;
+}
+
+void Channel_swapBuffers(ChannelHandle self){
+    FloatRingBufferHandle buffer = self->buffers[SWAP_BUFFER];
+    self->buffers[SWAP_BUFFER] = self->buffers[POLL_BUFFER];
+    self->buffers[POLL_BUFFER] = buffer;
+		FloatRingBuffer_clear(self->buffers[POLL_BUFFER]);
+}
+
+size_t Channel_getAmountOfUsedSwapData(ChannelHandle self){
+    return FloatRingBuffer_getNumberOfUsedData(self->buffers[SWAP_BUFFER]);
+}
+
+size_t Channel_getAmountOfUsedPollData(ChannelHandle self){
+	return FloatRingBuffer_getNumberOfUsedData(self->buffers[POLL_BUFFER]);
 }

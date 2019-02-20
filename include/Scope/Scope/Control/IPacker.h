@@ -58,6 +58,8 @@ typedef struct IPackerStruct{
     bool (* flowControlReadyToSend)(IPackerHandle packer);
 
     void (* reset)(IPackerHandle packer);
+
+    bool (*packerReady)(IPackerHandle packer);
 } IPacker;
 
 #endif

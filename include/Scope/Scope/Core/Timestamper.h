@@ -45,6 +45,8 @@ void Timestamper_configureTimestampIncrement(TimestamperHandle self, uint32_t ti
 
 void Timestamper_clear(TimestamperHandle self);
 
+void Timerstamper_swapBuffers(TimestamperHandle self);
+
 IIntStreamHandle Timestamper_getStream(TimestamperHandle self);
 
 #endif

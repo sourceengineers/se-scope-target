@@ -496,6 +496,12 @@ static bool flowControlReadyToSend(IPackerHandle packer){
     return self->flowcontrolReady;
 }
 
+static bool packerReady(IPackerHandle packer){
+    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
+
+    return !self->dataPendingToBePacked;
+}
+
 
 /******************************************************************************
  Public functions
@@ -527,7 +533,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.prepareTrigger = &prepareTrigger;
     self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
     self->packer.flowControlReadyToSend = &flowControlReadyToSend;
-
+    self->packer.packerReady = &packerReady;
     self->packer.reset(&self->packer);
 
     return self;
