@@ -40,17 +40,16 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "dma.h"
 #include "usart.h"
 #include "gpio.h"
 
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
 #include <string.h>
 #include <scope.h>
 #include <arm_math.h>
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -70,83 +69,35 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-volatile bool ms_has_elapsed = false;
-static uint32_t timestamp = 0;
-volatile uint32_t delta;
+/* UART handler declaration */
+__IO ITStatus RxReady = RESET;
+__IO ITStatus TxReady = RESET;
 
-/* Callback for the scope */
-void transmit_data(UartJsonHandle self){
+uint8_t aTxBuffer[6000];
+#define UART_INPUT_SIZE 300
+uint8_t aRxBuffer[UART_INPUT_SIZE];
 
-    /* In a example with interrupts, this function may just enable the interrupt
-     * If it would be used, with interrupt, the whole data could be fetched out of the UartJson class
-     * with UartJson_getTxData and be transmitted to the host. */
-    huart2.Instance->CR1 |= USART_CR1_TXEIE_Msk;
-}
+volatile bool adc_it_is_cleared = false;
+volatile float adcValue = 0.0f;
+uint32_t timestamp = 0;
+uint32_t timestamp_safe = 0;
 
-/**
-  * @brief This function handles USART2 global interrupt.
-  */
-void USART2_IRQHandler(void){
-    /* USER CODE BEGIN USART2_IRQn 0 */
-    /* USER CODE END USART2_IRQn 0 */
-    if(((huart2.Instance->ISR & USART_ISR_TXE_Msk) >> USART_ISR_TXE_Pos) == 1){
-        if(((huart2.Instance->ISR & USART_ISR_BUSY_Msk) >> USART_ISR_BUSY_Pos) == 0){
+static const float frequency = 20.0f;
+float sinus = 0.0f;
+float cosinus = 0.0f;
+float leistung = 0.0f;
+uint8_t schmitttriggered = 0;
 
-            /******************************************************
-             * Sending
-             * Reading bytes out of the UartJson class
-             *****************************************************/
-            while(UartJson_amountOfTxDataPending(uartJson) > 0){
+bool transmitting = false;
 
-                uint8_t data;
-                UartJson_getTxData(uartJson, &data, 1);
-                huart2.Instance->TDR = data;
-                while(((huart2.Instance->ISR & USART_ISR_TC_Msk) >> USART_ISR_TC_Pos) == 0);
-            }
-            huart2.Instance->CR1 = huart2.Instance->CR1 & ~(USART_CR1_TXEIE_Msk);
-            UartJson_resetTx(uartJson);
-
-        }
-    }
-    if(((huart2.Instance->ISR & USART_ISR_RXNE_Msk) >> USART_ISR_RXNE_Pos) == 1){
-        uint16_t data;
-
-        /******************************************************
-         * Receiving
-         * Writing bytes into the UartJson class
-        *****************************************************/
-        data = huart2.Instance->RDR;
-        while(((huart2.Instance->ISR & USART_ISR_RXNE_Msk) >> USART_ISR_RXNE_Pos) == 1);
-        UartJson_putRxData(uartJson, (uint8_t * ) & data, 1);
-    }
-
-    /* Interrupt error handling */
-    if(((huart2.Instance->ISR & USART_ISR_IDLE_Msk) >> USART_ISR_IDLE_Pos) == 1){
-        huart2.Instance->ICR |= 0xFF & UART_CLEAR_IDLEF;
-    }
-
-    if(((huart2.Instance->ISR & USART_ISR_ORE_Msk) >> USART_ISR_ORE_Pos) == 1){
-        (&huart2)->Instance->ICR = USART_ISR_ORE_Msk;
-    }
-
-    if(((huart2.Instance->ISR & USART_ISR_CMF_Msk) >> USART_ISR_CMF_Pos) == 1){
-        (&huart2)->Instance->ICR = USART_ISR_CMF_Msk;
-    }
-    if(((huart2.Instance->ISR & USART_ISR_EOBF_Msk) >> USART_ISR_EOBF_Pos) == 1){
-        (&huart2)->Instance->ICR = USART_ISR_EOBF_Msk;
-    }
-
-    /* USER CODE BEGIN USART2_IRQn 1 */
-
-    /* USER CODE END USART2_IRQn 1 */
-}
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
-
 static void MX_NVIC_Init(void);
+
 /* USER CODE BEGIN PFP */
+void transmit_data(UartJsonHandle self);
 
 /* USER CODE END PFP */
 
@@ -184,32 +135,24 @@ int main(void){
     MX_GPIO_Init();
     MX_DMA_Init();
     MX_USART2_UART_Init();
-    MX_NVIC_Init();
-    CLEAR_BIT((&huart2)->Instance->CR1, USART_CR1_RXNEIE);
+    MX_ADC1_Init();
 
+    /* Initialize interrupts */
+    MX_NVIC_Init();
     /* USER CODE BEGIN 2 */
 
-    /* If the variables should be found in the map file, they have to be declared as static*/
-    static float sinus = 0.0f;
-    static float cosinus = 0.0f;
-    static float leistung = 0.0f;
-    static uint8_t schmitttriggered = 0;
-    static const float frequency = 20.0f;
-
-/***********************************************************************************************************************
-* Build Scope
-***********************************************************************************************************************/
-
-
-    scope_init(transmit_data, &timestamp);
+    scope_init(transmit_data, &timestamp_safe);
 
     /* adding some variables to the AddressStorage
      * These can be trasmitted to the host if wanted */
-    __HAL_UART_ENABLE_IT(&huart2, UART_IT_RXNE);
     AddressStorage_addAnnounceAddress(addressStorage, "sinus", &sinus, FLOAT, 0);
     AddressStorage_addAnnounceAddress(addressStorage, "cosinus", &cosinus, FLOAT, 1);
     AddressStorage_addAnnounceAddress(addressStorage, "tangent", &leistung, FLOAT, 2);
     AddressStorage_addAnnounceAddress(addressStorage, "schmitttriggered", &schmitttriggered, UINT8, 3);
+
+    HAL_UART_Receive_IT(&huart2, (uint8_t*) aRxBuffer, UART_INPUT_SIZE);
+    HAL_ADC_Start_IT(&hadc1);
+
     /* USER CODE END 2 */
 
     /* Infinite loop */
@@ -218,22 +161,36 @@ int main(void){
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-        if(ms_has_elapsed == true){
+        /* Update timestmap */
 
-            /* Generating a signal for visualizing */
+	      timestamp = HAL_GetTick();
+
+        if(adc_it_is_cleared == true){
+            adc_it_is_cleared = false;
+            HAL_ADC_Start_IT(&hadc1);
+        }
+
+		    if(TxReady == SET){
+			    UartJson_resetTx(uartJson);
+			    TxReady = RESET;
+		    }
+		    if(RxReady == SET){
+			    UartJson_putRxData(uartJson, aRxBuffer, UART_INPUT_SIZE);
+			    RxReady = RESET;
+			    HAL_UART_Receive_IT(&huart2, (uint8_t*) aRxBuffer, UART_INPUT_SIZE);
+		    }
+
+        if(timestamp > timestamp_safe && transmitting == false){
+
+            timestamp_safe = timestamp;
             float t_in_s = timestamp / 1000.0f;
 
-            float noise = ((float) rand() / RAND_MAX) / 10; // -20dB noise
-            float amp = (sinf(2 * PI * frequency / 10 * t_in_s) + noise) * 2; // up to 3dB signal amplification
-
-            sinus = amp * sinf(2 * PI * frequency * t_in_s) + noise;
-            cosinus = amp * cosf(2 * PI * frequency * t_in_s) + noise;
+            sinus = 2 * sinf(2 * PI * frequency * t_in_s);
+            cosinus = 2 * cosf(2 * PI * frequency * t_in_s);
             leistung = sinus * cosinus;
-            schmitttriggered = (sinus > 0) ? 1 : 0;
+            schmitttriggered = (adcValue > 1) ? 2 : 0;
 
-            delta = timestamp;
             scope_run();
-            ms_has_elapsed = false;
         }
     }
     return 0;
@@ -276,8 +233,16 @@ void SystemClock_Config(void){
     if(HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK){
         Error_Handler();
     }
-    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2;
+    PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2 | RCC_PERIPHCLK_ADC;
     PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+    PeriphClkInit.AdcClockSelection = RCC_ADCCLKSOURCE_PLLSAI1;
+    PeriphClkInit.PLLSAI1.PLLSAI1Source = RCC_PLLSOURCE_HSI;
+    PeriphClkInit.PLLSAI1.PLLSAI1M = 1;
+    PeriphClkInit.PLLSAI1.PLLSAI1N = 8;
+    PeriphClkInit.PLLSAI1.PLLSAI1P = RCC_PLLP_DIV7;
+    PeriphClkInit.PLLSAI1.PLLSAI1Q = RCC_PLLQ_DIV2;
+    PeriphClkInit.PLLSAI1.PLLSAI1R = RCC_PLLR_DIV2;
+    PeriphClkInit.PLLSAI1.PLLSAI1ClockOut = RCC_PLLSAI1_ADC1CLK;
     if(HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK){
         Error_Handler();
     }
@@ -299,6 +264,47 @@ static void MX_NVIC_Init(void){
 }
 
 /* USER CODE BEGIN 4 */
+void transmit_data(UartJsonHandle self){
+
+    size_t length = UartJson_amountOfTxDataPending(uartJson);
+    UartJson_getTxData(uartJson, aTxBuffer, length);
+    HAL_UART_Transmit_IT(&huart2, aTxBuffer, (uint16_t) length);
+		transmitting = true;
+}
+
+/**
+  * @brief  Tx Transfer completed callback
+  * @param  UartHandle: UART handle.
+  * @note   This example shows a simple way to report end of IT Tx transfer, and
+  *         you can add your own implementation.
+  * @retval None
+  */
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef* UartHandle){
+    /* Set transmission flag: transfer complete */
+    HAL_UART_Receive_IT(&huart2, (uint8_t*) aRxBuffer, UART_INPUT_SIZE);
+		TxReady = SET;
+		transmitting = false;
+}
+
+/**
+  * @brief  Rx Transfer completed callback
+  * @param  UartHandle: UART handle
+  * @note   This example shows a simple way to report end of DMA Rx transfer, and
+  *         you can add your own implementation.
+  * @retval None
+  */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef* UartHandle){
+    /* Set transmission flag: transfer complete */
+    RxReady = SET;
+}
+
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc){
+
+    uint32_t adc = HAL_ADC_GetValue(hadc);
+
+    adcValue =  (float)(((float) adc / (1 << 12)) -0.49) * 4;
+    adc_it_is_cleared = true;
+}
 
 /* USER CODE END 4 */
 
@@ -318,37 +324,20 @@ void Error_Handler(void){
     /* USER CODE END Error_Handler_Debug */
 }
 
-/**
-  * @brief This function handles System tick timer.
-  */
-void SysTick_Handler(void){
-    /* USER CODE BEGIN SysTick_IRQn 0 */
-
-    /* USER CODE END SysTick_IRQn 0 */
-
-    ms_has_elapsed = true;
-
-    timestamp++;
-
-    /* USER CODE BEGIN SysTick_IRQn 1 */
-
-    /* USER CODE END SysTick_IRQn 1 */
-}
-
 #ifdef  USE_FULL_ASSERT
 /**
-    * @brief  Reports the name of the source file and the source line number
-    *         where the assert_param error has occurred.
-    * @param  file: pointer to the source file name
-    * @param  line: assert_param error line source number
-    * @retval None
-    */
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
 void assert_failed(char *file, uint32_t line)
-{
-    /* USER CODE BEGIN 6 */
+{ 
+  /* USER CODE BEGIN 6 */
     /* User can add his own implementation to report the file name and line number,
          tex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-    /* USER CODE END 6 */
+  /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
 

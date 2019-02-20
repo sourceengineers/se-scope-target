@@ -23,7 +23,7 @@ UartJsonHandle uartJson;
 void scope_init(UartTransmitCallback callback, uint32_t* timestamp){
 
     /* Specify amount of channels, the size of channels and the maximum amount of addresses in the announcer */
-    amountOfChannels = 4;
+    amountOfChannels = 5;
     sizeOfChannels = 100;
     addressesInAddressAnnouncer = 3;
 
