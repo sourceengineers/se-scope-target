@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 import collections
 import os
 import numpy as np
+import time
 
 
 def config():
@@ -282,7 +283,7 @@ def append_to_channel(channel, data):
 
 def prepare_data(data):
     for data_package in data.split(b'transport:00\0'):
-        print(data_package)
+        #print(data_package)
         data_package = data_package.split(b'transport')[0]
         ans = process_data(data_package)
         if ans is None:
@@ -425,6 +426,9 @@ def plot_data():
     plt.draw()
     plt.pause(1e-17)
 
+    if trigger_data['found'] == True and not trigger_conf['mode'] == 'Continous':
+        safe_plot()
+
 
 ##############################################################################
 
@@ -456,16 +460,15 @@ def get_address_from_map(var_name):
 
 ##############################################################################
 
-def cleanup():
-    print('Script interrupted\nCleaning up...')
+def safe_plot():
+    #print('Script interrupted\nCleaning up...')
     try:
         save_path = os.path.abspath(image_path)
     except:
         save_path = os.path.expanduser("~/Desktop")
 
-    save_path = os.path.join(save_path, figure_name)
+    save_path = os.path.join(save_path, figure_name + "_" + str(int(time.time())))
     figure.savefig(save_path)
-    ser.close()
 
     print("Safed plot to: " + save_path)
 
@@ -504,4 +507,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        cleanup()
+        safe_plot()
+        ser.close()
