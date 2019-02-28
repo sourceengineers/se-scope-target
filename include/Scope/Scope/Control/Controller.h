@@ -12,6 +12,7 @@
 #include <Scope/Control/IPacker.h>
 #include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/Control/CommandParserDispatcher.h>
+#include <Scope/GeneralPurpose/IObserver.h>
 
 /******************************************************************************
  Define class handle data
@@ -26,6 +27,12 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
 IRunnableHandle Controller_getRxRunnable(ControllerHandle self);
 
 IRunnableHandle Controller_getTxRunnable(ControllerHandle self);
+
+void Controller_attachPackObserver(ControllerHandle self, IObserverHandle observer);
+
+IObserverHandle Controller_getCommandObserver(ControllerHandle self);
+
+IObserverHandle Controller_getCommandPackObserver(ControllerHandle self);
 
 void Controller_destroy(ControllerHandle self);
 

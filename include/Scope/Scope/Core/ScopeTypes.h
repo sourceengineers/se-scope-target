@@ -52,7 +52,13 @@ typedef struct{
     char name[maxAddrNameLength];
     DATA_TYPES type;
     ADDRESS_DATA_TYPE address;
-    bool hasToBeSent;
 } AddressDefinition;
 
+
+typedef enum{
+    PACK_ANNOUNCE, PACK_DATA
+} PACK_TYPES;
+
+static const size_t MAX_COMMAND_LENGTH = 30;
+static const size_t MAX_FIELD_LENGTH = 30;
 #endif

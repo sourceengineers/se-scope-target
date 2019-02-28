@@ -40,18 +40,6 @@ size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self);
 /* Returns a pointer to a address */
 AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const uint32_t addressId);
 
-/* Flags the storage ready to transmit */
-void AddressStorage_announce(AddressStorageHandle self);
-
-/* Checks if the addresses have to be sent */
-bool AddressStorage_hasToBeSent(AddressStorageHandle self);
-
-/* Flags the storage as sent */
-void AddressStorage_hasBeenSent(AddressStorageHandle self);
-
-/* Flags all Addresses as send */
-void AddressStorage_flagAddressesAsSend(AddressStorageHandle self);
-
 /* Deconstructor: Deletes the instance of the channel */
 void AddressStorage_destroy(AddressStorageHandle self);
 

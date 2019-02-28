@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         CommandPack.h
+ * @file         CommandPackAnnounce.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -11,8 +11,8 @@
  * 
  ******************************************************************************/
 
-#ifndef COMMANDPACK_H_
-#define COMMANDPACK_H_
+#ifndef COMMANDPACKANNOUNCE_H_
+#define COMMANDPACKANNOUNCE_H_
 
 #include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
@@ -22,18 +22,18 @@
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __CommandPackPrivateData* CommandPackHandle;
+typedef struct __CommandPackAnnouncePrivateData* CommandPackAnnounceHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandPackHandle CommandPack_create(IScopeHandle scope, IPackerHandle packer);
+CommandPackAnnounceHandle CommandPackAnnounce_create(IScopeHandle scope, IPackerHandle packer);
 
 /* Deconstructor: Deletes the instance of the command */
-void CommandPack_destroy(CommandPackHandle self);
+void CommandPackAnnounce_destroy(CommandPackAnnounceHandle self);
 
 /* Returns the command interface */
-ICommandHandle CommandPack_getICommand(CommandPackHandle self);
+ICommandHandle CommandPackAnnounce_getICommand(CommandPackAnnounceHandle self);
 
 #endif

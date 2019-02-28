@@ -35,9 +35,14 @@ typedef struct __UartJsonPrivateData{
     ByteRingBufferHandle transportBuffer;
 
     uint8_t inputChecksum;
-    bool rxIsValid;
-    bool txPendingToValidate;
-    bool txPendingToTransmit;
+    bool rxDataReady;
+    bool txPendingToValidateAndTransmit;
+
+    IObserverHandle rxObserver;
+    IObserver txObserver;
+
+    IRunnable rxRunnable;
+    IRunnable txRunnable;
 
 } UartJsonPrivateData;
 
@@ -47,40 +52,21 @@ void createOutputChecksum(UartJsonHandle self, char* data);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-bool rxDataReady(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+void runRx(IRunnableHandle runnable){
+    UartJsonHandle self = (UartJsonHandle) runnable->handle;
 
-    return self->rxIsValid;
-}
-
-void txReadyToValidate(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    self->txPendingToValidate = true;
-}
-
-void rxDataHasBeenFetched(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    self->rxIsValid = false;
-    self->input->flush(self->input);
-}
-
-void runRx(ICommunicatorHandle communicator){
-		return;
-}
-
-bool txSendingPending(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    return self->txPendingToTransmit;
-}
-
-void runTx(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
-
-    if(self->txPendingToValidate == false){
+    if(self->rxDataReady == false){
         return;
     }
 
-    if(self->txPendingToTransmit == true){
+    self->rxDataReady = false;
+    self->rxObserver->update(self->rxObserver, NULL);
+}
+
+void runTx(IRunnableHandle runnable){
+    UartJsonHandle self = (UartJsonHandle) runnable->handle;
+
+    if(self->txPendingToValidateAndTransmit == true){
         return;
     }
 
@@ -93,8 +79,7 @@ void runTx(ICommunicatorHandle communicator){
     //createOutputChecksum(self, formatedChecksum);
     self->output->write(self->output, (const uint8_t*) KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH);
     self->output->write(self->output, (const uint8_t*) formatedChecksum, CHECKSUM_LENGTH + 1);
-    self->txPendingToValidate = false;
-    self->txPendingToTransmit = true;
+    self->txPendingToValidateAndTransmit = false;
 
     self->callback(self);
 }
@@ -135,6 +120,31 @@ ChecksumCheck validateInput(UartJsonHandle self){
     return CHECKSUM_OK;
 }
 
+void update(IObserverHandle observer, void* state){
+    UartJsonHandle self = (UartJsonHandle) observer->handle;
+    self->txPendingToValidateAndTransmit = true;
+}
+
+void attachObserver(ICommunicatorHandle communicator, IObserverHandle observer){
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    self->rxObserver = observer;
+}
+
+IObserverHandle getObserver(ICommunicatorHandle communicator){
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    return &self->txObserver;
+}
+
+IRunnableHandle getRxRunnable(ICommunicatorHandle communicator){
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    return &self->rxRunnable;
+}
+
+IRunnableHandle getTxRunnable(ICommunicatorHandle communicator){
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    return &self->txRunnable;
+}
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -143,19 +153,26 @@ UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle 
     UartJsonHandle self = malloc(sizeof(UartJsonPrivateData));
 
     self->communicator.handle = self;
-    self->communicator.runRx = &runRx;
-    self->communicator.runTx = &runTx;
-    self->communicator.rxDataReady = &rxDataReady;
-    self->communicator.rxDataHasBeenFetched = &rxDataHasBeenFetched;
-    self->communicator.txReadyToValidate = &txReadyToValidate;
-    self->communicator.txSendingPending = &txSendingPending;
+    self->rxRunnable.handle = self;
+    self->txRunnable.handle = self;
+    self->txObserver.handle = self;
+
+    self->communicator.attachObserver = &attachObserver;
+    self->communicator.getObserver = &getObserver;
+    self->communicator.getRxRunnable = &getRxRunnable;
+    self->communicator.getTxRunnable = &getTxRunnable;
+
+    self->txObserver.update = &update;
+
+    self->rxRunnable.run = &runRx;
+    self->txRunnable.run = &runTx;
 
     self->transportBuffer = ByteRingBuffer_create(KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH);
     self->callback = callback;
     self->input = input;
     self->output = output;
 
-    self->rxIsValid = false;
+    self->rxDataReady = false;
     UartJson_resetTx(self);
     UartJson_resetRx(self);
     return self;
@@ -177,18 +194,17 @@ void UartJson_resetRx(UartJsonHandle self){
     ByteRingBuffer_clear(self->transportBuffer);
     self->input->flush(self->input);
     self->inputChecksum = 0;
-    self->rxIsValid = false;
+    self->rxDataReady = false;
 }
 
 void UartJson_resetTx(UartJsonHandle self){
     self->output->flush(self->output);
-    self->txPendingToValidate = false;
-    self->txPendingToTransmit = false;
+    self->txPendingToValidateAndTransmit = false;
 }
 
 void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
 
-    if(self->rxIsValid == true){
+    if(self->rxDataReady == true){
         return;
     }
 
@@ -212,7 +228,7 @@ void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
             if(res == CHECKSUM_OK){
                 self->input->writeByte(self->input, (uint8_t) '\0');
                 ByteRingBuffer_clear(self->transportBuffer);
-                self->rxIsValid = true;
+                self->rxDataReady = true;
                 self->inputChecksum = 0;
                 break;
             }else if(res == CHECKSUM_FAULTY){

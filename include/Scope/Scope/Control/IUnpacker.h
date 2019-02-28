@@ -33,9 +33,6 @@
 ******************************************************************************/
 typedef struct IUnpackerStruct* IUnpackerHandle;
 
-static const size_t MAX_COMMAND_LENGTH = 30;
-static const size_t MAX_FIELD_LENGTH = 30;
-
 /* Struct which is used to clean up the amount of parameters passed to the fetcher functions */
 typedef struct{
     const char* commandName;
@@ -51,12 +48,6 @@ typedef struct IUnpackerStruct{
     GenericReference handle;
 
     bool (* unpack)(IUnpackerHandle unpacker);
-
-    bool (* dataPending)(IUnpackerHandle unpacker);
-
-    void (* dataRead)(IUnpackerHandle unpacker);
-
-    bool (* streamIsEmpty)(IUnpackerHandle unpacker);
 
     /* Functions to fetch commands and fields */
     size_t (* getNumberOfCommands)(IUnpackerHandle unpacker);

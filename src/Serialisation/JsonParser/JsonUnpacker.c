@@ -483,11 +483,6 @@ static bool dataPending(IUnpackerHandle unpacker){
     return self->dataPending;
 }
 
-static void dataRead(IUnpackerHandle unpacker){
-    JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
-    self->dataPending = false;
-}
-
 static bool streamIsEmpty(IUnpackerHandle unpacker){
     JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
 
@@ -528,9 +523,6 @@ JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
     self->unpacker.getNumberOfCommands = &getNumberOfCommands;
     self->unpacker.getNumberOfFields = &getNumberOfFields;
     self->unpacker.getNameOfField = &getNameOfField;
-    self->unpacker.streamIsEmpty = &streamIsEmpty;
-    self->unpacker.dataPending = &dataPending;
-    self->unpacker.dataRead = &dataRead;
 
     self->stream = stream;
 

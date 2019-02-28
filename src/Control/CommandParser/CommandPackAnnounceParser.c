@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandPackParser.c
+ * @file         CommandPackAnnounceParser.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,40 +7,39 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/CommandParser/CommandPackParser.h>
-#include <Scope/Control/IPacker.h>
+#include <Scope/Control/CommandParser/CommandPackAnnounceParser.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Name of the command */
-static char* commandName = "ev_pack";
+static char* commandName = "ev_pack_announce";
 
 /* Class data */
-typedef struct __CommandPackParserPrivateData{
-    CommandPackHandle command;
+typedef struct __CommandPackAnnounceParserPrivateData{
+    CommandPackAnnounceHandle command;
 
-} CommandPackParserPrivateData;
+} CommandPackAnnounceParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPackParserHandle CommandPackParser_create(IScopeHandle scope, IPackerHandle packer){
-    CommandPackParserHandle self = malloc(sizeof(CommandPackParserPrivateData));
-    self->command = CommandPack_create(scope, packer);
+CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(IScopeHandle scope, IPackerHandle packer){
+    CommandPackAnnounceParserHandle self = malloc(sizeof(CommandPackAnnounceParserPrivateData));
+    self->command = CommandPackAnnounce_create(scope, packer);
     return self;
 }
 
-ICommandHandle CommandPackParser_getCommand(CommandPackParserHandle self){
-    return CommandPack_getICommand(self->command);
+ICommandHandle CommandPackAnnounceParser_getCommand(CommandPackAnnounceParserHandle self){
+    return CommandPackAnnounce_getICommand(self->command);
 }
 
-char* CommandPackParser_getName(void){
+char* CommandPackAnnounceParser_getName(void){
     return commandName;
 }
 
-void CommandPackParser_destroy(CommandPackParserHandle self){
-    CommandPack_destroy(self->command);
+void CommandPackAnnounceParser_destroy(CommandPackAnnounceParserHandle self){
+    CommandPackAnnounce_destroy(self->command);
 
     free(self);
     self = NULL;

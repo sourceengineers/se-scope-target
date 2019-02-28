@@ -19,6 +19,7 @@
 #include <Scope/Core/AddressStorage.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/IObserver.h>
 
 /******************************************************************************
  Define class handle data
@@ -42,11 +43,6 @@ void Scope_transmit(ScopeHandle self);
 
 /* Tells the scope to transmit the announce addresses */
 void Scope_announce(ScopeHandle self);
-
-/* Passes data to the scope which has to be parsed. The data has to be in the form of the specified protocol, or will
- * be rejected.
- * After parsing, the commands will be executed */
-void Scope_receiveData(ScopeHandle self);
 
 /* Packs all the necessary data into a package ready to be sent */
 //void Scope_transmitData(ScopeHandle self);
@@ -78,16 +74,10 @@ void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId);
 /* Sets the channel with the given index to stopped */
 void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
 
-/* Sends all configured watch addresses to the host */
-//void Scope_announceAddresses(ScopeHandle self);
-
-/* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
-void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
-                                const DATA_TYPES type,
-                                const uint32_t addressId);
-
 /* Clears the data in the channels, as well as the timestamp buffer */
 void Scope_clear(ScopeHandle self);
+
+void Scope_attachPackObserver(ScopeHandle self, IObserverHandle observer);
 
 /* Returns the Runnable of the scope */
 IRunnableHandle Scope_getIRunnable(ScopeHandle self);

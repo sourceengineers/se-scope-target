@@ -16,6 +16,8 @@
 #define ICOMMUNICATOR_H_
 
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+#include <Scope/GeneralPurpose/IObserver.h>
 
 /******************************************************************************
  Define interface handle data
@@ -28,17 +30,17 @@ typedef struct ICommunicatorStruct* ICommunicatorHandle;
 typedef struct ICommunicatorStruct{
     GenericReference handle;
 
-    void (* runRx)(ICommunicatorHandle communicator);
+    /*
+     * Returns the observer which is used to update the Tx path
+     */
+    IObserverHandle (* getObserver)(ICommunicatorHandle communicator);
 
-    void (* runTx)(ICommunicatorHandle communicator);
+    /* Attaches the observer which will update the Rx path */
+    void (* attachObserver)(ICommunicatorHandle communicator, IObserverHandle observer);
 
-    bool (* rxDataReady)(ICommunicatorHandle communicator);
+    IRunnableHandle (* getTxRunnable)(ICommunicatorHandle communicator);
 
-    void (* rxDataHasBeenFetched)(ICommunicatorHandle communicator);
-
-    void (* txReadyToValidate)(ICommunicatorHandle communicator);
-
-    bool (* txSendingPending)(ICommunicatorHandle communicator);
+    IRunnableHandle (* getRxRunnable)(ICommunicatorHandle communicator);
 
 } ICommunicator;
 
