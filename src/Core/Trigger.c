@@ -348,7 +348,7 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
     self->activeStrategy = continuous;
 
     Trigger_clear(self);
-		Trigger_deactivate(self);
+    Trigger_deactivate(self);
     return self;
 }
 

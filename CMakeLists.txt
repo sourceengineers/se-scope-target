@@ -108,12 +108,8 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
 # Add examples
 ################################################################################
 if (GEMMI_BUILD_EXAMPLES)
-    file(GLOB_RECURSE EXAMPLE_SOURCES "${PROJECT_EXAMPLES_DIR}/*/CMakeLists.txt")
-    message("-- Examples will be added")
-    foreach (EXAMPLE ${EXAMPLE_SOURCES})
-        get_filename_component(EXAMPLE_SUB_DIRS ${EXAMPLE} DIRECTORY)
-        add_subdirectory(${EXAMPLE_SUB_DIRS})
-    endforeach (EXAMPLE)
+    add_subdirectory(examples/dynamic_example)
+    add_subdirectory(examples/static_example)
 endif ()
 ################################################################################
 # Install project
