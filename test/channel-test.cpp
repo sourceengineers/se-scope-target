@@ -28,6 +28,7 @@ TEST(Channel, test_polling){
         data = shortTestVector[i];
         Channel_poll(channel);
     }
+    Channel_swapBuffers(channel);
 
     Channel_read(channel, shortAnswer, shortVectorLength);
 
@@ -50,24 +51,28 @@ TEST(Channel, test_data_types){
     Channel_setPollAddress(channel, &data, FLOAT);
     Channel_setStateRunning(channel);
     Channel_poll(channel);
+    Channel_swapBuffers(channel);
     Channel_read(channel, &answer, 1);
     EXPECT_EQ(answer, 5.5f);
 
     uint8_t uint8Data = 12;
     Channel_setPollAddress(channel, &uint8Data, UINT8);
     Channel_poll(channel);
+    Channel_swapBuffers(channel);
     Channel_read(channel, &answer, 1);
     EXPECT_EQ((uint8_t) answer, 12);
 
     uint16_t uint16Data = 12;
     Channel_setPollAddress(channel, &uint16Data, UINT16);
     Channel_poll(channel);
+    Channel_swapBuffers(channel);
     Channel_read(channel, &answer, 1);
     EXPECT_EQ((uint16_t) answer, 12);
 
     uint32_t uint32Data = 12;
     Channel_setPollAddress(channel, &uint32Data, UINT32);
     Channel_poll(channel);
+    Channel_swapBuffers(channel);
     Channel_read(channel, &answer, 1);
     EXPECT_EQ((uint32_t) answer, 12);
 
