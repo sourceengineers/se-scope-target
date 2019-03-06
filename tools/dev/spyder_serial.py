@@ -464,8 +464,11 @@ def safe_plot():
     #print('Script interrupted\nCleaning up...')
     try:
         save_path = os.path.abspath(image_path)
-    except:
-        save_path = os.path.expanduser("~/Desktop")
+    except:     
+        save_path = os.path.expanduser("~/se-scope")
+
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
 
     save_path = os.path.join(save_path, figure_name + "_" + str(int(time.time())))
     figure.savefig(save_path)
