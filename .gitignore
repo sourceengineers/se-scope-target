@@ -25,3 +25,5 @@ examples/embedded/MDK-ARM/scope/
 ide/Listings/scope-lib\.map
 
 *.schuepbs
+
+tools/dev/__pycache__/
