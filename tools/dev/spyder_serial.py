@@ -53,14 +53,14 @@ def config():
     ##########################################################################
     ### Channel Konfiguration
     ##########################################################################
-    # typ = UINT8, UINT16, UINT32, FLOAT)
+    # typ = SE_UINT8, SE_UINT16, SE_UINT32, SE_FLOAT)
     # Die Addressen koennen entweder aus der map File ausgelesen werden, falls sie
     # als statisch deklariert sind, oder manuell eigetragen werden.
-    channels.append({'name': "Sinus", 'address': get_address_from_map("sinus"), 'type': "FLOAT"})
-    channels.append({'name': "Cosinus", 'address': get_address_from_map("cosinus"), 'type': "FLOAT"})
-    channels.append({'name': "Leistung", 'address': get_address_from_map("leistung"), 'type': "FLOAT"})
-    #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
-    channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "FLOAT"})
+    channels.append({'name': "Sinus", 'address': get_address_from_map("sinus"), 'type': "SE_FLOAT"})
+    channels.append({'name': "Cosinus", 'address': get_address_from_map("cosinus"), 'type': "SE_FLOAT"})
+    channels.append({'name': "Leistung", 'address': get_address_from_map("leistung"), 'type': "SE_FLOAT"})
+    #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "SE_UINT8"})
+    channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "SE_FLOAT"})
 
     ##########################################################################
     ### Trigger Konfiguration

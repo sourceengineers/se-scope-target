@@ -99,9 +99,9 @@ int main(int argc, char* argv[]){
     float var2;
     uint32_t var3;
 
-    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR1", &var1, UINT8, 0);
-    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR2", &var2, FLOAT, 1);
-    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR3", &var3, UINT32, 2);
+    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR1", &var1, SE_UINT8, 0);
+    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR2", &var2, SE_FLOAT, 1);
+    AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR3", &var3, SE_UINT32, 2);
 
     while(1){
 

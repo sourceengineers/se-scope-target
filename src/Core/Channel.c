@@ -52,29 +52,29 @@ static float castDataToFloat(ChannelHandle self){
     float data;
 
     switch(self->pollDataType){
-        case UINT8:
+        case SE_UINT8:
             transportAddr = *((ADDRESS_DATA_TYPE*) self->pollAddress);
             data = ((uint8_t) *((uint8_t*) &transportAddr));
             break;
-        case UINT16:
+        case SE_UINT16:
             transportAddr = *((ADDRESS_DATA_TYPE*) self->pollAddress);
             data = ((uint16_t) *((uint16_t*) &transportAddr));
             break;
-        case UINT32:
+        case SE_UINT32:
             transportAddr = *((ADDRESS_DATA_TYPE*) self->pollAddress);
             data = ((uint32_t) *((uint32_t*) &transportAddr));
             break;
-        case FLOAT:
+        case SE_FLOAT:
             transportAddr = *((ADDRESS_DATA_TYPE*) self->pollAddress);
             data = ((float) *((float*) &transportAddr));
             break;
 #if !(ARCH_SIZE_32)
-        case UINT64:
+        case SE_UINT64:
             transportAddr = *((ADDRESS_DATA_TYPE*) self->pollAddress);
             data = ((uint64_t) *((uint64_t*) &transportAddr));
             break;
 #endif
-/*    case DOUBLE:
+/*    case SE_DOUBLE:
       transportAddr = *((ADDRESS_DATA_TYPE*)self->pollAddress);
       data = ((double)*((double*)&transportAddr));
       break;*/

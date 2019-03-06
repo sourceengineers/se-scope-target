@@ -146,10 +146,10 @@ int main(void){
 
     /* adding some variables to the AddressStorage
      * These can be trasmitted to the host if wanted */
-    AddressStorage_addAnnounceAddress(addressStorage, "sinus", &sinus, FLOAT, 0);
-    AddressStorage_addAnnounceAddress(addressStorage, "cosinus", &cosinus, FLOAT, 1);
-    AddressStorage_addAnnounceAddress(addressStorage, "tangent", &leistung, FLOAT, 2);
-    AddressStorage_addAnnounceAddress(addressStorage, "schmitttriggered", &schmitttriggered, UINT8, 3);
+    AddressStorage_addAnnounceAddress(addressStorage, "sinus", &sinus, SE_FLOAT, 0);
+    AddressStorage_addAnnounceAddress(addressStorage, "cosinus", &cosinus, SE_FLOAT, 1);
+    AddressStorage_addAnnounceAddress(addressStorage, "tangent", &leistung, SE_FLOAT, 2);
+    AddressStorage_addAnnounceAddress(addressStorage, "schmitttriggered", &schmitttriggered, SE_UINT8, 3);
 
     HAL_UART_Receive_IT(&huart2, (uint8_t*) aRxBuffer, UART_INPUT_SIZE);
     HAL_ADC_Start_IT(&hadc1);

@@ -39,7 +39,7 @@ bool testCondition(float* var, float var1, float var2, TriggerConfiguration conf
 TEST(Trigger, test_normal){
     ChannelHandle channel = Channel_create(200);
     float var = 0;
-    Channel_setPollAddress(channel, &var, FLOAT);
+    Channel_setPollAddress(channel, &var, SE_FLOAT);
     Channel_setStateRunning(channel);
     uint32_t timestamp = 0;
     TimestamperHandle timestamper = Timestamper_create(200, &timestamp);
@@ -98,7 +98,7 @@ TEST(Trigger, test_normal){
 TEST(Trigger, test_continuous){
     ChannelHandle channel = Channel_create(200);
     float var = 0;
-    Channel_setPollAddress(channel, &var, FLOAT);
+    Channel_setPollAddress(channel, &var, SE_FLOAT);
     Channel_setStateRunning(channel);
     uint32_t timestamp = 0;
     TimestamperHandle timestamper = Timestamper_create(200, &timestamp);

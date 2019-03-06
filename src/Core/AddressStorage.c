@@ -39,7 +39,7 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses){
 
     /* Initialize all addresses to have a defined state */
     for(int i = 0; i < maxAmountOfAddresses; ++i){
-        self->addresses[i].type = FLOAT;
+        self->addresses[i].type = SE_FLOAT;
         self->addresses[i].address = 0;
         self->addresses[i].name[0] = '\0';
     }

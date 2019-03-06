@@ -18,19 +18,19 @@
 #include <stddef.h>
 
 /* Define the string names of the data types */
-#define UINT8_NAME "UINT8"
-#define UINT16_NAME "UINT16"
-#define UINT32_NAME "UINT32"
-#define UINT64_NAME "UINT64"
-#define FLOAT_NAME "FLOAT"
-#define DOUBLE_NAME "DOUBLE"
+#define SE_UINT8_NAME "SE_UINT8"
+#define SE_UINT16_NAME "SE_UINT16"
+#define SE_UINT32_NAME "SE_UINT32"
+#define SE_UINT64_NAME "SE_UINT64"
+#define SE_FLOAT_NAME "SE_FLOAT"
+#define SE_DOUBLE_NAME "SE_DOUBLE"
 
 /* Define list of names for easy access, matching the DATA_TYPES enum entries */
-static const char* DATA_TYPE_NAMES[6] = {UINT8_NAME, UINT16_NAME, UINT32_NAME, UINT64_NAME, FLOAT_NAME, DOUBLE_NAME};
+static const char* DATA_TYPE_NAMES[6] = {SE_UINT8_NAME, SE_UINT16_NAME, SE_UINT32_NAME, SE_UINT64_NAME, SE_FLOAT_NAME, SE_DOUBLE_NAME};
 
 /* Define dataypes themselves */
 typedef enum{
-    UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE
+    SE_UINT8, SE_UINT16, SE_UINT32, SE_UINT64, SE_FLOAT, SE_DOUBLE
 } DATA_TYPES;
 
 /* Define macro to fetch the right data type name */

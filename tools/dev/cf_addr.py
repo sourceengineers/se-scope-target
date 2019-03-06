@@ -43,7 +43,7 @@ if __name__ == "__main__":
         print(
             """Configures the choosen channels to track the gives address
             Usage: ./cf_addr INPUT_FILE CHANNEL_ID_1 ADDRESS_1 DATA_TYPE_1 CHANNEL_ID_N ADDRESS_N DATA_TYPE_N
-            DATA_TYPE may be: UINT8, UINT16, UINT32, UINT64, FLOAT, DUBLE""")
+            DATA_TYPE may be: SE_UINT8, SE_UINT16, SE_UINT32, SE_UINT64, SE_FLOAT, DUBLE""")
         sys.exit();
 
     main()

@@ -57,7 +57,7 @@ int main(){
 * User code
 ***********************************************************************************************************************/
     int test = 0;
-    Scope_configureChannel(obj.scope, 0, &test, UINT32);
+    Scope_configureChannel(obj.scope, 0, &test, SE_UINT32);
     Scope_setChannelRunning(obj.scope, 0);
     Scope_configureTrigger(obj.scope, 48, TRIGGER_EDGE_POSITIVE, TRIGGER_NORMAL, 0);
 

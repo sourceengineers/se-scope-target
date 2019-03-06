@@ -20,7 +20,7 @@ TEST(Channel, test_polling){
     ChannelHandle channel = Channel_create(shortCapacity);
 
     /* Configure channel */
-    Channel_setPollAddress(channel, &data, FLOAT);
+    Channel_setPollAddress(channel, &data, SE_FLOAT);
     Channel_setStateRunning(channel);
 
     /* Simulate polling */
@@ -48,7 +48,7 @@ TEST(Channel, test_data_types){
 
     float data = 5.5f;
     /* Configure channel */
-    Channel_setPollAddress(channel, &data, FLOAT);
+    Channel_setPollAddress(channel, &data, SE_FLOAT);
     Channel_setStateRunning(channel);
     Channel_poll(channel);
     Channel_swapBuffers(channel);
@@ -56,21 +56,21 @@ TEST(Channel, test_data_types){
     EXPECT_EQ(answer, 5.5f);
 
     uint8_t uint8Data = 12;
-    Channel_setPollAddress(channel, &uint8Data, UINT8);
+    Channel_setPollAddress(channel, &uint8Data, SE_UINT8);
     Channel_poll(channel);
     Channel_swapBuffers(channel);
     Channel_read(channel, &answer, 1);
     EXPECT_EQ((uint8_t) answer, 12);
 
     uint16_t uint16Data = 12;
-    Channel_setPollAddress(channel, &uint16Data, UINT16);
+    Channel_setPollAddress(channel, &uint16Data, SE_UINT16);
     Channel_poll(channel);
     Channel_swapBuffers(channel);
     Channel_read(channel, &answer, 1);
     EXPECT_EQ((uint16_t) answer, 12);
 
     uint32_t uint32Data = 12;
-    Channel_setPollAddress(channel, &uint32Data, UINT32);
+    Channel_setPollAddress(channel, &uint32Data, SE_UINT32);
     Channel_poll(channel);
     Channel_swapBuffers(channel);
     Channel_read(channel, &answer, 1);
@@ -96,7 +96,7 @@ TEST(Channel, test_states){
     EXPECT_EQ(isStopped, false);
 
     /* Configure channel */
-    Channel_setPollAddress(channel, &data, FLOAT);
+    Channel_setPollAddress(channel, &data, SE_FLOAT);
     isRunning = Channel_setStateRunning(channel);
     EXPECT_EQ(isRunning, true);
     data = 5.5f;
@@ -116,7 +116,7 @@ TEST(Channel, test_trigger_stream){
     ChannelHandle channel = Channel_create(shortCapacity);
 
     /* Configure channel */
-    Channel_setPollAddress(channel, &data, FLOAT);
+    Channel_setPollAddress(channel, &data, SE_FLOAT);
     Channel_setStateRunning(channel);
 
     /* Simulate polling */
