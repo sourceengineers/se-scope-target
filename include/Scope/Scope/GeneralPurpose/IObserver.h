@@ -1,33 +1,27 @@
 /*!*****************************************************************************
- * @file         Communicator.h
+ * @file         IObserver.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ *
  ******************************************************************************/
 
-#ifndef COMMUNICATOR_H
-#define COMMUNICATOR_H
-
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/Communication/ICommunicator.h>
+#ifndef IOBSERVER_H
+#define IOBSERVER_H
 
 /******************************************************************************
- Define class handle data
+ Define interface handle data
 ******************************************************************************/
-typedef struct __CommunicatorPrivateData* CommunicatorHandle;
+typedef struct IObserverStruct* IObserverHandle;
 
 /******************************************************************************
- Public functions
+ Define interface
 ******************************************************************************/
-CommunicatorHandle Communicator_create(ICommunicatorHandle communicator);
+typedef struct IObserverStruct{
+    GenericReference handle;
 
-IRunnableHandle Communicator_getRxRunnable(CommunicatorHandle self);
+    void (* update)(IObserverHandle runnable, void* state);
 
-IRunnableHandle Communicator_getTxRunnable(CommunicatorHandle self);
-
-void Communicator_destroy(CommunicatorHandle self);
-
+} IObserver;
 #endif
-
-

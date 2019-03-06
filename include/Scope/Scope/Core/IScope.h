@@ -57,14 +57,6 @@ typedef struct IScopeStruct{
     /* Helper functions */
     size_t (* getAmountOfChannels)(IScopeHandle scope);
 
-    bool (* scopeIsReadyToSend)(IScopeHandle scope);
-
-    bool (* dataIsReadyToSend)(IScopeHandle scope);
-
-    bool (* announcementIsReadyToSend)(IScopeHandle scope);
-
-    void (* dataIsTransmitted)(IScopeHandle scope);
-
     /* Data fetcher functions */
     TriggeredValues (* getTriggerData)(IScopeHandle scope);
 
@@ -75,8 +67,6 @@ typedef struct IScopeStruct{
     AddressDefinition* (* getAnnounceAddressToTransmit)(IScopeHandle scope, uint32_t addressId);
 
     size_t (* getMaxAmmountOfAnnounceAddresses)(IScopeHandle scope);
-
-    size_t (* getMaxSizeOfChannel)(IScopeHandle scope);
 
 } IScope;
 

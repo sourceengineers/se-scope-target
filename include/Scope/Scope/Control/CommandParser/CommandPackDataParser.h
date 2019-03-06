@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         CommandPackParser.h
+ * @file         CommandPackDataParser.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -10,29 +10,29 @@
  *              
  ******************************************************************************/
 
-#ifndef COMMANDPACKPARSER_H_
-#define COMMANDPACKPARSER_H_
+#ifndef COMMANDPACKDATAPARSER_H_
+#define COMMANDPACKDATAPARSER_H_
 
-#include <Scope/Control/Command/CommandPack.h>
+#include <Scope/Control/Command/CommandPackData.h>
 
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __CommandPackParserPrivateData* CommandPackParserHandle;
+typedef struct __CommandPackDataParserPrivateData* CommandPackDataParserHandle;
 
 /******************************************************************************
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command parser */
-CommandPackParserHandle CommandPackParser_create(IScopeHandle scope, IPackerHandle packer);
+CommandPackDataParserHandle CommandPackDataParser_create(IScopeHandle scope, IPackerHandle packer);
 
 /* Configurates the gives command */
-ICommandHandle CommandPackParser_getCommand(CommandPackParserHandle self);
+ICommandHandle CommandPackDataParser_getCommand(CommandPackDataParserHandle self);
 
 /* Returns the name of the command */
-char* CommandPackParser_getName(void);
+char* CommandPackDataParser_getName(void);
 
 /* Deconstructor: Deletes the instance of the command parser */
-void CommandPackParser_destroy(CommandPackParserHandle self);
+void CommandPackDataParser_destroy(CommandPackDataParserHandle self);
 
 #endif

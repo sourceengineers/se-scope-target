@@ -102,7 +102,6 @@ int main(int argc, char* argv[]){
     AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR1", &var1, UINT8, 0);
     AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR2", &var2, FLOAT, 1);
     AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR3", &var3, UINT32, 2);
-    AddressStorage_announce(addressStorage);
 
     while(1){
 
