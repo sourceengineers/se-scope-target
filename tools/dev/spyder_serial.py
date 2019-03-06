@@ -77,12 +77,18 @@ def config():
     ##########################################################################
     ### Grafik Konfiguration
     ##########################################################################
+#    add_subplot(["Sinus"], \
+#                {'title': 'Sinus', 'y_label': 'Value', 'x_label': 'Time [ms]'})
+#    add_subplot(["Cosinus"], \
+#                {'title': 'Cosinus', 'y_label': 'Value', 'x_label': 'Time [ms]'})
+#    add_subplot(["Leistung"], \
+#                {'title': 'Leistung', 'y_label': 'Value', 'x_label': 'Time [ms]'})
     add_subplot(["Sinus", "Cosinus", "Leistung"], \
                 {'title': 'Sin and Cos', 'y_label': 'Value', 'x_label': 'Time [ms]'})
     add_subplot(["Potty"], \
                 {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
 
-    figure_name = "Device data"
+    figure_name = "Demo_plot"
 
     # wenn die x_width auf None gesetzt wird, wird die Achse automatisch
     # skaliert
@@ -90,6 +96,50 @@ def config():
 
     x_width = 100
     x_width = x_width * step_size
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ##############################################################################
@@ -130,8 +180,8 @@ def found_flow_ctrl():
         # print(received_data) # uncomment this to line to see reived ack nak data
         data = process_data(received_data)
         if not data == None:
+            print(data)
             if ("flow_ctrl" in data["payload"]) == True:
-                print(data)
                 if (data["payload"]["flow_ctrl"] == "ACK"):
                     return "ACK"
                 if (data["payload"]["flow_ctrl"] == "NAK"):
