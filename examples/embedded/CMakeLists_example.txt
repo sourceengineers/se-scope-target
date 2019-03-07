@@ -53,8 +53,8 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
 Building ${BIN_FILE}")
 
 target_link_libraries(${PROJECT_NAME}.elf se-scope)
-include_directories(3party/iot-scope-target/include/Scope)
-add_subdirectory(3party/iot-scope-target)
+include_directories(3rdparty/iot-scope-target/include/Scope)
+add_subdirectory(3rdparty/iot-scope-target)
 
 add_custom_target(UPLOAD
         arm-none-eabi-gdb -iex "target remote tcp:127.0.0.1:3333"

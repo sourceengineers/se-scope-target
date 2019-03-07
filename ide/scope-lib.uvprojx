@@ -335,7 +335,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\include\Scope\;..\3party\jsmn\</IncludePath>
+              <IncludePath>..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -602,7 +602,7 @@
             <File>
               <FileName>jsmn.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\3party\jsmn\jsmn\jsmn.c</FilePath>
+              <FilePath>..\3rdparty\jsmn\jsmn\jsmn.c</FilePath>
             </File>
           </Files>
         </Group>
