@@ -1,6 +1,0 @@
-cmake-build-debug/
-.idea/*
-*.tmp
-build/*
-
-3rdparty/iot-scope-target
