@@ -18,6 +18,7 @@
 #include <Scope/Control/IPacker.h>
 #include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Control/AddressStorage.h>
 
 /******************************************************************************
  Define class handle data
@@ -28,7 +29,7 @@ typedef struct __CommandPackAnnouncePrivateData* CommandPackAnnounceHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandPackAnnounceHandle CommandPackAnnounce_create(IScopeHandle scope, IPackerHandle packer);
+CommandPackAnnounceHandle CommandPackAnnounce_create(AddressStorageHandle addressStorage, IPackerHandle packer);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandPackAnnounce_destroy(CommandPackAnnounceHandle self);

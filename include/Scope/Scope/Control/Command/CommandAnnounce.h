@@ -17,6 +17,8 @@
 #include <Scope/Control/Command/ICommand.h>
 #include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IObserver.h>
+
 
 /******************************************************************************
  Define class handle data
@@ -27,7 +29,7 @@ typedef struct __CommandAnnouncePrivateData* CommandAnnounceHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the command */
-CommandAnnounceHandle CommandAnnounce_create(IScopeHandle scope);
+CommandAnnounceHandle CommandAnnounce_create(IObserverHandle packObserver);
 
 /* Deconstructor: Deletes the instance of the command */
 void CommandAnnounce_destroy(CommandAnnounceHandle self);

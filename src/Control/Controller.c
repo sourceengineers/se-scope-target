@@ -146,7 +146,8 @@ static void commandUpdate(IObserverHandle observer, void *state) {
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker) {
+ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
+                                    AddressStorageHandle addressStorage) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
 
@@ -163,8 +164,8 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->commandPackObserver.update = &commandPackUpdate;
     self->commandObserver.update = &commandUpdate;
 
-    self->commandParserDispatcher = CommandParserDispatcher_create(scope, unpacker);
-    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, packer);
+    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
+    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, addressStorage, packer);
 
     self->packCommandPending = false;
     self->commandPending = false;

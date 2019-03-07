@@ -8,7 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "Scope/Core/AddressStorage.h"
+#include "Scope/Control/AddressStorage.h"
 #include "Scope/GeneralPurpose/BufferedByteStream.h"
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/ScopeBuilder.h"
@@ -107,6 +107,7 @@ int main(int argc, char* argv[]){
     AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR1", &var1, SE_UINT8, 0);
     AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR2", &var2, SE_FLOAT, 1);
     AddressStorage_addAnnounceAddress(addressStorage, (const char*) "VAR3", &var3, SE_UINT32, 2);
+    AddressStorage_announce(addressStorage);
 
     while(1){
 

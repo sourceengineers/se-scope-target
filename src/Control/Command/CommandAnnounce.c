@@ -20,7 +20,7 @@
 typedef struct __CommandAnnouncePrivateData{
     ICommand command;
 
-    IScopeHandle scope;
+    IObserverHandle packObserver;
 
 } CommandAnnouncePrivateData;
 
@@ -31,16 +31,17 @@ static void run(ICommandHandle command);
 ******************************************************************************/
 static void run(ICommandHandle command){
     CommandAnnounceHandle self = (CommandAnnounceHandle) command->handle;
-    self->scope->announce(self->scope);
+    PACK_TYPES packType = PACK_ANNOUNCE;
+    self->packObserver->update(self->packObserver, &packType);
 }
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandAnnounceHandle CommandAnnounce_create(IScopeHandle scope){
+CommandAnnounceHandle CommandAnnounce_create(IObserverHandle packObserver){
 
     CommandAnnounceHandle self = malloc(sizeof(CommandAnnouncePrivateData));
-    self->scope = scope;
+    self->packObserver = packObserver;
 
     self->command.handle = self;
     self->command.run = &run;

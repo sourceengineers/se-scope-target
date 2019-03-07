@@ -27,9 +27,9 @@ typedef struct __CommandAnnounceParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandAnnounceParserHandle CommandAnnounceParser_create(IScopeHandle scope){
+CommandAnnounceParserHandle CommandAnnounceParser_create(IObserverHandle packOverser){
     CommandAnnounceParserHandle self = malloc(sizeof(CommandAnnounceParserPrivateData));
-    self->command = CommandAnnounce_create(scope);
+    self->command = CommandAnnounce_create(packOverser);
     return self;
 }
 

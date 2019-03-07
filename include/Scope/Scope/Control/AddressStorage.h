@@ -14,6 +14,7 @@
 
 #include <Scope/Core/ScopeTypes.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IObserver.h>
 
 #include <stdint.h>
 #include <stddef.h>
@@ -37,6 +38,19 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses);
 void AddressStorage_addAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
                                        const DATA_TYPES type,
                                        const uint32_t addressId);
+
+/**
+ * Attaches the packObserver to the AddressStorage. This can be used to transmit the addresses
+ * @param self
+ * @param observer packObserver
+ */
+void AddressStorage_attachObserver(AddressStorageHandle self, IObserverHandle observer);
+
+/**
+ * Updates the packObserver, triggering a pending event in the packer
+ * @param self
+ */
+void AddressStorage_announce(AddressStorageHandle self);
 
 /* Returns how many addresses can be configured at maximum */
 size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self);

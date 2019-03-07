@@ -18,7 +18,7 @@
 #include <Scope/Communication/ICommunicator.h>
 #include <Scope/Control/IPacker.h>
 #include <Scope/Control/IUnpacker.h>
-#include <Scope/Core/AddressStorage.h>
+#include <Scope/Control/AddressStorage.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/GeneralPurpose/IRunnable.h>
 

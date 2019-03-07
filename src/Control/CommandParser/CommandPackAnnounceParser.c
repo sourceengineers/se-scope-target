@@ -11,6 +11,7 @@
 #include <Scope/Control/Command/CommandPackAnnounce.h>
 
 #include <stdlib.h>
+#include <Scope/Control/AddressStorage.h>
 
 /******************************************************************************
  Define private data
@@ -27,9 +28,9 @@ typedef struct __CommandPackAnnounceParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(IScopeHandle scope, IPackerHandle packer){
+CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(AddressStorageHandle addressStorage, IPackerHandle packer){
     CommandPackAnnounceParserHandle self = malloc(sizeof(CommandPackAnnounceParserPrivateData));
-    self->command = CommandPackAnnounce_create(scope, packer);
+    self->command = CommandPackAnnounce_create(addressStorage, packer);
     return self;
 }
 

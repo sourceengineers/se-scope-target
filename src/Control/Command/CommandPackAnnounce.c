@@ -24,7 +24,7 @@
 typedef struct __CommandPackAnnouncePrivateData{
     ICommand command;
 
-    IScopeHandle scope;
+    AddressStorageHandle addressStorage;
     IPackerHandle packer;
 
 } CommandPackAnnouncePrivateData;
@@ -37,10 +37,14 @@ static void run(ICommandHandle command);
 static void run(ICommandHandle command){
     CommandPackAnnounceHandle self = (CommandPackAnnounceHandle) command->handle;
 
-    const size_t maxAddresses = self->scope->getMaxAmmountOfAnnounceAddresses(self->scope);
+    if(self->addressStorage == NULL){
+        return;
+    }
+
+    const size_t maxAddresses = AddressStorage_getMaxAmountOfAddresses(self->addressStorage);
 
     for(uint32_t i = 0; i < maxAddresses; ++i){
-        AddressDefinition* addr = self->scope->getAnnounceAddressToTransmit(self->scope, i);
+        AddressDefinition* addr = AddressStorage_getAddressToTransmit(self->addressStorage, i);
 
         if(addr != NULL){
             self->packer->prepareAddressAnnouncement(self->packer, addr->name, getDataTypeName(addr->type),
@@ -52,10 +56,10 @@ static void run(ICommandHandle command){
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandPackAnnounceHandle CommandPackAnnounce_create(IScopeHandle scope, IPackerHandle packer){
+CommandPackAnnounceHandle CommandPackAnnounce_create(AddressStorageHandle addressStorage, IPackerHandle packer){
 
     CommandPackAnnounceHandle self = malloc(sizeof(CommandPackAnnouncePrivateData));
-    self->scope = scope;
+    self->addressStorage = addressStorage;
     self->packer = packer;
 
     self->command.handle = self;

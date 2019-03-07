@@ -12,7 +12,7 @@
 #ifndef SCOPE_H_
 #define SCOPE_H_
 
-#include <Scope/Core/AddressStorage.h>
+#include <Scope/Control/AddressStorage.h>
 #include <Scope/Core/Channel.h>
 #include <Scope/Core/IScope.h>
 #include <Scope/Core/ScopeTypes.h>
@@ -34,10 +34,7 @@ typedef struct __ScopePrivateData* ScopeHandle;
  Public functions 
 ******************************************************************************/
 /* Constructor: Creates a new instance of the channel */
-ScopeHandle Scope_create(size_t channelSize,
-                         size_t amountOfChannels,
-                         AddressStorageHandle addressStorage,
-                         uint32_t* referenceTimestamp);
+ScopeHandle Scope_create(size_t channelSize, size_t amountOfChannels, uint32_t* referenceTimestamp);
 
 /* Deconstructor: Deletes the instance of the channel */
 void Scope_destroy(ScopeHandle self);

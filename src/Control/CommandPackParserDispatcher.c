@@ -29,11 +29,11 @@ typedef struct __CommandPackParserDispatcherPrivateData{
  Public functions
 ******************************************************************************/
 CommandPackParserDispatcherHandle
-CommandPackParserDispatcher_create(IScopeHandle scope, IPackerHandle packer){
+CommandPackParserDispatcher_create(IScopeHandle scope, AddressStorageHandle addressStorage, IPackerHandle packer){
 
     CommandPackParserDispatcherHandle self = malloc(sizeof(CommandPackParserDispatcherPrivateData));
 
-    self->commandPackAnnounceParser = CommandPackAnnounceParser_create(scope, packer);
+    self->commandPackAnnounceParser = CommandPackAnnounceParser_create(addressStorage, packer);
     self->commandPackDataParser = CommandPackDataParser_create(scope, packer);
     
     return self;

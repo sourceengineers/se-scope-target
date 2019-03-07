@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Core/AddressStorage.h>
+#include <Scope/Control/AddressStorage.h>
 #include <Scope/Core/ScopeTypes.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
@@ -22,6 +22,7 @@ typedef struct __AddressStoragePrivateData{
 
     AddressDefinition* addresses;
     size_t maxAmountOfAddresses;
+    IObserverHandle packObserver;
 
 } AddressStoragePrivateData;
 
@@ -48,6 +49,15 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses){
     }
 
     return self;
+}
+
+void AddressStorage_attachObserver(AddressStorageHandle self, IObserverHandle observer){
+    self->packObserver = observer;
+}
+
+void AddressStorage_announce(AddressStorageHandle self){
+    PACK_TYPES packType = PACK_ANNOUNCE;
+    self->packObserver->update(self->packObserver, &packType);
 }
 
 size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self){

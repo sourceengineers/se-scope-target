@@ -15,6 +15,7 @@
 #include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/Control/IUnpacker.h>
 #include <Scope/Core/IScope.h>
+#include <Scope/Control/AddressStorage.h>
 
 /******************************************************************************
  Define class handle data
@@ -24,7 +25,8 @@ typedef struct __ControllerPrivateData* ControllerHandle;
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker);
+ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
+                                   AddressStorageHandle addressStorage);
 
 IRunnableHandle Controller_getRxRunnable(ControllerHandle self);
 

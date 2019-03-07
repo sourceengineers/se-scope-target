@@ -9,7 +9,7 @@
 
 #include <Scope/Core/Scope.h>
 #include <Scope/Core/Timestamper.h>
-#include <Scope/Core/AddressStorage.h>
+#include <Scope/Control/AddressStorage.h>
 #include <Scope/Core/Channel.h>
 #include <Scope/Core/IScope.h>
 #include <Scope/Core/ScopeTypes.h>
@@ -36,7 +36,6 @@ typedef struct __ScopePrivateData{
     ChannelHandle* channels;
     TriggerHandle trigger;
     size_t channelSize;
-    AddressStorageHandle addressStorage;
     TimestamperHandle timestamper;
 
     IObserverHandle observer;
@@ -66,8 +65,6 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
 
                                     uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress);
 
-void announce(IScopeHandle scope);
-
 void transmit(IScopeHandle scope);
 
 static void run(IRunnableHandle runnable);
@@ -77,10 +74,6 @@ static TriggeredValues getTriggerData(IScopeHandle scope);
 static bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId);
 
 static FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t channelId);
-
-static AddressDefinition* getAnnounceAddressToTransmit(IScopeHandle scope, uint32_t addressId);
-
-static size_t getMaxAmmountOfAnnounceAddresses(IScopeHandle scope);
 
 static bool allChannelsAreStopped(ScopeHandle self);
 /******************************************************************************
@@ -147,12 +140,6 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
     Scope_configureChannel(self, idOfChangedChannel, address, typeOfAddress);
 }
 
-void announce(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    Scope_announce(self);
-}
-
 void transmit(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
@@ -197,30 +184,6 @@ static FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t chann
     return Channel_getBuffer(self->channels[channelId]);
 }
 
-static AddressDefinition* getAnnounceAddressToTransmit(IScopeHandle scope, uint32_t addressId){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    if(self->addressStorage == NULL){
-        return NULL;
-    }
-
-    if(addressId >= AddressStorage_getMaxAmountOfAddresses(self->addressStorage)){
-        return NULL;
-    }
-
-    return AddressStorage_getAddressToTransmit(self->addressStorage, addressId);
-}
-
-static size_t getMaxAmmountOfAnnounceAddresses(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    if(self->addressStorage == NULL){
-        return 0;
-    }
-
-    return AddressStorage_getMaxAmountOfAddresses(self->addressStorage);
-}
-
 static bool allChannelsAreStopped(ScopeHandle self){
     bool channelIsRunning = false;
 
@@ -237,13 +200,11 @@ static bool allChannelsAreStopped(ScopeHandle self){
 ******************************************************************************/
 ScopeHandle Scope_create(size_t channelSize,
                          size_t amountOfChannels,
-                         AddressStorageHandle addressStorage,
                          uint32_t* referenceTimestamp){
 
     ScopeHandle self = malloc(sizeof(ScopePrivateData));
 
     self->channelSize = channelSize;
-    self->addressStorage = addressStorage;
 
     self->scope.handle = self;
     self->scope.poll = &scopePoll;
@@ -259,9 +220,6 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.getTriggerData = &getTriggerData;
     self->scope.channelHasToBePacked = &channelHasToBePacked;
     self->scope.getChannelBuffer = &getChannelBuffer;
-    self->scope.getAnnounceAddressToTransmit = &getAnnounceAddressToTransmit;
-    self->scope.getMaxAmmountOfAnnounceAddresses = &getMaxAmmountOfAnnounceAddresses;
-    self->scope.announce = &announce;
     self->scope.transmit = &transmit;
 
     self->runnable.handle = self;
@@ -305,18 +263,7 @@ void Scope_transmit(ScopeHandle self){
     self->observer->update(self->observer, &typeToPack);
 }
 
-void Scope_announce(ScopeHandle self){
-
-    if(self->addressStorage == NULL){
-        return;
-    }
-
-    PACK_TYPES typeToPack = PACK_ANNOUNCE;
-    self->observer->update(self->observer, &typeToPack);
-}
-
 void Scope_poll(ScopeHandle self){
-
 
     /* Check if the scope is ready to poll again, according to the set timeIncrement */
     if(Timestamper_updateElapsedTime(self->timestamper) == false){

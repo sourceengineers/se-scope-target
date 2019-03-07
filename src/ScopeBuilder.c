@@ -112,8 +112,8 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     }
 
     /* Create layers */
-    self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->addressStorage, self->timestamp);
-    self->controller = Controller_create(Scope_getIScope(self->scope), self->packer, self->unpacker);
+    self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->timestamp);
+    self->controller = Controller_create(Scope_getIScope(self->scope), self->packer, self->unpacker, self->addressStorage);
     self->serializer = Serializer_create(self->packer, self->unpacker);
 
     /* Connect all observers */
@@ -122,6 +122,10 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     Scope_attachPackObserver(self->scope, Controller_getCommandPackObserver(self->controller));
     Controller_attachPackObserver(self->controller, Serializer_getPackObserver(self->serializer));
     Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));
+
+    if(self->addressStorage != NULL){
+        AddressStorage_attachObserver(self->addressStorage, Controller_getCommandPackObserver(self->controller));
+    }
 
 
     obj.scope = self->scope;

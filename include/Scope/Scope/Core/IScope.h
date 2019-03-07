@@ -46,8 +46,6 @@ typedef struct IScopeStruct{
     void (* configureChannelAddress)(IScopeHandle scope, void* address,
                                      uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress);
 
-    void (* announce)(IScopeHandle scope);
-
     void (* transmit)(IScopeHandle scope);
 
     void (* setChannelRunning)(IScopeHandle scope, uint32_t idOfChangedChannel);
@@ -63,10 +61,6 @@ typedef struct IScopeStruct{
     bool (* channelHasToBePacked)(IScopeHandle scope, uint32_t channelId);
 
     FloatRingBufferHandle (* getChannelBuffer)(IScopeHandle scope, uint32_t channelId);
-
-    AddressDefinition* (* getAnnounceAddressToTransmit)(IScopeHandle scope, uint32_t addressId);
-
-    size_t (* getMaxAmmountOfAnnounceAddresses)(IScopeHandle scope);
 
 } IScope;
 
