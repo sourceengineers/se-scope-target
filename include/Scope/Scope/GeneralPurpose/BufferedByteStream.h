@@ -14,8 +14,12 @@
 #ifndef BYTESTREAM_H_
 #define BYTESTREAM_H_
 
-#include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /******************************************************************************
  Define class handle data

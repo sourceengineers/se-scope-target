@@ -13,8 +13,11 @@
 #define JSONUNPACKER_H_
 
 #include <Scope/Control/IUnpacker.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+
+#include <stddef.h>
 
 /******************************************************************************
  Define class handle data

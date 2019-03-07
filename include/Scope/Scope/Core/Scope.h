@@ -12,14 +12,18 @@
 #ifndef SCOPE_H_
 #define SCOPE_H_
 
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/Core/Trigger.h>
+#include <Scope/Core/AddressStorage.h>
 #include <Scope/Core/Channel.h>
 #include <Scope/Core/IScope.h>
-#include <Scope/Core/AddressStorage.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/Core/Trigger.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stdint.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /******************************************************************************
  Define class handle data

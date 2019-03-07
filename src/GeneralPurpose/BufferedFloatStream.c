@@ -9,6 +9,8 @@
 
 #include <Scope/GeneralPurpose/BufferedFloatStream.h>
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/GeneralPurpose/IFloatStream.h>
+
 #include <stdlib.h>
 
 /******************************************************************************

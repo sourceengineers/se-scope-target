@@ -1,11 +1,17 @@
-#include <stdio.h>
-#include <Gemmi.h>
-#include <stdint.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include <Scope/Communication/Interfaces/EthernetJson.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
+#include <stdint.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+
+#include "Scope/Core/Scope.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/GeneralPurpose/BufferedByteStream.h"
+#include "Scope/GeneralPurpose/DataTypes.h"
+#include "Scope/ScopeBuilder.h"
+#include "Scope/ScopeRunner.h"
 
 /*
  * watch the s_out file with:

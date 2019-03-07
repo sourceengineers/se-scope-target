@@ -14,8 +14,8 @@
 #ifndef COMMANDANNOUNCE_H_
 #define COMMANDANNOUNCE_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

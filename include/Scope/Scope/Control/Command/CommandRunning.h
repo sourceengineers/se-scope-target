@@ -20,9 +20,13 @@
 #ifndef COMMANDRUNNING_H_
 #define COMMANDRUNNING_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Core/ScopeTypes.h>
+
+#include <stdint.h>
+#include <stdbool.h>
 
 /* Struct used to help the command configure the channels */
 typedef struct{

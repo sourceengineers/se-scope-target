@@ -1,13 +1,18 @@
-#include <stdio.h>
-#include <Gemmi.h>
+#include <Scope/Communication/Interfaces/EthernetJson.h>
+#include <Scope/Serialisation/JsonParser/JsonPacker.h>
+#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <zconf.h>
-#include <Scope/Communication/Interfaces/EthernetJson.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
-#include <Scope/Serialisation/JsonParser/JsonPacker.h>
+#include <unistd.h>
+
+#include "Scope/Core/AddressStorage.h"
+#include "Scope/GeneralPurpose/BufferedByteStream.h"
+#include "Scope/GeneralPurpose/DataTypes.h"
+#include "Scope/ScopeBuilder.h"
+#include "Scope/ScopeRunner.h"
 
 /*
  * watch the s_out file with:

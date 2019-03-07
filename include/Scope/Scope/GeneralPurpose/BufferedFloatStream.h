@@ -14,8 +14,11 @@
 #ifndef FLOATSTREAM_H_
 #define FLOATSTREAM_H_
 
-#include <Scope/GeneralPurpose/IFloatStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IFloatStream.h>
+
+#include <stdbool.h>
+#include <stddef.h>
 
 /******************************************************************************
  Define class handle data

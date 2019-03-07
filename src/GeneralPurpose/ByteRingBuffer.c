@@ -8,7 +8,8 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
+
+#include <stdbool.h>
 #include <stdlib.h>
 
 /******************************************************************************

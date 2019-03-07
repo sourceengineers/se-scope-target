@@ -8,6 +8,9 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Core/AddressStorage.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+
 #include <stdlib.h>
 #include <string.h>
 

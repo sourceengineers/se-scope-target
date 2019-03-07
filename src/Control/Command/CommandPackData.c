@@ -9,7 +9,15 @@
 
 #include <Scope/Control/Command/CommandPackData.h>
 #include <Scope/Control/IPacker.h>
+#include <Scope/Control/Command/ICommand.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/GeneralPurpose/IIntStream.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

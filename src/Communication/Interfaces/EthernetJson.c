@@ -8,6 +8,12 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Communication/Interfaces/EthernetJson.h>
+#include <Scope/Communication/ICommunicator.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stdbool.h>
 #include <stdlib.h>
 
 /******************************************************************************

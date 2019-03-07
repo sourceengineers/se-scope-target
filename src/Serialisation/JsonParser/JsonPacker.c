@@ -7,12 +7,21 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <Scope/Serialisation/JsonParser/JsonCommon.h>
 #include <Scope/Control/ParserDefinitions.h>
+#include <Scope/Serialisation/JsonParser/JsonCommon.h>
+#include <Scope/Serialisation/JsonParser/JsonPacker.h>
+#include <Scope/Control/IPacker.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/IIntStream.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define FLOWCONTROL_BUFFER_SIZE 30
 #define TINC_BUFFER_SIZE 30

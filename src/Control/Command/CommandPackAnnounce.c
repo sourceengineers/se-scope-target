@@ -9,7 +9,13 @@
 
 #include <Scope/Control/Command/CommandPackAnnounce.h>
 #include <Scope/Control/IPacker.h>
+#include <Scope/Control/Command/ICommand.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdint.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

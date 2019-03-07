@@ -12,9 +12,18 @@
 #ifndef SCOPEBUILDER_H
 #define SCOPEBUILDER_H
 
-#include <Scope/Core/Scope.h>
 #include <Scope/Control/Controller.h>
+#include <Scope/Core/Scope.h>
 #include <Scope/Serialisation/Serializer.h>
+#include <Scope/Communication/ICommunicator.h>
+#include <Scope/Control/IPacker.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/AddressStorage.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stddef.h>
+#include <stdint.h>
 
 /******************************************************************************
  Define class handle data

@@ -17,13 +17,16 @@
 #define COMMANDPARSERDISPATCHER_H_
 
 #include <Scope/Control/CommandParser/CommandAddrParser.h>
+#include <Scope/Control/CommandParser/CommandAnnounceParser.h>
+#include <Scope/Control/CommandParser/CommandClearParser.h>
+#include <Scope/Control/CommandParser/CommandPollParser.h>
 #include <Scope/Control/CommandParser/CommandRunningParser.h>
 #include <Scope/Control/CommandParser/CommandTIncParser.h>
-#include <Scope/Control/CommandParser/CommandTriggerParser.h>
-#include <Scope/Control/CommandParser/CommandPollParser.h>
-#include <Scope/Control/CommandParser/CommandAnnounceParser.h>
 #include <Scope/Control/CommandParser/CommandTransParser.h>
-#include <Scope/Control/CommandParser/CommandClearParser.h>
+#include <Scope/Control/CommandParser/CommandTriggerParser.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/IScope.h>
 
 /******************************************************************************
  Define class handle data

@@ -16,8 +16,11 @@
 #ifndef COMMANDPACKPARSERDISPATCHER_H_
 #define COMMANDPACKPARSERDISPATCHER_H_
 
-#include <Scope/Control/CommandParser/CommandPackDataParser.h>
 #include <Scope/Control/CommandParser/CommandPackAnnounceParser.h>
+#include <Scope/Control/CommandParser/CommandPackDataParser.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Control/IPacker.h>
+#include <Scope/Core/IScope.h>
 
 /******************************************************************************
  Define class handle data

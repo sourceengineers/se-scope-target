@@ -12,9 +12,13 @@
 #ifndef CHANNEL_H_
 #define CHANNEL_H_
 
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/GeneralPurpose/IFloatStream.h>
+
+#include <stdbool.h>
+#include <stddef.h>
 
 /* Indication for the trigger data */
 static const int CHANNEL_CURRENT_DATA = 0;

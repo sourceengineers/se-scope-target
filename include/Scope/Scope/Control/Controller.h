@@ -9,10 +9,12 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include <Scope/Control/IPacker.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/Control/CommandParserDispatcher.h>
+#include <Scope/Control/IPacker.h>
 #include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/IScope.h>
 
 /******************************************************************************
  Define class handle data

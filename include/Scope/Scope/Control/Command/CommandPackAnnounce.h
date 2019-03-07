@@ -14,10 +14,10 @@
 #ifndef COMMANDPACKANNOUNCE_H_
 #define COMMANDPACKANNOUNCE_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Control/IPacker.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

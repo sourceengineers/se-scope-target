@@ -8,9 +8,8 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/ScopeRunner.h>
-#include <Scope/Core/Scope.h>
-#include <Scope/Control/Controller.h>
-#include <Scope/Serialisation/Serializer.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+#include <Scope/ScopeBuilder.h>
 
 /******************************************************************************
  Public functions

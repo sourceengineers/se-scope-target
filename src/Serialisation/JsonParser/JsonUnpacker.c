@@ -7,13 +7,19 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Control/ParserDefinitions.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Serialisation/JsonParser/JsonCommon.h>
-#include <stdlib.h>
+#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+
+#include <stdint.h>
 #include <jsmn/jsmn.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
+
 
 #define INPUT_BUFFER_SIZE 250
 #define TOKEN_BUFFER_SIZE 100
@@ -298,7 +304,9 @@ static bool unpack(IUnpackerHandle unpacker){
     }
 
     activateNewMessage(self, data);
+
     return true;
+
 }
 
 static size_t getNumberOfCommands(IUnpackerHandle unpacker){

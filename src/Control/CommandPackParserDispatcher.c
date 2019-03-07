@@ -8,6 +8,11 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandPackParserDispatcher.h>
+#include <Scope/Control/CommandParser/CommandPackAnnounceParser.h>
+#include <Scope/Control/CommandParser/CommandPackDataParser.h>
+#include <Scope/Core/ScopeTypes.h>
+
+#include <stdlib.h>
 #include <string.h>
 
 /******************************************************************************

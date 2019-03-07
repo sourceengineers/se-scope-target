@@ -8,8 +8,15 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandParser/CommandTriggerParser.h>
-#include <string.h>
 #include <Scope/Control/ParserDefinitions.h>
+#include <Scope/Control/Command/CommandTrigger.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/ScopeTypes.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 
 /******************************************************************************
  Define private data

@@ -14,8 +14,8 @@
 #ifndef COMMANDTRANS_H_
 #define COMMANDTRANS_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************

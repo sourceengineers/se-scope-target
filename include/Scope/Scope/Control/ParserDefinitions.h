@@ -9,6 +9,8 @@
  *
  ******************************************************************************/
 
+#include <stddef.h>
+
 static const char* KEYWORD_PAYLOAD = "payload";
 static const char* KEYWORD_TRANSPORT = "transport";
 static const char* KEYWORD_SC_DATA = "sc_data";

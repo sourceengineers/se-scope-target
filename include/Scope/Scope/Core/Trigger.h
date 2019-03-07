@@ -21,9 +21,13 @@
 #define TRIGGER_H_
 
 #include <Scope/Core/Channel.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Core/ScopeTypes.h>
 #include <Scope/Core/Timestamper.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
 
 /******************************************************************************
  Define class handle data

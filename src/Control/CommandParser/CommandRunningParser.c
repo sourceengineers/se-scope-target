@@ -8,6 +8,13 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandParser/CommandRunningParser.h>
+#include <Scope/Control/Command/CommandRunning.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/ScopeTypes.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

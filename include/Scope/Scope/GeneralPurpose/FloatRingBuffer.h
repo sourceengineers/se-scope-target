@@ -13,8 +13,10 @@
 #ifndef FLOATRINGBUFFER_H_
 #define FLOATRINGBUFFER_H_
 
-#include <Scope/GeneralPurpose/IFloatStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IFloatStream.h>
+
+#include <stddef.h>
 
 /******************************************************************************
  Define class handle data

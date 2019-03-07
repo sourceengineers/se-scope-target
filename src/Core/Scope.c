@@ -8,8 +8,19 @@
 *******************************************************************************/
 
 #include <Scope/Core/Scope.h>
-#include <Scope/GeneralPurpose/BufferedIntStream.h>
 #include <Scope/Core/Timestamper.h>
+#include <Scope/Core/AddressStorage.h>
+#include <Scope/Core/Channel.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/Core/Trigger.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/GeneralPurpose/IIntStream.h>
+#include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stdbool.h>
 #include <stdlib.h>
 
 /******************************************************************************

@@ -15,6 +15,8 @@
 
 #include <Scope/Control/Command/CommandRunning.h>
 #include <Scope/Control/IUnpacker.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 
 /******************************************************************************
  Define class handle data

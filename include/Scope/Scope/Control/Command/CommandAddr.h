@@ -24,9 +24,11 @@
 #ifndef COMMANDADDR_H_
 #define COMMANDADDR_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdint.h>
 
 /* Definition of the configuration struct */
 typedef struct{

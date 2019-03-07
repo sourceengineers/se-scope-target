@@ -15,9 +15,9 @@
 #define COMMANDTRIGGER_H_
 
 #include <Scope/Control/Command/ICommand.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/Core/ScopeTypes.h>
 #include <Scope/Core/IScope.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data

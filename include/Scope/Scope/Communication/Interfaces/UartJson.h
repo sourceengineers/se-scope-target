@@ -14,6 +14,10 @@
 #include <Scope/GeneralPurpose/IObserver.h>
 #include <Scope/GeneralPurpose/IRunnable.h>
 
+#include <stdint.h>
+#include <stddef.h>
+#include <stdint.h>
+
 /******************************************************************************
  Define class handle data
 ******************************************************************************/

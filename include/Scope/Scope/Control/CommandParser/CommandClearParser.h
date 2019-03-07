@@ -14,6 +14,8 @@
 #define COMMANDCLEARPARSER_H_
 
 #include <Scope/Control/Command/CommandClear.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 
 /******************************************************************************
  Define class handle data

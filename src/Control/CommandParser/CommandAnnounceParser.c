@@ -8,6 +8,9 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandParser/CommandAnnounceParser.h>
+#include <Scope/Control/Command/CommandAnnounce.h>
+
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

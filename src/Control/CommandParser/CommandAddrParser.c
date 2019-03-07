@@ -8,6 +8,14 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandParser/CommandAddrParser.h>
+#include <Scope/Control/Command/CommandAddr.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 /******************************************************************************
@@ -24,7 +32,7 @@ typedef struct __CommandAddrParserPrivateData{
 
 } CommandAddrParserPrivateData;
 
-/* Takes a String as input and retrieves the matching data type defined in "DataTypes.h" */
+/* Takes a String as input and retrieves the matching data type defined in "DataTypes.h> */
 static DATA_TYPES parseStringToDataType(const char* dataTypeName, size_t maxLength);
 
 /******************************************************************************

@@ -8,9 +8,11 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/ScopeBuilder.h>
-#include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
-#include <Scope/Communication/Interfaces/EthernetJson.h>
+#include <Scope/Control/Controller.h>
+#include <Scope/Core/Scope.h>
+#include <Scope/Serialisation/Serializer.h>
+
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

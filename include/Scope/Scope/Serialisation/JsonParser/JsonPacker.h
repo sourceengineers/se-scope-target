@@ -12,10 +12,13 @@
 #ifndef JSONPACKER_H_
 #define JSONPACKER_H_
 
-#include <Scope/Control/IPacker.h>
 #include <Scope/Communication/ICommunicator.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Control/IPacker.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+
+#include <stddef.h>
 
 /******************************************************************************
  Define class handle data

@@ -7,10 +7,19 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Controller.h>
-#include <stdlib.h>
-#include <Scope/Control/Command/CommandPackData.h>
 #include <Scope/Control/CommandPackParserDispatcher.h>
+#include <Scope/Control/Controller.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Control/CommandParserDispatcher.h>
+#include <Scope/Control/IPacker.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stdbool.h>
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

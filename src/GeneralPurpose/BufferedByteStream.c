@@ -9,6 +9,8 @@
 
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+
 #include <stdlib.h>
 
 /******************************************************************************

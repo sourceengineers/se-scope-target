@@ -16,9 +16,11 @@
 #ifndef COMMANDTINC_H_
 #define COMMANDTINC_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdint.h>
 
 /******************************************************************************
  Define class handle data

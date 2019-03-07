@@ -8,6 +8,11 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/Command/CommandAddr.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

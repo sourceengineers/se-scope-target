@@ -16,6 +16,9 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 
+#include <stddef.h>
+#include <stdint.h>
+
 /******************************************************************************
  Define class handle data
 ******************************************************************************/

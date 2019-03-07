@@ -8,7 +8,11 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/Command/CommandTrigger.h>
+#include <Scope/Control/Command/ICommand.h>
 #include <Scope/Core/IScope.h>
+#include <Scope/Core/ScopeTypes.h>
+
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

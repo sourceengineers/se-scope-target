@@ -12,8 +12,12 @@
 #ifndef ADDRESSSTORAGE_H_
 #define ADDRESSSTORAGE_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdint.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /******************************************************************************
  Define class handle data
