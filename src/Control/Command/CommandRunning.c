@@ -24,6 +24,8 @@ typedef struct __CommandRunningPrivateData{
 
 } CommandRunningPrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/

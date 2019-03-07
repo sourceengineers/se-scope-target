@@ -57,7 +57,7 @@ static bool incHead(ByteRingBufferHandle self){
 }
 
 /******************************************************************************
- Private functions
+ Public functions
 ******************************************************************************/
 ByteRingBufferHandle ByteRingBuffer_create(size_t capacity){
 

@@ -31,6 +31,14 @@ typedef struct __SerializerPrivateData{
     IObserverHandle communicationObserver;
 } SerializerPrivateData;
 
+static void runRx(IRunnableHandle runnable);
+
+static void runTx(IRunnableHandle runnable);
+
+static void updateUnpacker(IObserverHandle observer, void* state);
+
+static void updatePacker(IObserverHandle observer, void* state);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -72,12 +80,12 @@ static void runTx(IRunnableHandle runnable){
     self->communicationObserver->update(self->communicationObserver, NULL);
 }
 
-void updateUnpacker(IObserverHandle observer, void* state){
+static void updateUnpacker(IObserverHandle observer, void* state){
     SerializerHandle self = (SerializerHandle) observer->handle;
     self->unpackingPending = true;
 }
 
-void updatePacker(IObserverHandle observer, void* state){
+static void updatePacker(IObserverHandle observer, void* state){
     SerializerHandle self = (SerializerHandle) observer->handle;
     self->packingPending = true;
 }

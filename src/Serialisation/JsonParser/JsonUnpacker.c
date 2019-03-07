@@ -35,13 +35,52 @@ typedef struct __JsonUnpackerPrivateData{
 
 } JsonUnpackerPrivateData;
 
+void copyString(char* str, const char* data, size_t size);
+
+static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t* tok, size_t index);
+
+static jsmntok_t* getToken(const char* json, jsmntok_t* tok, const char* key, int msgLength);
+
+static jsmntok_t* getCommandField(JsonUnpackerHandle self);
+
+static jsmntok_t* getValueFromArray(JsonUnpackerHandle self, jsmntok_t* array, size_t index);
+
+static jsmntok_t* getField(JsonUnpackerHandle self, jsmntok_t* command, const char* fieldName);
+
+static jsmntok_t* getCommand(JsonUnpackerHandle self, const char* commandName);
+
 static int matchKeyToIndex(const char* json, jsmntok_t* tok, const char* key, int msgLength);
 
 static bool jsoneq(const char* json, jsmntok_t* tok, const char* key);
 
+static bool unpack(IUnpackerHandle unpacker);
+
+static size_t getNumberOfCommands(IUnpackerHandle unpacker);
+
+static bool getNameOfCommand(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+
+static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
+static float getFloatFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
+static bool getBoolFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
+static void getStringFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information,
+                                 char* targetStr,
+                                 const int maxLenght);
+
+static bool getNameOfField(IUnpackerHandle unpacker, const char* commandName, char* fieldName,
+                           const int maxLenght,
+                           const int index);
+
+static int getNumberOfFields(IUnpackerHandle unpacker, const char* commandName);
+
+static bool dataPending(IUnpackerHandle unpacker);
+
+static bool streamIsEmpty(IUnpackerHandle unpacker);
+
 static void activateNewMessage(JsonUnpackerHandle self, char* data);
 
-void copyString(char* str, const char* data, size_t size);
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -52,7 +91,6 @@ void copyString(char* str, const char* data, size_t size){
 
 /* The function matches the end of a field to a start of another one. With this, fields at a specific index can
  * be found */
-
 static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t* tok, size_t index){
 
     int startPosition = tok->start;

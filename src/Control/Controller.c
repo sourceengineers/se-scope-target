@@ -16,7 +16,7 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __ControllerPrivateData{
+typedef struct __ControllerPrivateData {
     IRunnable rxRunnable;
     IRunnable txRunnable;
     IScopeHandle scope;
@@ -36,24 +36,30 @@ typedef struct __ControllerPrivateData{
 
 } ControllerPrivateData;
 
-/* Fetches all commands from the Parser */
-static void
-fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands);
+static void runRx(IRunnableHandle runnable);
 
-/* Executes all fetched commands */
-static void runCommands(ICommandHandle* commands, size_t numberOfCommands);
+static void runTx(IRunnableHandle runnable);
+
+static void
+fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle *commands, size_t numberOfCommands);
+
+static void runCommands(ICommandHandle *commands, size_t numberOfCommands);
+
+static void commandPackUpdate(IObserverHandle observer, void *state);
+
+static void commandUpdate(IObserverHandle observer, void *state);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void runRx(IRunnableHandle runnable){
+static void runRx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
-    if(self->commandPending == false){
+    if (self->commandPending == false) {
         return;
     }
 
-    if(self->unpacker == NULL){
+    if (self->unpacker == NULL) {
         return;
     }
 
@@ -65,29 +71,31 @@ static void runRx(IRunnableHandle runnable){
     self->commandPending = false;
 }
 
-static void runTx(IRunnableHandle runnable){
+static void runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
-    if(self->packCommandPending == false){
+    if (self->packCommandPending == false) {
         return;
     }
 
     ICommandHandle packCommand;
 
-    switch(self->typeToPack){
+    switch (self->typeToPack) {
 
         case PACK_ANNOUNCE:
-            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, (const char*) "ev_pack_announce");
+            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                          (const char *) "ev_pack_announce");
             break;
         case PACK_DATA:
-            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, (const char*) "ev_pack_data");
+            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                          (const char *) "ev_pack_data");
             break;
         default:
             packCommand = NULL;
             break;
     }
 
-    if(packCommand == NULL){
+    if (packCommand == NULL) {
         return;
     }
 
@@ -97,31 +105,31 @@ static void runTx(IRunnableHandle runnable){
 }
 
 static void
-fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle* commands, size_t numberOfCommands){
+fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle *commands, size_t numberOfCommands) {
 
     char commandName[MAX_COMMAND_LENGTH];
 
-    for(size_t i = 0; i < numberOfCommands; ++i){
+    for (size_t i = 0; i < numberOfCommands; ++i) {
         unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
         commands[i] = CommandParserDispatcher_run(self->commandParserDispatcher, commandName);
     }
 }
 
-static void runCommands(ICommandHandle* commands, size_t numberOfCommands){
-    for(size_t i = 0; i < numberOfCommands; ++i){
-        if(commands[i] != NULL){
+static void runCommands(ICommandHandle *commands, size_t numberOfCommands) {
+    for (size_t i = 0; i < numberOfCommands; ++i) {
+        if (commands[i] != NULL) {
             commands[i]->run(commands[i]);
         }
     }
 }
 
-void commandPackUpdate(IObserverHandle observer, void* state){
+static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
     self->packCommandPending = true;
-    self->typeToPack = *(PACK_TYPES*) state;
+    self->typeToPack = *(PACK_TYPES *) state;
 }
 
-void commandUpdate(IObserverHandle observer, void* state){
+static void commandUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
     self->commandPending = true;
 }
@@ -129,7 +137,7 @@ void commandUpdate(IObserverHandle observer, void* state){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker){
+ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
 
@@ -156,27 +164,27 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
 }
 
 
-void Controller_attachPackObserver(ControllerHandle self, IObserverHandle observer){
+void Controller_attachPackObserver(ControllerHandle self, IObserverHandle observer) {
     self->packObserver = observer;
 }
 
-IObserverHandle Controller_getCommandObserver(ControllerHandle self){
+IObserverHandle Controller_getCommandObserver(ControllerHandle self) {
     return &self->commandObserver;
 }
 
-IObserverHandle Controller_getCommandPackObserver(ControllerHandle self){
+IObserverHandle Controller_getCommandPackObserver(ControllerHandle self) {
     return &self->commandPackObserver;
 }
 
-IRunnableHandle Controller_getRxRunnable(ControllerHandle self){
+IRunnableHandle Controller_getRxRunnable(ControllerHandle self) {
     return &self->rxRunnable;
 }
 
-IRunnableHandle Controller_getTxRunnable(ControllerHandle self){
+IRunnableHandle Controller_getTxRunnable(ControllerHandle self) {
     return &self->txRunnable;
 }
 
-void Controller_destroy(ControllerHandle self){
+void Controller_destroy(ControllerHandle self) {
     CommandParserDispatcher_destroy(self->commandParserDispatcher);
     CommandPackParserDispatcher_destroy(self->commandPackParserDispatcher);
 

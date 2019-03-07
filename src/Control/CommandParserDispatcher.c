@@ -14,7 +14,7 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandParserDispatcherPrivateData{
+typedef struct __CommandParserDispatcherPrivateData {
     CommandAddrParserHandle commandAddrParser;
     CommandRunningParserHandle commandRunningParser;
     CommandTIncParserHandle commandTIncParser;
@@ -30,7 +30,7 @@ typedef struct __CommandParserDispatcherPrivateData{
  Public functions
 ******************************************************************************/
 CommandParserDispatcherHandle
-CommandParserDispatcher_create(IScopeHandle scope, IUnpackerHandle unpacker){
+CommandParserDispatcher_create(IScopeHandle scope, IUnpackerHandle unpacker) {
 
     CommandParserDispatcherHandle self = malloc(sizeof(CommandParserDispatcherPrivateData));
 
@@ -48,30 +48,30 @@ CommandParserDispatcher_create(IScopeHandle scope, IUnpackerHandle unpacker){
     return self;
 }
 
-ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, const char* command){
+ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, const char *command) {
 
-    if(strncmp(command, CommandRunningParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    if (strncmp(command, CommandRunningParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandRunningParser_getCommand(self->commandRunningParser);
 
-    }else if(strncmp(command, CommandPollParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    } else if (strncmp(command, CommandPollParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandPollParser_getCommand(self->commandPollParser);
 
-    }else if(strncmp(command, CommandAddrParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    } else if (strncmp(command, CommandAddrParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandAddrParser_getCommand(self->commandAddrParser);
 
-    }else if(strncmp(command, CommandTIncParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    } else if (strncmp(command, CommandTIncParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandTIncParser_getCommand(self->commandTIncParser);
 
-    }else if(strncmp(command, CommandTransParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    } else if (strncmp(command, CommandTransParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandTransParser_getCommand(self->commandTransParser);
 
-    }else if(strncmp(command, CommandTriggerParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    } else if (strncmp(command, CommandTriggerParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandTriggerParser_getCommand(self->commandTriggerParser);
 
-    }else if(strncmp(command, CommandAnnounceParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    } else if (strncmp(command, CommandAnnounceParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandAnnounceParser_getCommand(self->commandAnnounceParser);
 
-    }else if(strncmp(command, CommandClearParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    } else if (strncmp(command, CommandClearParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandClearParser_getCommand(self->commandClearParser);
 
     }
@@ -79,7 +79,7 @@ ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, c
     return NULL;
 }
 
-void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self){
+void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self) {
 
     CommandRunningParser_destroy(self->commandRunningParser);
     CommandAddrParser_destroy(self->commandAddrParser);

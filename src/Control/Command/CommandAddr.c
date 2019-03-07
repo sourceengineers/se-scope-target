@@ -23,6 +23,8 @@ typedef struct __CommandAddrPrivateData{
 
 } CommandAddrPrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/

@@ -23,6 +23,8 @@ typedef struct __CommandPackAnnouncePrivateData{
 
 } CommandPackAnnouncePrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/

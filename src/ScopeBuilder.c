@@ -34,9 +34,8 @@ typedef struct __ScopeBuilderPrivateData{
 } ScopeBuilderPrivateData;
 
 /******************************************************************************
- Private functions
+ Public functions
 ******************************************************************************/
-
 ScopeBuilderHandle ScopeBuilder_create(void){
 
     ScopeBuilderHandle self = malloc(sizeof(ScopeBuilderPrivateData));

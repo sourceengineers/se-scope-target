@@ -56,7 +56,7 @@ static bool incHead(FloatRingBufferHandle self){
 }
 
 /******************************************************************************
- Private functions
+ Public functions
 ******************************************************************************/
 FloatRingBufferHandle FloatRingBuffer_create(size_t capacity){
 

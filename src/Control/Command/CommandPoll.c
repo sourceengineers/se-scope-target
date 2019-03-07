@@ -20,6 +20,8 @@ typedef struct __CommandPollPrivateData{
 
 } CommandPollPrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/

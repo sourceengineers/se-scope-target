@@ -84,6 +84,8 @@ static void restoreChannelStates(TriggerHandle self);
 
 static void stopChannelsAndTimestamp(TriggerHandle self);
 
+static void swapBuffers(TriggerHandle self);
+
 /******************************************************************************
  Trigger strategies
 ******************************************************************************/

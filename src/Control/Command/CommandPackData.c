@@ -23,6 +23,8 @@ typedef struct __CommandPackDataPrivateData{
 
 } CommandPackDataPrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/

@@ -63,17 +63,24 @@ typedef struct __JsonPackerPrivateData{
 
 } JsonPackerPrivateData;
 
+inline static void appendFloat(float data, IByteStreamHandle stream);
+
 inline static void appendString(IByteStreamHandle destination, const char* origin, size_t originSize,
                                 const char* endWith, size_t endWidthSize);
 
-static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE origin, const char* endWith,
-                         size_t endWithSize);
+inline static void appendData(IByteStreamHandle destination, const char* origin, size_t originSize,
+                              const char* endWith, size_t endWidthSize);
 
-static void flushBuffer(char* buffer);
+inline static void flushBuffer(char* buffer);
 
-static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
+inline static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
 
-static bool channelMapIsEmpty(JsonPackerHandle self);
+inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE origin, const char* endWith,
+                                size_t endWithSize);
+
+static void prepareChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
+
+static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
 
 static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -81,7 +88,12 @@ static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded);
 
+static void
+prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);
+
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded);
+
+static void prepareFlowControl(IPackerHandle packer, const char* flowControl);
 
 static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -92,11 +104,17 @@ static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded);
 
 static bool packChannel(JsonPackerHandle self, bool commaIsNeeded);
 
+static bool channelMapIsEmpty(JsonPackerHandle self);
+
 static bool packChannelMap(JsonPackerHandle self);
 
 static bool packPayloadMap(JsonPackerHandle self);
 
-static void appendFloat(float data, IByteStreamHandle stream);
+static void packData(IPackerHandle packer);
+
+static void reset(IPackerHandle packer);
+
+static bool flowControlReadyToSend(IPackerHandle packer);
 
 /******************************************************************************
  Private functions

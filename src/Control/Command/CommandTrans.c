@@ -20,6 +20,8 @@ typedef struct __CommandTransPrivateData{
 
 } CommandTransPrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/

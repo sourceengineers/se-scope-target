@@ -20,6 +20,8 @@ typedef struct __CommandClearPrivateData{
 
 } CommandClearPrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/

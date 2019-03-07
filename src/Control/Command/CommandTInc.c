@@ -22,6 +22,8 @@ typedef struct __CommandTIncPrivateData{
     uint32_t timeIncrement;
 } CommandTIncPrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/

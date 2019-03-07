@@ -21,8 +21,22 @@ typedef struct __BufferedIntStreamPrivateData{
 
 } BufferedIntStreamPrivateData;
 
+static bool dataIsReady(IIntStreamHandle stream);
+
+static uint32_t readData(IIntStreamHandle stream);
+
+static void readAll(IIntStreamHandle stream, uint32_t* data, const size_t length);
+
+static size_t streamLength(IIntStreamHandle stream);
+
+static void writeData(IIntStreamHandle stream, const uint32_t data);
+
+static void writeAll(IIntStreamHandle stream, const uint32_t* data, const size_t length);
+
+static void flush(IIntStreamHandle stream);
+
 /******************************************************************************
- Public functions
+ Private functions
 ******************************************************************************/
 static bool dataIsReady(IIntStreamHandle stream){
     BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
@@ -76,6 +90,10 @@ static void flush(IIntStreamHandle stream){
 
     IntRingBuffer_clear(self->buffer);
 }
+
+/******************************************************************************
+ Public functions
+******************************************************************************/
 
 BufferedIntStreamHandle BufferedIntStream_create(size_t capacity){
 

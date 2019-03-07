@@ -22,6 +22,8 @@ typedef struct __CommandTriggerPrivateData{
 
 } CommandTriggerPrivateData;
 
+static void run(ICommandHandle command);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
