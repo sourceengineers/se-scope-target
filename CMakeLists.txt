@@ -17,10 +17,7 @@ if (ARCHITECTURE STREQUAL "X86")
     set(CMAKE_C_FLAGS -m32)
     set(CMAKE_CXX_FLAGS "-m32 -fpermissive")
 
-    option(BUILD_SHARED_LIBS OFF)
-
-    set(SE__TESTING ON)
-    set(SE__BUILD_EXAMPLES ON)
+    set(SE_TESTING ON)
 
     # Inform the compiler to compile for 32 bit code
     add_definitions(-DARCH_SIZE_32=1)
@@ -30,8 +27,7 @@ elseif (ARCHITECTURE STREQUAL "X64" OR ARCHITECTURE STREQUAL "")
     # X64 Host machines should be able to run tests as well as examples
     message("-- x64 architecture is on")
 
-    set(SE__BUILD_EXAMPLES ON)
-    set(SE__TESTING ON)
+    set(SE_TESTING ON)
 
     # Inform the compiler to compile for 64 bit code
     add_definitions(-DARCH_SIZE_32=0)
@@ -43,8 +39,7 @@ elseif (ARCHITECTURE STREQUAL "EMBEDDED")
 
     # Disable testing and examples because they will not run on the
     # host with a embedded compiler anyway
-    set(SE__TESTING OFF)
-    set(SE__BUILD_EXAMPLES OFF)
+    set(SE_TESTING OFF)
 
     # Inform the compiler to compile for 32 bit code
     add_definitions(-DARCH_SIZE_32=1)
@@ -82,7 +77,7 @@ file(GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h")
 ################################################################################
 # GTest
 ################################################################################
-if (SE__TESTING)
+if (SE_TESTING)
     enable_testing()
     set(BUILD_GMOCK ON)
     add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
@@ -107,10 +102,10 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
 ################################################################################
 # Add examples
 ################################################################################
-if (SE__BUILD_EXAMPLES)
-    add_subdirectory(examples/dynamic_example)
-    add_subdirectory(examples/static_example)
-endif ()
+#if (SE_BUILD_EXAMPLES)
+#    add_subdirectory(examples/dynamic_example)
+#    add_subdirectory(examples/static_example)
+#endif ()
 ################################################################################
 # Install project
 ################################################################################

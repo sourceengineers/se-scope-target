@@ -26,10 +26,10 @@ cmake.exe -G "MinGW Makefiles" -DARCHITECTURE=X64 ..
 mingw64-make.exe install
 ```
 ### Tests
-If you want to run tests, you have to set the cmake SE__TESTING flag to ON. And afterwards run the ctest.
+If you want to run tests, you have to set the cmake SE_TESTING flag to ON. And afterwards run the ctest.
 ```
 ...
-cmake -DARCHITECTURE=X64 -DSE__TESTING=ON ..
+cmake -DARCHITECTURE=X64 -DSE_TESTING=ON ..
 make
 ctest -VV
 ```
