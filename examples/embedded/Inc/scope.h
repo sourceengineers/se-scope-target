@@ -5,7 +5,7 @@
 #ifndef NUCLEO_SCOPE_H
 #define NUCLEO_SCOPE_H
 
-#include <Gemmi.h>
+#include <SE-Scope.h>
 #include <Scope/Communication/Interfaces/UartJson.h>
 #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>

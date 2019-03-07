@@ -1,5 +1,5 @@
-#ifndef GEMMI_H_
-#define GEMMI_H_
+#ifndef SE_SCOPE_H_
+#define SE_SCOPE_H_
 
 #include <Scope/Core/Scope.h>
 #include <Scope/ScopeBuilder.h>

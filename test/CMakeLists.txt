@@ -19,13 +19,13 @@ if (NOT (TARGET gtest AND TARGET gtest_main))
 endif ()
 
 include_directories(../include/Scope)
-include_directories(../3party/gtest/googletest/include ../3party/gtest/googlemock/include)
+include_directories(../3rdparty/gtest/googletest/include ../3rdparty/gtest/googlemock/include)
 
 add_executable(${TEST_PROJECT_NAME} ${LIBRARY_TESTS_SOURCE})
 target_link_libraries(${TEST_PROJECT_NAME}
         gtest
         gtest_main
-        gemmi
+        se-scope
         )
 
 add_test(${TEST_PROJECT_NAME} ${TEST_PROJECT_NAME})

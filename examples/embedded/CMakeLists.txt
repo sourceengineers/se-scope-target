@@ -52,7 +52,7 @@ add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD
         COMMENT "Building ${HEX_FILE}
 Building ${BIN_FILE}")
 
-target_link_libraries(${PROJECT_NAME}.elf gemmi)
+target_link_libraries(${PROJECT_NAME}.elf se-scope)
 include_directories(3party/iot-scope-target/include/Scope)
 add_subdirectory(3party/iot-scope-target)
 

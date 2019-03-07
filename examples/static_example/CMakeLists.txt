@@ -8,4 +8,4 @@ set(PROJECT_NAME
 project(${PROJECT_NAME})
 
 add_executable(${PROJECT_NAME} main.c)
-target_link_libraries(${PROJECT_NAME} gemmi)
+target_link_libraries(${PROJECT_NAME} se-scope)

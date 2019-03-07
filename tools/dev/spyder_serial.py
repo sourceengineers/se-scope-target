@@ -66,7 +66,7 @@ def config():
     ### Trigger Konfiguration
     ##########################################################################
     #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 0}
-    trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id': 1}
+    trigger_conf = {'mode': 'Normal', 'level': 1.0, 'edge': 'rising', 'cl_id': 3}
     #trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
