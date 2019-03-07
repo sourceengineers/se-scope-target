@@ -81,7 +81,7 @@ static void runRx(IRunnableHandle runnable) {
 static void runTx(IRunnableHandle runnable) {
     UartJsonHandle self = (UartJsonHandle) runnable->handle;
 
-    if (self->txPendingToValidateAndTransmit == true) {
+    if (self->txPendingToValidateAndTransmit == false) {
         return;
     }
 
