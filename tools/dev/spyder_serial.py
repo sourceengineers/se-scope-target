@@ -151,10 +151,10 @@ def transmit_data(data):
         checksum = checksum + ord(d)
 
     data_to_send = data + "transport:" + ''.join('{:02X}'.format(checksum))[-2:] + '\0'
+    print(data_to_send)
     data_to_append = "\0" * (300 - len(data_to_send))
     data_to_send = data_to_send + data_to_append
     data_to_send = data_to_send.encode("utf-8")
-    print(data_to_send)
     ser.write(data_to_send)
 
 
