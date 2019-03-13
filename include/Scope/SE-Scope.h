@@ -5,5 +5,6 @@
 #include <Scope/ScopeBuilder.h>
 #include <Scope/ScopeRunner.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/Communication/Interfaces/UartJson.h>
 
 #endif
