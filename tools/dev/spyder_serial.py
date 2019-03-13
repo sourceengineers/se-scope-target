@@ -214,12 +214,17 @@ def init_periph(send_commands):
         addresses.append(str(channels[i]['address']))
         types.append(channels[i]['type'])
         ids.append(str(i))
-        new_state.append("true")
+        new_state.append("false")
 
+
+    send_command(cf_running.getCommand(ids, new_state, len(channels)), True)
+  #  send_command(ev_announce.getCommand(), True)
+    send_command(cf_addr.getCommand(ids, addresses, types, len(channels)), True)
     send_command(cf_tgr.getCommand(str(trigger_conf['cl_id']), trigger_conf['mode'], str(trigger_conf['level']),
                                    str(trigger_conf['edge'])), True)
-    send_command(cf_addr.getCommand(ids, addresses, types, len(channels)), True)
     send_command(cf_t_inc.getCommand(str(step_size)), True)
+
+    new_state = [n.replace("false", "true") for n in new_state]
     send_command(cf_running.getCommand(ids, new_state, len(channels)), True)
 
 
