@@ -15,7 +15,7 @@
 #include <Scope/Core/Scope.h>
 #include <Scope/Builders/ScopeBuilder.h>
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
-#include <Scope/Core/AddressStorage.h>
+#include <Scope/Control/AddressStorage.h>
 #include <Scope/Communication/Interfaces/UartJson.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
