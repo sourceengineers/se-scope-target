@@ -10,6 +10,7 @@ import serial
 import time
 import sys
 import json
+import ev_announce
 import cf_addr
 import cf_running
 import cf_t_inc
@@ -35,7 +36,7 @@ def config():
     ##########################################################################
     ### Serial optionen
     ##########################################################################
-    serial_file = 'COM33'  # z.B.: COM1 bei Windows
+    serial_file = 'COM3'  # z.B.: COM1 bei Windows
     baudrate = 57600
     timeout = 4
 
@@ -56,18 +57,18 @@ def config():
     # typ = UINT8, UINT16, UINT32, FLOAT)
     # Die Addressen koennen entweder aus der map File ausgelesen werden, falls sie
     # als statisch deklariert sind, oder manuell eigetragen werden.
-    channels.append({'name': "Sinus", 'address': get_address_from_map("sinus"), 'type': "FLOAT"})
-    channels.append({'name': "Cosinus", 'address': get_address_from_map("cosinus"), 'type': "FLOAT"})
-    channels.append({'name': "Leistung", 'address': get_address_from_map("leistung"), 'type': "FLOAT"})
+    channels.append({'name': "Sinus", 'address': 536877912, 'type': "FLOAT"})
+    channels.append({'name': "Cosinus", 'address': 536877900, 'type': "FLOAT"})
+    channels.append({'name': "Leistung", 'address': 536877904, 'type': "FLOAT"})
     #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
-    channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "FLOAT"})
+  #  channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "FLOAT"})
 
     ##########################################################################
     ### Trigger Konfiguration
     ##########################################################################
-    #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 0}
-    trigger_conf = {'mode': 'Normal', 'level': 1.0, 'edge': 'rising', 'cl_id': 3}
-    #trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
+   # trigger_conf = {'mode' : 'Continous', 'level' : None, 'edge' :  None, 'cl_id' :  None}
+    trigger_conf = {'mode': 'Normal', 'level': 1.0, 'edge': 'rising', 'cl_id': 0}
+    #trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 0}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
     # Wird z.B. der timestmap pro Millisekunde incrementiert, und die step_size ist 10,
@@ -83,9 +84,9 @@ def config():
 #                {'title': 'Cosinus', 'y_label': 'Value', 'x_label': 'Time [ms]'})
 #    add_subplot(["Leistung"], \
 #                {'title': 'Leistung', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-    add_subplot(["Sinus", "Cosinus", "Leistung"], \
+    add_subplot(["Sinus", "Cosinus"], \
                 {'title': 'Sin and Cos', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-    add_subplot(["Potty"], \
+    add_subplot(["Leistung"], \
                 {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
 
     figure_name = "Demo_plot"
