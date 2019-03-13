@@ -7,9 +7,11 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/ScopeRunner.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/ScopeBuilder.h>
+#include <Scope/Builders/ScopeRunner.h>
+#include <Scope/Core/Scope.h>
+#include <Scope/Control/Controller.h>
+#include <Scope/Communication/Communicator.h>
+#include <Scope/Serialisation/Serializer.h>
 
 /******************************************************************************
  Public functions

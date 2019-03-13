@@ -10,6 +10,7 @@ import serial
 import time
 import sys
 import json
+import ev_announce
 import cf_addr
 import cf_running
 import cf_t_inc
@@ -35,7 +36,7 @@ def config():
     ##########################################################################
     ### Serial optionen
     ##########################################################################
-    serial_file = '/dev/ttyACM0'  # z.B.: COM1 bei Windows
+    serial_file = 'COM3'  # z.B.: COM1 bei Windows
     baudrate = 57600
     timeout = 4
 
@@ -48,7 +49,7 @@ def config():
     # image_path = "/Users/USER/Documents"
 
     # Pfad zum map file
-    map_file = "/home/schuepbs/Documents/Projects/cmake_embedded/build/nucleo.map"
+    map_file = r"C:\se\git\iot-scope-target\examples\keil\MDK-ARM\nucleo\nucleo.map"
 
     ##########################################################################
     ### Channel Konfiguration
@@ -83,9 +84,9 @@ def config():
 #                {'title': 'Cosinus', 'y_label': 'Value', 'x_label': 'Time [ms]'})
 #    add_subplot(["Leistung"], \
 #                {'title': 'Leistung', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-    add_subplot(["Sinus", "Cosinus", "Leistung"], \
+    add_subplot(["Sinus", "Cosinus"], \
                 {'title': 'Sin and Cos', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-    add_subplot(["Potty"], \
+    add_subplot(["Leistung"], \
                 {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
 
     figure_name = "Demo_plot"
@@ -270,7 +271,12 @@ def init_plots():
 
     figure, ax = plt.subplots(len(plot_conf), 1)
     figure.suptitle(figure_name)
-    ax = list(ax)
+    try:
+        ax = list(ax)
+    except:
+        ax_to_list = []
+        ax_to_list.append(ax)
+        ax = ax_to_list
 
     trigger_on_axis = None
 
@@ -557,13 +563,15 @@ if __name__ == "__main__":
     try:
         print("Reinitialize preipherie: " + sys.argv[1])
         init_periph(eval(sys.argv[1]))
+    except KeyboardInterrupt:
+        ser.close()
     except:
         init_periph(True)
-
+        
     init_plots()
 
     try:
         main()
     except KeyboardInterrupt:
-        safe_plot()
         ser.close()
+        safe_plot()
