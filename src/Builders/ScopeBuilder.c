@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/ScopeBuilder.h>
+#include <Scope/Builders/ScopeBuilder.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
 #include <Scope/Communication/Interfaces/EthernetJson.h>
