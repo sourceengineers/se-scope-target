@@ -25,19 +25,56 @@ typedef struct __ControllerPrivateData* ControllerHandle;
 /******************************************************************************
  Public functions
 ******************************************************************************/
+/**
+ * Constructor
+ * @param scope
+ * @param packer
+ * @param unpacker
+ * @param addressStorage
+ * @return
+ */
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
                                    AddressStorageHandle addressStorage);
 
+/**
+ * Returns the runnable of the rx controller
+ * @param self
+ * @return
+ */
 IRunnableHandle Controller_getRxRunnable(ControllerHandle self);
 
+/**
+ * Returns the runnable of the tx controller
+ * @param self
+ * @return
+ */
 IRunnableHandle Controller_getTxRunnable(ControllerHandle self);
 
+/**
+ * Attach the observer to the controller
+ * @param self
+ * @param observer
+ */
 void Controller_attachPackObserver(ControllerHandle self, IObserverHandle observer);
 
+/**
+ * Returns the observer of the controller
+ * @param self
+ * @return
+ */
 IObserverHandle Controller_getCommandObserver(ControllerHandle self);
 
+/**
+ * Returns the observer to the pack controller
+ * @param self
+ * @return
+ */
 IObserverHandle Controller_getCommandPackObserver(ControllerHandle self);
 
+/**
+ * Deconstructor
+ * @param self
+ */
 void Controller_destroy(ControllerHandle self);
 
 #endif

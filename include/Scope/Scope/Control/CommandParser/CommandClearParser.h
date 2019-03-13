@@ -25,16 +25,30 @@ typedef struct __CommandClearParserPrivateData* CommandClearParserHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command parser */
+/**
+ * Constructor
+ * @param scope
+ * @return
+ */
 CommandClearParserHandle CommandClearParser_create(IScopeHandle scope);
 
-/* Configurates the gives command */
+/**
+ * Returns the command
+ * @param self
+ * @return
+ */
 ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self);
 
-/* Returns the name of the command */
+/**
+ * Returns the name of the command
+ * @return
+ */
 char* CommandClearParser_getName(void);
 
-/* Deconstructor: Deletes the instance of the command parser */
+/**
+ * Deconstructor
+ * @param self
+ */
 void CommandClearParser_destroy(CommandClearParserHandle self);
 
 #endif

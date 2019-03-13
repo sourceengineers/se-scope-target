@@ -47,25 +47,82 @@ typedef struct{
 typedef struct IUnpackerStruct{
     GenericReference handle;
 
+    /**
+     * Unpacks the data in the input stream
+     * @param unpacker
+     * @return
+     */
     bool (* unpack)(IUnpackerHandle unpacker);
 
-    /* Functions to fetch commands and fields */
+    /**
+     * Returns the number of commands which were unpacked
+     * @param unpacker
+     * @return
+     */
     size_t (* getNumberOfCommands)(IUnpackerHandle unpacker);
 
+    /**
+     * Returns the name of the command at index
+     * @param unpacker
+     * @param name string into which the name will be written into
+     * @param maxLenght maximal length of the name field
+     * @param index
+     * @return
+     */
     bool (* getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+
+    /**
+     * Returns an int value
+     * @param unpacker
+     * @param information
+     * @return
+     */
     /* Functions to fetch the data from commands */
     ADDRESS_DATA_TYPE (* getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
 
+    /**
+     * Returns a float value
+     * @param unpacker
+     * @param information
+     * @return
+     */
     float (* getFloatFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
 
+    /**
+     * Returns a bool value
+     * @param unpacker
+     * @param information
+     * @return
+     */
     bool (* getBoolFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
 
+    /**
+     * Fetches a string
+     * @param unpacker
+     * @param information
+     * @param targetStr array to which the data gets written into
+     * @param maxLenght max length of the targetStr field
+     */
     void (* getStringFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information, char* targetStr,
                                   const int maxLenght);
 
-    /* Functions to help the communication validators */
+    /**
+     * Get amount of fields in a command
+     * @param unpacker
+     * @param commandName
+     * @return
+     */
     int (* getNumberOfFields)(IUnpackerHandle unpacker, const char* commandName);
 
+    /**
+     * Get the name of a field inside of a command
+     * @param unpacker
+     * @param commandName
+     * @param fieldName
+     * @param maxLenght
+     * @param index
+     * @return
+     */
     bool (* getNameOfField)(IUnpackerHandle unpacker, const char* commandName, char* fieldName, const int maxLenght,
                             const int index);
 

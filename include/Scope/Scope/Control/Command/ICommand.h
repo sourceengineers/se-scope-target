@@ -32,6 +32,10 @@ typedef struct ICommandStruct* ICommandHandle;
 typedef struct ICommandStruct{
     GenericReference handle;
 
+    /**
+     * Runnable
+     * @param command
+     */
     void (* run)(ICommandHandle command);
 } ICommand;
 

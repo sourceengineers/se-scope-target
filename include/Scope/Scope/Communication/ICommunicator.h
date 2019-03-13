@@ -30,16 +30,32 @@ typedef struct ICommunicatorStruct* ICommunicatorHandle;
 typedef struct ICommunicatorStruct{
     GenericReference handle;
 
-    /*
+    /**
      * Returns the observer which is used to update the Tx path
+     * @param communicator
+     * @return
      */
     IObserverHandle (* getObserver)(ICommunicatorHandle communicator);
 
-    /* Attaches the observer which will update the Rx path */
+    /**
+     * Attaches the observer which will update the Rx path
+     * @param communicator
+     * @param observer
+     */
     void (* attachObserver)(ICommunicatorHandle communicator, IObserverHandle observer);
 
+    /**
+     * Returns the runnable of the tx path of the communication interface
+     * @param communicator
+     * @return
+     */
     IRunnableHandle (* getTxRunnable)(ICommunicatorHandle communicator);
 
+    /**
+     * Returns the runnable of the rx path of the communication interface
+     * @param communicator
+     * @return
+     */
     IRunnableHandle (* getRxRunnable)(ICommunicatorHandle communicator);
 
 } ICommunicator;

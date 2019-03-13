@@ -26,16 +26,31 @@ typedef struct __CommandAddrParserPrivateData* CommandAddrParserHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command parser */
+/**
+ * Constructor
+ * @param scope
+ * @param unpacker
+ * @return
+ */
 CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
 
-/* Configurates the given command */
+/**
+ * Returns the command
+ * @param self
+ * @return
+ */
 ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self);
 
-/* Deconstructor: Deletes the instance of the parser */
-void CommandAddrParser_destroy(CommandAddrParserHandle self);
-
-/* Returns the name of the command */
+/**
+ * Returns the name of the command
+ * @return
+ */
 char* CommandAddrParser_getName(void);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandAddrParser_destroy(CommandAddrParserHandle self);
 
 #endif

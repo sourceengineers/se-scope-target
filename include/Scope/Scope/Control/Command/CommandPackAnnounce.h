@@ -28,13 +28,25 @@ typedef struct __CommandPackAnnouncePrivateData* CommandPackAnnounceHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command */
+/**
+ * Constructor
+ * @param addressStorage
+ * @param packer
+ * @return
+ */
 CommandPackAnnounceHandle CommandPackAnnounce_create(AddressStorageHandle addressStorage, IPackerHandle packer);
 
-/* Deconstructor: Deletes the instance of the command */
-void CommandPackAnnounce_destroy(CommandPackAnnounceHandle self);
-
-/* Returns the command interface */
+/**
+ * Returns the ICommand interface
+ * @param self
+ * @return
+ */
 ICommandHandle CommandPackAnnounce_getICommand(CommandPackAnnounceHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandPackAnnounce_destroy(CommandPackAnnounceHandle self);
 
 #endif

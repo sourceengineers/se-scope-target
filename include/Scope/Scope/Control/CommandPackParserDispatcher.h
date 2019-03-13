@@ -31,15 +31,29 @@ typedef struct __CommandPackParserDispatcherPrivateData* CommandPackParserDispat
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the commandParserDispatcher */
+
+/**
+ * Constructor
+ * @param scope
+ * @param addressStorage
+ * @param packer
+ * @return
+ */
 CommandPackParserDispatcherHandle
 CommandPackParserDispatcher_create(IScopeHandle scope, AddressStorageHandle addressStorage, IPackerHandle packer);
 
-/* Deconstructor: Deletes the instance of the commandParserDispatcher */
-void CommandPackParserDispatcher_destroy(CommandPackParserDispatcherHandle self);
-
-/* Returns the command interface */
+/**
+ * Returns the command with name matching command.
+ * @param self
+ * @param command
+ * @return Returns NULL if command matches no name of a command
+ */
 ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, const char* command);
 
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandPackParserDispatcher_destroy(CommandPackParserDispatcherHandle self);
 
 #endif

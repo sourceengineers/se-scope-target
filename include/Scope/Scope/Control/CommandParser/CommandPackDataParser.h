@@ -26,16 +26,31 @@ typedef struct __CommandPackDataParserPrivateData* CommandPackDataParserHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command parser */
+/**
+ * Constructor
+ * @param scope
+ * @param packer
+ * @return
+ */
 CommandPackDataParserHandle CommandPackDataParser_create(IScopeHandle scope, IPackerHandle packer);
 
-/* Configurates the gives command */
+/**
+ * Returns the command
+ * @param self
+ * @return
+ */
 ICommandHandle CommandPackDataParser_getCommand(CommandPackDataParserHandle self);
 
-/* Returns the name of the command */
+/**
+ * Returns the name of the command
+ * @return
+ */
 char* CommandPackDataParser_getName(void);
 
-/* Deconstructor: Deletes the instance of the command parser */
+/**
+ * Deconstructor
+ * @param self
+ */
 void CommandPackDataParser_destroy(CommandPackDataParserHandle self);
 
 #endif

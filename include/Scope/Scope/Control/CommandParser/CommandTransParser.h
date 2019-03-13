@@ -25,16 +25,30 @@ typedef struct __CommandTransParserPrivateData* CommandTransParserHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command parser */
+/**
+ * Constructor
+ * @param scope
+ * @return
+ */
 CommandTransParserHandle CommandTransParser_create(IScopeHandle scope);
 
-/* Configurates the gives command */
+/**
+ * Returns the command
+ * @param self
+ * @return
+ */
 ICommandHandle CommandTransParser_getCommand(CommandTransParserHandle self);
 
-/* Returns the name of the command */
+/**
+ * Returns the name of the command
+ * @return
+ */
 char* CommandTransParser_getName(void);
 
-/* Deconstructor: Deletes the instance of the command parser */
+/**
+ * Deconstructor
+ * @param self
+ */
 void CommandTransParser_destroy(CommandTransParserHandle self);
 
 #endif

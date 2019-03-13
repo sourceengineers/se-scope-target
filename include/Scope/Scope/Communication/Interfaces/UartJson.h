@@ -28,27 +28,62 @@ typedef void(*UartTransmitCallback)(UartJsonHandle self);
 /******************************************************************************
  Public functions
 ******************************************************************************/
+/**
+ * Generates the uart communication interface
+ * @param callback Callback to the transmit function defined by the user
+ * @param input
+ * @param output
+ * @return
+ */
 UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
 
+/**
+ * Returns the communicator interface
+ * @param self
+ * @return
+ */
 ICommunicatorHandle UartJson_getCommunicator(UartJsonHandle self);
 
-/* Reads length amount of data from the output stream.
- * If the requested length is more than the amount of data stored in the stream,
- * the function returns no new data */
+/**
+ * Writes the data to transmit into data
+ * @param self
+ * @param data Array to which the data will be written
+ * @param length Length of the data array. If this is shorter than EthernetJson_amountOfTxDataPending,
+ *               nothing will be written into data
+ */
 void UartJson_getTxData(UartJsonHandle self, uint8_t* data, size_t length);
 
-/* Returns how much data currently is stored in the output stream */
-size_t UartJson_amountOfTxDataPending(UartJsonHandle self);
+/**
+ * Returns the amount of data pending to be sent
+ * @param self
+ * @return
+ */
+ size_t UartJson_amountOfTxDataPending(UartJsonHandle self);
 
-/* Resets the Input handler. This might be used, if a new command is expected */
-void UartJson_resetRx(UartJsonHandle self);
-
-/* Resets the output handler. This might be used, if a new command is expected */
-void UartJson_resetTx(UartJsonHandle self);
-
-/* Puts data into the input buffer */
+/**
+ * Writes data into the object
+ * @param self
+ * @param data data to be written into the stream
+ * @param length amount of data to be written into the stream
+ */
 void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length);
 
+/**
+ * Resets the input stream
+ * @param self
+ */
+void UartJson_resetRx(UartJsonHandle self);
+
+/**
+ * Resets the output stream
+ * @param self
+ */
+void UartJson_resetTx(UartJsonHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
 void UartJson_destroy(UartJsonHandle self);
 
 #endif

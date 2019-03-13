@@ -25,16 +25,30 @@ typedef struct __CommandPollParserPrivateData* CommandPollParserHandle;
 /******************************************************************************
  Public functions
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command parser */
+/**
+ * Constructor
+ * @param scope
+ * @return
+ */
 CommandPollParserHandle CommandPollParser_create(IScopeHandle scope);
 
-/* Configurates the gives command */
+/**
+ * Returns the command
+ * @param self
+ * @return
+ */
 ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self);
 
-/* Returns the name of the command */
+/**
+ * Returns the name of the command
+ * @return
+ */
 char* CommandPollParser_getName(void);
 
-/* Deconstructor: Deletes the instance of the command parser */
+/**
+ * Deconstructor
+ * @param self
+ */
 void CommandPollParser_destroy(CommandPollParserHandle self);
 
 #endif

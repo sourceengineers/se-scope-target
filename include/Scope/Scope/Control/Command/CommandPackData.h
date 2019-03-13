@@ -27,13 +27,25 @@ typedef struct __CommandPackDataPrivateData* CommandPackDataHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command */
+/**
+ * Constructor
+ * @param scope
+ * @param packer
+ * @return
+ */
 CommandPackDataHandle CommandPackData_create(IScopeHandle scope, IPackerHandle packer);
 
-/* Deconstructor: Deletes the instance of the command */
-void CommandPackData_destroy(CommandPackDataHandle self);
-
-/* Returns the command interface */
+/**
+ * Returns the ICommand interface
+ * @param self
+ * @return
+ */
 ICommandHandle CommandPackData_getICommand(CommandPackDataHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandPackData_destroy(CommandPackDataHandle self);
 
 #endif
