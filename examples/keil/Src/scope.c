@@ -8,7 +8,7 @@
 
 AddressStorageHandle addressStorage;
 ScopeBuilderHandle builder;
-ScopeObject scope_obj;
+static ScopeObject scope_obj;
 size_t inputBufferSize = 0;
 size_t amountOfChannels;
 size_t sizeOfChannels;

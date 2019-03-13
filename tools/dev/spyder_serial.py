@@ -35,7 +35,7 @@ def config():
     ##########################################################################
     ### Serial optionen
     ##########################################################################
-    serial_file = '/dev/ttyACM0'  # z.B.: COM1 bei Windows
+    serial_file = 'COM33'  # z.B.: COM1 bei Windows
     baudrate = 57600
     timeout = 4
 
@@ -48,7 +48,7 @@ def config():
     # image_path = "/Users/USER/Documents"
 
     # Pfad zum map file
-    map_file = "/home/schuepbs/Documents/Projects/cmake_embedded/build/nucleo.map"
+    map_file = r"C:\se\git\iot-scope-target\examples\keil\MDK-ARM\nucleo\nucleo.map"
 
     ##########################################################################
     ### Channel Konfiguration
@@ -66,7 +66,7 @@ def config():
     ### Trigger Konfiguration
     ##########################################################################
     #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 0}
-    trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id': 1}
+    trigger_conf = {'mode': 'Normal', 'level': 1.0, 'edge': 'rising', 'cl_id': 3}
     #trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
@@ -559,13 +559,15 @@ if __name__ == "__main__":
     try:
         print("Reinitialize preipherie: " + sys.argv[1])
         init_periph(eval(sys.argv[1]))
+    except KeyboardInterrupt:
+        ser.close()
     except:
         init_periph(True)
-
+        
     init_plots()
 
     try:
         main()
     except KeyboardInterrupt:
-        safe_plot()
         ser.close()
+        safe_plot()
