@@ -151,10 +151,10 @@ def transmit_data(data):
         checksum = checksum + ord(d)
 
     data_to_send = data + "transport:" + ''.join('{:02X}'.format(checksum))[-2:] + '\0'
+    print(data_to_send)
     data_to_append = "\0" * (300 - len(data_to_send))
     data_to_send = data_to_send + data_to_append
     data_to_send = data_to_send.encode("utf-8")
-    print(data_to_send)
     ser.write(data_to_send)
 
 
@@ -216,6 +216,8 @@ def init_periph(send_commands):
         ids.append(str(i))
         new_state.append("true")
 
+
+    send_command(ev_announce.getCommand(), True)
     send_command(cf_tgr.getCommand(str(trigger_conf['cl_id']), trigger_conf['mode'], str(trigger_conf['level']),
                                    str(trigger_conf['edge'])), True)
     send_command(cf_addr.getCommand(ids, addresses, types, len(channels)), True)
@@ -265,7 +267,12 @@ def init_plots():
 
     figure, ax = plt.subplots(len(plot_conf), 1)
     figure.suptitle(figure_name)
-    ax = list(ax)
+    try:
+        ax = list(ax)
+    except:
+        ax_to_list = []
+        ax_to_list.append(ax)
+        ax = ax_to_list
 
     trigger_on_axis = None
 
