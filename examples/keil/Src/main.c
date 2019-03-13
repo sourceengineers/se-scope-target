@@ -44,13 +44,12 @@
 #include "dma.h"
 #include "usart.h"
 #include "gpio.h"
+#include <Gemmi.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <string.h>
-#include <scope.h>
-//#include <arm_math.h>
-#include <math.h>
+#include <arm_math.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -142,14 +141,16 @@ int main(void){
     MX_NVIC_Init();
     /* USER CODE BEGIN 2 */
 
-    scope_init(transmit_data, &timestamp_safe);
+    JsonUartStack_create(50, 5, transmit_data, &timestamp_safe, 5);
+    JsonUartPublicStack stack =  JsonUartStack_getObject();
+
 
     /* adding some variables to the AddressStorage
      * These can be trasmitted to the host if wanted */
-    AddressStorage_addAnnounceAddress(addressStorage, "sinus", &sinus, FLOAT, 0);
-    AddressStorage_addAnnounceAddress(addressStorage, "cosinus", &cosinus, FLOAT, 1);
-    AddressStorage_addAnnounceAddress(addressStorage, "tangent", &leistung, FLOAT, 2);
-    AddressStorage_addAnnounceAddress(addressStorage, "schmitttriggered", &schmitttriggered, UINT8, 3);
+    AddressStorage_addAnnounceAddress(stack.addressStorage, "sinus", &sinus, FLOAT, 0);
+    AddressStorage_addAnnounceAddress(stack.addressStorage, "cosinus", &cosinus, FLOAT, 1);
+    AddressStorage_addAnnounceAddress(stack.addressStorage, "tangent", &leistung, FLOAT, 2);
+    AddressStorage_addAnnounceAddress(stack.addressStorage, "schmitttriggered", &schmitttriggered, UINT8, 3);
 
     HAL_UART_Receive_IT(&huart2, (uint8_t*) aRxBuffer, UART_INPUT_SIZE);
     HAL_ADC_Start_IT(&hadc1);
@@ -164,35 +165,34 @@ int main(void){
         /* USER CODE BEGIN 3 */
         /* Update timestmap */
 
-	      timestamp = HAL_GetTick();
+        timestamp = HAL_GetTick();
 
         if(adc_it_is_cleared == true){
             adc_it_is_cleared = false;
             HAL_ADC_Start_IT(&hadc1);
         }
 
-		    if(TxReady == SET){
-			    UartJson_resetTx(uartJson);
-			    TxReady = RESET;
-		    }
-		    if(RxReady == SET){
-			    UartJson_putRxData(uartJson, aRxBuffer, UART_INPUT_SIZE);
-			    RxReady = RESET;
-			    HAL_UART_Receive_IT(&huart2, (uint8_t*) aRxBuffer, UART_INPUT_SIZE);
-		    }
+        if(TxReady == SET){
+            UartJson_resetTx(stack.uartJson);
+            TxReady = RESET;
+        }
+        if(RxReady == SET){
+            UartJson_putRxData(stack.uartJson, aRxBuffer, UART_INPUT_SIZE);
+            RxReady = RESET;
+            HAL_UART_Receive_IT(&huart2, (uint8_t*) aRxBuffer, UART_INPUT_SIZE);
+        }
 
         if(timestamp > timestamp_safe && transmitting == false){
 
             timestamp_safe = timestamp;
             float t_in_s = timestamp / 1000.0f;
 
-            // TODO take pi from math.h
-            sinus = 2 * sinf(2 *  3.14159f * frequency * t_in_s);
-            cosinus = 2 * cosf(2 *  3.14159f * frequency * t_in_s);
+            sinus = 2 * sinf(2 * PI * frequency * t_in_s);
+            cosinus = 2 * cosf(2 * PI * frequency * t_in_s);
             leistung = sinus * cosinus;
             schmitttriggered = (adcValue > 1) ? 2 : 0;
 
-            scope_run();
+            JsonUartStack_run();
         }
     }
     return 0;
@@ -268,10 +268,10 @@ static void MX_NVIC_Init(void){
 /* USER CODE BEGIN 4 */
 void transmit_data(UartJsonHandle self){
 
-    size_t length = UartJson_amountOfTxDataPending(uartJson);
-    UartJson_getTxData(uartJson, aTxBuffer, length);
+    size_t length = UartJson_amountOfTxDataPending(self);
+    UartJson_getTxData(self, aTxBuffer, length);
     HAL_UART_Transmit_IT(&huart2, aTxBuffer, (uint16_t) length);
-		transmitting = true;
+    transmitting = true;
 }
 
 /**
@@ -284,8 +284,8 @@ void transmit_data(UartJsonHandle self){
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef* UartHandle){
     /* Set transmission flag: transfer complete */
     HAL_UART_Receive_IT(&huart2, (uint8_t*) aRxBuffer, UART_INPUT_SIZE);
-		TxReady = SET;
-		transmitting = false;
+    TxReady = SET;
+    transmitting = false;
 }
 
 /**
