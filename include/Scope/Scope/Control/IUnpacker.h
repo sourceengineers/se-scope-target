@@ -5,21 +5,9 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Parser interface.
- *
- *               unpack: Unpacks the given data. Returns false if the parsing process failed
- *               dataPending: Offers the Controller a possibility to check if new data is ready to be read or not
- *               dataRead: This function has to be executed by the controller once the pending data was interpreted
- *               streamIsEmpty: Checks if data in the input stream is present or not
- *
- *               getNumberOfCommands: Returns the number of parser commands
- *               getNameOfCommand: Writes the name of the command, at the given index into the name field
- *               getNameOfField: Same as getNameOfCommand, but for the command fields
- *               getIntFromCommand: Returns the int value of a given command and field
- *               getFloatFromCommand: Returns the float value of a given command and field
- *               getBoolFromCommand: Returns the float value of a given command and field
- *               getStringFromCommand: Returns the float value of a given command and field
- *
+ * @brief        Specifies an interface which must be used by a protocol to allows the scope to unpack
+ *               input data.
+ *               This allows to extend the scope for multiple protocols.
  *
  *****************************************************************************************************************************************/
 

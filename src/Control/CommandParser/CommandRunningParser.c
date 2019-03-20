@@ -11,6 +11,7 @@
 #include <Scope/Control/Command/CommandRunning.h>
 #include <Scope/Control/IUnpacker.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/Control/ParserDefinitions.h>
 
 #include <stdint.h>
 #include <stdbool.h>

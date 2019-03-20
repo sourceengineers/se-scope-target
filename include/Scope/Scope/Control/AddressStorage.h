@@ -5,14 +5,16 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Impelments the channels, which will be attached to the scope ???
+ * @brief        Implements a storage module through which addresses can be named
+ *               and transmitted.
+ *               This allows the usage of the scope, even for non static addresses.
  *
  ******************************************************************************/
 
 #ifndef ADDRESSSTORAGE_H_
 #define ADDRESSSTORAGE_H_
 
-#include <Scope/Core/ScopeTypes.h>
+#include <Scope/Control/ParserDefinitions.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/IObserver.h>
 

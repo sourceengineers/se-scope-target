@@ -5,7 +5,9 @@
  *
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
- * @brief        Implements functions of the IUnpacker.h interface.
+ * @brief        Implements the deserialisation of input data for the json format by implementing the
+ *               IUnpacker interface.
+ *               It uses the jsmn library to do so.
  *
  *****************************************************************************************************************************************/
 
@@ -27,16 +29,30 @@ typedef struct __JsonUnpackerPrivateData* JsonUnpackerHandle;
 /******************************************************************************
  Public functions
 ******************************************************************************/
-/* Constructor: Creates a new instance of the json unpacker */
+/**
+ * Constructor
+ * @param stream Input stream
+ * @return
+ */
 JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream);
 
-/* Destroys the instance of the json unpacker */
-void JsonUnpacker_destroy(JsonUnpackerHandle self);
-
-/* Returns the IUnpacker interface */
+/**
+ * Returns the IUnpacker interface
+ * @param self
+ * @return
+ */
 IUnpackerHandle JsonUnpacker_getIUnpacker(JsonUnpackerHandle self);
 
-/* Calculates how big the buffer has to be */
+/**
+ * Estimates how big the input buffer needs to be
+ * @return
+ */
 size_t JsonUnpacker_calculateBufferSize(void);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void JsonUnpacker_destroy(JsonUnpackerHandle self);
 
 #endif

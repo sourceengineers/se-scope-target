@@ -5,7 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Factory to generate the different Command interfaces 
+ * @brief        Factory to generate the different command interfaces
  * 
  *               Since the usage of malloc after the initial construction is 
  *               not permitted, all objects returned by the commandParserDispatcher are pre-

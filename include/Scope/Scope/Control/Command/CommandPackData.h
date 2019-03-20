@@ -5,10 +5,9 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the ev_pack command
- *                
- *               Starts a sending event, provided by the IScope interface
- * 
+ * @brief        Implementation of the ev_pack_data command
+ *               Packs the data of the scope and triggers a transmit event.
+ *
  ******************************************************************************/
 
 #ifndef COMMANDPACKDATA_H_

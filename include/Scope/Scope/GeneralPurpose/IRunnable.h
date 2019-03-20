@@ -5,7 +5,8 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief
+ * @brief        Interface to be implemented if a runnable should be used
+ *
  ******************************************************************************/
 
 #ifndef IRUNNABLE_H_
@@ -24,6 +25,10 @@ typedef struct IRunnableStruct* IRunnableHandle;
 typedef struct IRunnableStruct{
     GenericReference handle;
 
+    /**
+     * Runs the class which implemented the runnable
+     * @param runnable
+     */
     void (* run)(IRunnableHandle runnable);
 
 } IRunnable;

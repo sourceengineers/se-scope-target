@@ -4,6 +4,10 @@
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ *
+ * @brief        Layer which controls the commands used to pack the scope data
+ *               and passed commands from the lower layers into the scop.e
+ *
  ******************************************************************************/
 
 #ifndef CONTROLLER_H

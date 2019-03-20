@@ -5,7 +5,10 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Impelments the channels, which will be attached to the scope
+ * @brief        The timestamper is used to stamp the timestamp stream.
+ *               It also handles the time passed since the last stamping and
+ *               therefore allows to implement to only run the scope every 10ms
+ *               instead of every ms as example.
  * 
  ******************************************************************************/
 
@@ -28,30 +31,84 @@ typedef struct __TimestamperPrivateData* TimestamperHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the channel */
+/**
+ * Constructor
+ * @param capacity Capacity of the internal buffer. This should match the size of the channel buffers
+ * @param referenceTimestamp Externally controller timestamp. The timestamps will be copied and put into the buffer
+ * @return
+ */
 TimestamperHandle Timestamper_create(size_t capacity, uint32_t* referenceTimestamp);
 
-/* Deconstructor: Deletes the instance of the channel */
-void Timestamper_destroy(TimestamperHandle self);
-
+/**
+ * Calculates the elapsed time since the last stamp and the current referenceTimestamp time
+ * @param self
+ * @return
+ */
 bool Timestamper_updateElapsedTime(TimestamperHandle self);
 
+/**
+ * Copies the current referenceTimestamp and puts it into the buffer
+ * @param self
+ */
 void Timestamper_stamp(TimestamperHandle self);
 
+/**
+ * Set the state to running
+ * @param self
+ */
 void Timestamper_setStateRunning(TimestamperHandle self);
 
+/**
+ * Set the state to stopped
+ * @param self
+ */
 void Timestamper_setStateStopped(TimestamperHandle self);
 
+/**
+ * Returns the value of referenceTimestamp
+ * @param self
+ * @return
+ */
 uint32_t Timestamper_getCurrentTime(TimestamperHandle self);
 
+/**
+ * Returns the value timestamp increment value. This is used to ajust the polling speed. The poll event can
+ * be executed only every 10ms instead of every 1ms as example-
+ * @param self
+ * @return
+ */
 uint32_t Timerstamper_getTimeIncrement(TimestamperHandle self);
 
+/**
+ * Configures the time increment. This is used for the cf_t_inc command
+ * @param self
+ * @param timstampIncrement
+ */
 void Timestamper_configureTimestampIncrement(TimestamperHandle self, uint32_t timstampIncrement);
 
+/**
+ * Clears the data in the buffer
+ * @param self
+ */
 void Timestamper_clear(TimestamperHandle self);
 
+/**
+ * Swaps the SWAP and the POLL buffers
+ * @param self
+ */
 void Timerstamper_swapBuffers(TimestamperHandle self);
 
+/**
+ * Returns the handle to the buffer
+ * @param self
+ * @return
+ */
 IIntStreamHandle Timestamper_getStream(TimestamperHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void Timestamper_destroy(TimestamperHandle self);
 
 #endif

@@ -4,6 +4,9 @@
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ *
+ * @brief        Implementation of a communication interface for ethernet.
+ *
  ******************************************************************************/
 
 #ifndef ETHERNETJSON_H

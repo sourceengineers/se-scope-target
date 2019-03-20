@@ -5,10 +5,9 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the ev_pack command
- *                
- *               Starts a sending event, provided by the IScope interface
- * 
+ * @brief        Implementation of the ev_pack_announce command.
+ *               Packs the announce data and triggers a transmission event.
+ *
  ******************************************************************************/
 
 #ifndef COMMANDPACKANNOUNCE_H_

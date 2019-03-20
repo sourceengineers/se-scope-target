@@ -123,8 +123,6 @@ static void packData(IPackerHandle packer);
 
 static void reset(IPackerHandle packer);
 
-static bool flowControlReadyToSend(IPackerHandle packer);
-
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -517,12 +515,6 @@ static void reset(IPackerHandle packer){
     flushBuffer(self->flowcontrol);
 }
 
-static bool flowControlReadyToSend(IPackerHandle packer){
-    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
-
-    return self->flowcontrolReady;
-}
-
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -552,7 +544,6 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.prepareTimestamp = &prepareTimestamp;
     self->packer.prepareTrigger = &prepareTrigger;
     self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
-    self->packer.flowControlReadyToSend = &flowControlReadyToSend;
     self->packer.reset(&self->packer);
 
     return self;

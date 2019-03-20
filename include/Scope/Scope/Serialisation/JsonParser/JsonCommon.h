@@ -5,6 +5,8 @@
  *
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
+ * @brief        Contains specifications needed by both the JsonUnpacker as well as the JsonPacker
+ *
  *****************************************************************************************************************************************/
 
 #ifndef JSONCOMMON_H_

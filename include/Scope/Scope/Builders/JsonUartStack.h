@@ -5,7 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Build the Scope
+ * @brief        Builds a Uart Json stack.
  *
  ******************************************************************************/
 

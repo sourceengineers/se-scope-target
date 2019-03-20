@@ -5,10 +5,10 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Implementation of the BufferedFloatStream interface The stream currently
- *               works with a simple array internally.
- *               The array will be swapped to a ringbuffer in a later version.
- *               This will enable a more dynamic and fluent usage of the stream.
+ * @brief        Implementation of the float stream interface.
+ *               The buffered float stream uses a ring buffer as underlying data
+ *               structure
+ *
  ******************************************************************************/
 
 #ifndef FLOATSTREAM_H_
@@ -28,34 +28,74 @@ typedef struct __BufferedFloatStreamPrivateData* BufferedFloatStreamHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the stream */
+/**
+ * Constructor
+ * @param capacity size of the buffer
+ * @return
+ */
 BufferedFloatStreamHandle BufferedFloatStream_create(size_t capacity);
 
-/* Deconstructor: Deletes the instance of the stream */
-void BufferedFloatStream_destroy(BufferedFloatStreamHandle self);
-
-/* Returns the IFloatStream interface */
+/**
+ * Returns the stream interface
+ * @param self
+ * @return
+ */
 IFloatStreamHandle BufferedFloatStream_getIFloatStream(BufferedFloatStreamHandle self);
 
-/* Flushes the stream */
+/**
+ * Flushes the stream
+ * @param self
+ */
 void BufferedFloatStream_flush(BufferedFloatStreamHandle self);
 
-/* Returns the amount of data currently pending in the stream */
+/**
+ * Returns the amount of data currently pending in the stream
+ * @param self
+ * @return
+ */
 size_t BufferedFloatStream_length(BufferedFloatStreamHandle self);
 
-/* Writes "length" amount of data into the stream */
+/**
+ * Writes "length" amount of data into the stream
+ * @param self
+ * @param data Data from which the data has to be written
+ * @param length Amount of data that has to be written
+ */
 void BufferedFloatStream_write(BufferedFloatStreamHandle self, const float* data, const size_t length);
 
-/* Writes one single data point into the stream */
+/**
+ * Writes one single data point into the stream
+ * @param self
+ * @param data
+ */
 void BufferedFloatStream_writeFloat(BufferedFloatStreamHandle self, const float data);
 
-/* Reads "length" amount of data from the stream and writes it into "data" */
+/**
+ * Reads length amount of data from the stream and writes it into data
+ * @param self
+ * @param data Array into which the data gets written
+ * @param length Size of array. If this is smaller than the amount of data pending, the function gets rejected.
+ */
 void FloatStream_read(BufferedFloatStreamHandle self, float* data, const size_t length);
 
-/* Returns one single data point */
+/**
+ * Returns one single data point
+ * @param self
+ * @return
+ */
 float FloatStream_readFloat(BufferedFloatStreamHandle self);
 
-/* Returns of a data point is ready to be read or not */
+/**
+ * Returns of more data is pending or not
+ * @param self
+ * @return True if data pending. False if not
+ */
 bool FloatStream_byteIsReady(BufferedFloatStreamHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void BufferedFloatStream_destroy(BufferedFloatStreamHandle self);
 
 #endif

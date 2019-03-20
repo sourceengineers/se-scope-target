@@ -5,7 +5,9 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Parser interface.
+ * @brief        Specifies an interface which must be used by a protocol to allows the scope to pack
+ *               output data.
+ *               This allows to extend the scope for multiple protocols.
  *
  *****************************************************************************************************************************************/
 

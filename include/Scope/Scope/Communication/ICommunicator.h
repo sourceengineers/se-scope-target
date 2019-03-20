@@ -8,8 +8,6 @@
  * @brief        Interface, which will have to be implemented by every communication type to present functions
  *               to validate that the communication was successful.
  *
- *
- *
  *****************************************************************************************************************************************/
 
 #ifndef ICOMMUNICATOR_H_

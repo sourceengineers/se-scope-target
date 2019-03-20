@@ -16,6 +16,7 @@
 #include <Scope/Control/CommandParser/CommandTIncParser.h>
 #include <Scope/Control/CommandParser/CommandTransParser.h>
 #include <Scope/Control/CommandParser/CommandTriggerParser.h>
+#include <Scope/Control/ParserDefinitions.h>
 #include <Scope/Core/ScopeTypes.h>
 
 #include <stdlib.h>

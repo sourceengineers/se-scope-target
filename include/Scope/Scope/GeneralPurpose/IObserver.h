@@ -5,6 +5,8 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
+ * @brief        Interface to implement the Observer design pattern
+ *
  ******************************************************************************/
 
 #ifndef IOBSERVER_H
@@ -23,6 +25,11 @@ typedef struct IObserverStruct* IObserverHandle;
 typedef struct IObserverStruct{
     GenericReference handle;
 
+    /**
+     * Calls an update on the class which implemented the observer
+     * @param runnable
+     * @param state
+     */
     void (* update)(IObserverHandle runnable, void* state);
 
 } IObserver;

@@ -5,15 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Streaming interface
- *               open: opens the channel to a given byte pointer
- *               length: returns the amount of bytes ready to be read
- *               read: returns a pointer to the beginning of the byte array
- *               write: writes bytes into the stream
- *               writeByte: writes a single byte into the stream
- *               readByte: returns a single byte from the stream
- *               flush: flushs the stream
- *               close: closes the stream
+ * @brief        Interface for an byte stream.
  *
  *****************************************************************************************************************************************/
 
@@ -33,28 +25,54 @@ typedef struct IByteStreamStruct* IByteStreamHandle;
 typedef struct IByteStreamStruct{
     GenericReference handle;
 
+    /**
+     * Checks if data is pending
+     * @param self
+     * @return True if data is pending, False if not
+     */
     bool (* byteIsReady)(IByteStreamHandle self);
 
+    /**
+     * Returns the oldest data point
+     * @param self
+     * @return
+     */
     uint8_t (* readByte)(IByteStreamHandle self);
 
+    /**
+     * Returns the amount of data in the stream
+     * @param self
+     * @return
+     */
     size_t (* length)(IByteStreamHandle self);
 
     /**
-     *
-     * @param data array into which the data gets written. The size of this should be what ever "length" returned
-     * @param length Amount of bytes which should be read
+     * Reads data in the stream
+     * @param self
+     * @param data Array into which the data has to be written
+     * @param length Max size of the data array
      */
     void (* read)(IByteStreamHandle self, uint8_t* data, const size_t length);
 
+    /**
+     * Write one single data point into the stream
+     * @param self
+     * @param data
+     */
     void (* writeByte)(IByteStreamHandle self, const uint8_t data);
 
     /**
-     *
-     * @param data Data which should be written into the Stream
-     * @param length Amount of data which should be written
+     * Writes multiple data points into the stream
+     * @param self
+     * @param data Data that has to be written into the stream
+     * @param length Amount of data that has to be written into the stream
      */
     void (* write)(IByteStreamHandle self, const uint8_t* data, const size_t length);
 
+    /**
+     * Flushes the stream
+     * @param self
+     */
     void (* flush)(IByteStreamHandle self);
 } IByteStream;
 

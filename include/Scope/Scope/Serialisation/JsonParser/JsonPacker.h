@@ -5,7 +5,8 @@
  *
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
- * @brief        Implements functions of the IPacker.h for the Json interface.
+ * @brief        Implements the serialisation of the scope data for the json format by implementing the
+ *               IPacker interface.
  *
  *****************************************************************************************************************************************/
 
@@ -28,18 +29,37 @@ typedef struct __JsonPackerPrivateData* JsonPackerHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the Packer */
+/**
+ * Constructor
+ * @param maxNumberOfChannels
+ * @param maxAddressesToAnnounce
+ * @param byteStream A reference to the output stream
+ * @return
+ */
 JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddressesToAnnounce,
                                    IByteStreamHandle byteStream);
 
-/* Destroys the instance of the Packer */
-void JsonPacker_destroy(JsonPackerHandle self);
-
-/* Calculates how much space the buffers need
- * This is used, so that the outbut byte buffer can be defined without having to be generated in the JsonPacker*/
+/**
+ * Calculates how much space the buffers need
+ * This is used, so that the outbut byte buffer can be defined without having to be generated in the JsonPacker
+ * @param maxNumberOfChannels
+ * @param sizeOfChannels
+ * @param maxAddressesToAnnounce
+ * @return
+ */
 size_t JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t sizeOfChannels, size_t maxAddressesToAnnounce);
 
-/* Returns the IPacker interface */
+/**
+ * Returns the packer interface
+ * @param self
+ * @return
+ */
 IPackerHandle JsonPacker_getIPacker(JsonPackerHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void JsonPacker_destroy(JsonPackerHandle self);
 
 #endif
