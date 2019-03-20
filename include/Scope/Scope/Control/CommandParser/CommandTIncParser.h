@@ -15,6 +15,8 @@
 
 #include <Scope/Control/Command/CommandTInc.h>
 #include <Scope/Control/IUnpacker.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 
 /******************************************************************************
  Define class handle data
@@ -24,16 +26,31 @@ typedef struct __CommandTIncParserPrivateData* CommandTIncParserHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command parser */
+/**
+ * Constructor
+ * @param scope
+ * @param unpacker
+ * @return
+ */
 CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
 
-/* Configurates the gives command */
+/**
+ * Returns the command
+ * @param self
+ * @return
+ */
 ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self);
 
-/* Returns the name of the command */
+/**
+ * Returns the name of the command
+ * @return
+ */
 char* CommandTIncParser_getName(void);
 
-/* Deconstructor: Deletes the instance of the command parser */
+/**
+ * Deconstructor
+ * @param self
+ */
 void CommandTIncParser_destroy(CommandTIncParserHandle self);
 
 #endif

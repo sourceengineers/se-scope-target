@@ -8,6 +8,15 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandParser/CommandAddrParser.h>
+#include <Scope/Control/Command/CommandAddr.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Control/ParserDefinitions.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
 
 /******************************************************************************
@@ -24,7 +33,7 @@ typedef struct __CommandAddrParserPrivateData{
 
 } CommandAddrParserPrivateData;
 
-/* Takes a String as input and retrieves the matching data type defined in "DataTypes.h" */
+/* Takes a String as input and retrieves the matching data type defined in "DataTypes.h> */
 static DATA_TYPES parseStringToDataType(const char* dataTypeName, size_t maxLength);
 
 /******************************************************************************
@@ -32,19 +41,19 @@ static DATA_TYPES parseStringToDataType(const char* dataTypeName, size_t maxLeng
 ******************************************************************************/
 static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t maxLength){
 
-    if(strncmp(dataTypeName, UINT8_NAME, maxLength) == 0){
-        return UINT8;
-    }else if(strncmp(dataTypeName, UINT16_NAME, maxLength) == 0){
-        return UINT16;
-    }else if(strncmp(dataTypeName, UINT32_NAME, maxLength) == 0){
-        return UINT32;
-    }else if(strncmp(dataTypeName, UINT64_NAME, maxLength) == 0){
-        return UINT64;
-    }else if(strncmp(dataTypeName, FLOAT_NAME, maxLength) == 0){
-        return FLOAT;
+    if(strncmp(dataTypeName, SE_UINT8_NAME, maxLength) == 0){
+        return SE_UINT8;
+    }else if(strncmp(dataTypeName, SE_UINT16_NAME, maxLength) == 0){
+        return SE_UINT16;
+    }else if(strncmp(dataTypeName, SE_UINT32_NAME, maxLength) == 0){
+        return SE_UINT32;
+    }else if(strncmp(dataTypeName, SE_UINT64_NAME, maxLength) == 0){
+        return SE_UINT64;
+    }else if(strncmp(dataTypeName, SE_FLOAT_NAME, maxLength) == 0){
+        return SE_FLOAT;
     }
 
-    return FLOAT;
+    return SE_FLOAT;
 }
 
 /******************************************************************************

@@ -14,8 +14,8 @@
 #ifndef COMMANDCLEAR_H_
 #define COMMANDCLEAR_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -26,14 +26,25 @@ typedef struct __CommandClearPrivateData* CommandClearHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command */
-CommandClearHandle CommandClear_create(IScopeHandle scope);
+/**
+ * Constructor
+ * @param scope Dependency to the scope interface
+ * @return
+ */
+ CommandClearHandle CommandClear_create(IScopeHandle scope);
 
-/* Deconstructor: Deletes the instance of the command */
+/**
+ * Returns the ICommand interface
+ * @param self
+ * @return
+ */
+ ICommandHandle CommandClear_getICommand(CommandClearHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
 void CommandClear_destroy(CommandClearHandle self);
-
-/* Returns the command interface */
-ICommandHandle CommandClear_getICommand(CommandClearHandle self);
 
 
 #endif

@@ -7,10 +7,12 @@
  *
  *****************************************************************************************************************************************/
 
+#include <Scope/Control/Controller.h>
+#include <Scope/Core/Scope.h>
+#include <Scope/Serialisation/Serializer.h>
+
+#include <stdlib.h>
 #include <Scope/Builders/ScopeBuilder.h>
-#include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
-#include <Scope/Communication/Interfaces/EthernetJson.h>
 
 /******************************************************************************
  Define private data
@@ -21,11 +23,10 @@ typedef struct __ScopeBuilderPrivateData{
     IByteStreamHandle output;
     IPackerHandle packer;
     IUnpackerHandle unpacker;
-    ICommunicatorHandle interface;
+    ICommunicatorHandle communicator;
     ScopeHandle scope;
     ControllerHandle controller;
     SerializerHandle serializer;
-    CommunicatorHandle communicator;
     AddressStorageHandle addressStorage;
 
     uint32_t* timestamp;
@@ -35,9 +36,8 @@ typedef struct __ScopeBuilderPrivateData{
 } ScopeBuilderPrivateData;
 
 /******************************************************************************
- Private functions
+ Public functions
 ******************************************************************************/
-
 ScopeBuilderHandle ScopeBuilder_create(void){
 
     ScopeBuilderHandle self = malloc(sizeof(ScopeBuilderPrivateData));
@@ -46,11 +46,10 @@ ScopeBuilderHandle ScopeBuilder_create(void){
     self->output = NULL;
     self->packer = NULL;
     self->unpacker = NULL;
-    self->interface = NULL;
+    self->communicator = NULL;
     self->scope = NULL;
     self->controller = NULL;
     self->serializer = NULL;
-    self->communicator = NULL;
     self->timestamp = NULL;
     self->addressStorage = NULL;
 
@@ -76,8 +75,8 @@ void ScopeBuilder_setParser(ScopeBuilderHandle self, IPackerHandle packer, IUnpa
     self->unpacker = unpacker;
 }
 
-void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle interface){
-    self->interface = interface;
+void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle communicator){
+    self->communicator = communicator;
 }
 
 void ScopeBuilder_setAddressStorage(ScopeBuilderHandle self, AddressStorageHandle addressStorage){
@@ -105,17 +104,29 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     if(self->packer == NULL){
         return obj;
     }
-    if(self->interface == NULL){
+    if(self->communicator == NULL){
         return obj;
     }
     if((self->amountOfChannels == 0) || (self->sizeOfChannels == 0)){
         return obj;
     }
 
-    self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->addressStorage, self->timestamp);
-    self->controller = Controller_create(Scope_getIScope(self->scope), self->packer, self->unpacker);
-    self->serializer = Serializer_create(self->packer, self->unpacker, self->interface);
-    self->communicator = Communicator_create(self->interface);
+    /* Create layers */
+    self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->timestamp);
+    self->controller = Controller_create(Scope_getIScope(self->scope), self->packer, self->unpacker, self->addressStorage);
+    self->serializer = Serializer_create(self->packer, self->unpacker);
+
+    /* Connect all observers */
+    self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));
+    Serializer_attachControlObserver(self->serializer, Controller_getCommandObserver(self->controller));
+    Scope_attachPackObserver(self->scope, Controller_getCommandPackObserver(self->controller));
+    Controller_attachPackObserver(self->controller, Serializer_getPackObserver(self->serializer));
+    Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));
+
+    if(self->addressStorage != NULL){
+        AddressStorage_attachObserver(self->addressStorage, Controller_getCommandPackObserver(self->controller));
+    }
+
 
     obj.scope = self->scope;
     obj.runScope = Scope_getIRunnable(self->scope);
@@ -123,8 +134,8 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     obj.runDataAggregator = Controller_getTxRunnable(self->controller);
     obj.runUnpacker = Serializer_getRxRunnable(self->serializer);
     obj.runPacker = Serializer_getTxRunnable(self->serializer);
-    obj.runCommunicationRx = Communicator_getRxRunnable(self->communicator);
-    obj.runCommunicationTx = Communicator_getTxRunnable(self->communicator);
+    obj.runCommunicationRx = self->communicator->getRxRunnable(self->communicator);
+    obj.runCommunicationTx = self->communicator->getTxRunnable(self->communicator);
 
     return obj;
 }
@@ -134,5 +145,4 @@ void ScopeBuilder_destroy(ScopeBuilderHandle self){
     Scope_destroy(self->scope);
     Controller_destroy(self->controller);
     Serializer_destroy(self->serializer);
-    Communicator_destroy(self->communicator);
 }

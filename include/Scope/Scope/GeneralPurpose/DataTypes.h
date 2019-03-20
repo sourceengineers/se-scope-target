@@ -5,8 +5,12 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Defines different types in a enum to achieve a "template" kind
- *               of programming.
+ * @brief        Defines the data types that can be used by the scope.
+ *               It specifies the size of addresses by defines which can be controlled by setting
+ *               the ARCH_SIZE_32. ARCH_SIZE_32=1 equals a 32 bit architecture and
+ *               ARCH_SIZE_32=0, or not setting ARCH_SIZE_32 at all, defined a 64 bit architecture.
+ *               This is necessary to be able to read from the correct address, and that the channels can be configured
+ *               properly
  *
  *****************************************************************************************************************************************/
 
@@ -18,22 +22,30 @@
 #include <stddef.h>
 
 /* Define the string names of the data types */
-#define UINT8_NAME "UINT8"
-#define UINT16_NAME "UINT16"
-#define UINT32_NAME "UINT32"
-#define UINT64_NAME "UINT64"
-#define FLOAT_NAME "FLOAT"
-#define DOUBLE_NAME "DOUBLE"
 
-/* Define list of names for easy access, matching the DATA_TYPES enum entries */
-static const char* DATA_TYPE_NAMES[6] = {UINT8_NAME, UINT16_NAME, UINT32_NAME, UINT64_NAME, FLOAT_NAME, DOUBLE_NAME};
+#define SE_UINT8_NAME "SE_UINT8"
+#define SE_UINT16_NAME "SE_UINT16"
+#define SE_UINT32_NAME "SE_UINT32"
+#define SE_UINT64_NAME "SE_UINT64"
+#define SE_FLOAT_NAME "SE_FLOAT"
+#define SE_DOUBLE_NAME "SE_DOUBLE"
 
-/* Define dataypes themselves */
+/** Define list of names for easy access, matching the DATA_TYPES enum entries */
+static const char* DATA_TYPE_NAMES[6] = {SE_UINT8_NAME, SE_UINT16_NAME, SE_UINT32_NAME, SE_UINT64_NAME, SE_FLOAT_NAME, SE_DOUBLE_NAME};
+
+/**
+ * Enum representing the data types
+ */
 typedef enum{
-    UINT8, UINT16, UINT32, UINT64, FLOAT, DOUBLE
+    SE_UINT8, // Representing uint_8 data
+    SE_UINT16, // Representing uint_16 data
+    SE_UINT32, // Representing uint_32 data
+    SE_UINT64, // Representing uint_64 data
+    SE_FLOAT, // Representing Float data
+    SE_DOUBLE // Representing Double data
 } DATA_TYPES;
 
-/* Define macro to fetch the right data type name */
+/** Define macro to fetch the right data type name */
 #define getDataTypeName(type) DATA_TYPE_NAMES[type]
 
 /* Choose the right integer length */

@@ -5,9 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Interface for functions which will be used by the commands.
- *               This interface will not be visible for parts outside of the
- *               scope
+ * @brief        Interface for functions which will be used to communicate with the control layer.
  *
  ******************************************************************************/
 
@@ -30,53 +28,112 @@ typedef struct IScopeStruct* IScopeHandle;
 typedef struct IScopeStruct{
     GenericReference handle;
 
-    /* Functions represention the various commands */
+    /**
+     * Tells the scope to poll data in the active channels
+     * Corresponding command: ev_poll
+     * @param scope
+     */
     void (* poll)(IScopeHandle scope);
 
+    /**
+     * Sets the time increment between poll events.
+     * Corresponding command: cf_t_inc
+     * @param scope
+     * @param timeIncrement
+     */
     void (* setTimeIncrement)(IScopeHandle scope, uint32_t timeIncrement);
 
+    /**
+     * Returns the time increment which is set between poll events
+     * @param scope
+     * @return
+     */
     uint32_t (* getTimeIncrement)(IScopeHandle scope);
 
+    /**
+     * Returns a reference to the timestamp stream
+     * @param scope
+     * @return
+     */
     IIntStreamHandle (* getTimestamp)(IScopeHandle scope);
 
+    /**
+     * Clears the timestamp stream as well as all channels
+     * Corresponding command: ev_clear
+     * @param scope
+     */
     void (* clear)(IScopeHandle scope);
 
+    /**
+     * Configures the trigger. Used for cf_trigger
+     * @param scope
+     * @param conf
+     */
     void (* configureTrigger)(IScopeHandle scope, TriggerConfiguration conf);
 
+    /**
+     * Configurates the channels of a specific address.
+     * Corresponding command: cf_addr
+     * @param scope
+     * @param address Address which the channel will poll from
+     * @param idOfChangedChannel If idOfChangedChannel > max amount of channels, the command gets rejected.
+     * @param typeOfAddress Type of the address
+     */
     void (* configureChannelAddress)(IScopeHandle scope, void* address,
                                      uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress);
 
-    void (* announce)(IScopeHandle scope);
-
+    /**
+     * Commands the scope to transmit its data
+     * Corresponding command: ev_trans
+     * @param scope
+     */
     void (* transmit)(IScopeHandle scope);
 
+    /**
+     * Starts the channel with its id matching idOfChangedChannel
+     * Corresponding command: cf_running (true)
+     * @param scope
+     * @param idOfChangedChannel If idOfChangedChannel > max amount of channels, the command gets rejected.
+     */
     void (* setChannelRunning)(IScopeHandle scope, uint32_t idOfChangedChannel);
 
+    /**
+     * Stopps the channel with its id matching idOfChangedChannel
+     * Corresponding command: cf_running (false)
+     * @param scope
+     * @param idOfChangedChannel If idOfChangedChannel > max amount of channels, the command gets rejected.
+     */
     void (* setChannelStopped)(IScopeHandle scope, uint32_t idOfChangedChannel);
 
-    /* Helper functions */
+    /**
+     * Returns the max amount of channels configured
+     * @param scope
+     * @return
+     */
     size_t (* getAmountOfChannels)(IScopeHandle scope);
 
-    bool (* scopeIsReadyToSend)(IScopeHandle scope);
-
-    bool (* dataIsReadyToSend)(IScopeHandle scope);
-
-    bool (* announcementIsReadyToSend)(IScopeHandle scope);
-
-    void (* dataIsTransmitted)(IScopeHandle scope);
-
-    /* Data fetcher functions */
+    /**
+     * Returns the data in the trigger. Such as triggered or not, timestamp when triggered and activated channel
+     * @param scope
+     * @return
+     */
     TriggeredValues (* getTriggerData)(IScopeHandle scope);
 
+    /**
+     * Checks if a specific channel is ready to be packed
+     * @param scope
+     * @param channelId  If channelId > max amount of channels, the command gets rejected.
+     * @return
+     */
     bool (* channelHasToBePacked)(IScopeHandle scope, uint32_t channelId);
 
+    /**
+     * Returns a reference to a FloatRingBuffer of the channel matching channelId
+     * @param scope
+     * @param channelId If channelId > max amount of channels, the command gets rejected.
+     * @return
+     */
     FloatRingBufferHandle (* getChannelBuffer)(IScopeHandle scope, uint32_t channelId);
-
-    AddressDefinition* (* getAnnounceAddressToTransmit)(IScopeHandle scope, uint32_t addressId);
-
-    size_t (* getMaxAmmountOfAnnounceAddresses)(IScopeHandle scope);
-
-    size_t (* getMaxSizeOfChannel)(IScopeHandle scope);
 
 } IScope;
 

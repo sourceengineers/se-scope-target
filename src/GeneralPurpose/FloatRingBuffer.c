@@ -8,6 +8,9 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
+
+#include <stdint.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 /******************************************************************************
@@ -56,7 +59,7 @@ static bool incHead(FloatRingBufferHandle self){
 }
 
 /******************************************************************************
- Private functions
+ Public functions
 ******************************************************************************/
 FloatRingBufferHandle FloatRingBuffer_create(size_t capacity){
 

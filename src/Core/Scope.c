@@ -8,8 +8,19 @@
 *******************************************************************************/
 
 #include <Scope/Core/Scope.h>
-#include <Scope/GeneralPurpose/BufferedIntStream.h>
 #include <Scope/Core/Timestamper.h>
+#include <Scope/Control/AddressStorage.h>
+#include <Scope/Core/Channel.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/Core/Trigger.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/GeneralPurpose/IIntStream.h>
+#include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stdbool.h>
 #include <stdlib.h>
 
 /******************************************************************************
@@ -25,17 +36,46 @@ typedef struct __ScopePrivateData{
     ChannelHandle* channels;
     TriggerHandle trigger;
     size_t channelSize;
-    AddressStorageHandle addressStorage;
     TimestamperHandle timestamper;
 
-    /* Flags */
-    bool scopeIsReadyToSend;
-    bool dataIsReadyToSend;
+    IObserverHandle observer;
 
 } ScopePrivateData;
 
-bool allChannelsAreStopped(ScopeHandle self);
 
+static void scopePoll(IScopeHandle scope);
+
+static void scopeClear(IScopeHandle scope);
+
+static void scopeSetTimeIncrement(IScopeHandle scope, uint32_t timeIncrement);
+
+static uint32_t getTimeIncrement(IScopeHandle scope);
+
+static size_t getAmountOfChannels(IScopeHandle scope);
+
+static IIntStreamHandle getTimestamp(IScopeHandle scope);
+
+static void configureTrigger(IScopeHandle scope, TriggerConfiguration conf);
+
+static void setChannelRunning(IScopeHandle scope, uint32_t idOfChangedChannel);
+
+static void setChannelStopped(IScopeHandle scope, uint32_t idOfChangedChannel);
+
+static void configureChannelAddress(IScopeHandle scope, void* address,
+
+                                    uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress);
+
+void transmit(IScopeHandle scope);
+
+static void run(IRunnableHandle runnable);
+
+static TriggeredValues getTriggerData(IScopeHandle scope);
+
+static bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId);
+
+static FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t channelId);
+
+static bool allChannelsAreStopped(ScopeHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -100,53 +140,11 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
     Scope_configureChannel(self, idOfChangedChannel, address, typeOfAddress);
 }
 
-void announce(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    Scope_announce(self);
-}
-
 void transmit(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
     Scope_transmit(self);
 }
-
-bool scopeIsReadyToSend(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    return self->scopeIsReadyToSend;
-}
-
-bool dataIsReadyToSend(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    return self->dataIsReadyToSend;
-}
-
-bool announcementIsReadyToSend(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    if(self->addressStorage == NULL){
-        return false;
-    }
-
-    return AddressStorage_hasToBeSent(self->addressStorage);
-}
-
-void dataIsTransmitted(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    self->dataIsReadyToSend = false;
-    self->scopeIsReadyToSend = false;
-
-    if(self->addressStorage == NULL){
-        return;
-    }
-
-    AddressStorage_hasBeenSent(self->addressStorage);
-}
-
 
 static void run(IRunnableHandle runnable){
     ScopeHandle self = (ScopeHandle) runnable->handle;
@@ -154,7 +152,7 @@ static void run(IRunnableHandle runnable){
     Scope_poll(self);
 }
 
-TriggeredValues getTriggerData(IScopeHandle scope){
+static TriggeredValues getTriggerData(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
     TriggeredValues values;
@@ -166,7 +164,7 @@ TriggeredValues getTriggerData(IScopeHandle scope){
     return values;
 }
 
-bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId){
+static bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
     if(channelId >= self->amountOfChannels){
@@ -176,7 +174,7 @@ bool channelHasToBePacked(IScopeHandle scope, uint32_t channelId){
     return Channel_getAmountOfUsedSwapData(self->channels[channelId]) ==  Channel_getCapacity(self->channels[channelId]);
 }
 
-FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t channelId){
+static FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t channelId){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
     if(channelId >= self->amountOfChannels){
@@ -186,37 +184,7 @@ FloatRingBufferHandle getChannelBuffer(IScopeHandle scope, uint32_t channelId){
     return Channel_getBuffer(self->channels[channelId]);
 }
 
-AddressDefinition* getAnnounceAddressToTransmit(IScopeHandle scope, uint32_t addressId){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    if(self->addressStorage == NULL){
-        return NULL;
-    }
-
-    if(addressId >= AddressStorage_getMaxAmountOfAddresses(self->addressStorage)){
-        return NULL;
-    }
-
-    return AddressStorage_getAddressToTransmit(self->addressStorage, addressId);
-}
-
-size_t getMaxAmmountOfAnnounceAddresses(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    if(self->addressStorage == NULL){
-        return 0;
-    }
-
-    return AddressStorage_getMaxAmountOfAddresses(self->addressStorage);
-}
-
-size_t getMaxSizeOfChannel(IScopeHandle scope){
-    ScopeHandle self = (ScopeHandle) scope->handle;
-
-    return self->channelSize;
-}
-
-bool allChannelsAreStopped(ScopeHandle self){
+static bool allChannelsAreStopped(ScopeHandle self){
     bool channelIsRunning = false;
 
     for(int i = 0; i < self->amountOfChannels; ++i){
@@ -227,21 +195,16 @@ bool allChannelsAreStopped(ScopeHandle self){
     }
     return !channelIsRunning;
 }
-
 /******************************************************************************
  Public functions
 ******************************************************************************/
 ScopeHandle Scope_create(size_t channelSize,
                          size_t amountOfChannels,
-                         AddressStorageHandle addressStorage,
                          uint32_t* referenceTimestamp){
 
     ScopeHandle self = malloc(sizeof(ScopePrivateData));
 
-    self->scopeIsReadyToSend = false;
-    self->dataIsReadyToSend = false;
     self->channelSize = channelSize;
-    self->addressStorage = addressStorage;
 
     self->scope.handle = self;
     self->scope.poll = &scopePoll;
@@ -254,17 +217,9 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.setChannelRunning = &setChannelRunning;
     self->scope.configureChannelAddress = &configureChannelAddress;
     self->scope.configureTrigger = &configureTrigger;
-    self->scope.announcementIsReadyToSend = &announcementIsReadyToSend;
-    self->scope.scopeIsReadyToSend = &scopeIsReadyToSend;
-    self->scope.dataIsReadyToSend = &dataIsReadyToSend;
-    self->scope.dataIsTransmitted = &dataIsTransmitted;
     self->scope.getTriggerData = &getTriggerData;
     self->scope.channelHasToBePacked = &channelHasToBePacked;
     self->scope.getChannelBuffer = &getChannelBuffer;
-    self->scope.getAnnounceAddressToTransmit = &getAnnounceAddressToTransmit;
-    self->scope.getMaxAmmountOfAnnounceAddresses = &getMaxAmmountOfAnnounceAddresses;
-    self->scope.getMaxSizeOfChannel = &getMaxSizeOfChannel;
-    self->scope.announce = &announce;
     self->scope.transmit = &transmit;
 
     self->runnable.handle = self;
@@ -284,6 +239,10 @@ ScopeHandle Scope_create(size_t channelSize,
     return self;
 }
 
+void Scope_attachPackObserver(ScopeHandle self, IObserverHandle observer){
+    self->observer = observer;
+}
+
 void Scope_destroy(ScopeHandle self){
 
     for(size_t i = 0; i < self->amountOfChannels; ++i){
@@ -300,23 +259,11 @@ void Scope_destroy(ScopeHandle self){
 }
 
 void Scope_transmit(ScopeHandle self){
-
-    self->scopeIsReadyToSend = true;
-    self->dataIsReadyToSend = true;
-}
-
-void Scope_announce(ScopeHandle self){
-
-    if(self->addressStorage == NULL){
-        return;
-    }
-
-    self->scopeIsReadyToSend = true;
-    AddressStorage_announce(self->addressStorage);
+    PACK_TYPES typeToPack = PACK_DATA;
+    self->observer->update(self->observer, &typeToPack);
 }
 
 void Scope_poll(ScopeHandle self){
-
 
     /* Check if the scope is ready to poll again, according to the set timeIncrement */
     if(Timestamper_updateElapsedTime(self->timestamper) == false){
@@ -401,17 +348,6 @@ void Scope_clear(ScopeHandle self){
     }
     Timestamper_clear(self->timestamper);
     Trigger_clear(self->trigger);
-}
-
-void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
-                                const DATA_TYPES type,
-                                const uint32_t addressId){
-
-    if(self->addressStorage == NULL){
-        return;
-    }
-
-    AddressStorage_addAnnounceAddress(self->addressStorage, name, address, type, addressId);
 }
 
 IRunnableHandle Scope_getIRunnable(ScopeHandle self){

@@ -8,9 +8,9 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Core/Timestamper.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/BufferedFloatStream.h>
 #include <Scope/GeneralPurpose/BufferedIntStream.h>
+#include <Scope/GeneralPurpose/IIntStream.h>
+
 #include <stdlib.h>
 
 /******************************************************************************

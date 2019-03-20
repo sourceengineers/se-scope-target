@@ -3,7 +3,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 # Set the Project name
 set(PROJECT_NAME
-        gemmi
+        se-scope
         )
 ################################################################################
 # Set options
@@ -17,10 +17,7 @@ if (ARCHITECTURE STREQUAL "X86")
     set(CMAKE_C_FLAGS -m32)
     set(CMAKE_CXX_FLAGS "-m32 -fpermissive")
 
-    option(BUILD_SHARED_LIBS OFF)
-
-    set(GEMMI_TESTING ON)
-    set(GEMMI_BUILD_EXAMPLES ON)
+    set(SE_TESTING ON)
 
     # Inform the compiler to compile for 32 bit code
     add_definitions(-DARCH_SIZE_32=1)
@@ -30,8 +27,7 @@ elseif (ARCHITECTURE STREQUAL "X64" OR ARCHITECTURE STREQUAL "")
     # X64 Host machines should be able to run tests as well as examples
     message("-- x64 architecture is on")
 
-    set(GEMMI_BUILD_EXAMPLES ON)
-    set(GEMMI_TESTING ON)
+    set(SE_TESTING ON)
 
     # Inform the compiler to compile for 64 bit code
     add_definitions(-DARCH_SIZE_32=0)
@@ -43,8 +39,7 @@ elseif (ARCHITECTURE STREQUAL "EMBEDDED")
 
     # Disable testing and examples because they will not run on the
     # host with a embedded compiler anyway
-    set(GEMMI_TESTING OFF)
-    set(GEMMI_BUILD_EXAMPLES OFF)
+    set(SE_TESTING OFF)
 
     # Inform the compiler to compile for 32 bit code
     add_definitions(-DARCH_SIZE_32=1)
@@ -60,7 +55,7 @@ set(PROJECT_SOURCE_DIR
         src
         )
 set(PROJECT_DEPENDENCIES_DIR
-        3party
+        3rdparty
         )
 set(PROJECT_EXAMPLES_DIR
         examples
@@ -82,7 +77,7 @@ file(GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h")
 ################################################################################
 # GTest
 ################################################################################
-if (GEMMI_TESTING)
+if (SE_TESTING)
     enable_testing()
     set(BUILD_GMOCK ON)
     add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
@@ -107,14 +102,14 @@ target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
 ################################################################################
 # Add examples
 ################################################################################
-if (GEMMI_BUILD_EXAMPLES)
-    add_subdirectory(examples/dynamic_example)
-    add_subdirectory(examples/static_example)
-endif ()
+#if (SE_BUILD_EXAMPLES)
+#    add_subdirectory(examples/dynamic_example)
+#    add_subdirectory(examples/static_example)
+#endif ()
 ################################################################################
 # Install project
 ################################################################################
-TARGET_INCLUDE_DIRECTORIES(gemmi
+TARGET_INCLUDE_DIRECTORIES(se-scope
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>

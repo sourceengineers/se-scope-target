@@ -8,6 +8,8 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/GeneralPurpose/IntRingBuffer.h>
+
+#include <stdbool.h>
 #include <stdlib.h>
 
 /******************************************************************************
@@ -56,7 +58,7 @@ static bool incHead(IntRingBufferHandle self){
 }
 
 /******************************************************************************
- Private functions
+ Public functions
 ******************************************************************************/
 IntRingBufferHandle IntRingBuffer_create(size_t capacity){
 

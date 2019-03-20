@@ -9,6 +9,8 @@
 
 #include <Scope/GeneralPurpose/BufferedFloatStream.h>
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/GeneralPurpose/IFloatStream.h>
+
 #include <stdlib.h>
 
 /******************************************************************************
@@ -21,8 +23,22 @@ typedef struct __BufferedFloatStreamPrivateData{
 
 } BufferedFloatStreamPrivateData;
 
+static bool dataIsReady(IFloatStreamHandle stream);
+
+static float readData(IFloatStreamHandle stream);
+
+static void readAll(IFloatStreamHandle stream, float* data, const size_t length);
+
+static size_t streamLength(IFloatStreamHandle stream);
+
+static void writeData(IFloatStreamHandle stream, const float data);
+
+static void writeAll(IFloatStreamHandle stream, const float* data, const size_t length);
+
+static void flush(IFloatStreamHandle stream);
+
 /******************************************************************************
- Public functions
+ Private functions
 ******************************************************************************/
 static bool dataIsReady(IFloatStreamHandle stream){
     BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
@@ -76,6 +92,10 @@ static void flush(IFloatStreamHandle stream){
 
     FloatRingBuffer_clear(self->buffer);
 }
+
+/******************************************************************************
+ Public functions
+******************************************************************************/
 
 BufferedFloatStreamHandle BufferedFloatStream_create(size_t capacity){
 

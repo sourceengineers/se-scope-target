@@ -790,7 +790,7 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\3party\jsmn\jsmn\jsmn.c</PathWithFileName>
+      <PathWithFileName>..\3rdparty\jsmn\jsmn\jsmn.c</PathWithFileName>
       <FilenameWithoutPath>jsmn.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>

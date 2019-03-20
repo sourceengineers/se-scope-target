@@ -12,10 +12,18 @@
 #ifndef SCOPEBUILDER_H
 #define SCOPEBUILDER_H
 
-#include <Scope/Core/Scope.h>
 #include <Scope/Control/Controller.h>
-#include <Scope/Communication/Communicator.h>
+#include <Scope/Core/Scope.h>
 #include <Scope/Serialisation/Serializer.h>
+#include <Scope/Communication/ICommunicator.h>
+#include <Scope/Control/IPacker.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Control/AddressStorage.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stddef.h>
+#include <stdint.h>
 
 /******************************************************************************
  Define class handle data
@@ -42,31 +50,71 @@ typedef struct ScopeObjectStruct{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-/* Constructor: Creates a new instance of the channel */
+/**
+ * Constructor
+ * @return ScopeBuilderHandle
+ */
 ScopeBuilderHandle ScopeBuilder_create(void);
 
-/* Builds the scope with gives objects */
+/**
+ * Builds the scope and returns an object with runnables
+ * @param self
+ * @return ScopeObject
+ */
 ScopeObject ScopeBuilder_build(ScopeBuilderHandle self);
 
-/* Set the number and the size of the channels */
+/**
+ * Sets the amount and size of channels that have to be build
+ * @param self
+ * @param amountOfChannels
+ * @param sizeOfChannels
+ */
 void ScopeBuilder_setChannels(ScopeBuilderHandle self, size_t amountOfChannels, size_t sizeOfChannels);
 
-/* Set the used input and output streams */
+/**
+ * Set the used input and output streams
+ * @param self
+ * @param input Stream which contains the received data
+ * @param output Stream which contains the data to be sent
+ */
 void ScopeBuilder_setStreams(ScopeBuilderHandle self, IByteStreamHandle input, IByteStreamHandle output);
 
-/* Set a reference to the used timestamp */
+/**
+ * Sets the timestamp reference which will be passed on to the scope
+ * @param self
+ * @param timestamp
+ */
+/* */
 void ScopeBuilder_setTimestampReference(ScopeBuilderHandle self, uint32_t* timestamp);
 
-/* Set the used parsers */
+/**
+ * Set the used protocol
+ * @param self
+ * @param packer Packer which will serialize the data of the scope.
+ * @param unpacker Unpacker used to deserialize the commands.
+ */
 void ScopeBuilder_setParser(ScopeBuilderHandle self, IPackerHandle packer, IUnpackerHandle unpacker);
 
-/* Set the used communication protocol */
+/**
+ * Set the used communication interface
+ * @param self
+ * @param interface
+ */
 void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle interface);
 
-/* If wanted, set the address announcer */
+/**
+ * Add the AddressStorage. With the help of the AddressStorage, addresses and their aliases can be sent to the host
+ * This can be handy when the addresses aren't known at compile time.
+ * This is optional.
+ * @param self
+ * @param addressStorage
+ */
 void ScopeBuilder_setAddressStorage(ScopeBuilderHandle self, AddressStorageHandle addressStorage);
 
-/* Deconstructor: Deletes the instance of the channel */
+/**
+ * Deconstructor
+ * @param self
+ */
 void ScopeBuilder_destroy(ScopeBuilderHandle self);
 
 

@@ -25,8 +25,8 @@ TEST(json_packer, unpack_test){
 
     IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(5, 10, outputStream));
 
-    packer->prepareAddressAnnouncement(packer, "VAR_1", "UINT32", 11111);
-    packer->prepareAddressAnnouncement(packer, "VAR_2", "FLOAT", 22222);
+    packer->prepareAddressAnnouncement(packer, "VAR_1", "SE_UINT32", 11111);
+    packer->prepareAddressAnnouncement(packer, "VAR_2", "SE_FLOAT", 22222);
 
     packer->prepareTrigger(packer, true, 1, 1000);
 
@@ -77,6 +77,6 @@ TEST(json_packer, unpack_test){
     data[dataPending] = '\0';
 
     EXPECT_STREQ(data,
-                 "{\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5],\"1\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5]},\"t_stmp\":[0,1,2,3,4,5],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"UINT32\"],\"VAR_2\":[22222,\"FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");
+                 "{\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5],\"1\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5]},\"t_stmp\":[0,1,2,3,4,5],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"SE_UINT32\"],\"VAR_2\":[22222,\"SE_FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");
 
 }

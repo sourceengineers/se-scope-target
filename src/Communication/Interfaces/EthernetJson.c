@@ -8,6 +8,12 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Communication/Interfaces/EthernetJson.h>
+#include <Scope/Communication/ICommunicator.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stdbool.h>
 #include <stdlib.h>
 
 /******************************************************************************
@@ -21,44 +27,52 @@ typedef struct __EthernetJsonPrivateData{
     IByteStreamHandle output;
 
     bool txPendingToValidateAndTransmit;
+    bool rxDataReady;
     EthernetTransmitCallback callback;
 
+    IObserverHandle rxObserver;
+    IObserver txObserver;
+
+    IRunnable rxRunnable;
+    IRunnable txRunnable;
 } EthernetJsonPrivateData;
+
+static void runRx(IRunnableHandle runnable);
+
+static void runTx(IRunnableHandle runnable);
+
+static void update(IObserverHandle observer, void *state);
+
+static void attachObserver(ICommunicatorHandle communicator, IObserverHandle observer);
+
+static IObserverHandle getObserver(ICommunicatorHandle communicator);
+
+static IRunnableHandle getRxRunnable(ICommunicatorHandle communicator);
+
+static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-bool rxDataReady(ICommunicatorHandle communicator){
-    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
-    return self->input->length(self->input) > 0;
-}
+static void runRx(IRunnableHandle runnable) {
+    EthernetJsonHandle self = (EthernetJsonHandle) runnable->handle;
 
-void txReadyToValidate(ICommunicatorHandle communicator){
-    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
-    self->txPendingToValidateAndTransmit = true;
-}
-
-void rxDataHasBeenFetched(ICommunicatorHandle communicator){
-    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
-    self->input->flush(self->input);
-}
-
-void runRx(ICommunicatorHandle communicator){
-    return;
-}
-
-bool txSendingPending(ICommunicatorHandle communicator){
-    return false;
-}
-
-void runTx(ICommunicatorHandle communicator){
-    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
-
-    if(self->txPendingToValidateAndTransmit == false){
+    if (self->rxDataReady == false) {
         return;
     }
 
-    if(self->output->length(self->output) <= 0){
+    self->rxDataReady = false;
+    self->rxObserver->update(self->rxObserver, NULL);
+}
+
+static void runTx(IRunnableHandle runnable) {
+    EthernetJsonHandle self = (EthernetJsonHandle) runnable->handle;
+
+    if (self->txPendingToValidateAndTransmit == false) {
+        return;
+    }
+
+    if (self->output->length(self->output) <= 0) {
         return;
     }
 
@@ -68,48 +82,82 @@ void runTx(ICommunicatorHandle communicator){
     self->txPendingToValidateAndTransmit = false;
 }
 
+static void update(IObserverHandle observer, void *state) {
+    EthernetJsonHandle self = (EthernetJsonHandle) observer->handle;
+    self->txPendingToValidateAndTransmit = true;
+}
+
+static void attachObserver(ICommunicatorHandle communicator, IObserverHandle observer) {
+    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
+    self->rxObserver = observer;
+}
+
+static IObserverHandle getObserver(ICommunicatorHandle communicator) {
+    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
+    return &self->txObserver;
+}
+
+static IRunnableHandle getRxRunnable(ICommunicatorHandle communicator) {
+    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
+    return &self->rxRunnable;
+}
+
+static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator) {
+    EthernetJsonHandle self = (EthernetJsonHandle) communicator->handle;
+    return &self->txRunnable;
+}
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
 EthernetJsonHandle
-EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output){
+EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output) {
 
     EthernetJsonHandle self = malloc(sizeof(EthernetJsonPrivateData));
 
     self->communicator.handle = self;
-    self->communicator.runRx = &runRx;
-    self->communicator.runTx = &runTx;
-    self->communicator.rxDataReady = &rxDataReady;
-    self->communicator.rxDataHasBeenFetched = &rxDataHasBeenFetched;
-    self->communicator.txReadyToValidate = &txReadyToValidate;
-    self->communicator.txSendingPending = &txSendingPending;
+    self->rxRunnable.handle = self;
+    self->txRunnable.handle = self;
+    self->txObserver.handle = self;
+
+    self->communicator.attachObserver = &attachObserver;
+    self->communicator.getObserver = &getObserver;
+    self->communicator.getRxRunnable = &getRxRunnable;
+    self->communicator.getTxRunnable = &getTxRunnable;
+
+    self->txObserver.update = &update;
+
     self->callback = callback;
+    self->rxRunnable.run = &runRx;
+    self->txRunnable.run = &runTx;
 
     self->txPendingToValidateAndTransmit = false;
+    self->rxDataReady = false;
     self->input = input;
     self->output = output;
 
     return self;
 }
 
-ICommunicatorHandle EthernetJson_getCommunicator(EthernetJsonHandle self){
+ICommunicatorHandle EthernetJson_getCommunicator(EthernetJsonHandle self) {
     return &self->communicator;
 }
 
-void EthernetJson_getTxData(EthernetJsonHandle self, uint8_t* data, size_t length){
+void EthernetJson_getTxData(EthernetJsonHandle self, uint8_t *data, size_t length) {
     self->output->read(self->output, data, length);
 }
 
-size_t EthernetJson_amountOfTxDataPending(EthernetJsonHandle self){
+size_t EthernetJson_amountOfTxDataPending(EthernetJsonHandle self) {
     return self->output->length(self->output);
 }
 
-void EthernetJson_putRxData(EthernetJsonHandle self, uint8_t* data, size_t length){
+void EthernetJson_putRxData(EthernetJsonHandle self, uint8_t *data, size_t length) {
     self->input->write(self->input, data, length);
     self->input->writeByte(self->input, '\0');
+    self->rxDataReady = true;
 }
 
-void EthernetJson_destroy(EthernetJsonHandle self){
+void EthernetJson_destroy(EthernetJsonHandle self) {
     free(self);
     self = NULL;
 }

@@ -15,9 +15,9 @@
 #define COMMANDTRIGGER_H_
 
 #include <Scope/Control/Command/ICommand.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/Core/ScopeTypes.h>
 #include <Scope/Core/IScope.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
  Define class handle data
@@ -27,16 +27,31 @@ typedef struct __CommandTriggerPrivateData* CommandTriggerHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command */
+/**
+ * Constructor
+ * @param scope
+ * @return
+ */
 CommandTriggerHandle CommandTrigger_create(IScopeHandle scope);
 
-/* Deconstructor: Deletes the instance of the command */
-void CommandTrigger_destroy(CommandTriggerHandle self);
-
-/* Sets the Attributes of the command */
+/**
+ * Set the attributes which the command will use to configure the scope
+ * @param self
+ * @param conf
+ */
 void CommandTrigger_setAttributes(CommandTriggerHandle self, TriggerConfiguration conf);
 
-/* Returns the command interface */
+/**
+ * Returns the ICommand interface
+ * @param self
+ * @return
+ */
 ICommandHandle CommandTrigger_getICommand(CommandTriggerHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandTrigger_destroy(CommandTriggerHandle self);
 
 #endif

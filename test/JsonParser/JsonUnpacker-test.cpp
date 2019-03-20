@@ -13,9 +13,9 @@ static const char* data = (const char*) "{\"payload\": {"
                                         "\"ev_announce\": null,"
                                         "\"ev_trans\": null,"
                                         "\"cf_addr\": {"
-                                        "\"cl_id_1\": [111, \"UINT8\"],"
-                                        "\"cl_id_2\": [222,\"UINT16\"],"
-                                        "\"cl_id_3\": [333,\"FLOAT\"]"
+                                        "\"cl_id_1\": [111, \"SE_UINT8\"],"
+                                        "\"cl_id_2\": [222,\"SE_UINT16\"],"
+                                        "\"cl_id_3\": [333,\"SE_FLOAT\"]"
                                         "},"
                                         "\"cf_tgr\": {"
                                         "\"cl_id\": 15,"
@@ -126,7 +126,7 @@ TEST(json_unpacker, values_from_array){
 
     char dataType[20];
     unpacker->getStringFromCommand(unpacker, &info, dataType, 20);
-    EXPECT_STREQ(dataType, "UINT16");
+    EXPECT_STREQ(dataType, "SE_UINT16");
 
 }
 
@@ -135,9 +135,9 @@ static const char* faultyData = (const char*) "{\"payload\": {"
                                               "\"ev_announce\": null,"
                                               "\"ev_trans\": null,"
                                               "\"cf_addr\": {"
-                                              "\"cl_id_1\": [\"111\", \"UINT8\"],"
-                                              "\"cl_id_2\": [222,\"UINT16\"],"
-                                              "\"cl_id_3\": [333,\"FLOAT\"]"
+                                              "\"cl_id_1\": [\"111\", \"SE_UINT8\"],"
+                                              "\"cl_id_2\": [222,\"SE_UINT16\"],"
+                                              "\"cl_id_3\": [333,\"SE_FLOAT\"]"
                                               "},"
                                               "\"cf_tgr\": {"
                                               "\"cl_\": 15,"
@@ -155,9 +155,9 @@ static const char* notParsingData = (const char*) "\"payload\": {"
                                                   "\"ev_announce\": null,"
                                                   "\"ev_trans\": null,"
                                                   "\"cf_addr\": {"
-                                                  "\"cl_id_1\": [\"111\", \"UINT8\"],"
-                                                  "\"cl_id_2\": [222,\"UINT16\"],"
-                                                  "\"cl_id_3\": [333,\"FLOAT\"]"
+                                                  "\"cl_id_1\": [\"111\", \"SE_UINT8\"],"
+                                                  "\"cl_id_2\": [222,\"SE_UINT16\"],"
+                                                  "\"cl_id_3\": [333,\"SE_FLOAT\"]"
                                                   "},"
                                                   "\"cf_tgr\": {"
                                                   "\"cl_\": 15,"

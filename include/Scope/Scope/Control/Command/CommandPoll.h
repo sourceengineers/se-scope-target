@@ -15,8 +15,8 @@
 #ifndef COMMANDPOLL_H_
 #define COMMANDPOLL_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -27,13 +27,24 @@ typedef struct __CommandPollPrivateData* CommandPollHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command */
+/**
+ * Constructor
+ * @param scope
+ * @return
+ */
 CommandPollHandle CommandPoll_create(IScopeHandle scope);
 
-/* Deconstructor: Deletes the instance of the command */
-void CommandPoll_destroy(CommandPollHandle self);
-
-/* Returns the command interface */
+/**
+ * Returns the ICommand interface
+ * @param self
+ * @return
+ */
 ICommandHandle CommandPoll_getICommand(CommandPollHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandPoll_destroy(CommandPollHandle self);
 
 #endif

@@ -36,7 +36,7 @@ def config():
     ##########################################################################
     ### Serial optionen
     ##########################################################################
-    serial_file = 'COM3'  # z.B.: COM1 bei Windows
+    serial_file = '/dev/ttyACM0'  # z.B.: COM1 bei Windows
     baudrate = 57600
     timeout = 4
 
@@ -49,26 +49,26 @@ def config():
     # image_path = "/Users/USER/Documents"
 
     # Pfad zum map file
-    map_file = r"C:\se\git\iot-scope-target\examples\keil\MDK-ARM\nucleo\nucleo.map"
+    map_file = "/home/schuepbs/Documents/Projects/cmake_embedded/build/nucleo.map"
 
     ##########################################################################
     ### Channel Konfiguration
     ##########################################################################
-    # typ = UINT8, UINT16, UINT32, FLOAT)
+    # typ = SE_UINT8, SE_UINT16, SE_UINT32, SE_FLOAT)
     # Die Addressen koennen entweder aus der map File ausgelesen werden, falls sie
     # als statisch deklariert sind, oder manuell eigetragen werden.
-    channels.append({'name': "Sinus", 'address': 536877912, 'type': "FLOAT"})
-    channels.append({'name': "Cosinus", 'address': 536877900, 'type': "FLOAT"})
-    channels.append({'name': "Leistung", 'address': 536877904, 'type': "FLOAT"})
-    #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "UINT8"})
-  #  channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "FLOAT"})
+    channels.append({'name': "Sinus", 'address': get_address_from_map("sinus"), 'type': "SE_FLOAT"})
+    channels.append({'name': "Cosinus", 'address': get_address_from_map("cosinus"), 'type': "SE_FLOAT"})
+    channels.append({'name': "Leistung", 'address': get_address_from_map("leistung"), 'type': "SE_FLOAT"})
+    #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "SE_UINT8"})
+    channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "SE_FLOAT"})
 
     ##########################################################################
     ### Trigger Konfiguration
     ##########################################################################
-   # trigger_conf = {'mode' : 'Continous', 'level' : None, 'edge' :  None, 'cl_id' :  None}
-    trigger_conf = {'mode': 'Normal', 'level': 1.0, 'edge': 'rising', 'cl_id': 0}
-    #trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 0}
+    #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 0}
+    #trigger_conf = {'mode': 'Normal', 'level': 1.0, 'edge': 'rising', 'cl_id': 0}
+    trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
     # Wird z.B. der timestmap pro Millisekunde incrementiert, und die step_size ist 10,
@@ -88,6 +88,8 @@ def config():
                 {'title': 'Sin and Cos', 'y_label': 'Value', 'x_label': 'Time [ms]'})
     add_subplot(["Leistung"], \
                 {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
+    add_subplot(["Potty"], \
+                {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
 
     figure_name = "Demo_plot"
 
@@ -95,7 +97,7 @@ def config():
     # skaliert
     # x_width = None
 
-    x_width = 100
+    x_width = 50
     x_width = x_width * step_size
 
 
@@ -215,14 +217,17 @@ def init_periph(send_commands):
         addresses.append(str(channels[i]['address']))
         types.append(channels[i]['type'])
         ids.append(str(i))
-        new_state.append("true")
+        new_state.append("false")
 
 
+    send_command(cf_running.getCommand(ids, new_state, len(channels)), True)
     send_command(ev_announce.getCommand(), True)
+    send_command(cf_addr.getCommand(ids, addresses, types, len(channels)), True)
     send_command(cf_tgr.getCommand(str(trigger_conf['cl_id']), trigger_conf['mode'], str(trigger_conf['level']),
                                    str(trigger_conf['edge'])), True)
-    send_command(cf_addr.getCommand(ids, addresses, types, len(channels)), True)
     send_command(cf_t_inc.getCommand(str(step_size)), True)
+
+    new_state = [n.replace("false", "true") for n in new_state]
     send_command(cf_running.getCommand(ids, new_state, len(channels)), True)
 
 

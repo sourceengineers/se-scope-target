@@ -9,6 +9,8 @@
 
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+
 #include <stdlib.h>
 
 /******************************************************************************
@@ -21,8 +23,22 @@ typedef struct __BufferedByteStreamPrivateData{
 
 } BufferedByteStreamPrivateData;
 
+static bool dataIsReady(IByteStreamHandle parent);
+
+static uint8_t readData(IByteStreamHandle parent);
+
+static void readAll(IByteStreamHandle parent, uint8_t* data, const size_t length);
+
+static size_t streamLength(IByteStreamHandle parent);
+
+static void writeData(IByteStreamHandle parent, const uint8_t data);
+
+static void writeAll(IByteStreamHandle parent, const uint8_t* data, const size_t length);
+
+static void flush(IByteStreamHandle parent);
+
 /******************************************************************************
- Public functions
+ Private functions
 ******************************************************************************/
 static bool dataIsReady(IByteStreamHandle parent){
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) parent->handle;
@@ -77,6 +93,9 @@ static void flush(IByteStreamHandle parent){
     ByteRingBuffer_clear(self->buffer);
 }
 
+/******************************************************************************
+ Public functions
+******************************************************************************/
 BufferedByteStreamHandle BufferedByteStream_create(size_t capacity){
 
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) malloc(sizeof(BufferedByteStreamPrivateData));

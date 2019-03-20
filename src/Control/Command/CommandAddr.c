@@ -8,6 +8,11 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/Command/CommandAddr.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
@@ -22,6 +27,8 @@ typedef struct __CommandAddrPrivateData{
     size_t amountOfChannels;
 
 } CommandAddrPrivateData;
+
+static void run(ICommandHandle command);
 
 /******************************************************************************
  Private functions

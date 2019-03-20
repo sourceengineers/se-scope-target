@@ -12,13 +12,18 @@
 #ifndef SCOPE_H_
 #define SCOPE_H_
 
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/Core/Trigger.h>
+#include <Scope/Control/AddressStorage.h>
 #include <Scope/Core/Channel.h>
 #include <Scope/Core/IScope.h>
-#include <Scope/Core/AddressStorage.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Core/ScopeTypes.h>
+#include <Scope/Core/Trigger.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stdint.h>
+#include <stddef.h>
+#include <stdint.h>
 
 /******************************************************************************
  Define class handle data
@@ -28,72 +33,100 @@ typedef struct __ScopePrivateData* ScopeHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the channel */
-ScopeHandle Scope_create(size_t channelSize,
-                         size_t amountOfChannels,
-                         AddressStorageHandle addressStorage,
-                         uint32_t* referenceTimestamp);
+/**
+ * Constructor
+ * @param channelSize Amount of space each channel buffer has
+ * @param amountOfChannels Amount of channels that should be used
+ * @param referenceTimestamp Reference to an externally incremented timestamp. Used for the Timestamper
+ * @return
+ */
+ScopeHandle Scope_create(size_t channelSize, size_t amountOfChannels, uint32_t* referenceTimestamp);
 
-/* Deconstructor: Deletes the instance of the channel */
-void Scope_destroy(ScopeHandle self);
-
-/* Tells the scope to transmit the data in its channels */
+/**
+ * Commands the scope to transmit its data
+ * @param self
+ */
 void Scope_transmit(ScopeHandle self);
 
-/* Tells the scope to transmit the announce addresses */
-void Scope_announce(ScopeHandle self);
-
-/* Passes data to the scope which has to be parsed. The data has to be in the form of the specified protocol, or will
- * be rejected.
- * After parsing, the commands will be executed */
-void Scope_receiveData(ScopeHandle self);
-
-/* Packs all the necessary data into a package ready to be sent */
-//void Scope_transmitData(ScopeHandle self);
-
-/* Polls data from all channels */
+/**
+ * Tells the scope to poll data in the active channels
+ * @param self
+ */
 void Scope_poll(ScopeHandle self);
 
-/* Configures the channel with the given id, with the wanted address */
-/* If the id exceeds the maximum amount of channels, the function will return without doing anything */
-void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* pollAddress, DATA_TYPES type);
+/**
+ * Configurates the channels with id == channelId toa specific address.
+ * @param self
+ * @param channelId If channelId > max amount of channels, the command gets rejected.
+ * @param pollAddress Address which the channel should poll from
+ * @param type Type of the data stored in pollAddress
+ */
+void Scope_configureChannel(ScopeHandle self, size_t channelId, void* pollAddress, DATA_TYPES type);
 
-/* Configurates the trigger with the gives values
- * level: can be any float value
- * edge: This can be either TRIGGER_EDGE_NEGATIVE or TRIGGER_EDGE_POSITIVE
- * mode: Chooses the trigger mode. Can be either: TRIGGER_CONTINUOUS, TRIGGER_NORMAL or TRIGGER_ONESHOT
- * channelId: The id which should be watched by the trigger
- *
- * If the id exceeds the maximum amount of channels, the function will return without doing anything
- * */
-void Scope_configureTrigger(ScopeHandle self, const float level, int edge, TRIGGER_MODE mode, uint32_t channelId);
+/**
+ * Configurates the trigger with the gives values
+ * @param self
+ * @param level Can be any float value
+ * @param edge This can be either TRIGGER_EDGE_NEGATIVE or TRIGGER_EDGE_POSITIVE
+ * @param mode Chooses the trigger mode. Can be either: TRIGGER_CONTINUOUS, TRIGGER_NORMAL or TRIGGER_ONESHOT
+ * @param channelId The id which should be monitored by the trigger. If channelId doesn't match any channel,
+ *  this command gets rejected
+ */
+void Scope_configureTrigger(ScopeHandle self, float level, int edge, TRIGGER_MODE mode, uint32_t channelId);
 
-/* Sets the timestamp increment
- * If the timestamp increment mode is set to manual, this will not have any effect */
+/**
+ * Sets the time increment between poll events.
+ * @param self
+ * @param timstampIncrement
+ */
 void Scope_configureTimestampIncrement(ScopeHandle self, uint32_t timstampIncrement);
 
-/* Sets the channel with the given index to running */
+/**
+ * Starts the channel with its id matching idOfChangedChannel
+ * @param self
+ * @param channelId If channelId > max amount of channels, the command gets rejected.
+ */
 void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId);
 
-/* Sets the channel with the given index to stopped */
+/**
+ * Stopps the channel with its id matching idOfChangedChannel
+ * @param self
+ * @param channelId If channelId > max amount of channels, the command gets rejected.
+ */
 void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId);
 
-/* Sends all configured watch addresses to the host */
-//void Scope_announceAddresses(ScopeHandle self);
-
-/* Sets a new watch address. Returns if the index exceeds the maximum amount of elements */
-void Scope_addAnnounceAddresses(ScopeHandle self, const char* name, const void* address,
-                                const DATA_TYPES type,
-                                const uint32_t addressId);
-
-/* Clears the data in the channels, as well as the timestamp buffer */
+/**
+ * Clears the timestamp stream as well as all channels
+ * @param self
+ */
 void Scope_clear(ScopeHandle self);
 
-/* Returns the Runnable of the scope */
+/**
+ * Attatches the observer which has to be called to execute a pack event
+ * @param self
+ * @param observer
+ */
+void Scope_attachPackObserver(ScopeHandle self, IObserverHandle observer);
+
+/**
+ * Returns the runnable interface
+ * @param self
+ * @return
+ */
 IRunnableHandle Scope_getIRunnable(ScopeHandle self);
 
-/* Returns the IScope interface */
+/**
+ * Returns the IScope interface
+ * @param self
+ * @return
+ */
 IScopeHandle Scope_getIScope(ScopeHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void Scope_destroy(ScopeHandle self);
 
 #endif
 

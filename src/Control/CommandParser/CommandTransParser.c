@@ -8,6 +8,9 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandParser/CommandTransParser.h>
+#include <Scope/Control/Command/CommandTrans.h>
+
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data

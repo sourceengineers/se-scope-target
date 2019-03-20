@@ -9,6 +9,9 @@
  *
  ******************************************************************************/
 
+#include <stddef.h>
+#include <Scope/Core/ScopeTypes.h>
+
 static const char* KEYWORD_PAYLOAD = "payload";
 static const char* KEYWORD_TRANSPORT = "transport";
 static const char* KEYWORD_SC_DATA = "sc_data";
@@ -53,3 +56,16 @@ static const size_t KEYWORD_TRUE_LENGTH = 4;
 static const size_t KEYWORD_FALSE_LENGTH = 5;
 static const size_t KEYWORD_T_STMP_LENGTH = 6;
 static const size_t KEYWORD_T_INC_LENGTH = 5;
+
+static const size_t MAX_COMMAND_LENGTH = 30; // Max length of a command
+static const size_t MAX_FIELD_LENGTH = 30; // Max length of a field
+
+#define maxAddrNameLength 30 // Max length of an address name
+/**
+ * Definitions for the AddressStorage
+ */
+typedef struct{
+    char name[maxAddrNameLength]; // Name of an address
+    DATA_TYPES type; // Type of the address
+    ADDRESS_DATA_TYPE address; // The address
+} AddressDefinition;

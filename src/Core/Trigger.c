@@ -7,11 +7,17 @@
  * 
  ******************************************************************************/
 
-#include <Scope/Core/Trigger.h>
-#include <math.h>
 #include <Scope/Core/Timestamper.h>
+#include <Scope/Core/Trigger.h>
+#include <Scope/Core/Channel.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/IFloatStream.h>
+
+#include <stdint.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
+struct __TriggerPrivateData;
 
 /******************************************************************************
  Trigger definitions
@@ -83,6 +89,8 @@ static void safeChannelStates(TriggerHandle self);
 static void restoreChannelStates(TriggerHandle self);
 
 static void stopChannelsAndTimestamp(TriggerHandle self);
+
+static void swapBuffers(TriggerHandle self);
 
 /******************************************************************************
  Trigger strategies

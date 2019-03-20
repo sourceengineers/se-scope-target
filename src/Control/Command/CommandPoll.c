@@ -8,6 +8,10 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/Command/CommandPoll.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
+
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
@@ -19,6 +23,8 @@ typedef struct __CommandPollPrivateData{
     IScopeHandle scope;
 
 } CommandPollPrivateData;
+
+static void run(ICommandHandle command);
 
 /******************************************************************************
  Private functions

@@ -8,25 +8,30 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Communication/Interfaces/UartJson.h>
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
+#include <Scope/Communication/ICommunicator.h>
 #include <Scope/GeneralPurpose/ByteRingBuffer.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/IObserver.h>
+#include <Scope/GeneralPurpose/IRunnable.h>
+
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum{
+typedef enum {
     TRANSPORT_NOT_FOUND, CHECKSUM_FAULTY, CHECKSUM_OK
 } ChecksumCheck;
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
-static const char* KEYWORD_TRANSPORT = "transport:";
+static const char *KEYWORD_TRANSPORT = "transport:";
 static const size_t KEYWORD_TRANSPORT_LENGTH = 10;
 static const size_t CHECKSUM_LENGTH = 2;
 
 /* Class data */
-typedef struct __UartJsonPrivateData{
+typedef struct __UartJsonPrivateData {
     ICommunicator communicator;
 
     UartTransmitCallback callback;
@@ -35,76 +40,76 @@ typedef struct __UartJsonPrivateData{
     ByteRingBufferHandle transportBuffer;
 
     uint8_t inputChecksum;
-    bool rxIsValid;
-    bool txPendingToValidate;
-    bool txPendingToTransmit;
+    bool rxDataReady;
+    bool txPendingToValidateAndTransmit;
+
+    IObserverHandle rxObserver;
+    IObserver txObserver;
+
+    IRunnable rxRunnable;
+    IRunnable txRunnable;
 
 } UartJsonPrivateData;
 
-ChecksumCheck validateInput(UartJsonHandle self);
+static void runRx(IRunnableHandle runnable);
 
-void createOutputChecksum(UartJsonHandle self, char* data);
+static void runTx(IRunnableHandle runnable);
+
+static void createOutputChecksum(UartJsonHandle self, char *data);
+
+static ChecksumCheck validateInput(UartJsonHandle self);
+
+static void update(IObserverHandle observer, void *state);
+
+static void attachObserver(ICommunicatorHandle communicator, IObserverHandle observer);
+
+static IObserverHandle getObserver(ICommunicatorHandle communicator);
+
+static IRunnableHandle getRxRunnable(ICommunicatorHandle communicator);
+
+static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
-bool rxDataReady(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+static void runRx(IRunnableHandle runnable) {
+    UartJsonHandle self = (UartJsonHandle) runnable->handle;
 
-    return self->rxIsValid;
-}
-
-void txReadyToValidate(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    self->txPendingToValidate = true;
-}
-
-void rxDataHasBeenFetched(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    self->rxIsValid = false;
-    self->input->flush(self->input);
-}
-
-void runRx(ICommunicatorHandle communicator){
-		return;
-}
-
-bool txSendingPending(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
-    return self->txPendingToTransmit;
-}
-
-void runTx(ICommunicatorHandle communicator){
-    UartJsonHandle self = (UartJsonHandle) communicator->handle;
-
-    if(self->txPendingToValidate == false){
+    if (self->rxDataReady == false) {
         return;
     }
 
-    if(self->txPendingToTransmit == true){
+    self->rxDataReady = false;
+    self->rxObserver->update(self->rxObserver, NULL);
+}
+
+static void runTx(IRunnableHandle runnable) {
+    UartJsonHandle self = (UartJsonHandle) runnable->handle;
+
+    if (self->txPendingToValidateAndTransmit == false) {
         return;
     }
 
-    if(self->output->length(self->output) <= 0){
+    if (self->output->length(self->output) <= 0) {
         return;
     }
 
-    char* formatedChecksum;
-    formatedChecksum = (char*) "00\0";
+    char *formatedChecksum;
+    formatedChecksum = (char *) "00\0";
     //createOutputChecksum(self, formatedChecksum);
-    self->output->write(self->output, (const uint8_t*) KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH);
-    self->output->write(self->output, (const uint8_t*) formatedChecksum, CHECKSUM_LENGTH + 1);
-    self->txPendingToValidate = false;
-    self->txPendingToTransmit = true;
+    self->output->write(self->output, (const uint8_t *) KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH);
+    self->output->write(self->output, (const uint8_t *) formatedChecksum, CHECKSUM_LENGTH + 1);
+    self->txPendingToValidateAndTransmit = false;
 
     self->callback(self);
 }
 
-void createOutputChecksum(UartJsonHandle self, char* data){
+static void createOutputChecksum(UartJsonHandle self, char *data) {
 
     size_t length = self->output->length(self->output);
     uint8_t checksum = 0;
 
-    for(int i = 0; i < length; ++i){
+    for (int i = 0; i < length; ++i) {
 
         uint8_t dataChunk = self->output->readByte(self->output);
         checksum += dataChunk;
@@ -114,13 +119,13 @@ void createOutputChecksum(UartJsonHandle self, char* data){
     sprintf(data, "%02X", checksum);
 }
 
-ChecksumCheck validateInput(UartJsonHandle self){
+static ChecksumCheck validateInput(UartJsonHandle self) {
 
     uint8_t checkData[KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH];
 
     ByteRingBuffer_readNoPosInc(self->transportBuffer, checkData, KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH);
 
-    if(strncmp((const char*) checkData, KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH) != 0){
+    if (strncmp((const char *) checkData, KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH) != 0) {
         return TRANSPORT_NOT_FOUND;
     }
 
@@ -128,77 +133,108 @@ ChecksumCheck validateInput(UartJsonHandle self){
     char checksum[CHECKSUM_LENGTH + 1];
     sprintf(checksum, "%02X", self->inputChecksum);
 
-    if(strncmp((const char*) &checkData[KEYWORD_TRANSPORT_LENGTH], checksum, CHECKSUM_LENGTH) != 0){
+    if (strncmp((const char *) &checkData[KEYWORD_TRANSPORT_LENGTH], checksum, CHECKSUM_LENGTH) != 0) {
         return CHECKSUM_FAULTY;
     }
 
     return CHECKSUM_OK;
 }
 
+static void update(IObserverHandle observer, void *state) {
+    UartJsonHandle self = (UartJsonHandle) observer->handle;
+    self->txPendingToValidateAndTransmit = true;
+}
+
+static void attachObserver(ICommunicatorHandle communicator, IObserverHandle observer) {
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    self->rxObserver = observer;
+}
+
+static IObserverHandle getObserver(ICommunicatorHandle communicator) {
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    return &self->txObserver;
+}
+
+static IRunnableHandle getRxRunnable(ICommunicatorHandle communicator) {
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    return &self->rxRunnable;
+}
+
+static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator) {
+    UartJsonHandle self = (UartJsonHandle) communicator->handle;
+    return &self->txRunnable;
+}
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
-UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output){
+UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output) {
 
     UartJsonHandle self = malloc(sizeof(UartJsonPrivateData));
 
     self->communicator.handle = self;
-    self->communicator.runRx = &runRx;
-    self->communicator.runTx = &runTx;
-    self->communicator.rxDataReady = &rxDataReady;
-    self->communicator.rxDataHasBeenFetched = &rxDataHasBeenFetched;
-    self->communicator.txReadyToValidate = &txReadyToValidate;
-    self->communicator.txSendingPending = &txSendingPending;
+    self->rxRunnable.handle = self;
+    self->txRunnable.handle = self;
+    self->txObserver.handle = self;
+
+    self->communicator.attachObserver = &attachObserver;
+    self->communicator.getObserver = &getObserver;
+    self->communicator.getRxRunnable = &getRxRunnable;
+    self->communicator.getTxRunnable = &getTxRunnable;
+
+    self->txObserver.update = &update;
+
+    self->rxRunnable.run = &runRx;
+    self->txRunnable.run = &runTx;
 
     self->transportBuffer = ByteRingBuffer_create(KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH);
     self->callback = callback;
     self->input = input;
     self->output = output;
 
-    self->rxIsValid = false;
+    self->rxDataReady = false;
     UartJson_resetTx(self);
     UartJson_resetRx(self);
     return self;
 }
 
-ICommunicatorHandle UartJson_getCommunicator(UartJsonHandle self){
+ICommunicatorHandle UartJson_getCommunicator(UartJsonHandle self) {
     return &self->communicator;
 }
 
-void UartJson_getTxData(UartJsonHandle self, uint8_t* data, size_t length){
+void UartJson_getTxData(UartJsonHandle self, uint8_t *data, size_t length) {
     self->output->read(self->output, data, length);
 }
 
-size_t UartJson_amountOfTxDataPending(UartJsonHandle self){
+size_t UartJson_amountOfTxDataPending(UartJsonHandle self) {
     return self->output->length(self->output);
 }
 
-void UartJson_resetRx(UartJsonHandle self){
+void UartJson_resetRx(UartJsonHandle self) {
     ByteRingBuffer_clear(self->transportBuffer);
     self->input->flush(self->input);
     self->inputChecksum = 0;
-    self->rxIsValid = false;
+    self->rxDataReady = false;
 }
 
-void UartJson_resetTx(UartJsonHandle self){
+void UartJson_resetTx(UartJsonHandle self) {
     self->output->flush(self->output);
-    self->txPendingToValidate = false;
-    self->txPendingToTransmit = false;
+    self->txPendingToValidateAndTransmit = false;
 }
 
-void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
+void UartJson_putRxData(UartJsonHandle self, uint8_t *data, size_t length) {
 
-    if(self->rxIsValid == true){
+    if (self->rxDataReady == true) {
         return;
     }
 
-    for(int i = 0; i < length; ++i){
+    for (int i = 0; i < length; ++i) {
 
-        if(data[i] == '\0'){
+        if (data[i] == '\0') {
             continue;
         }
 
-        if(ByteRingBuffer_write(self->transportBuffer, &data[i], 1) == -1){
+        if (ByteRingBuffer_write(self->transportBuffer, &data[i], 1) == -1) {
             uint8_t transportByte;
             ByteRingBuffer_read(self->transportBuffer, &transportByte, 1);
             ByteRingBuffer_write(self->transportBuffer, &data[i], 1);
@@ -209,23 +245,23 @@ void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length){
 
             ChecksumCheck res = validateInput(self);
 
-            if(res == CHECKSUM_OK){
+            if (res == CHECKSUM_OK) {
                 self->input->writeByte(self->input, (uint8_t) '\0');
                 ByteRingBuffer_clear(self->transportBuffer);
-                self->rxIsValid = true;
+                self->rxDataReady = true;
                 self->inputChecksum = 0;
                 break;
-            }else if(res == CHECKSUM_FAULTY){
+            } else if (res == CHECKSUM_FAULTY) {
                 UartJson_resetRx(self);
                 break;
-            }else{
+            } else {
                 continue;
             }
         }
     }
 }
 
-void UartJson_destroy(UartJsonHandle self){
+void UartJson_destroy(UartJsonHandle self) {
     ByteRingBuffer_destroy(self->transportBuffer);
 
     free(self);

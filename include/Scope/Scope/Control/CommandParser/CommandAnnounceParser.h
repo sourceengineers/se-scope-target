@@ -14,6 +14,9 @@
 #define COMMANDANNOUNCEPARSER_H_
 
 #include <Scope/Control/Command/CommandAnnounce.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/GeneralPurpose/IObserver.h>
 
 /******************************************************************************
  Define class handle data
@@ -23,16 +26,31 @@ typedef struct __CommandAnnounceParserPrivateData* CommandAnnounceParserHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command parser */
-CommandAnnounceParserHandle CommandAnnounceParser_create(IScopeHandle scope);
+/**
+ * Constructor
+ * @param packObserver
+ * @return
+ */
+CommandAnnounceParserHandle CommandAnnounceParser_create(IObserverHandle packObserver);
 
-/* Configurates the gives command */
+/**
+ * Returns the command
+ * @param self
+ * @return
+ */
 ICommandHandle CommandAnnounceParser_getCommand(CommandAnnounceParserHandle self);
 
-/* Returns the name of the command */
+/**
+ * Returns the name of the command
+ * @return
+ */
 char* CommandAnnounceParser_getName(void);
 
-/* Deconstructor: Deletes the instance of the command parser */
-void CommandAnnounceParser_destroy(CommandAnnounceParserHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+ void CommandAnnounceParser_destroy(CommandAnnounceParserHandle self);
 
 #endif

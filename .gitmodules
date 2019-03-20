@@ -1,6 +1,6 @@
-[submodule "3party/gtest"]
-	path = 3party/gtest
+[submodule "3rdparty/gtest"]
+	path = 3rdparty/gtest
 	url = https://github.com/google/googletest.git
-[submodule "3party/jsmn/jsmn"]
-	path = 3party/jsmn/jsmn
+[submodule "3rdparty/jsmn/jsmn"]
+	path = 3rdparty/jsmn/jsmn
 	url = https://github.com/zserge/jsmn.git

@@ -5,15 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Streaming interface
- *               open: opens the channel to a given Int pointer
- *               length: returns the amount of data ready to be read
- *               read: returns a pointer to the beginning of the data array
- *               write: writes Ints into the stream
- *               writeData: writes a single data point into the stream
- *               readData: returns a single data point from the stream
- *               flush: flushs the stream
- *               close: closes the stream
+ * @brief        Interface for an int stream.
  *
  *****************************************************************************************************************************************/
 
@@ -33,28 +25,55 @@ typedef struct IIntStreamStruct* IIntStreamHandle;
 typedef struct IIntStreamStruct{
     GenericReference handle;
 
+    /**
+     * Checks if data is pending
+     * @param self
+     * @return True if data is pending, False if not
+     */
     bool (* dataIsReady)(IIntStreamHandle self);
 
+    /**
+     * Returns the amount of data in the stream
+     * @param self
+     * @return
+     */
     uint32_t (* readData)(IIntStreamHandle self);
 
+    /**
+     * Reads data in the stream
+     * @param self
+     * @param data Array into which the data has to be written
+     * @param length Max size of the data array
+     */
     size_t (* length)(IIntStreamHandle self);
 
     /**
-     *
-     * @param data array into which the data gets written. The size of this should be what ever "length" returned
-     * @param length Amount of bytes which should be read
+     * Reads data in the stream
+     * @param self
+     * @param data Array into which the data has to be written
+     * @param length Max size of the data array
      */
     void (* read)(IIntStreamHandle self, uint32_t* data, const size_t length);
 
+    /**
+     * Write one single data point into the stream
+     * @param self
+     * @param data
+     */
     void (* writeData)(IIntStreamHandle self, const uint32_t data);
 
     /**
-     *
-     * @param data Data which should be written into the Stream
-     * @param length Amount of data which should be written
+     * Writes multiple data points into the stream
+     * @param self
+     * @param data Data that has to be written into the stream
+     * @param length Amount of data that has to be written into the stream
      */
     void (* write)(IIntStreamHandle self, const uint32_t* data, const size_t length);
 
+    /**
+     * Flushes the stream
+     * @param self
+     */
     void (* flush)(IIntStreamHandle self);
 } IIntStream;
 

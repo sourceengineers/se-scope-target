@@ -5,18 +5,9 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Parser interface.
- *
- *               unpack: Unpacks the given data. Returns false if the parsing process failed
- *               activateNewMessage: Activates the last parsed message to be the new object, from which the data gets
-*                                     fetched. This is used in case as example checksums are faulty.
- *               getNumberOfCommands: Returns the number of parser commands
- *               getNameOfCommand: Writes the name of the command, at the given index into the name field
- *               getNameOfField: Same as getNameOfCommand, but for the command fields
- *               getIntFromCommand: Returns the int value of a given command and field
- *               getFloatFromCommand: Returns the float value of a given command and field
- *               getBoolFromCommand: Returns the float value of a given command and field
- *               getStringFromCommand: Returns the float value of a given command and field
+ * @brief        Specifies an interface which must be used by a protocol to allows the scope to pack
+ *               output data.
+ *               This allows to extend the scope for multiple protocols.
  *
  *****************************************************************************************************************************************/
 
@@ -39,27 +30,67 @@ typedef struct IPackerStruct* IPackerHandle;
 typedef struct IPackerStruct{
     GenericReference handle;
 
+    /**
+     * Calls the pack function of the packer. It packs the predefined data into the output stream
+     * @param packer
+     */
     void (* pack)(IPackerHandle packer);
 
+    /**
+     * Prepares channels
+     * @param packer
+     * @param buffer Passes the Swap buffer into the packer
+     * @param channelId id of the channel
+     */
     void (* prepareChannel)(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
 
+    /**
+     * Prepares the time increment
+     * @param packer
+     * @param timeIncrement
+     */
     void (* prepareTimeIncrement)(IPackerHandle packer, const uint32_t timeIncrement);
 
+    /**
+     * Prepares the timestamp
+     * @param packer
+     * @param timestamp Reference to the timestamp stream
+     */
     void (* prepareTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
 
+    /**
+     * Prepares the trigger
+     * @param packer
+     * @param isTriggered
+     * @param channelId
+     * @param timestamp
+     */
     void (* prepareTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId,
                             const uint32_t timestamp);
 
+    /**
+     * Prepares flow control
+     * @param packer
+     * @param flowcontrol
+     */
     void (* prepareFlowControl)(IPackerHandle packer, const char* flowcontrol);
 
+    /**
+     * Prepares address announcement
+     * @param packer
+     * @param name
+     * @param type
+     * @param address
+     */
     void (* prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type,
                                         const ADDRESS_DATA_TYPE address);
 
-    bool (* flowControlReadyToSend)(IPackerHandle packer);
-
+    /**
+     * Resets the packer
+     * @param packer
+     */
     void (* reset)(IPackerHandle packer);
 
-    bool (*packerReady)(IPackerHandle packer);
 } IPacker;
 
 #endif

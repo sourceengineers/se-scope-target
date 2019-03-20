@@ -5,7 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Factory to generate the different Command interfaces 
+ * @brief        Factory to generate the different command interfaces
  * 
  *               Since the usage of malloc after the initial construction is 
  *               not permitted, all objects returned by the commandParserDispatcher are pre-
@@ -13,17 +13,21 @@
  *
  ******************************************************************************/
 
-#ifndef COMMANDFACTORY_H_
-#define COMMANDFACTORY_H_
+#ifndef COMMANDPARSERDISPATCHER_H_
+#define COMMANDPARSERDISPATCHER_H_
 
 #include <Scope/Control/CommandParser/CommandAddrParser.h>
+#include <Scope/Control/CommandParser/CommandAnnounceParser.h>
+#include <Scope/Control/CommandParser/CommandClearParser.h>
+#include <Scope/Control/CommandParser/CommandPollParser.h>
 #include <Scope/Control/CommandParser/CommandRunningParser.h>
 #include <Scope/Control/CommandParser/CommandTIncParser.h>
-#include <Scope/Control/CommandParser/CommandTriggerParser.h>
-#include <Scope/Control/CommandParser/CommandPollParser.h>
-#include <Scope/Control/CommandParser/CommandAnnounceParser.h>
 #include <Scope/Control/CommandParser/CommandTransParser.h>
-#include <Scope/Control/CommandParser/CommandClearParser.h>
+#include <Scope/Control/CommandParser/CommandTriggerParser.h>
+#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/Core/IScope.h>
+#include <Scope/GeneralPurpose/IObserver.h>
 
 /******************************************************************************
  Define class handle data
@@ -33,15 +37,29 @@ typedef struct __CommandParserDispatcherPrivateData* CommandParserDispatcherHand
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the commandParserDispatcher */
+
+/**
+ * Constructor
+ * @param scope
+ * @param packObserver
+ * @param unpacker
+ * @return
+ */
 CommandParserDispatcherHandle
-CommandParserDispatcher_create(IScopeHandle scope, IUnpackerHandle unpacker);
+CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver, IUnpackerHandle unpacker);
 
-/* Deconstructor: Deletes the instance of the commandParserDispatcher */
-void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self);
-
-/* Returns the command interface */
+/**
+ * Returns the command with name matching command.
+ * @param self
+ * @param command
+ * @return Returns NULL if command matches no name of a command
+ */
 ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, const char* command);
 
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self);
 
 #endif

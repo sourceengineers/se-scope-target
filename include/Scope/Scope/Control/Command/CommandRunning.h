@@ -20,9 +20,13 @@
 #ifndef COMMANDRUNNING_H_
 #define COMMANDRUNNING_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/Core/ScopeTypes.h>
+
+#include <stdint.h>
+#include <stdbool.h>
 
 /* Struct used to help the command configure the channels */
 typedef struct{
@@ -41,16 +45,31 @@ typedef struct __CommandRunningPrivateData* CommandRunningHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command */
+/**
+ * Constructor
+ * @param scope
+ * @return
+ */
 CommandRunningHandle CommandRunning_create(IScopeHandle scope);
 
-/* Deconstructor: Deletes the instance of the command */
-void CommandRunning_destroy(CommandRunningHandle self);
-
-/* Sets the Attributes of the command */
+/**
+ * Set the attributes which the command will use to configure the scope
+ * @param self
+ * @param conf
+ */
 void CommandRunning_setAttributes(CommandRunningHandle self, CommandRunningConf conf);
 
-/* Returns the command interface */
+/**
+ * Returns the ICommand interface
+ * @param self
+ * @return
+ */
 ICommandHandle CommandRunning_getICommand(CommandRunningHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandRunning_destroy(CommandRunningHandle self);
 
 #endif

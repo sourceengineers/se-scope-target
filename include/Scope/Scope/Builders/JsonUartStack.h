@@ -5,7 +5,7 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Build the Scope
+ * @brief        Builds a Uart Json stack.
  *
  ******************************************************************************/
 
@@ -15,7 +15,7 @@
 #include <Scope/Core/Scope.h>
 #include <Scope/Builders/ScopeBuilder.h>
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
-#include <Scope/Core/AddressStorage.h>
+#include <Scope/Control/AddressStorage.h>
 #include <Scope/Communication/Interfaces/UartJson.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
@@ -41,14 +41,31 @@ typedef struct __JsonUartStackPrivateData* JsonUartStackHandle;
 /******************************************************************************
  Public functions
 ******************************************************************************/
-/* Constructor: Creates a new instance of the channel */
+/**
+ * Constructor. Creates a static instance of the stack
+ * @param sizeOfChannels Size of the channels
+ * @param amountOfChannels
+ * @param callback Callback to the UsartTransmit method defined by the user.
+ * @param timestamp Timestamp as base for the scope. This has to be incremented by the user.
+ * @param addressesInAddressAnnouncer Amount of addresses that can be stored to be transmitted
+ */
 void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback,
                             uint32_t* timestamp, size_t  addressesInAddressAnnouncer);
 
+/**
+ * Runs the JsonUart stack
+ */
 void JsonUartStack_run();
 
-/* Returns the JsonUartPublicStack which contains pointers to some elements which can be controller by the user code */
+/**
+ * Returns a JsonUartPublicStack instance to be able to control some parts of the code. Add addresses to the
+ * AddressStorage as example.
+ * @return AddressStorageHandle
+ */
 JsonUartPublicStack JsonUartStack_getObject();
 
+/**
+ * Deonstructor
+ */
 void JsonUartStack_destroy();
 #endif

@@ -24,11 +24,17 @@
 #ifndef COMMANDADDR_H_
 #define COMMANDADDR_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
+#include <stdint.h>
+
 /* Definition of the configuration struct */
+/**
+ * Struct used to communicate with its parser. Contains definitions of how and which addresses have to be
+ * configured
+ */
 typedef struct{
     void** newAddresses;          // Array to keep track on witch channels have changed
     uint32_t* changedChannels;         // Id's of the channels stored in "newAddresses"
@@ -44,16 +50,31 @@ typedef struct __CommandAddrPrivateData* CommandAddrHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command */
+/**
+ * Constructor
+ * @param scope Dependency to the scope interface
+ * @return
+ */
 CommandAddrHandle CommandAddr_create(IScopeHandle scope);
 
-/* Deconstructor: Deletes the instance of the command */
-void CommandAddr_destroy(CommandAddrHandle self);
-
-/* Sets the Attributes of the command */
+/**
+ * Set the attributes which the command will use to configure the scope
+ * @param self
+ * @param conf
+ */
 void CommandAddr_setAttributes(CommandAddrHandle self, CommandAddrConf conf);
 
-/* Returns the command interface */
+/**
+ * Returns the ICommand interface
+ * @param self
+ * @return
+ */
 ICommandHandle CommandAddr_getICommand(CommandAddrHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandAddr_destroy(CommandAddrHandle self);
 
 #endif

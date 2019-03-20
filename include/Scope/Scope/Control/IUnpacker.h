@@ -5,21 +5,9 @@
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- * @brief        Parser interface.
- *
- *               unpack: Unpacks the given data. Returns false if the parsing process failed
- *               dataPending: Offers the Controller a possibility to check if new data is ready to be read or not
- *               dataRead: This function has to be executed by the controller once the pending data was interpreted
- *               streamIsEmpty: Checks if data in the input stream is present or not
- *
- *               getNumberOfCommands: Returns the number of parser commands
- *               getNameOfCommand: Writes the name of the command, at the given index into the name field
- *               getNameOfField: Same as getNameOfCommand, but for the command fields
- *               getIntFromCommand: Returns the int value of a given command and field
- *               getFloatFromCommand: Returns the float value of a given command and field
- *               getBoolFromCommand: Returns the float value of a given command and field
- *               getStringFromCommand: Returns the float value of a given command and field
- *
+ * @brief        Specifies an interface which must be used by a protocol to allows the scope to unpack
+ *               input data.
+ *               This allows to extend the scope for multiple protocols.
  *
  *****************************************************************************************************************************************/
 
@@ -32,9 +20,6 @@
  Define interface handle datar
 ******************************************************************************/
 typedef struct IUnpackerStruct* IUnpackerHandle;
-
-static const size_t MAX_COMMAND_LENGTH = 30;
-static const size_t MAX_FIELD_LENGTH = 30;
 
 /* Struct which is used to clean up the amount of parameters passed to the fetcher functions */
 typedef struct{
@@ -50,31 +35,82 @@ typedef struct{
 typedef struct IUnpackerStruct{
     GenericReference handle;
 
+    /**
+     * Unpacks the data in the input stream
+     * @param unpacker
+     * @return
+     */
     bool (* unpack)(IUnpackerHandle unpacker);
 
-    bool (* dataPending)(IUnpackerHandle unpacker);
-
-    void (* dataRead)(IUnpackerHandle unpacker);
-
-    bool (* streamIsEmpty)(IUnpackerHandle unpacker);
-
-    /* Functions to fetch commands and fields */
+    /**
+     * Returns the number of commands which were unpacked
+     * @param unpacker
+     * @return
+     */
     size_t (* getNumberOfCommands)(IUnpackerHandle unpacker);
 
+    /**
+     * Returns the name of the command at index
+     * @param unpacker
+     * @param name string into which the name will be written into
+     * @param maxLenght maximal length of the name field
+     * @param index
+     * @return
+     */
     bool (* getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+
+    /**
+     * Returns an int value
+     * @param unpacker
+     * @param information
+     * @return
+     */
     /* Functions to fetch the data from commands */
     ADDRESS_DATA_TYPE (* getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
 
+    /**
+     * Returns a float value
+     * @param unpacker
+     * @param information
+     * @return
+     */
     float (* getFloatFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
 
+    /**
+     * Returns a bool value
+     * @param unpacker
+     * @param information
+     * @return
+     */
     bool (* getBoolFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
 
+    /**
+     * Fetches a string
+     * @param unpacker
+     * @param information
+     * @param targetStr array to which the data gets written into
+     * @param maxLenght max length of the targetStr field
+     */
     void (* getStringFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information, char* targetStr,
                                   const int maxLenght);
 
-    /* Functions to help the communication validators */
+    /**
+     * Get amount of fields in a command
+     * @param unpacker
+     * @param commandName
+     * @return
+     */
     int (* getNumberOfFields)(IUnpackerHandle unpacker, const char* commandName);
 
+    /**
+     * Get the name of a field inside of a command
+     * @param unpacker
+     * @param commandName
+     * @param fieldName
+     * @param maxLenght
+     * @param index
+     * @return
+     */
     bool (* getNameOfField)(IUnpackerHandle unpacker, const char* commandName, char* fieldName, const int maxLenght,
                             const int index);
 

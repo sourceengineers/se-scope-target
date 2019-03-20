@@ -7,12 +7,21 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <Scope/Serialisation/JsonParser/JsonCommon.h>
 #include <Scope/Control/ParserDefinitions.h>
+#include <Scope/Serialisation/JsonParser/JsonCommon.h>
+#include <Scope/Serialisation/JsonParser/JsonPacker.h>
+#include <Scope/Control/IPacker.h>
+#include <Scope/Core/ScopeTypes.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
+#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/IIntStream.h>
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define FLOWCONTROL_BUFFER_SIZE 30
 #define TINC_BUFFER_SIZE 30
@@ -63,17 +72,24 @@ typedef struct __JsonPackerPrivateData{
 
 } JsonPackerPrivateData;
 
+inline static void appendFloat(float data, IByteStreamHandle stream);
+
 inline static void appendString(IByteStreamHandle destination, const char* origin, size_t originSize,
                                 const char* endWith, size_t endWidthSize);
 
-static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE origin, const char* endWith,
-                         size_t endWithSize);
+inline static void appendData(IByteStreamHandle destination, const char* origin, size_t originSize,
+                              const char* endWith, size_t endWidthSize);
 
-static void flushBuffer(char* buffer);
+inline static void flushBuffer(char* buffer);
 
-static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
+inline static void addComma(IByteStreamHandle destination, bool commaIsNeeded);
 
-static bool channelMapIsEmpty(JsonPackerHandle self);
+inline static void appendNumber(IByteStreamHandle destination, ADDRESS_DATA_TYPE origin, const char* endWith,
+                                size_t endWithSize);
+
+static void prepareChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
+
+static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
 
 static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -81,7 +97,12 @@ static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded);
 
+static void
+prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);
+
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded);
+
+static void prepareFlowControl(IPackerHandle packer, const char* flowControl);
 
 static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -92,11 +113,15 @@ static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded);
 
 static bool packChannel(JsonPackerHandle self, bool commaIsNeeded);
 
+static bool channelMapIsEmpty(JsonPackerHandle self);
+
 static bool packChannelMap(JsonPackerHandle self);
 
 static bool packPayloadMap(JsonPackerHandle self);
 
-static void appendFloat(float data, IByteStreamHandle stream);
+static void packData(IPackerHandle packer);
+
+static void reset(IPackerHandle packer);
 
 /******************************************************************************
  Private functions
@@ -490,19 +515,6 @@ static void reset(IPackerHandle packer){
     flushBuffer(self->flowcontrol);
 }
 
-static bool flowControlReadyToSend(IPackerHandle packer){
-    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
-
-    return self->flowcontrolReady;
-}
-
-static bool packerReady(IPackerHandle packer){
-    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
-
-    return !self->dataPendingToBePacked;
-}
-
-
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -532,8 +544,6 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.prepareTimestamp = &prepareTimestamp;
     self->packer.prepareTrigger = &prepareTrigger;
     self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
-    self->packer.flowControlReadyToSend = &flowControlReadyToSend;
-    self->packer.packerReady = &packerReady;
     self->packer.reset(&self->packer);
 
     return self;

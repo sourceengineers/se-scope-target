@@ -7,13 +7,19 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/Control/ParserDefinitions.h>
+#include <Scope/Control/IUnpacker.h>
+#include <Scope/GeneralPurpose/IByteStream.h>
+#include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/Serialisation/JsonParser/JsonCommon.h>
-#include <stdlib.h>
+#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+
+#include <stdint.h>
 #include <jsmn/jsmn.h>
+#include <stdbool.h>
+#include <stdlib.h>
 #include <string.h>
+
 
 #define INPUT_BUFFER_SIZE 250
 #define TOKEN_BUFFER_SIZE 100
@@ -35,13 +41,52 @@ typedef struct __JsonUnpackerPrivateData{
 
 } JsonUnpackerPrivateData;
 
+void copyString(char* str, const char* data, size_t size);
+
+static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t* tok, size_t index);
+
+static jsmntok_t* getToken(const char* json, jsmntok_t* tok, const char* key, int msgLength);
+
+static jsmntok_t* getCommandField(JsonUnpackerHandle self);
+
+static jsmntok_t* getValueFromArray(JsonUnpackerHandle self, jsmntok_t* array, size_t index);
+
+static jsmntok_t* getField(JsonUnpackerHandle self, jsmntok_t* command, const char* fieldName);
+
+static jsmntok_t* getCommand(JsonUnpackerHandle self, const char* commandName);
+
 static int matchKeyToIndex(const char* json, jsmntok_t* tok, const char* key, int msgLength);
 
 static bool jsoneq(const char* json, jsmntok_t* tok, const char* key);
 
+static bool unpack(IUnpackerHandle unpacker);
+
+static size_t getNumberOfCommands(IUnpackerHandle unpacker);
+
+static bool getNameOfCommand(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+
+static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
+static float getFloatFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
+static bool getBoolFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+
+static void getStringFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information,
+                                 char* targetStr,
+                                 const int maxLenght);
+
+static bool getNameOfField(IUnpackerHandle unpacker, const char* commandName, char* fieldName,
+                           const int maxLenght,
+                           const int index);
+
+static int getNumberOfFields(IUnpackerHandle unpacker, const char* commandName);
+
+static bool dataPending(IUnpackerHandle unpacker);
+
+static bool streamIsEmpty(IUnpackerHandle unpacker);
+
 static void activateNewMessage(JsonUnpackerHandle self, char* data);
 
-void copyString(char* str, const char* data, size_t size);
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -52,7 +97,6 @@ void copyString(char* str, const char* data, size_t size){
 
 /* The function matches the end of a field to a start of another one. With this, fields at a specific index can
  * be found */
-
 static jsmntok_t* getElementInObject(JsonUnpackerHandle self, jsmntok_t* tok, size_t index){
 
     int startPosition = tok->start;
@@ -260,7 +304,9 @@ static bool unpack(IUnpackerHandle unpacker){
     }
 
     activateNewMessage(self, data);
+
     return true;
+
 }
 
 static size_t getNumberOfCommands(IUnpackerHandle unpacker){
@@ -483,11 +529,6 @@ static bool dataPending(IUnpackerHandle unpacker){
     return self->dataPending;
 }
 
-static void dataRead(IUnpackerHandle unpacker){
-    JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
-    self->dataPending = false;
-}
-
 static bool streamIsEmpty(IUnpackerHandle unpacker){
     JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
 
@@ -528,9 +569,6 @@ JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
     self->unpacker.getNumberOfCommands = &getNumberOfCommands;
     self->unpacker.getNumberOfFields = &getNumberOfFields;
     self->unpacker.getNameOfField = &getNameOfField;
-    self->unpacker.streamIsEmpty = &streamIsEmpty;
-    self->unpacker.dataPending = &dataPending;
-    self->unpacker.dataRead = &dataRead;
 
     self->stream = stream;
 

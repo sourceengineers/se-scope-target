@@ -14,8 +14,8 @@
 #ifndef COMMANDTRANS_H_
 #define COMMANDTRANS_H_
 
-#include <Scope/Core/IScope.h>
 #include <Scope/Control/Command/ICommand.h>
+#include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 /******************************************************************************
@@ -26,13 +26,24 @@ typedef struct __CommandTransPrivateData* CommandTransHandle;
 /******************************************************************************
  Public functions 
 ******************************************************************************/
-/* Constructor: Creates a new instance of the command */
+/**
+ * Constructor
+ * @param scope
+ * @return
+ */
 CommandTransHandle CommandTrans_create(IScopeHandle scope);
 
-/* Deconstructor: Deletes the instance of the command */
-void CommandTrans_destroy(CommandTransHandle self);
-
-/* Returns the command interface */
+/**
+ * Returns the ICommand interface
+ * @param self
+ * @return
+ */
 ICommandHandle CommandTrans_getICommand(CommandTransHandle self);
+
+/**
+ * Deconstructor
+ * @param self
+ */
+void CommandTrans_destroy(CommandTransHandle self);
 
 #endif

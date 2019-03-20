@@ -17,8 +17,9 @@
 #ifndef ICOMMAND_H_
 #define ICOMMAND_H_
 
-#include <stdlib.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+
+#include <stdlib.h>
 
 /******************************************************************************
  Define interface handle data
@@ -31,6 +32,10 @@ typedef struct ICommandStruct* ICommandHandle;
 typedef struct ICommandStruct{
     GenericReference handle;
 
+    /**
+     * Runnable
+     * @param command
+     */
     void (* run)(ICommandHandle command);
 } ICommand;
 
