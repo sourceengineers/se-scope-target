@@ -28,7 +28,6 @@ typedef struct __JsonUartStackPrivateData{
 
     AddressStorageHandle addressStorage;
     ScopeBuilderHandle builder;
-    size_t addressesInAddressAnnouncer;
     BufferedByteStreamHandle input;
     BufferedByteStreamHandle output;
     JsonUnpackerHandle unpacker;
@@ -50,7 +49,7 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
     self->outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
-                                                            self->addressesInAddressAnnouncer);
+                                                            addressesInAddressAnnouncer);
     self->inputBufferSize = JsonUnpacker_calculateBufferSize();
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
@@ -59,7 +58,7 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
 
     /* Generate the desired packer and unpacker */
     self->unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(self->input));
-    self->packer = JsonPacker_create(amountOfChannels, self->addressesInAddressAnnouncer,
+    self->packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer,
                                BufferedByteStream_getIByteStream(self->output));
 
     /* Generate the communication handler */
