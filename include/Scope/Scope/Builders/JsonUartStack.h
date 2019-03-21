@@ -30,6 +30,8 @@ typedef struct JsonUartPublicStackStruct {
     BufferedByteStreamHandle input;
     BufferedByteStreamHandle output;
     UartJsonHandle uartJson;
+    size_t outputBufferSize;
+    size_t inputBufferSize;
 
 } JsonUartPublicStack;
 
@@ -50,7 +52,7 @@ typedef struct __JsonUartStackPrivateData* JsonUartStackHandle;
  * @param addressesInAddressAnnouncer Amount of addresses that can be stored to be transmitted
  */
 void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback,
-                            uint32_t* timestamp, size_t  addressesInAddressAnnouncer);
+                          uint32_t* timestamp, size_t  addressesInAddressAnnouncer);
 
 /**
  * Runs the JsonUart stack

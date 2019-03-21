@@ -51,19 +51,21 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
     self->outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
                                                             addressesInAddressAnnouncer);
     self->inputBufferSize = JsonUnpacker_calculateBufferSize();
+    size_t usedSpace = self->outputBufferSize + self->inputBufferSize + sizeOfChannels * amountOfChannels;
+
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
     self->input = BufferedByteStream_create(self->inputBufferSize);
     self->output = BufferedByteStream_create(self->outputBufferSize);
 
     /* Generate the desired packer and unpacker */
-    self->unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(self->input));
     self->packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer,
-                               BufferedByteStream_getIByteStream(self->output));
+                                     BufferedByteStream_getIByteStream(self->output));
+    self->unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(self->input));
 
     /* Generate the communication handler */
     self->uartJson = UartJson_create(callback, BufferedByteStream_getIByteStream(self->input),
-                               BufferedByteStream_getIByteStream(self->output));
+                                     BufferedByteStream_getIByteStream(self->output));
 
     /* Generate the address storage. The address storage is optional and doesn't have to be used */
     self->addressStorage = AddressStorage_create(addressesInAddressAnnouncer);
@@ -82,6 +84,7 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
 
     /* Build the scope */
     self->scope_obj = ScopeBuilder_build(self->builder);
+
 }
 
 void JsonUartStack_run(){
@@ -90,8 +93,13 @@ void JsonUartStack_run(){
 
 JsonUartPublicStack JsonUartStack_getObject(){
 
-    JsonUartPublicStack stack = {.addressStorage = self->addressStorage, .scope = self->scope_obj.scope, .input = self->input,
-                                 .output = self->output, .uartJson = self->uartJson};
+    JsonUartPublicStack stack = {.addressStorage = self->addressStorage,
+            .scope = self->scope_obj.scope,
+            .input = self->input,
+            .output = self->output,
+            .uartJson = self->uartJson,
+            .outputBufferSize = self->outputBufferSize,
+            .inputBufferSize = self->inputBufferSize};
 
     return stack;
 }
