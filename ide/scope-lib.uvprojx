@@ -10,20 +10,20 @@
       <TargetName>debug</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060300::V5.06 update 3 (build 300)::ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32L476RGTx</Device>
+          <Device>STM32G071RBTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32L4xx_DFP.2.2.0</PackID>
+          <PackID>Keil.STM32G0xx_DFP.1.0.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IRAM(0x20000000,0x00018000) IRAM2(0x10000000,0x00008000) IROM(0x08000000,0x00100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x00008000) IROM(0x08000000,0x00020000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32L4xx_1024 -FS08000000 -FL0100000 -FP0($$Device:STM32L476RGTx$CMSIS\Flash\STM32L4xx_1024.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32G0xx_128 -FS08000000 -FL020000 -FP0($$Device:STM32G071RBTx$CMSIS\Flash\STM32G0xx_128.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32L476RGTx$Drivers\CMSIS\Device\ST\STM32L4xx\Include\stm32l4xx.h</RegisterFile>
+          <RegisterFile>$$Device:STM32G071RBTx$Drivers\CMSIS\Device\ST\STM32G0xx\Include\stm32g0xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32L476RGTx$CMSIS\SVD\STM32L4x6.svd</SFDFile>
+          <SFDFile>$$Device:STM32G071RBTx$CMSIS\SVD\STM32G07x.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -110,13 +110,13 @@
         </CommonProperty>
         <DllOption>
           <SimDllName>SARMCM3.DLL</SimDllName>
-          <SimDllArguments> -REMAP -MPU</SimDllArguments>
-          <SimDlgDll>DCM.DLL</SimDlgDll>
-          <SimDlgDllArguments>-pCM4</SimDlgDllArguments>
+          <SimDllArguments> -REMAP-MPU </SimDllArguments>
+          <SimDlgDll>DARMCM1.DLL</SimDlgDll>
+          <SimDlgDllArguments>-pCM0+</SimDlgDllArguments>
           <TargetDllName>SARMCM3.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
-          <TargetDlgDll>TCM.DLL</TargetDlgDll>
-          <TargetDlgDllArguments>-pCM4</TargetDlgDllArguments>
+          <TargetDllArguments>-MPU </TargetDllArguments>
+          <TargetDlgDll>TARMCM1.DLL</TargetDlgDll>
+          <TargetDlgDllArguments>-pCM0+</TargetDlgDllArguments>
         </DllOption>
         <DebugOption>
           <OPTHX>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2CM3.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -174,7 +174,7 @@
             <AdsLsxf>1</AdsLsxf>
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
-            <AdsCpuType>"Cortex-M4"</AdsCpuType>
+            <AdsCpuType>"Cortex-M0+"</AdsCpuType>
             <RvctDeviceName></RvctDeviceName>
             <mOS>0</mOS>
             <uocRom>0</uocRom>
@@ -183,9 +183,9 @@
             <hadIRAM>1</hadIRAM>
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>2</RvdsVP>
+            <RvdsVP>0</RvdsVP>
             <RvdsMve>0</RvdsMve>
-            <hadIRAM2>1</hadIRAM2>
+            <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>0</useUlib>
@@ -193,7 +193,7 @@
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
             <RoSelD>3</RoSelD>
-            <RwSelD>4</RwSelD>
+            <RwSelD>3</RwSelD>
             <CodeSel>0</CodeSel>
             <OptFeed>0</OptFeed>
             <NoZi1>0</NoZi1>
@@ -245,12 +245,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x18000</Size>
+                <Size>0x8000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x20000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -275,7 +275,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x60000</Size>
+                <Size>0x20000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -300,12 +300,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x50000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x10000000</StartAddress>
-                <Size>0x80000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -383,11 +383,6 @@
           <GroupName>Communication</GroupName>
           <Files>
             <File>
-              <FileName>Communicator.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Communication\Communicator.c</FilePath>
-            </File>
-            <File>
               <FileName>UartJson.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Communication\Interfaces\UartJson.c</FilePath>
@@ -421,11 +416,6 @@
               <FileName>CommandClear.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\Command\CommandClear.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandPack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandPack.c</FilePath>
             </File>
             <File>
               <FileName>CommandPoll.c</FileName>
@@ -468,11 +458,6 @@
               <FilePath>..\src\Control\CommandParser\CommandClearParser.c</FilePath>
             </File>
             <File>
-              <FileName>CommandPackParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandPackParser.c</FilePath>
-            </File>
-            <File>
               <FileName>CommandPollParser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\CommandParser\CommandPollParser.c</FilePath>
@@ -496,6 +481,36 @@
               <FileName>CommandTriggerParser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\CommandParser\CommandTriggerParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>AddressStorage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\AddressStorage.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPackParserDispatcher.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\CommandPackParserDispatcher.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPackAnnounce.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Command\CommandPackAnnounce.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPackData.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Command\CommandPackData.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPackAnnounceParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\CommandParser\CommandPackAnnounceParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPackDataParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\CommandParser\CommandPackDataParser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -521,11 +536,6 @@
               <FileName>Trigger.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Core\Trigger.c</FilePath>
-            </File>
-            <File>
-              <FileName>AddressStorage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Core\AddressStorage.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -588,14 +598,19 @@
           <GroupName>Builder</GroupName>
           <Files>
             <File>
+              <FileName>JsonUartStack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Builders\JsonUartStack.c</FilePath>
+            </File>
+            <File>
               <FileName>ScopeBuilder.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\ScopeBuilder.c</FilePath>
+              <FilePath>..\src\Builders\ScopeBuilder.c</FilePath>
             </File>
             <File>
               <FileName>ScopeRunner.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\ScopeRunner.c</FilePath>
+              <FilePath>..\src\Builders\ScopeRunner.c</FilePath>
             </File>
           </Files>
         </Group>
