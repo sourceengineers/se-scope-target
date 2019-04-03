@@ -57,17 +57,17 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
 /**
  * Runs the JsonUart stack
  */
-void JsonUartStack_run();
+void JsonUartStack_run(void);
 
 /**
  * Returns a JsonUartPublicStack instance to be able to control some parts of the code. Add addresses to the
  * AddressStorage as example.
  * @return AddressStorageHandle
  */
-JsonUartPublicStack JsonUartStack_getObject();
+JsonUartPublicStack JsonUartStack_getObject(void);
 
 /**
  * Deonstructor
  */
-void JsonUartStack_destroy();
+void JsonUartStack_destroy(void);
 #endif

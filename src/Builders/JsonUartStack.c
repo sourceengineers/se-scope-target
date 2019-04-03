@@ -51,8 +51,6 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
     self->outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
                                                             addressesInAddressAnnouncer);
     self->inputBufferSize = JsonUnpacker_calculateBufferSize();
-    size_t usedSpace = self->outputBufferSize + self->inputBufferSize + sizeOfChannels * amountOfChannels;
-
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
     self->input = BufferedByteStream_create(self->inputBufferSize);
