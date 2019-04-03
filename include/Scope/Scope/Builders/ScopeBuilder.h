@@ -21,6 +21,7 @@
 #include <Scope/Control/AddressStorage.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/GeneralPurpose/IRunnable.h>
+#include <Scope/GeneralPurpose/IMutex.h>
 
 #include <stddef.h>
 #include <stdint.h>
@@ -44,6 +45,9 @@ typedef struct ScopeObjectStruct{
     IRunnableHandle runCommandParser;
     IRunnableHandle runDataAggregator;
     IRunnableHandle runScope;
+
+    IMutexHandle dataMutex;
+    IMutexHandle configMutex;
 
 } ScopeObject;
 
