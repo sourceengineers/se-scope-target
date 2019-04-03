@@ -45,9 +45,9 @@ typedef struct __ControllerPrivateData {
 
 } ControllerPrivateData;
 
-static void runRx(IRunnableHandle runnable);
+static bool runRx(IRunnableHandle runnable);
 
-static void runTx(IRunnableHandle runnable);
+static bool runTx(IRunnableHandle runnable);
 
 static void
 fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle *commands, size_t numberOfCommands);
@@ -61,15 +61,15 @@ static void commandUpdate(IObserverHandle observer, void *state);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void runRx(IRunnableHandle runnable) {
+static bool runRx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
     if (self->commandPending == false) {
-        return;
+        return false;
     }
 
     if (self->unpacker == NULL) {
-        return;
+        return false;
     }
 
     size_t numberOfCommands = self->unpacker->getNumberOfCommands(self->unpacker);
@@ -78,13 +78,15 @@ static void runRx(IRunnableHandle runnable) {
     fetchCommands(self, self->unpacker, commands, numberOfCommands);
     runCommands(commands, numberOfCommands);
     self->commandPending = false;
+
+    return true;
 }
 
-static void runTx(IRunnableHandle runnable) {
+static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
     if (self->packCommandPending == false) {
-        return;
+        return false;
     }
 
     ICommandHandle packCommand;
@@ -105,12 +107,14 @@ static void runTx(IRunnableHandle runnable) {
     }
 
     if (packCommand == NULL) {
-        return;
+        return false;
     }
 
     packCommand->run(packCommand);
     self->packCommandPending = false;
     self->packObserver->update(self->packObserver, NULL);
+
+    return true;
 }
 
 static void
@@ -176,6 +180,10 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
 
 void Controller_attachPackObserver(ControllerHandle self, IObserverHandle observer) {
     self->packObserver = observer;
+}
+
+bool Controller_commandPending(ControllerHandle self){
+    return self->commandPending;
 }
 
 IObserverHandle Controller_getCommandObserver(ControllerHandle self) {

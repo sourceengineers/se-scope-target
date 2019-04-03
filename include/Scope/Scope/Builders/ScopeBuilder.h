@@ -36,7 +36,8 @@ typedef struct __ScopeBuilderPrivateData* ScopeBuilderHandle;
 ******************************************************************************/
 typedef struct ScopeObjectStruct{
 
-    ScopeHandle scope;
+    IScopeHandle scope;
+    ControllerHandle controller;
 
     IRunnableHandle runCommunicationRx;
     IRunnableHandle runCommunicationTx;
@@ -114,6 +115,22 @@ void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle 
  * @param addressStorage
  */
 void ScopeBuilder_setAddressStorage(ScopeBuilderHandle self, AddressStorageHandle addressStorage);
+
+/**
+ * Appends the mutex which protects the Tx path of the runner. If no mutex is passed,
+ * only the ScopeRunner can be used. Otherwise the ScopeThreadRunner can be used.
+ * @param self
+ * @param mutex
+ */
+void ScopeBuilder_setDataMutex(ScopeBuilderHandle self, IMutexHandle mutex);
+
+/**
+ * Appends the mutex which protects the Rx path of the runner. If no mutex is passed,
+ * only the ScopeRunner can be used. Otherwise the ScopeThreadRunner can be used.
+ * @param self
+ * @param mutex
+ */
+void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex);
 
 /**
  * Deconstructor

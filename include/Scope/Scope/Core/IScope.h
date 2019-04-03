@@ -135,6 +135,20 @@ typedef struct IScopeStruct{
      */
     FloatRingBufferHandle (* getChannelBuffer)(IScopeHandle scope, uint32_t channelId);
 
+    /**
+     * Returns if the scope is currently running or not
+     * @param scope
+     * @return
+     */
+    bool (*isRunning)(IScopeHandle scope);
+
+    /**
+     * Returns if the scope is ready to run or not
+     * @param scope
+     * @return
+     */
+    bool (*isReadyToRun)(IScopeHandle scope);
+
 } IScope;
 
 #endif

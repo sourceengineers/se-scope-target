@@ -26,7 +26,7 @@
 typedef struct JsonUartPublicStackStruct {
 
     AddressStorageHandle addressStorage;
-    ScopeHandle scope;
+    IScopeHandle scope;
     BufferedByteStreamHandle input;
     BufferedByteStreamHandle output;
     UartJsonHandle uartJson;

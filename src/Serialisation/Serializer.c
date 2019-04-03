@@ -38,9 +38,9 @@ typedef struct __SerializerPrivateData{
     IObserverHandle communicationObserver;
 } SerializerPrivateData;
 
-static void runRx(IRunnableHandle runnable);
+static bool runRx(IRunnableHandle runnable);
 
-static void runTx(IRunnableHandle runnable);
+static bool runTx(IRunnableHandle runnable);
 
 static void updateUnpacker(IObserverHandle observer, void* state);
 
@@ -49,15 +49,15 @@ static void updatePacker(IObserverHandle observer, void* state);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void runRx(IRunnableHandle runnable){
+static bool runRx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
     if(self->unpackingPending == false){
-        return;
+        return false;
     }
 
     if(self->unpacker == NULL){
-        return;
+        return false;
     }
 
     bool parsingIsValid = self->unpacker->unpack(self->unpacker);
@@ -73,18 +73,22 @@ static void runRx(IRunnableHandle runnable){
     self->unpackingPending = false;
 
     self->controlObserver->update(self->controlObserver, NULL);
+
+    return true;
 }
 
-static void runTx(IRunnableHandle runnable){
+static bool runTx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
     if(self->packingPending == false){
-        return;
+        return false;
     }
 
     self->packer->pack(self->packer);
     self->packingPending = false;
     self->communicationObserver->update(self->communicationObserver, NULL);
+
+    return true;
 }
 
 static void updateUnpacker(IObserverHandle observer, void* state){

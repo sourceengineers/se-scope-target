@@ -33,7 +33,7 @@ typedef struct IMutexStruct{
      * @param self
      * @return
      */
-    bool (*lock)(IMutexHandle self);
+    bool (*lock)(IMutexHandle self, uint32_t timeout);
 
     /**
      * Implement unlock for the specific operating system mutex unlock operation.

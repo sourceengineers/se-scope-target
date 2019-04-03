@@ -37,9 +37,9 @@ typedef struct __EthernetJsonPrivateData{
     IRunnable txRunnable;
 } EthernetJsonPrivateData;
 
-static void runRx(IRunnableHandle runnable);
+static bool runRx(IRunnableHandle runnable);
 
-static void runTx(IRunnableHandle runnable);
+static bool runTx(IRunnableHandle runnable);
 
 static void update(IObserverHandle observer, void *state);
 
@@ -54,32 +54,36 @@ static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void runRx(IRunnableHandle runnable) {
+static bool runRx(IRunnableHandle runnable) {
     EthernetJsonHandle self = (EthernetJsonHandle) runnable->handle;
 
     if (self->rxDataReady == false) {
-        return;
+        return false;
     }
 
     self->rxDataReady = false;
     self->rxObserver->update(self->rxObserver, NULL);
+
+    return true;
 }
 
-static void runTx(IRunnableHandle runnable) {
+static bool runTx(IRunnableHandle runnable) {
     EthernetJsonHandle self = (EthernetJsonHandle) runnable->handle;
 
     if (self->txPendingToValidateAndTransmit == false) {
-        return;
+        return false;
     }
 
     if (self->output->length(self->output) <= 0) {
-        return;
+        return false;
     }
 
     self->output->writeByte(self->output, '\0');
 
     self->callback(self);
     self->txPendingToValidateAndTransmit = false;
+
+    return true;
 }
 
 static void update(IObserverHandle observer, void *state) {

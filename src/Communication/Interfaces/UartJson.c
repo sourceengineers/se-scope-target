@@ -51,9 +51,9 @@ typedef struct __UartJsonPrivateData {
 
 } UartJsonPrivateData;
 
-static void runRx(IRunnableHandle runnable);
+static bool runRx(IRunnableHandle runnable);
 
-static void runTx(IRunnableHandle runnable);
+static bool runTx(IRunnableHandle runnable);
 
 static void createOutputChecksum(UartJsonHandle self, char *data);
 
@@ -72,26 +72,28 @@ static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void runRx(IRunnableHandle runnable) {
+static bool runRx(IRunnableHandle runnable) {
     UartJsonHandle self = (UartJsonHandle) runnable->handle;
 
     if (self->rxDataReady == false) {
-        return;
+        return false;
     }
 
     self->rxDataReady = false;
     self->rxObserver->update(self->rxObserver, NULL);
+
+    return true;
 }
 
-static void runTx(IRunnableHandle runnable) {
+static bool runTx(IRunnableHandle runnable) {
     UartJsonHandle self = (UartJsonHandle) runnable->handle;
 
     if (self->txPendingToValidateAndTransmit == false) {
-        return;
+        return false;
     }
 
     if (self->output->length(self->output) <= 0) {
-        return;
+        return false;
     }
 
     char *formatedChecksum;
@@ -102,6 +104,8 @@ static void runTx(IRunnableHandle runnable) {
     self->txPendingToValidateAndTransmit = false;
 
     self->callback(self);
+
+    return true;
 }
 
 static void createOutputChecksum(UartJsonHandle self, char *data) {

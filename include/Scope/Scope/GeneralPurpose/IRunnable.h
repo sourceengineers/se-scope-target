@@ -29,7 +29,7 @@ typedef struct IRunnableStruct{
      * Runs the class which implemented the runnable
      * @param runnable
      */
-    void (* run)(IRunnableHandle runnable);
+    bool (* run)(IRunnableHandle runnable);
 
 } IRunnable;
 

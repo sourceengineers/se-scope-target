@@ -40,8 +40,14 @@ typedef struct __ScopePrivateData{
 
     IObserverHandle observer;
 
+    bool scopeIsRunning;
+    bool scopeIsReadyToRun;
+
 } ScopePrivateData;
 
+static bool isReadyToRun(IScopeHandle scope);
+
+static bool isRunning(IScopeHandle scope);
 
 static void scopePoll(IScopeHandle scope);
 
@@ -67,7 +73,7 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
 
 void transmit(IScopeHandle scope);
 
-static void run(IRunnableHandle runnable);
+static bool run(IRunnableHandle runnable);
 
 static TriggeredValues getTriggerData(IScopeHandle scope);
 
@@ -79,6 +85,18 @@ static bool allChannelsAreStopped(ScopeHandle self);
 /******************************************************************************
  Private functions
 ******************************************************************************/
+static bool isReadyToRun(IScopeHandle scope){
+    ScopeHandle self = (ScopeHandle) scope->handle;
+
+    return self->scopeIsReadyToRun;
+}
+
+static bool isRunning(IScopeHandle scope){
+	ScopeHandle self = (ScopeHandle) scope->handle;
+
+	return self->scopeIsRunning;
+}
+
 static void scopePoll(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
@@ -146,10 +164,10 @@ void transmit(IScopeHandle scope){
     Scope_transmit(self);
 }
 
-static void run(IRunnableHandle runnable){
+static bool run(IRunnableHandle runnable){
     ScopeHandle self = (ScopeHandle) runnable->handle;
 
-    Scope_poll(self);
+    return Scope_poll(self);
 }
 
 static TriggeredValues getTriggerData(IScopeHandle scope){
@@ -221,6 +239,8 @@ ScopeHandle Scope_create(size_t channelSize,
     self->scope.channelHasToBePacked = &channelHasToBePacked;
     self->scope.getChannelBuffer = &getChannelBuffer;
     self->scope.transmit = &transmit;
+    self->scope.isRunning = &isRunning;
+    self->scope.isReadyToRun = &isReadyToRun;
 
     self->runnable.handle = self;
     self->runnable.run = &run;
@@ -235,6 +255,8 @@ ScopeHandle Scope_create(size_t channelSize,
     self->timestamper = Timestamper_create(channelSize, referenceTimestamp);
     self->trigger = Trigger_create(self->channels, self->amountOfChannels, self->channelSize, self->timestamper);
 
+    self->scopeIsRunning = false;
+    self->scopeIsReadyToRun = false;
 
     return self;
 }
@@ -263,11 +285,17 @@ void Scope_transmit(ScopeHandle self){
     self->observer->update(self->observer, &typeToPack);
 }
 
-void Scope_poll(ScopeHandle self){
+bool Scope_poll(ScopeHandle self){
+
+	if(self->scopeIsReadyToRun == false){
+		return false;
+	}
+
+	self->scopeIsRunning = true;
 
     /* Check if the scope is ready to poll again, according to the set timeIncrement */
     if(Timestamper_updateElapsedTime(self->timestamper) == false){
-        return;
+        return self->scopeIsRunning;
     }
 
     /* Update timestamp */
@@ -281,6 +309,8 @@ void Scope_poll(ScopeHandle self){
     if(readyToSend == true){
         Scope_transmit(self);
     }
+
+	return self->scopeIsRunning;
 }
 
 void Scope_configureChannel(ScopeHandle self, const size_t channelId, void* pollAddress, DATA_TYPES type){
@@ -324,6 +354,7 @@ void Scope_setChannelRunning(ScopeHandle self, uint32_t channelId){
     if(allChannelsAreStopped(self) == false){
         Timestamper_setStateRunning(self->timestamper);
         Trigger_activate(self->trigger);
+	      self->scopeIsReadyToRun = true;
     }
 }
 
@@ -339,6 +370,8 @@ void Scope_setChannelStopped(ScopeHandle self, uint32_t channelId){
     if(allChannelsAreStopped(self) == true){
         Timestamper_setStateStopped(self->timestamper);
         Trigger_deactivate(self->trigger);
+	      self->scopeIsRunning = false;
+	      self->scopeIsReadyToRun = false;
     }
 }
 
