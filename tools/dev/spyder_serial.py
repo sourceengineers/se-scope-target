@@ -36,7 +36,7 @@ def config():
     ##########################################################################
     ### Serial optionen
     ##########################################################################
-    serial_file = '/dev/ttyACM0'  # z.B.: COM1 bei Windows
+    serial_file = 'COM4'  # z.B.: COM1 bei Windows
     baudrate = 57600
     timeout = 4
 
@@ -49,7 +49,7 @@ def config():
     # image_path = "/Users/USER/Documents"
 
     # Pfad zum map file
-    map_file = "/home/schuepbs/Documents/Projects/cmake_embedded/build/nucleo.map"
+    map_file = r"C:\Users\schuepbs\Documents\Projects\se-scope-target-examples\keil-nucleo-g0\MDK-ARM\nucleo-g0\nucleo-g0.map"
 
     ##########################################################################
     ### Channel Konfiguration
@@ -61,14 +61,14 @@ def config():
     channels.append({'name': "Cosinus", 'address': get_address_from_map("cosinus"), 'type': "SE_FLOAT"})
     channels.append({'name': "Leistung", 'address': get_address_from_map("leistung"), 'type': "SE_FLOAT"})
     #channels.append({'name': "Schmitt triggered", 'address': get_address_from_map("schmitttriggered"), 'type': "SE_UINT8"})
-    channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "SE_FLOAT"})
+    #channels.append({'name': "Potty", 'address': get_address_from_map("adcValue"), 'type': "SE_FLOAT"})
 
     ##########################################################################
     ### Trigger Konfiguration
     ##########################################################################
     #trigger_conf = {'mode' : 'Continous', 'level' : 1.4, 'edge' : 'rising', 'cl_id' : 0}
-    #trigger_conf = {'mode': 'Normal', 'level': 1.0, 'edge': 'rising', 'cl_id': 0}
-    trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 3}
+    trigger_conf = {'mode': 'Normal', 'level': 0.75, 'edge': 'rising', 'cl_id':get_channel_id("Leistung")}
+  #  trigger_conf = {'mode': 'OneShot', 'level': 0.75, 'edge': 'rising', 'cl_id': 0}
 
     # Mit der step size, kann eingestellt werden, wie häufig gepollt werden soll.
     # Wird z.B. der timestmap pro Millisekunde incrementiert, und die step_size ist 10,
@@ -78,19 +78,13 @@ def config():
     ##########################################################################
     ### Grafik Konfiguration
     ##########################################################################
-#    add_subplot(["Sinus"], \
-#                {'title': 'Sinus', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-#    add_subplot(["Cosinus"], \
-#                {'title': 'Cosinus', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-#    add_subplot(["Leistung"], \
-#                {'title': 'Leistung', 'y_label': 'Value', 'x_label': 'Time [ms]'})
-    add_subplot(["Sinus", "Cosinus"], \
-                {'title': 'Sin and Cos', 'y_label': 'Value', 'x_label': 'Time [ms]'})
+    add_subplot(["Sinus"], \
+                {'title': 'Sinus', 'y_label': 'Value', 'x_label': 'Time [ms]'})
+    add_subplot(["Cosinus"], \
+                {'title': 'Cosinus', 'y_label': 'Value', 'x_label': 'Time [ms]'})
     add_subplot(["Leistung"], \
-                {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
-    add_subplot(["Potty"], \
-                {'title': 'Potentiometer', 'y_label': 'Strange values', 'x_label': 'Time [ms]'})
-
+                {'title': 'Leistung', 'y_label': 'Value', 'x_label': 'Time [ms]'})
+  
     figure_name = "Demo_plot"
 
     # wenn die x_width auf None gesetzt wird, wird die Achse automatisch
@@ -155,11 +149,18 @@ def transmit_data(data):
 
     data_to_send = data + "transport:" + ''.join('{:02X}'.format(checksum))[-2:] + '\0'
     print(data_to_send)
-#    data_to_append = "\0" * (300 - len(data_to_send))
-#    data_to_send = data_to_send + data_to_append
     data_to_send = data_to_send.encode("utf-8")
     ser.write(data_to_send)
 
+##############################################################################
+    
+def get_channel_id(name):
+    
+    for i in range(len(channels)):
+        if channels[i]["name"] == name:
+            return i;
+        
+    raise Exception("""No channel called: """ + name + """ could be found""")
 
 ##############################################################################
 
@@ -172,7 +173,6 @@ def send_command(command, wait_for_ack):
         if found_flow_ctrl() == "ACK":
             break
         print("Something went wrong. Trying to send again")
-
 
 ##############################################################################
 
@@ -381,6 +381,7 @@ def clear_data():
 def read_data():
     answer = ser.read_until(b'transport:00\0')
 
+   # print(answer)
     # print(answer)    # Uncomment this print if you want to see the complete
     # output of the scope
     if ((b'{\"payload' in answer[0:10]) and (b'transport:00\0' in answer)):
