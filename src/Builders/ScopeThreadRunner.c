@@ -21,34 +21,56 @@ void ScopeThreadRunner_runScope(ScopeObject scope) {
     static bool isMutexLocked = false;
     bool success = false;
 
-    if (!scope.configMutex || scope.configMutex->lock(scope.configMutex, 0)) {
-        if (!scope.scope->isRunning(scope.scope) && scope.scope->isReadyToRun(scope.scope)) {
-            scope.dataMutex->lock(scope.dataMutex, 0);
-            isMutexLocked = true;
-        }
+    if(scope.configMutex == NULL){
+        return;
+    }
 
-        if (isMutexLocked) {
-            if (!scope.runScope->run(scope.runScope)) {
-                scope.dataMutex->unlock(scope.dataMutex);
-                isMutexLocked = false;
-            }
+    /* Lock the config mutex so the stack thread doesn't overwrite the scope config while running */
+    if(scope.configMutex->lock(scope.configMutex, 0) == false){
+        return;
+    }
+
+    /* Lock the data mutex if the scope is running or about to run */
+    if (!scope.scope->isRunning(scope.scope) && scope.scope->isReadyToRun(scope.scope)) {
+        scope.dataMutex->lock(scope.dataMutex, 0);
+        isMutexLocked = true;
+    }
+
+    /* If the scope is done running, release the data mutex */
+    if (isMutexLocked) {
+        if (!scope.runScope->run(scope.runScope)) {
+            scope.dataMutex->unlock(scope.dataMutex);
+            isMutexLocked = false;
         }
     }
+
+    /* Release the config mutex */
+    scope.configMutex->unlock(scope.configMutex);
 }
 
 void ScopeThreadRunner_runStack(ScopeObject scope) {
 
+    if(scope.configMutex == NULL){
+        return;
+    }
+
+    /* Process all pending data. This can be done no matter what the state of the
+     * mutexes is, since it doesn't interact with the scope */
     scope.runCommunicationRx->run(scope.runCommunicationRx);
     scope.runUnpacker->run(scope.runUnpacker);
 
+    /* If data is pending, the config mutex has to be locked, so the scope can be reconfigured */
     if (Controller_commandPending(scope.controller)) {
-        if (!scope.configMutex || scope.configMutex->lock(scope.configMutex, 10)) {
+        if (scope.configMutex->lock(scope.configMutex, 0) == true) {
+            /* Reconfigure the scope */
             scope.runCommandParser->run(scope.runCommandParser);
             scope.configMutex->unlock(scope.configMutex);
         }
     }
 
-    if (scope.dataMutex->lock(scope.configMutex, 10)) {
+    /* If data is pending to be transmitted, the dataMutex has to be locked, so no new data is put into the
+     * output streams while data is still being processed.*/
+    if (scope.dataMutex->lock(scope.dataMutex, 10)) {
         scope.runDataAggregator->run(scope.runDataAggregator);
         scope.runPacker->run(scope.runPacker);
         scope.runCommunicationTx->run(scope.runCommunicationTx);
