@@ -19,7 +19,6 @@
 void ScopeThreadRunner_runScope(ScopeObject scope) {
 
     static bool isMutexLocked = false;
-    bool success = false;
 
     if(scope.configMutex == NULL){
         return;
