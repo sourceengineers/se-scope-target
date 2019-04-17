@@ -93,6 +93,13 @@ void Timestamper_configureTimestampIncrement(TimestamperHandle self, uint32_t ti
 void Timestamper_clear(TimestamperHandle self);
 
 /**
+ * Checks if a swap event is pending or not.
+ * @param self
+ * @return
+ */
+bool Timestamper_swapIsPending(TimestamperHandle self);
+
+/**
  * Swaps the SWAP and the POLL buffers
  * @param self
  */

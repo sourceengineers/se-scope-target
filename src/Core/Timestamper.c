@@ -124,6 +124,17 @@ void Timestamper_clear(TimestamperHandle self){
     stream->flush(stream);
 }
 
+bool Timestamper_swapIsPending(TimestamperHandle self) {
+
+    IIntStreamHandle pollStream = BufferedIntStream_getIIntStream(self->timestamps[POLL_BUFFER]);
+    IIntStreamHandle swapStream = BufferedIntStream_getIIntStream(self->timestamps[SWAP_BUFFER]);
+
+    bool pollBufferIsFull = pollStream->capacity(pollStream) == pollStream->length(pollStream);
+    bool swapBufferIsEmpty = swapStream->length(swapStream) == 0;
+
+    return pollBufferIsFull && swapBufferIsEmpty;
+}
+
 void Timerstamper_swapBuffers(TimestamperHandle self){
     BufferedIntStreamHandle buffer = self->timestamps[SWAP_BUFFER];
     self->timestamps[SWAP_BUFFER] = self->timestamps[POLL_BUFFER];

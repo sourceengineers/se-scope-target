@@ -26,7 +26,7 @@ typedef enum {POLL_BUFFER, SWAP_BUFFER} BUFFER_TYPE;
 
 typedef struct TriggerStrategyStruct{
     void (* start)(TriggerHandle self);
-    void (* stop)(TriggerHandle self);
+    bool (* stop)(TriggerHandle self);
     void (* fillUp)(TriggerHandle self);
     void (* detecting)(TriggerHandle self);
 
@@ -90,7 +90,7 @@ static void restoreChannelStates(TriggerHandle self);
 
 static void stopChannelsAndTimestamp(TriggerHandle self);
 
-static void swapBuffers(TriggerHandle self);
+static bool swapBuffers(TriggerHandle self);
 
 /******************************************************************************
  Trigger strategies
@@ -107,23 +107,34 @@ static void fillUpTillChannelFull(TriggerHandle self);
 
 static void fillUpIfTriggered(TriggerHandle self);
 
-static void stopWithoutStoppingChannels(TriggerHandle self);
+static bool stopWithoutStoppingChannels(TriggerHandle self);
 
-static void stopIntoPause(TriggerHandle self);
+static bool stopIntoPause(TriggerHandle self);
 
-static void stopIntoIdle(TriggerHandle self);
+static bool stopIntoIdle(TriggerHandle self);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void swapBuffers(TriggerHandle self){
-	for(int i = 0; i < self->amountOfChannels; ++i){
-		Channel_swapBuffers(self->channels[i]);
-	}
-	Timerstamper_swapBuffers(self->timestamper);
+static bool swapBuffers(TriggerHandle self){
 
-	self->isTriggereds[SWAP_BUFFER] = self->isTriggereds[POLL_BUFFER];
-	self->triggerIndexes[SWAP_BUFFER] = self->triggerIndexes[POLL_BUFFER];
+    if(Channel_swapIsPending(self->channels[self->activeChannelId]) == false){
+        return false;
+    }
+
+    if(Timestamper_swapIsPending(self->timestamper) == false){
+        return false;
+    }
+
+		for(int i = 0; i < self->amountOfChannels; ++i){
+			Channel_swapBuffers(self->channels[i]);
+		}
+		Timerstamper_swapBuffers(self->timestamper);
+
+		self->isTriggereds[SWAP_BUFFER] = self->isTriggereds[POLL_BUFFER];
+		self->triggerIndexes[SWAP_BUFFER] = self->triggerIndexes[POLL_BUFFER];
+
+    return true;
 }
 
 static void stopChannelsAndTimestamp(TriggerHandle self){
@@ -197,6 +208,7 @@ static void fillUpTillChannelFull(TriggerHandle self){
         return;
     }
 
+		safeChannelStates(self);
     setState(self, TRIGGER_CLEANUP);
 }
 
@@ -211,34 +223,49 @@ static void fillUpIfTriggered(TriggerHandle self){
     if(self->fillUpPollCount < ((self->channelCapacity / 2))){
         return;
     }
-
+		
+		safeChannelStates(self);
     setState(self, TRIGGER_CLEANUP);
 }
 
-static void stopWithoutStoppingChannels(TriggerHandle self){
-    safeChannelStates(self);
-    if(Channel_swapIsPending(self->channels[self->activeChannelId]) == true){
-        swapBuffers(self);
+static bool stopWithoutStoppingChannels(TriggerHandle self){
+
+    if(swapBuffers(self) == false){
+        return false;
     }
+
     setState(self, TRIGGER_PAUSED);
+    self->fillUpPollCount = 0;
+
+    return true;
 }
 
-static void stopIntoPause(TriggerHandle self){
-    safeChannelStates(self);
+static bool stopIntoPause(TriggerHandle self){
+
     stopChannelsAndTimestamp(self);
-    if(Channel_swapIsPending(self->channels[self->activeChannelId]) == true){
-        swapBuffers(self);
+
+    if(swapBuffers(self) == false){
+        return false;
     }
+
     setState(self, TRIGGER_PAUSED);
+    self->fillUpPollCount = 0;
+
+    return true;
 }
 
-static void stopIntoIdle(TriggerHandle self){
-    safeChannelStates(self);
+static bool stopIntoIdle(TriggerHandle self){
+
     stopChannelsAndTimestamp(self);
-    if(Channel_swapIsPending(self->channels[self->activeChannelId]) == true){
-        swapBuffers(self);
+
+    if(swapBuffers(self) == false){
+        return false;
     }
+
     setState(self, TRIGGER_IDLE);
+    self->fillUpPollCount = 0;
+
+    return true;
 }
 
 static bool checkCurrentData(TriggerHandle self, const float* triggerData){
@@ -396,16 +423,14 @@ bool Trigger_run(TriggerHandle self){
         self->activeStrategy.fillUp(self);
     }
     if(getState(self) == TRIGGER_CLEANUP){
-        self->activeStrategy.stop(self);
-        self->fillUpPollCount = 0;
-        return true;
+        return self->activeStrategy.stop(self);
     } else {
         return false;
     }
 }
 
 bool Trigger_isTriggered(TriggerHandle self){
-    return self->isTriggereds[POLL_BUFFER];
+    return self->isTriggereds[SWAP_BUFFER];
 }
 
 uint32_t Trigger_getChannelId(TriggerHandle self){

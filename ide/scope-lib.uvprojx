@@ -612,6 +612,11 @@
               <FileType>1</FileType>
               <FilePath>..\src\Builders\ScopeRunner.c</FilePath>
             </File>
+            <File>
+              <FileName>ScopeThreadRunner.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

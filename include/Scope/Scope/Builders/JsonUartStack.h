@@ -52,7 +52,7 @@ typedef struct __JsonUartStackPrivateData* JsonUartStackHandle;
  * @param addressesInAddressAnnouncer Amount of addresses that can be stored to be transmitted
  */
 void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback, uint32_t* timestamp,
-                          size_t  addressesInAddressAnnouncer, IMutexHandle dataMutex, IMutexHandle configMutex);
+                          size_t  addressesInAddressAnnouncer);
 
 /**
  * Constructor. Creates a static instance of the stack and scope. If the stack is created with this function, it can be used in a 

@@ -60,7 +60,7 @@ void ScopeThreadRunner_runStack(ScopeObject scope) {
 
     /* If data is pending, the config mutex has to be locked, so the scope can be reconfigured */
     if (Controller_commandPending(scope.controller)) {
-        if (scope.configMutex->lock(scope.configMutex, 0) == true) {
+        if (scope.configMutex->lock(scope.configMutex, 10) == true) {
             /* Reconfigure the scope */
             scope.runCommandParser->run(scope.runCommandParser);
             scope.configMutex->unlock(scope.configMutex);
