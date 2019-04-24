@@ -232,7 +232,7 @@
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
           <BreakIfRCount>0</BreakIfRCount>
-          <Filename>C:\Users\schuepbs\Documents\Projects\se-scope-target-examples\keil-nucleo-g0\Middlewares\Third_Party\FreeRTOS\Source\tasks.c</Filename>
+          <Filename>&lt;1&gt;../Middlewares/Third_Party/FreeRTOS/Source/tasks.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression></Expression>
         </Bp>
