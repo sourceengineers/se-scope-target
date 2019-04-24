@@ -75,6 +75,13 @@ typedef struct IIntStreamStruct{
      * @param self
      */
     void (* flush)(IIntStreamHandle self);
+
+    /**
+     * Returns the maximum amount of data that can be safed in the stream
+     * @param self
+     */
+    size_t (* capacity)(IIntStreamHandle self);
+
 } IIntStream;
 
 #endif

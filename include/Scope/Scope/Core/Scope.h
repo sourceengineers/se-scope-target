@@ -51,8 +51,9 @@ void Scope_transmit(ScopeHandle self);
 /**
  * Tells the scope to poll data in the active channels
  * @param self
+ * @return Returns if the scope is done running
  */
-void Scope_poll(ScopeHandle self);
+bool Scope_poll(ScopeHandle self);
 
 /**
  * Configurates the channels with id == channelId toa specific address.

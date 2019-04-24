@@ -29,6 +29,9 @@ typedef struct __ScopeBuilderPrivateData{
     SerializerHandle serializer;
     AddressStorageHandle addressStorage;
 
+    IMutexHandle dataMutex;
+    IMutexHandle configMutex;
+
     uint32_t* timestamp;
     size_t amountOfChannels;
     size_t sizeOfChannels;
@@ -83,6 +86,14 @@ void ScopeBuilder_setAddressStorage(ScopeBuilderHandle self, AddressStorageHandl
     self->addressStorage = addressStorage;
 }
 
+void ScopeBuilder_setDataMutex(ScopeBuilderHandle self, IMutexHandle mutex){
+    self->dataMutex = mutex;
+}
+
+void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex){
+    self->configMutex = mutex;
+}
+
 ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
 
     ScopeObject obj;
@@ -128,7 +139,10 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     }
 
 
-    obj.scope = self->scope;
+    obj.scope = Scope_getIScope(self->scope);
+    obj.dataMutex = self->dataMutex;
+    obj.configMutex = self->configMutex;
+    obj.controller = self->controller;
     obj.runScope = Scope_getIRunnable(self->scope);
     obj.runCommandParser = Controller_getRxRunnable(self->controller);
     obj.runDataAggregator = Controller_getTxRunnable(self->controller);

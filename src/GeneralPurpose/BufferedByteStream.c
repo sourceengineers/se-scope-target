@@ -37,6 +37,8 @@ static void writeAll(IByteStreamHandle parent, const uint8_t* data, const size_t
 
 static void flush(IByteStreamHandle parent);
 
+static size_t getCapacity(IByteStreamHandle stream);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -93,6 +95,11 @@ static void flush(IByteStreamHandle parent){
     ByteRingBuffer_clear(self->buffer);
 }
 
+static size_t getCapacity(IByteStreamHandle stream){
+    BufferedByteStreamHandle self = (BufferedByteStreamHandle) stream->handle;
+
+    return ByteRingBuffer_getCapacity(self->buffer);
+}
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -110,6 +117,7 @@ BufferedByteStreamHandle BufferedByteStream_create(size_t capacity){
     self->parent.writeByte = writeData;
     self->parent.write = writeAll;
     self->parent.flush = flush;
+    self->parent.capacity = &getCapacity;
 
     return self;
 }

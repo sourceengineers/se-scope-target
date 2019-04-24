@@ -55,6 +55,13 @@ IRunnableHandle Controller_getRxRunnable(ControllerHandle self);
 IRunnableHandle Controller_getTxRunnable(ControllerHandle self);
 
 /**
+ * Returns if a command is pending to be interpreted
+ * @param self
+ * @return true if a command is pending. False if not
+ */
+bool Controller_commandPending(ControllerHandle self);
+
+/**
  * Attach the observer to the controller
  * @param self
  * @param observer

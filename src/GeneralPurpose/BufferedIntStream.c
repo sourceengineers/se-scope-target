@@ -37,6 +37,8 @@ static void writeAll(IIntStreamHandle stream, const uint32_t* data, const size_t
 
 static void flush(IIntStreamHandle stream);
 
+static size_t getCapacity(IIntStreamHandle stream);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -93,6 +95,12 @@ static void flush(IIntStreamHandle stream){
     IntRingBuffer_clear(self->buffer);
 }
 
+static size_t getCapacity(IIntStreamHandle stream){
+    BufferedIntStreamHandle self = (BufferedIntStreamHandle) stream->handle;
+
+    return IntRingBuffer_getCapacity(self->buffer);
+}
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -111,6 +119,7 @@ BufferedIntStreamHandle BufferedIntStream_create(size_t capacity){
     self->parent.writeData = writeData;
     self->parent.write = writeAll;
     self->parent.flush = flush;
+    self->parent.capacity = &getCapacity;
 
     return self;
 }

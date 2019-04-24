@@ -37,6 +37,8 @@ static void writeAll(IFloatStreamHandle stream, const float* data, const size_t 
 
 static void flush(IFloatStreamHandle stream);
 
+static size_t getCapacity(IFloatStreamHandle stream);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -93,6 +95,12 @@ static void flush(IFloatStreamHandle stream){
     FloatRingBuffer_clear(self->buffer);
 }
 
+static size_t getCapacity(IFloatStreamHandle stream){
+    BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) stream->handle;
+
+    return FloatRingBuffer_getCapacity(self->buffer);
+}
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
@@ -111,6 +119,7 @@ BufferedFloatStreamHandle BufferedFloatStream_create(size_t capacity){
     self->parent.writeData = writeData;
     self->parent.write = writeAll;
     self->parent.flush = flush;
+    self->parent.capacity = &getCapacity;
 
     return self;
 }

@@ -74,6 +74,13 @@ typedef struct IFloatStreamStruct{
      * @param self
      */
     void (* flush)(IFloatStreamHandle self);
+
+    /**
+     * Returns the maximum amount of data that can be safed in the stream
+     * @param self
+     */
+    size_t (* capacity)(IFloatStreamHandle self);
+
 } IFloatStream;
 
 #endif
