@@ -2,9 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 set(CMAKE_CXX_STANDARD 11)
 
 # Set the Project name
-set(PROJECT_NAME
-        se-scope
-        )
+set(PROJECT_NAME se-scope)
 ################################################################################
 # Set options
 ################################################################################
@@ -51,24 +49,11 @@ project(${PROJECT_NAME} C ASM)
 ################################################################################
 # Set options
 ################################################################################
-set(PROJECT_SOURCE_DIR
-        src
-        )
-set(PROJECT_DEPENDENCIES_DIR
-        3rdparty
-        )
-set(PROJECT_EXAMPLES_DIR
-        examples
-        )
-set(PROJECT_DEPENDENCIES
-        jsmn
-        )
-set(PROJECT_INCLUDE_DIR
-        include/Scope
-        )
-set(PROJECT_TEST_DIR
-        test
-        )
+set(PROJECT_SOURCE_DIR src)
+set(PROJECT_DEPENDENCIES_DIR 3rdparty)
+set(PROJECT_DEPENDENCIES jsmn)
+set(PROJECT_INCLUDE_DIR include/Scope)
+set(PROJECT_TEST_DIR test)
 #######################################################################################################################
 ## Find all needed files
 #######################################################################################################################
@@ -88,9 +73,7 @@ endif ()
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
-include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn"
-        "${PROJECT_INCLUDE_DIR}")
-
+include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn" "${PROJECT_INCLUDE_DIR}")
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
 
@@ -99,13 +82,7 @@ foreach (DEPENDENCY ${PROJECT_DEPENDENCIES})
 endforeach (DEPENDENCY)
 
 target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
-################################################################################
-# Add examples
-################################################################################
-#if (SE_BUILD_EXAMPLES)
-#    add_subdirectory(examples/dynamic_example)
-#    add_subdirectory(examples/static_example)
-#endif ()
+
 ################################################################################
 # Install project
 ################################################################################

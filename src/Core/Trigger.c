@@ -126,13 +126,13 @@ static bool swapBuffers(TriggerHandle self){
         return false;
     }
 
-		for(int i = 0; i < self->amountOfChannels; ++i){
-			Channel_swapBuffers(self->channels[i]);
-		}
-		Timerstamper_swapBuffers(self->timestamper);
+    for(int i = 0; i < self->amountOfChannels; ++i){
+        Channel_swapBuffers(self->channels[i]);
+    }
+    Timerstamper_swapBuffers(self->timestamper);
 
-		self->isTriggereds[SWAP_BUFFER] = self->isTriggereds[POLL_BUFFER];
-		self->triggerIndexes[SWAP_BUFFER] = self->triggerIndexes[POLL_BUFFER];
+    self->isTriggereds[SWAP_BUFFER] = self->isTriggereds[POLL_BUFFER];
+    self->triggerIndexes[SWAP_BUFFER] = self->triggerIndexes[POLL_BUFFER];
 
     return true;
 }

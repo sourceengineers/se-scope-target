@@ -1,15 +1,10 @@
 # Description
-This library aims to help developers debugging their code and embedded devices easier and more fluent.
-It helps tracking values of multiple addresses for a variation of communication interfaces as well as protocols.
-
-The target can be configured with the help of multiple pre defined commands, and sends data of the tracked addresses to the host computer. Through that, the data can be plotted on the host computer. This enables a type of debugging, which helps you determine the project actually does what it should and not just if its crashing or not.
+The SE-Scope is a library, used to visualize and log data produced by microcrontollers. 
+A set of commands allow the scope to be dynamically reconfigured during runtime.
+It features mutliple trigger modes, such as a continous, edge detecting as well as one shot mode.
 # Building
-The library is build upon cmake, and is therefore able to be compiled on pretty much anything.
-Additionally there is a release package which contains the sources, to be included into what ever IDE and project is used.
-
-If the library is to be compiled with cmake, the process is slightly different if the host system is a Windows or \*nix system.
-
-For detailed instructions, take a look at the doc folder and pick the documentation for what ever operating system the library is build on, or for what ever IDE is used.
+The library uses cmake as build tool, and is therefore able to be compiled on pretty much anything.
+Additionally there are pre configured project files for some supported IDE's. 
 
 ## Cmake host platform
 - [\*nix systems](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-nix.md)
@@ -18,75 +13,31 @@ For detailed instructions, take a look at the doc folder and pick the documentat
 - [IDE's](https://bitbucket.org/sourceengineers/iot-scope-target/src/master/doc/build-ide.md)
 # Usage
 ## Generate
-The scope is builded with the help of a dedicated builder class. An example usage of this might look like the following code sample.
+For common usages such as a system communicating with UART and JSON, there are pre configured 
+builders to generate the scope. 
 
+Building the UartJson stack can be done by the following code:
 ```c
-AddressStorageHandle addressStorage;
-ScopeBuilderHandle builder;
-ScopeObject scope_obj;
-size_t inputBufferSize = 0;
-size_t amountOfChannels;
-size_t sizeOfChannels;
-size_t outputBufferSize;
-size_t addressesInAddressAnnouncer;
-BufferedByteStreamHandle input;
-BufferedByteStreamHandle output;
-JsonUnpackerHandle unpacker;
-JsonPackerHandle packer;
-UartJsonHandle uartJson;
-UartTransmitCallback callback;
-uint32_t timestamp;
+uint32_t timestamp = 0;
+size_t channelSize = 50;
+size_t amountOfChannels = 3;
+size_t announceAddresses = 3;
 
-/* Specify amount of channels, the size of channels and the maximum amount of addresses in the announcer */
-amountOfChannels = 4;
-sizeOfChannels = 100;
-addressesInAddressAnnouncer = 3;
+void transmit_data(UartJsonHandle self){
+  printf("Implement your transmit function here");
+}
 
-/* Let the Packer and Unpacker calculate how much buffer space they are going to use */
-outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
-                                                         addressesInAddressAnnouncer);
-inputBufferSize = JsonUnpacker_calculateBufferSize();
-
-/* Generate the input and output buffers, based on the previously calculated sizes */
-input = BufferedByteStream_create(inputBufferSize);
-output = BufferedByteStream_create(outputBufferSize);
-
-/* Generate the desired packer and unpacker */
-unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(input));
-packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer,
-                                            BufferedByteStream_getIByteStream(output));
-
-/* Generate the communication handler */
-uartJson = UartJson_create(callback, BufferedByteStream_getIByteStream(input),
-                                                      BufferedByteStream_getIByteStream(output));
-
-/* Generate the address storage. The address storage is optional and doesn't have to be used */
-addressStorage = AddressStorage_create(addressesInAddressAnnouncer);
-
-/* Create the builder itself */
-builder = ScopeBuilder_create();
-
-/* Pass all the wanted elements into the builder */
-ScopeBuilder_setChannels(builder, amountOfChannels, sizeOfChannels);
-ScopeBuilder_setStreams(builder, BufferedByteStream_getIByteStream(input),
-                        BufferedByteStream_getIByteStream(output));
-ScopeBuilder_setTimestampReference(builder, timestamp);
-ScopeBuilder_setCommunication(builder, UartJson_getCommunicator(uartJson));
-ScopeBuilder_setParser(builder, JsonPacker_getIPacker(packer), JsonUnpacker_getIUnpacker(unpacker));
-ScopeBuilder_setAddressStorage(builder, addressStorage);
-
-/* Build the scope */
-scope_obj = ScopeBuilder_build(builder);
+JsonUartStack_create(channelSize, amountOfChannels, transmit_data, &timestamp, announceAddresses);
 ```
-Building the scope like this, allows to specify what ever protocol or communication interface should be used very easily.
-The input objects, as well as the address storage are optional. The builder will still be able to generate the scope, but it will only have limited functionalities.
+If a stack should be used that is not pre generated, it can be custom build.
+The UartJson class can be used as an example of how to do this.
 ## Running
 To run the scope, just call the ScopeRunner with the object generated by the builder.
 ```c
 /* Run the scope */
 ScopeRunner_run(scope_obj);
 ```
-Note, that the timestamp will not be automatically be increased. This should happen somewhere externally, to be able to supply an as accurate timestamp as possible.
+Note, that the timestamp will not be automatically be increased. This has to be done externally.
 As example through a systick on a embedded device.
 ## Communication
 Every communication interface class should supply functions, through which data can be passed into the scope, and be read out of it.
@@ -107,42 +58,36 @@ void callback(UartJsonHandle self){
   UartJson_resetTx(self);  
 }
 ```
-Note that you can also get the data out of the class at a later time through the earlier defined uartJson object. The transmission doesn't have to happen in the callback. This might be useful if the transmission should happen in a interrupted state or in a separate thread.
-As example
-```c
-static hasToBeSent = false;
+The transmission doesn't have to happen in the callback, but can be fetched from 
+the object returned from the JsonUartStack_getObject(). This might be useful if the transmission should occur in a interrupted state.
 
-void callback(UartJsonHandle self){
-  hasToBeSent = true;
-}
-
-if(hasToBeSent == true){
-  size_t length = UartJson_amountOfTxDataPending(uartJson);
-  uint8_t data[length];
-  UartJson_getTxData(uartJson, data, length);
-  hasToBeSent = false;
-  UartJson_resetTx(uartJson);  
-}
-```
 ## Destroy
 If the scope isn't used anymore, it can be destroyed.
 Every class should supply a destroy function. Therefore everything created for the builder can be destroyed again.
 ```c
-BufferedByteStream_destroy(input);
-BufferedByteStream_destroy(output);
-JsonUnpacker_destroy(unpacker);
-JsonPacker_destroy(packer);
-UartJson_destroy(uartJson);
-AddressStorage_destroy(addressStorage);
-ScopeBuilder_destroy(builder);
+JsonUartStack_destroy(stack);
+```
 
+## Thread
+The scope has the possibility to be run thread safe.
+To the thread safe version of the scope, the IMutex interface has to be implemented for the desired operating system.
+The scope can then be build with a dedicated builder and run with the thread safe runner.
+
+```c
+/* Builds the scope in a thread safe way. Mutexes have to be supplied to this function. */
+void JsonUartStack_createThreadSafe(...);
+
+/* Runs the scope in a thread safe way. This should ideally be done in a high priority thread */
+JsonUartStack_runThreadScope();
+
+/* Runs the stack in a thread safe way. This can be done in a lower priority thread */
+JsonUartStack_runThreadStack();
 ```
 # Protocol
 The host and the target are communicating through a custom defined protocol.
-The specification can be checked, in the dedicated [documentation](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md).
-This protocol will be parsed in what ever protocol (Json/Msgpack) is chosen to be sent between host and target.
+The specification can be viewed, in the dedicated [documentation](https://bitbucket.org/sourceengineers/iot-scope-doc/src/master/Protocol.md).
 # Desktop client
-A desktop client which is able to control the target and display the data, is currently under work.
+A desktop client which is able to control the target and display the data, is currently under work in progress.
 For the moment, the developer tools in tools have to be used to communicate with the target have to be used. These will be extended before the work at the desktop client continue.
-The progress of the client can be tracked in its respective [repo](https://bitbucket.org/sourceengineers/iot-scope/src/schuepbs/).
+The progress of the client can be tracked in its respective [repo](https://bitbucket.org/sourceengineers/iot-scope).
 # License
