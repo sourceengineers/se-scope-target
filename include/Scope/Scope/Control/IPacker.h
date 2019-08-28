@@ -85,6 +85,8 @@ typedef struct IPackerStruct{
     void (* prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type,
                                         const ADDRESS_DATA_TYPE address);
 
+    void (* prepareDetect)(IPackerHandle packer);
+
     /**
      * Resets the packer
      * @param packer

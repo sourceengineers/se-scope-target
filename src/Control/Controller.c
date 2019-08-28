@@ -101,6 +101,11 @@ static bool runTx(IRunnableHandle runnable) {
             packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
                                                           (const char *) "ev_pack_data");
             break;
+
+        case PACK_DETECT:
+            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                          (const char *) "ev_pack_detect");
+            break;
         default:
             packCommand = NULL;
             break;

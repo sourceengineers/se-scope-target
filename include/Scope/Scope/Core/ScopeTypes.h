@@ -63,7 +63,8 @@ typedef enum{
  */
 typedef enum{
     PACK_ANNOUNCE, // Announce data will be packed
-    PACK_DATA // Channel data and trigger will be packed
+    PACK_DATA, // Channel data and trigger will be packed
+    PACK_DETECT // Detect package that lets hosts discover the device
 } PACK_TYPES;
 
 #endif
