@@ -64,6 +64,7 @@ typedef struct __JsonPackerPrivateData{
     bool isTriggered;
     uint32_t channelId;
     uint32_t triggerTimestamp;
+    char triggerMode[KEYWORD_TGR_MODE_MAX_LENGTH];
 
     /* Flow control data */
     bool flowcontrolReady;
@@ -100,7 +101,8 @@ static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded);
 
 static void
-prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp);
+prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
+        char* triggerMode);
 
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -295,13 +297,15 @@ static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded){
 }
 
 static void
-prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp){
+prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
+        char* triggerMode){
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     self->triggerReady = true;
     self->isTriggered = isTriggered;
     self->channelId = channelId;
     self->triggerTimestamp = timestamp;
+    strncpy(self->triggerMode, triggerMode, KEYWORD_TGR_MODE_MAX_LENGTH);
     self->dataPendingToBePacked = true;
 }
 
@@ -321,6 +325,9 @@ static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded){
 
         appendString(self->byteStream, KEYWORD_TGR_CL_DATA_IND, KEYWORD_TGR_CL_DATA_IND_LENGTH, ":", 1);
         appendNumber(self->byteStream, self->triggerTimestamp, ",", 1);
+
+        appendString(self->byteStream, KEYWORD_CF_TGR_MODE, KEYWORD_TGR_MODE_LENGTH, ":", 1);
+        appendString(self->byteStream, self->triggerMode, strlen(self->triggerMode), ",", 1);
 
         appendString(self->byteStream, KEYWORD_TGR_CL_ID, KEYWORD_TGR_CL_ID_LENGTH, ":", 1);
         appendNumber(self->byteStream, self->channelId, "}", 1);

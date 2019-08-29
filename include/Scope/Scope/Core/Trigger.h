@@ -98,6 +98,13 @@ void Trigger_activate(TriggerHandle self);
 void Trigger_deactivate(TriggerHandle self);
 
 /**
+ * Returns the configured Trigger mode
+ * @param self
+ * @return
+ */
+TRIGGER_MODE Trigger_getTriggerMode(TriggerHandle self);
+
+/**
  * Resets the trigger
  * @param self
  */

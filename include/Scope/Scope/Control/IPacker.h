@@ -66,7 +66,7 @@ typedef struct IPackerStruct{
      * @param timestamp
      */
     void (* prepareTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId,
-                            const uint32_t timestamp);
+                            const uint32_t timestamp, char* triggerMode);
 
     /**
      * Prepares flow control

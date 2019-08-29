@@ -48,6 +48,7 @@ static const size_t FLOWCONTROL_NAK_LENGTH = 3;
 static const size_t KEYWORD_NUMBER_OF_CHANNELS_LENGTH = 9;
 static const size_t KEYWORD_SC_DATA_LENGTH = 7;
 static const size_t KEYWORD_TGR_LENGTH = 3;
+static const size_t KEYWORD_TGR_MODE_LENGTH = 4;
 static const size_t KEYWORD_SC_DETECT_LENGTH = 9;
 static const size_t KEYWORD_TGR_FOUND_LENGTH = 5;
 static const size_t KEYWORD_TGR_CL_DATA_IND_LENGTH = 11;
@@ -58,6 +59,7 @@ static const size_t KEYWORD_TRUE_LENGTH = 4;
 static const size_t KEYWORD_FALSE_LENGTH = 5;
 static const size_t KEYWORD_T_STMP_LENGTH = 6;
 static const size_t KEYWORD_T_INC_LENGTH = 5;
+static const size_t KEYWORD_TGR_MODE_MAX_LENGTH = 30;
 
 static const size_t MAX_COMMAND_LENGTH = 30; // Max length of a command
 static const size_t MAX_FIELD_LENGTH = 30; // Max length of a field
