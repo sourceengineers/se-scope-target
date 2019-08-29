@@ -178,6 +178,7 @@ static TriggeredValues getTriggerData(IScopeHandle scope){
     values.isTriggered = Trigger_isTriggered(self->trigger);
     values.triggerTimestamp = Trigger_getTriggerIndex(self->trigger);
     values.channelId = Trigger_getChannelId(self->trigger);
+    values.mode = Trigger_getTriggerMode(self->trigger);
 
     return values;
 }

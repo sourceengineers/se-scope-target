@@ -46,6 +46,7 @@ typedef struct{
     bool isTriggered; // True if the trigger is triggered
     uint32_t channelId; // Channel id which the trigger currently is monitoring
     uint32_t triggerTimestamp; // Timestamp at which the trigger detected matching trigger criteria
+    TRIGGER_MODE mode;
 } TriggeredValues;
 
 /**

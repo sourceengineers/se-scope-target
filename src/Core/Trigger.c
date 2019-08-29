@@ -55,6 +55,7 @@ typedef struct __TriggerPrivateData{
     bool* channelIsRunning;
 
     TRIGGER_STATES state;
+    TRIGGER_MODE mode;
 
     uint32_t fillUpPollCount;
 
@@ -327,6 +328,7 @@ static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode)
 static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
     self->level = conf.level;
     self->edge = conf.edge;
+    self->mode = conf.mode;
     self->stream = Channel_getTriggerDataStream(self->channels[conf.channelId]);
     self->activeStrategy = getTriggerStrategy(self, conf.mode);
     self->activeChannelId = conf.channelId;
@@ -448,6 +450,10 @@ void Trigger_deactivate(TriggerHandle self){
     stopChannelsAndTimestamp(self);
     setState(self, TRIGGER_IDLE);
     self->fillUpPollCount = 0;
+}
+
+TRIGGER_MODE Trigger_getTriggerMode(TriggerHandle self){
+    return self->mode;
 }
 
 void Trigger_clear(TriggerHandle self){

@@ -14,10 +14,12 @@
 #include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
 #include <Scope/GeneralPurpose/IIntStream.h>
+#include <Scope/Control/ParserDefinitions.h>
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 /******************************************************************************
  Define private data
@@ -33,9 +35,28 @@ typedef struct __CommandPackDataPrivateData{
 
 static void run(ICommandHandle command);
 
+static bool mapTriggerModeToString(TRIGGER_MODE mode, char* buffer, size_t maxBufferSize);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
+static bool mapTriggerModeToString(TRIGGER_MODE mode, char* buffer, size_t maxBufferSize){
+
+    if(mode == TRIGGER_CONTINUOUS){
+        strncpy(buffer, KEYWORD_CF_TGR_MODE_CONTINOUS, maxBufferSize);
+        return true;
+    } else if(mode == TRIGGER_NORMAL){
+        strncpy(buffer, KEYWORD_CF_TGR_MODE_NORMAL, maxBufferSize);
+        return true;
+    } else if(mode == TRIGGER_ONESHOT){
+        strncpy(buffer, KEYWORD_CF_TGR_MODE_ONESHOT, maxBufferSize);
+        return true;
+    }
+
+    strncpy(buffer, "", 1);
+    return false;
+}
+
 static void run(ICommandHandle command){
     CommandPackDataHandle self = (CommandPackDataHandle) command->handle;
 
@@ -54,8 +75,12 @@ static void run(ICommandHandle command){
     }
 
     TriggeredValues triggeredValues = self->scope->getTriggerData(self->scope);
+
+    char triggerMode[KEYWORD_TGR_MODE_MAX_LENGTH];
+    mapTriggerModeToString(triggeredValues.mode, triggerMode, KEYWORD_TGR_MODE_MAX_LENGTH);
+
     self->packer->prepareTrigger(self->packer, triggeredValues.isTriggered, triggeredValues.channelId, \
-                                   triggeredValues.triggerTimestamp);
+                                   triggeredValues.triggerTimestamp, triggerMode);
 
     IIntStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
     self->packer->prepareTimestamp(self->packer, scopeTimestamp);
