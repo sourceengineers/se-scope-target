@@ -27,8 +27,6 @@ static char* commandName = "ev_detect";
 typedef struct __CommandDetectParserPrivateData{
     CommandDetectHandle command;
 
-    IUnpackerHandle unpacker;
-
 } CommandDetectParserPrivateData;
 
 /******************************************************************************
@@ -45,10 +43,6 @@ CommandDetectParserHandle CommandDetectParser_create(IObserverHandle packOverser
 }
 
 ICommandHandle CommandDetectParser_getCommand(CommandDetectParserHandle self){
-
-    if(self->unpacker == NULL){
-        return NULL;
-    }
 
     return CommandDetect_getICommand(self->command);
 }
