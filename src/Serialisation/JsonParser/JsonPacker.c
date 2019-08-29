@@ -70,6 +70,8 @@ typedef struct __JsonPackerPrivateData{
     char flowcontrol[4];
     bool dataPendingToBePacked;
 
+    bool detectPending;
+
 } JsonPackerPrivateData;
 
 inline static void appendFloat(float data, IByteStreamHandle stream);
@@ -120,6 +122,10 @@ static bool packChannelMap(JsonPackerHandle self);
 static bool packPayloadMap(JsonPackerHandle self);
 
 static void packData(IPackerHandle packer);
+
+static void prepareDetect(IPackerHandle packer);
+
+static bool packDetect(JsonPackerHandle self, bool commaIsNeeded);
 
 static void reset(IPackerHandle packer);
 
@@ -210,6 +216,13 @@ static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrem
     self->dataPendingToBePacked = true;
 }
 
+static void prepareDetect(IPackerHandle packer){
+    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
+    self->detectPending = true;
+
+    self->dataPendingToBePacked = true;
+}
+
 static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded){
 
     if(self->tIncReady == false){
@@ -232,6 +245,20 @@ static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp){
     self->timestampReady = true;
     self->timestamp = timestamp;
     self->dataPendingToBePacked = true;
+}
+
+static bool packDetect(JsonPackerHandle self, bool commaIsNeeded){
+
+    if(self->detectPending == false){
+        return commaIsNeeded;
+    }
+
+    addComma(self->byteStream, commaIsNeeded);
+    appendString(self->byteStream, KEYWORD_SC_DETECT, KEYWORD_SC_DETECT_LENGTH, ":", 1);
+    appendData(self->byteStream, KEYWORD_TRUE, KEYWORD_TRUE_LENGTH, "", 0);
+
+    self->detectPending = false;
+    return true;
 }
 
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded){
@@ -474,6 +501,7 @@ static bool packPayloadMap(JsonPackerHandle self){
 
     bool commaIsNeeded = packChannelMap(self);
     commaIsNeeded = packFlowControl(self, commaIsNeeded);
+    commaIsNeeded = packDetect(self, commaIsNeeded);
 
     appendData(self->byteStream, "}", 1, "", 0);
     appendData(self->byteStream, "}", 1, "", 0);
@@ -511,6 +539,7 @@ static void reset(IPackerHandle packer){
     self->triggerReady = false;
     self->flowcontrolReady = false;
     self->dataPendingToBePacked = false;
+    self->detectPending = false;
 
     flushBuffer(self->flowcontrol);
 }
@@ -545,6 +574,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.prepareTrigger = &prepareTrigger;
     self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
     self->packer.reset(&self->packer);
+    self->packer.prepareDetect = &prepareDetect;
 
     return self;
 }
