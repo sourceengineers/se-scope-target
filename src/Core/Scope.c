@@ -9,7 +9,6 @@
 
 #include <Scope/Core/Scope.h>
 #include <Scope/Core/Timestamper.h>
-#include <Scope/Control/AddressStorage.h>
 #include <Scope/Core/Channel.h>
 #include <Scope/Core/IScope.h>
 #include <Scope/Core/ScopeTypes.h>

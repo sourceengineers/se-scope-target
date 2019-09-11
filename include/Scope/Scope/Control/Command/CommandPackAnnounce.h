@@ -17,7 +17,7 @@
 #include <Scope/Control/IPacker.h>
 #include <Scope/Core/IScope.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/Control/AddressStorage.h>
+#include <Scope/Control/AnnounceStorage.h>
 
 /******************************************************************************
  Define class handle data
@@ -33,7 +33,7 @@ typedef struct __CommandPackAnnouncePrivateData* CommandPackAnnounceHandle;
  * @param packer
  * @return
  */
-CommandPackAnnounceHandle CommandPackAnnounce_create(AddressStorageHandle addressStorage, IPackerHandle packer);
+CommandPackAnnounceHandle CommandPackAnnounce_create(AnnounceStorageHandle addressStorage, IPackerHandle packer);
 
 /**
  * Returns the ICommand interface

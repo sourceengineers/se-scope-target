@@ -156,7 +156,7 @@ static void commandUpdate(IObserverHandle observer, void *state) {
  Public functions
 ******************************************************************************/
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                    AddressStorageHandle addressStorage) {
+                                   AnnounceStorageHandle addressStorage) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
 

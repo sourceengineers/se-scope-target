@@ -21,7 +21,7 @@
 #include <Scope/Control/Command/ICommand.h>
 #include <Scope/Control/IPacker.h>
 #include <Scope/Core/IScope.h>
-#include <Scope/Control/AddressStorage.h>
+#include <Scope/Control/AnnounceStorage.h>
 
 /******************************************************************************
  Define class handle data
@@ -40,7 +40,7 @@ typedef struct __CommandPackParserDispatcherPrivateData* CommandPackParserDispat
  * @return
  */
 CommandPackParserDispatcherHandle
-CommandPackParserDispatcher_create(IScopeHandle scope, AddressStorageHandle addressStorage, IPackerHandle packer);
+CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle addressStorage, IPackerHandle packer);
 
 /**
  * Returns the command with name matching command.

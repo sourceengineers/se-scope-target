@@ -41,6 +41,8 @@ static const char* KEYWORD_CF_TGR_EDGE = "edge";
 static const char* KEYWORD_CF_TGR_CL_ID = "cl_id";
 static const char* KEYWORD_CF_TGR_MODE = "mode";
 static const char* KEYWORD_CF_TGR_LEVEL = "level";
+static const char* KEYWORD_VERSION = "version";
+static const char* KEYWORD_TIME_BASE = "time_base";
 static const size_t KEYWORD_ANNOUNCE_LENGTH = 11;
 static const size_t KEYWORD_FLOW_CTRL_LENGTH = 9;
 static const size_t FLOWCONTROL_ACK_LENGTH = 3;
@@ -60,13 +62,14 @@ static const size_t KEYWORD_FALSE_LENGTH = 5;
 static const size_t KEYWORD_T_STMP_LENGTH = 6;
 static const size_t KEYWORD_T_INC_LENGTH = 5;
 static const size_t KEYWORD_TGR_MODE_MAX_LENGTH = 30;
-
+static const size_t KEYWORD_VERSION_LENGTH = 7;
+static const size_t KEYWORD_TIME_BASE_LENGTH = 9;
 static const size_t MAX_COMMAND_LENGTH = 30; // Max length of a command
 static const size_t MAX_FIELD_LENGTH = 30; // Max length of a field
 
 #define maxAddrNameLength 30 // Max length of an address name
 /**
- * Definitions for the AddressStorage
+ * Definitions for the AnnounceStorage
  */
 typedef struct{
     char name[maxAddrNameLength]; // Name of an address

@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         AddressStorage.c
+ * @file         AnnounceStorage.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -7,9 +7,10 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/AddressStorage.h>
+#include <Scope/Control/AnnounceStorage.h>
 #include <Scope/Core/ScopeTypes.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
+#include <Version.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -18,13 +19,16 @@
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __AddressStoragePrivateData{
+typedef struct __AnnounceStoragePrivateData{
 
     AddressDefinition* addresses;
     size_t maxAmountOfAddresses;
+    size_t maxAmountOfChannels;
+    TIME_BASE timeBase;
+    const char* version;
     IObserverHandle packObserver;
 
-} AddressStoragePrivateData;
+} AnnounceStoragePrivateData;
 
 /******************************************************************************
  Private functions
@@ -34,12 +38,15 @@ typedef struct __AddressStoragePrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses){
+AnnounceStorageHandle AnnounceStorage_create(const size_t maxAmountOfAddresses, const size_t maxAmountOfChannels, const TIME_BASE timeBase){
 
-    AddressStorageHandle self = malloc(sizeof(AddressStoragePrivateData));
+    AnnounceStorageHandle self = malloc(sizeof(AnnounceStoragePrivateData));
 
     self->addresses = malloc(sizeof(AddressDefinition) * maxAmountOfAddresses);
     self->maxAmountOfAddresses = maxAmountOfAddresses;
+    self->version = SE_SCOPE_TARGET_VERSION;
+    self->timeBase = timeBase;
+    self->maxAmountOfChannels = maxAmountOfChannels;
 
     /* Initialize all addresses to have a defined state */
     for(int i = 0; i < maxAmountOfAddresses; ++i){
@@ -51,24 +58,36 @@ AddressStorageHandle AddressStorage_create(const size_t maxAmountOfAddresses){
     return self;
 }
 
-void AddressStorage_attachObserver(AddressStorageHandle self, IObserverHandle observer){
+void AnnounceStorage_attachObserver(AnnounceStorageHandle self, IObserverHandle observer){
     self->packObserver = observer;
 }
 
-void AddressStorage_announce(AddressStorageHandle self){
+size_t AnnounceStorage_getMaxAmountOfChannels(AnnounceStorageHandle self){
+    return self->maxAmountOfChannels;
+}
+
+TIME_BASE AnnounceStorage_getTimeBase(AnnounceStorageHandle self){
+    return self->timeBase;
+}
+
+void AnnounceStorage_getVersion(AnnounceStorageHandle self, char* version){
+    strncpy(version, self->version, strlen(self->version));
+}
+
+void AnnounceStorage_announce(AnnounceStorageHandle self){
     PACK_TYPES packType = PACK_ANNOUNCE;
     self->packObserver->update(self->packObserver, &packType);
 }
 
-size_t AddressStorage_getMaxAmountOfAddresses(AddressStorageHandle self){
+size_t AnnounceStorage_getMaxAmountOfAddresses(AnnounceStorageHandle self){
     return self->maxAmountOfAddresses;
 }
 
-AddressDefinition* AddressStorage_getAddressToTransmit(AddressStorageHandle self, const uint32_t addressId){
+AddressDefinition* AnnounceStorage_getAddressToTransmit(AnnounceStorageHandle self, const uint32_t addressId){
     return &self->addresses[addressId];
 }
 
-void AddressStorage_addAnnounceAddress(AddressStorageHandle self, const char* name, const void* address,
+void AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* name, const void* address,
                                        const DATA_TYPES type,
                                        const uint32_t addressId){
 
@@ -85,7 +104,7 @@ void AddressStorage_addAnnounceAddress(AddressStorageHandle self, const char* na
     strncpy(self->addresses[addressId].name, name, maxAddrNameLength);
 }
 
-void AddressStorage_destroy(AddressStorageHandle self){
+void AnnounceStorage_destroy(AnnounceStorageHandle self){
     free(self->addresses);
     self->addresses = NULL;
     free(self);

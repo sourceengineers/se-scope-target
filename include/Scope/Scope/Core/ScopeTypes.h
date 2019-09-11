@@ -68,4 +68,10 @@ typedef enum{
     PACK_DETECT // Detect package that lets hosts discover the device
 } PACK_TYPES;
 
+typedef enum {
+    TIME_BASE_S = 0,
+    TIME_BASE_MS = -3,
+    TIME_BASE_US = -6,
+} TIME_BASE;
+
 #endif

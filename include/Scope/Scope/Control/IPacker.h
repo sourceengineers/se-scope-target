@@ -18,6 +18,7 @@
 #include <Scope/GeneralPurpose/IIntStream.h>
 #include <Scope/GeneralPurpose/DataTypes.h>
 #include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include <Scope/Core/ScopeTypes.h>
 
 /******************************************************************************
  Define interface handle data
@@ -85,6 +86,19 @@ typedef struct IPackerStruct{
     void (* prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type,
                                         const ADDRESS_DATA_TYPE address);
 
+    /**
+     * Prepares the packer to pack version, timebase and max channels
+     * @param packer
+     * @param timeBase
+     * @param version
+     * @param maxChannels
+     */
+    void (* prepareAnnouncement)(IPackerHandle packer, TIME_BASE timeBase, char* version, size_t maxChannels);
+
+    /**
+     * Prepares detection package
+     * @param packer
+     */
     void (* prepareDetect)(IPackerHandle packer);
 
     /**

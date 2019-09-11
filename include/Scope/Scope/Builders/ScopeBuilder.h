@@ -18,7 +18,7 @@
 #include <Scope/Communication/ICommunicator.h>
 #include <Scope/Control/IPacker.h>
 #include <Scope/Control/IUnpacker.h>
-#include <Scope/Control/AddressStorage.h>
+#include <Scope/Control/AnnounceStorage.h>
 #include <Scope/GeneralPurpose/IByteStream.h>
 #include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/GeneralPurpose/IMutex.h>
@@ -108,13 +108,13 @@ void ScopeBuilder_setParser(ScopeBuilderHandle self, IPackerHandle packer, IUnpa
 void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle interface);
 
 /**
- * Add the AddressStorage. With the help of the AddressStorage, addresses and their aliases can be sent to the host
+ * Add the AnnounceStorage. With the help of the AnnounceStorage, addresses and their aliases can be sent to the host
  * This can be handy when the addresses aren't known at compile time.
  * This is optional.
  * @param self
  * @param addressStorage
  */
-void ScopeBuilder_setAddressStorage(ScopeBuilderHandle self, AddressStorageHandle addressStorage);
+void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle addressStorage);
 
 /**
  * Appends the mutex which protects the Tx path of the runner. If no mutex is passed,

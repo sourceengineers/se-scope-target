@@ -19,7 +19,7 @@
 #include <Scope/GeneralPurpose/IRunnable.h>
 #include <Scope/Control/IUnpacker.h>
 #include <Scope/Core/IScope.h>
-#include <Scope/Control/AddressStorage.h>
+#include <Scope/Control/AnnounceStorage.h>
 
 /******************************************************************************
  Define class handle data
@@ -38,7 +38,7 @@ typedef struct __ControllerPrivateData* ControllerHandle;
  * @return
  */
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                   AddressStorageHandle addressStorage);
+                                   AnnounceStorageHandle addressStorage);
 
 /**
  * Returns the runnable of the rx controller

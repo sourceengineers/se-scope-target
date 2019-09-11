@@ -27,7 +27,7 @@ typedef struct __ScopeBuilderPrivateData{
     ScopeHandle scope;
     ControllerHandle controller;
     SerializerHandle serializer;
-    AddressStorageHandle addressStorage;
+    AnnounceStorageHandle addressStorage;
 
     IMutexHandle dataMutex;
     IMutexHandle configMutex;
@@ -82,7 +82,7 @@ void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle 
     self->communicator = communicator;
 }
 
-void ScopeBuilder_setAddressStorage(ScopeBuilderHandle self, AddressStorageHandle addressStorage){
+void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle addressStorage){
     self->addressStorage = addressStorage;
 }
 
@@ -135,7 +135,7 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));
 
     if(self->addressStorage != NULL){
-        AddressStorage_attachObserver(self->addressStorage, Controller_getCommandPackObserver(self->controller));
+        AnnounceStorage_attachObserver(self->addressStorage, Controller_getCommandPackObserver(self->controller));
     }
 
 

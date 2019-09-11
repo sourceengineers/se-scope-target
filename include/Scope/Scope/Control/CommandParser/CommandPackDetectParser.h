@@ -17,7 +17,7 @@
 #include <Scope/Control/Command/ICommand.h>
 #include <Scope/Control/IPacker.h>
 #include <Scope/Core/IScope.h>
-#include <Scope/Control/AddressStorage.h>
+#include <Scope/Control/AnnounceStorage.h>
 
 /******************************************************************************
  Define class handle data

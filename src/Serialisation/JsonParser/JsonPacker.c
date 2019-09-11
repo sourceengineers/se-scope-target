@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <Version.h>
 
 #define FLOWCONTROL_BUFFER_SIZE 30
 #define TINC_BUFFER_SIZE 30
@@ -43,6 +44,11 @@ typedef struct __JsonPackerPrivateData{
     ADDRESS_DATA_TYPE* addresses;
     uint32_t numberOfAddressesToAnnounce;
     bool addressesReady;
+    TIME_BASE timeBase;
+    char* version;
+    size_t maxChannels;
+    bool annoucementReady;
+
     IByteStreamHandle byteStream;
 
     /* Channel preparation data */
@@ -64,7 +70,7 @@ typedef struct __JsonPackerPrivateData{
     bool isTriggered;
     uint32_t channelId;
     uint32_t triggerTimestamp;
-    char triggerMode[KEYWORD_TGR_MODE_MAX_LENGTH];
+    char* triggerMode;
 
     /* Flow control data */
     bool flowcontrolReady;
@@ -113,7 +119,10 @@ static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded);
 static void
 prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, ADDRESS_DATA_TYPE address);
 
-static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded);
+static void
+prepareAnnouncement(IPackerHandle packer, TIME_BASE timeBase, char* version, size_t maxChannels);
+
+static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded);
 
 static bool packChannel(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -369,7 +378,6 @@ static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded){
     return true;
 }
 
-
 static void
 prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, ADDRESS_DATA_TYPE address){
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
@@ -388,39 +396,73 @@ prepareAddressAnnouncement(IPackerHandle packer, const char* name, const char* t
     self->dataPendingToBePacked = true;
 }
 
-static bool packAddressAnnouncement(JsonPackerHandle self, bool commaIsNeeded){
+static void prepareAnnouncement(IPackerHandle packer, TIME_BASE timeBase, char* version, size_t maxChannels){
+    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
-    if(self->addressesReady == false){
-        return commaIsNeeded;
+    self->timeBase = timeBase;
+    strncpy(self->version, version, strlen(version));
+    self->maxChannels = maxChannels;
+
+    self->annoucementReady = true;
+    self->dataPendingToBePacked = true;
+}
+
+
+static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded){
+
+    bool dataAppended = false;
+
+    /* Append the channels */
+    if(self->addressesReady == true && self->numberOfAddressesToAnnounce > 0){
+        addComma(self->byteStream, commaIsNeeded);
+        appendString(self->byteStream, KEYWORD_ANNOUNCE, KEYWORD_ANNOUNCE_LENGTH, ":{", 2);
+
+        for(size_t i = 0; i < self->numberOfAddressesToAnnounce; ++i){
+
+            if(i != 0){
+                appendData(self->byteStream, ",", 1, "", 0);
+            }
+
+            appendString(self->byteStream, self->namesOfAddresses[i], strlen(self->namesOfAddresses[i]), ":[", 2);
+            appendNumber(self->byteStream, self->addresses[i], ",", 1);
+
+            appendString(self->byteStream, self->typesOfAddresses[i], strlen(self->typesOfAddresses[i]), "]", 1);
+        }
+
+
+        self->addressesReady = false;
+
+        dataAppended = true;
     }
 
-    if(self->numberOfAddressesToAnnounce == 0){
-        return commaIsNeeded;
-    }
-
-    addComma(self->byteStream, commaIsNeeded);
-    appendString(self->byteStream, KEYWORD_ANNOUNCE, KEYWORD_ANNOUNCE_LENGTH, ":{", 2);
-
-    for(size_t i = 0; i < self->numberOfAddressesToAnnounce; ++i){
-
-        if(i != 0){
+    if(self->annoucementReady == true){
+        /* Check if some data has been appended previously. If so, add a comma */
+        if(dataAppended == true){
             appendData(self->byteStream, ",", 1, "", 0);
         }
 
-        appendString(self->byteStream, self->namesOfAddresses[i], strlen(self->namesOfAddresses[i]), ":[", 2);
-        appendNumber(self->byteStream, self->addresses[i], ",", 1);
+        /* Append max number of available channels */
+        appendString(self->byteStream, KEYWORD_NUMBER_OF_CHANNELS, KEYWORD_NUMBER_OF_CHANNELS_LENGTH, ":", 1);
+        appendNumber(self->byteStream, self->maxChannels, ",", 1);
 
-        appendString(self->byteStream, self->typesOfAddresses[i], strlen(self->typesOfAddresses[i]), "]", 1);
+        /* Append the version number */
+        appendString(self->byteStream, KEYWORD_VERSION, KEYWORD_VERSION_LENGTH, ":", 1);
+        appendString(self->byteStream, self->version, strlen(self->version), ",", 1);
+
+        /* Append the version number */
+        appendString(self->byteStream, KEYWORD_TIME_BASE, KEYWORD_TIME_BASE_LENGTH, ":", 1);
+        appendNumber(self->byteStream, self->timeBase, "", 0);
+
+        self->annoucementReady = false;
+        dataAppended = true;
     }
 
-    appendData(self->byteStream, ",", 1, "", 0);
-
-    appendString(self->byteStream, KEYWORD_NUMBER_OF_CHANNELS, KEYWORD_NUMBER_OF_CHANNELS_LENGTH, ":", 1);
-    appendNumber(self->byteStream, self->maxNumberOfChannels, "", 0);
+    if(dataAppended == false){
+        return commaIsNeeded;
+    }
 
     appendData(self->byteStream, "}", 1, "", 0);
 
-    self->addressesReady = false;
 
     return true;
 }
@@ -494,7 +536,7 @@ static bool packChannelMap(JsonPackerHandle self){
     commaIsNeeded = packTimestamp(self, commaIsNeeded);
     commaIsNeeded = packTimeIncrement(self, commaIsNeeded);
     commaIsNeeded = packTrigger(self, commaIsNeeded);
-    packAddressAnnouncement(self, commaIsNeeded);
+    packAnnouncement(self, commaIsNeeded);
 
     appendData(self->byteStream, "}", 1, "", 0);
 
@@ -532,6 +574,7 @@ static void reset(IPackerHandle packer){
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     self->addressesReady = false;
+    self->annoucementReady = false;
     self->channelsReady = false;
     self->numberOfAddressesToAnnounce = 0;
     self->amountOfChannelsToSend = 0;
@@ -567,6 +610,8 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->addresses = malloc(sizeof(ADDRESS_DATA_TYPE) * maxAddressesToAnnounce);
     self->namesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
     self->typesOfAddresses = malloc(sizeof(char*) * maxAddressesToAnnounce);
+    self->triggerMode = malloc(sizeof(char) * KEYWORD_TGR_MODE_MAX_LENGTH);
+    self->version = malloc(sizeof(char) * SE_SCOPE_TARGET_VERSION_LENGTH);
 
     self->byteStream = byteStream;
     self->dataPendingToBePacked = false;
@@ -581,6 +626,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.prepareTrigger = &prepareTrigger;
     self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
     self->packer.reset(&self->packer);
+    self->packer.prepareAnnouncement = &prepareAnnouncement;
     self->packer.prepareDetect = &prepareDetect;
 
     return self;

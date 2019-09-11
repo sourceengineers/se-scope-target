@@ -11,7 +11,7 @@
 #include <Scope/Control/Command/CommandPackDetect.h>
 
 #include <stdlib.h>
-#include <Scope/Control/AddressStorage.h>
+#include <Scope/Control/AnnounceStorage.h>
 
 /******************************************************************************
  Define private data
