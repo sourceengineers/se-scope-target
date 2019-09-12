@@ -430,12 +430,29 @@ static void prepareAnnouncement(IPackerHandle packer, TIME_BASE timeBase, char *
 
 static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded) {
 
-    bool dataAppended = false;
+    if(self->addressesReady == false && self->annoucementReady == false){
+        return commaIsNeeded;
+    }
+
+    addComma(self->byteStream, commaIsNeeded);
+    appendString(self->byteStream, KEYWORD_ANNOUNCE, KEYWORD_ANNOUNCE_LENGTH, ":{", 2);
+
+    /* Append max number of available channels */
+    appendString(self->byteStream, KEYWORD_NUMBER_OF_CHANNELS, KEYWORD_NUMBER_OF_CHANNELS_LENGTH, ":", 1);
+    appendUnsignedInt(self->byteStream, self->maxChannels, ",", 1);
+
+    /* Append the version number */
+    appendString(self->byteStream, KEYWORD_VERSION, KEYWORD_VERSION_LENGTH, ":", 1);
+    appendString(self->byteStream, self->version, strlen(self->version), ",", 1);
+
+    /* Append the version number */
+    appendString(self->byteStream, KEYWORD_TIME_BASE, KEYWORD_TIME_BASE_LENGTH, ":", 1);
+    appendSignedInt(self->byteStream, self->timeBase, "", 0);
 
     /* Append the channels */
     if (self->addressesReady == true && self->numberOfAddressesToAnnounce > 0) {
-        addComma(self->byteStream, commaIsNeeded);
-        appendString(self->byteStream, KEYWORD_ANNOUNCE, KEYWORD_ANNOUNCE_LENGTH, ":{", 2);
+        addComma(self->byteStream, true);
+        appendString(self->byteStream, KEYWORD_CHANNELS, KEYWORD_CHANNELS_LENGTH, ":{", 2);
 
         for (size_t i = 0; i < self->numberOfAddressesToAnnounce; ++i) {
 
@@ -449,40 +466,12 @@ static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded) {
             appendString(self->byteStream, self->typesOfAddresses[i], strlen(self->typesOfAddresses[i]), "]", 1);
         }
 
-
+        appendData(self->byteStream, "}", 1, "", 0);
         self->addressesReady = false;
-
-        dataAppended = true;
-    }
-
-    if (self->annoucementReady == true) {
-        /* Check if some data has been appended previously. If so, add a comma */
-        if (dataAppended == true) {
-            appendData(self->byteStream, ",", 1, "", 0);
-        }
-
-        /* Append max number of available channels */
-        appendString(self->byteStream, KEYWORD_NUMBER_OF_CHANNELS, KEYWORD_NUMBER_OF_CHANNELS_LENGTH, ":", 1);
-        appendUnsignedInt(self->byteStream, self->maxChannels, ",", 1);
-
-        /* Append the version number */
-        appendString(self->byteStream, KEYWORD_VERSION, KEYWORD_VERSION_LENGTH, ":", 1);
-        appendString(self->byteStream, self->version, strlen(self->version), ",", 1);
-
-        /* Append the version number */
-        appendString(self->byteStream, KEYWORD_TIME_BASE, KEYWORD_TIME_BASE_LENGTH, ":", 1);
-        appendSignedInt(self->byteStream, self->timeBase, "", 0);
-
-        self->annoucementReady = false;
-        dataAppended = true;
-    }
-
-    if (dataAppended == false) {
-        return commaIsNeeded;
     }
 
     appendData(self->byteStream, "}", 1, "", 0);
-
+    self->annoucementReady = false;
 
     return true;
 }
