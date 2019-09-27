@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         Keywords.h
+ * @file         ParserDefinitions.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
@@ -9,65 +9,68 @@
  *
  ******************************************************************************/
 
+#ifndef PARSERDEFINITIONS_H_
+#define PARSERDEFINITIONS_H_
+
 #include <stddef.h>
 #include <Scope/Core/ScopeTypes.h>
 
-static const char* KEYWORD_PAYLOAD = "payload";
-static const char* KEYWORD_TRANSPORT = "transport";
-static const char* KEYWORD_SC_DATA = "sc_data";
-static const char* KEYWORD_PLACEHOLDER = "...";
-static const char* KEYWORD_ANNOUNCE = "sc_announce";
-static const char* KEYWORD_FLOW_CTRL = "flow_ctrl";
-static const char* KEYWORD_CL_DATA = "cl_data";
-static const char* KEYWORD_T_STMP = "t_stmp";
-static const char* KEYWORD_T_INC = "t_inc";
-static const char* KEYWORD_SC_DETECT = "sc_detect";
-static const char* KEYWORD_TGR = "tgr";
-static const char* KEYWORD_TGR_FOUND = "found";
-static const char* KEYWORD_TGR_CL_DATA_IND = "cl_data_ind";
-static const char* KEYWORD_TGR_CL_ID = "cl_id";
-static const char* KEYWORD_NUMBER_OF_CHANNELS = "cl_amount";
-static const char* KEYWORD_SC_CMD = "sc_cmd";
-static const char* FLOWCONTROL_ACK = "ACK";
-static const char* FLOWCONTROL_NAK = "NAK";
-static const char* KEYWORD_TRUE = "true";
-static const char* KEYWORD_FALSE = "false";
-static const char* KEYWORD_CF_TGR_MODE_CONTINOUS = "Continous";
-static const char* KEYWORD_CF_TGR_MODE_NORMAL = "Normal";
-static const char* KEYWORD_CF_TGR_MODE_ONESHOT = "OneShot";
-static const char* KEYWORD_CF_TGR_EDGE_RISING = "rising";
-static const char* KEYWORD_CF_TGR_EDGE_FALLING = "falling";
-static const char* KEYWORD_CF_TGR_EDGE = "edge";
-static const char* KEYWORD_CF_TGR_CL_ID = "cl_id";
-static const char* KEYWORD_CF_TGR_MODE = "mode";
-static const char* KEYWORD_CF_TGR_LEVEL = "level";
-static const char* KEYWORD_VERSION = "version";
-static const char* KEYWORD_TIME_BASE = "time_base";
-static const char* KEYWORD_CHANNELS = "channels";
-static const size_t KEYWORD_ANNOUNCE_LENGTH = 11;
-static const size_t KEYWORD_FLOW_CTRL_LENGTH = 9;
-static const size_t KEYWORD_CHANNELS_LENGTH = 8;
-static const size_t FLOWCONTROL_ACK_LENGTH = 3;
-static const size_t FLOWCONTROL_NAK_LENGTH = 3;
-static const size_t KEYWORD_NUMBER_OF_CHANNELS_LENGTH = 9;
-static const size_t KEYWORD_SC_DATA_LENGTH = 7;
-static const size_t KEYWORD_TGR_LENGTH = 3;
-static const size_t KEYWORD_TGR_MODE_LENGTH = 4;
-static const size_t KEYWORD_SC_DETECT_LENGTH = 9;
-static const size_t KEYWORD_TGR_FOUND_LENGTH = 5;
-static const size_t KEYWORD_TGR_CL_DATA_IND_LENGTH = 11;
-static const size_t KEYWORD_TGR_CL_ID_LENGTH = 5;
-static const size_t KEYWORD_CL_DATA_LENGTH = 7;
-static const size_t KEYWORD_PAYLOAD_LENGTH = 7;
-static const size_t KEYWORD_TRUE_LENGTH = 4;
-static const size_t KEYWORD_FALSE_LENGTH = 5;
-static const size_t KEYWORD_T_STMP_LENGTH = 6;
-static const size_t KEYWORD_T_INC_LENGTH = 5;
-static const size_t KEYWORD_TGR_MODE_MAX_LENGTH = 30;
-static const size_t KEYWORD_VERSION_LENGTH = 7;
-static const size_t KEYWORD_TIME_BASE_LENGTH = 9;
-static const size_t MAX_COMMAND_LENGTH = 30; // Max length of a command
-static const size_t MAX_FIELD_LENGTH = 30; // Max length of a field
+extern const char* KEYWORD_PAYLOAD;
+extern const char* KEYWORD_TRANSPORT;
+extern const char* KEYWORD_SC_DATA;
+extern const char* KEYWORD_PLACEHOLDER;
+extern const char* KEYWORD_ANNOUNCE;
+extern const char* KEYWORD_FLOW_CTRL;
+extern const char* KEYWORD_CL_DATA;
+extern const char* KEYWORD_T_STMP;
+extern const char* KEYWORD_T_INC;
+extern const char* KEYWORD_SC_DETECT;
+extern const char* KEYWORD_TGR;
+extern const char* KEYWORD_TGR_FOUND;
+extern const char* KEYWORD_TGR_CL_DATA_IND;
+extern const char* KEYWORD_TGR_CL_ID;
+extern const char* KEYWORD_NUMBER_OF_CHANNELS;
+extern const char* KEYWORD_SC_CMD;
+extern const char* FLOWCONTROL_ACK;
+extern const char* FLOWCONTROL_NAK;
+extern const char* KEYWORD_TRUE;
+extern const char* KEYWORD_FALSE;
+extern const char* KEYWORD_CF_TGR_MODE_CONTINOUS;
+extern const char* KEYWORD_CF_TGR_MODE_NORMAL;
+extern const char* KEYWORD_CF_TGR_MODE_ONESHOT;
+extern const char* KEYWORD_CF_TGR_EDGE_RISING;
+extern const char* KEYWORD_CF_TGR_EDGE_FALLING;
+extern const char* KEYWORD_CF_TGR_EDGE;
+extern const char* KEYWORD_CF_TGR_CL_ID;
+extern const char* KEYWORD_CF_TGR_MODE;
+extern const char* KEYWORD_CF_TGR_LEVEL;
+extern const char* KEYWORD_VERSION;
+extern const char* KEYWORD_TIME_BASE;
+extern const char* KEYWORD_CHANNELS;
+extern const size_t KEYWORD_ANNOUNCE_LENGTH;
+extern const size_t KEYWORD_FLOW_CTRL_LENGTH;
+extern const size_t KEYWORD_CHANNELS_LENGTH;
+extern const size_t FLOWCONTROL_ACK_LENGTH;
+extern const size_t FLOWCONTROL_NAK_LENGTH;
+extern const size_t KEYWORD_NUMBER_OF_CHANNELS_LENGTH;
+extern const size_t KEYWORD_SC_DATA_LENGTH;
+extern const size_t KEYWORD_TGR_LENGTH;
+extern const size_t KEYWORD_TGR_MODE_LENGTH;
+extern const size_t KEYWORD_SC_DETECT_LENGTH;
+extern const size_t KEYWORD_TGR_FOUND_LENGTH;
+extern const size_t KEYWORD_TGR_CL_DATA_IND_LENGTH;
+extern const size_t KEYWORD_TGR_CL_ID_LENGTH;
+extern const size_t KEYWORD_CL_DATA_LENGTH;
+extern const size_t KEYWORD_PAYLOAD_LENGTH;
+extern const size_t KEYWORD_TRUE_LENGTH;
+extern const size_t KEYWORD_FALSE_LENGTH;
+extern const size_t KEYWORD_T_STMP_LENGTH;
+extern const size_t KEYWORD_T_INC_LENGTH;
+extern const size_t KEYWORD_TGR_MODE_MAX_LENGTH;
+extern const size_t KEYWORD_VERSION_LENGTH;
+extern const size_t KEYWORD_TIME_BASE_LENGTH;
+extern const size_t MAX_COMMAND_LENGTH; // Max length of a command
+extern const size_t MAX_FIELD_LENGTH; // Max length of a field
 
 #define maxAddrNameLength 30 // Max length of an address name
 /**
@@ -78,3 +81,5 @@ typedef struct{
     DATA_TYPES type; // Type of the address
     ADDRESS_DATA_TYPE address; // The address
 } AddressDefinition;
+
+#endif

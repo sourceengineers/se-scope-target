@@ -39,7 +39,7 @@ typedef struct __AnnounceStoragePrivateData* AnnounceStorageHandle;
  * @return
  */
 AnnounceStorageHandle AnnounceStorage_create(const size_t maxAmountOfConfiguredAddresses,
-        const size_t maxAmountOfChannels, const TIME_BASE timeBase);
+        const size_t maxAmountOfChannels, const float timeBase);
 
 /**
  * Sets a new definition of a address. If the addressId is bigger than the maximum amount of elements,
@@ -67,7 +67,7 @@ size_t AnnounceStorage_getMaxAmountOfChannels(AnnounceStorageHandle self);
  * @param self
  * @return
  */
-TIME_BASE AnnounceStorage_getTimeBase(AnnounceStorageHandle self);
+float AnnounceStorage_getTimeBase(AnnounceStorageHandle self);
 
 /**
  * Attaches the packObserver to the AnnounceStorage. This can be used to transmit the addresses

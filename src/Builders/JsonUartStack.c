@@ -45,7 +45,7 @@ typedef struct __JsonUartStackPrivateData{
  Private functions
 ******************************************************************************/
 void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback, uint32_t* timestamp,
-                          size_t  addressesInAddressAnnouncer, TIME_BASE timebase){
+                          size_t  addressesInAddressAnnouncer, float timebase){
 
     self = malloc(sizeof(JsonUartStackPrivateData));
 
@@ -91,7 +91,7 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
 
 void JsonUartStack_createThreadSafe(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback, uint32_t* timestamp,
                           size_t  addressesInAddressAnnouncer, IMutexHandle dataMutex, IMutexHandle configMutex,
-                          TIME_BASE timebase){
+                          float timebase){
 
     self = malloc(sizeof(JsonUartStackPrivateData));
 

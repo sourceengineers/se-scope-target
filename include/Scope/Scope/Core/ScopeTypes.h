@@ -63,15 +63,9 @@ typedef enum{
  * Enum to determine the source of the observer.
  */
 typedef enum{
-    PACK_ANNOUNCE, // Announce data will be packed
-    PACK_DATA, // Channel data and trigger will be packed
-    PACK_DETECT // Detect package that lets hosts discover the device
+    PACK_ANNOUNCE = 1, // Announce data will be packed
+    PACK_DATA = 2, // Channel data and trigger will be packed
+    PACK_DETECT = 4 // Detect package that lets hosts discover the device
 } PACK_TYPES;
-
-typedef enum {
-    TIME_BASE_S = 0,
-    TIME_BASE_MS = -3,
-    TIME_BASE_US = -6,
-} TIME_BASE;
 
 #endif

@@ -53,7 +53,7 @@ typedef struct __JsonUartStackPrivateData* JsonUartStackHandle;
  * @param timebase Timebase of the system
  */
 void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback, uint32_t* timestamp,
-                          size_t  addressesInAddressAnnouncer, TIME_BASE timebase);
+                          size_t  addressesInAddressAnnouncer, float timebase);
 
 /**
  * Constructor. Creates a static instance of the stack and scope. If the stack is created with this function, it can be used in a 
@@ -69,7 +69,7 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
  */
 void JsonUartStack_createThreadSafe(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback, uint32_t* timestamp,
                           size_t  addressesInAddressAnnouncer, IMutexHandle dataMutex, IMutexHandle configMutex,
-                                    TIME_BASE timebase);
+                                    float timebase);
 
 /**
  * Runs the JsonUart stack

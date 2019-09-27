@@ -93,7 +93,7 @@ typedef struct IPackerStruct{
      * @param version
      * @param maxChannels
      */
-    void (* prepareAnnouncement)(IPackerHandle packer, TIME_BASE timeBase, char* version, size_t maxChannels);
+    void (* prepareAnnouncement)(IPackerHandle packer, float timeBase, char* version, size_t maxChannels);
 
     /**
      * Prepares detection package

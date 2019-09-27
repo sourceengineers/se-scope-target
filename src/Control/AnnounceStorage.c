@@ -24,7 +24,7 @@ typedef struct __AnnounceStoragePrivateData{
     AddressDefinition* addresses;
     size_t maxAmountOfAddresses;
     size_t maxAmountOfChannels;
-    TIME_BASE timeBase;
+    float timeBase;
     const char* version;
     IObserverHandle packObserver;
 
@@ -38,7 +38,7 @@ typedef struct __AnnounceStoragePrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-AnnounceStorageHandle AnnounceStorage_create(const size_t maxAmountOfAddresses, const size_t maxAmountOfChannels, const TIME_BASE timeBase){
+AnnounceStorageHandle AnnounceStorage_create(const size_t maxAmountOfAddresses, const size_t maxAmountOfChannels, const float timeBase){
 
     AnnounceStorageHandle self = malloc(sizeof(AnnounceStoragePrivateData));
 
@@ -66,7 +66,7 @@ size_t AnnounceStorage_getMaxAmountOfChannels(AnnounceStorageHandle self){
     return self->maxAmountOfChannels;
 }
 
-TIME_BASE AnnounceStorage_getTimeBase(AnnounceStorageHandle self){
+float AnnounceStorage_getTimeBase(AnnounceStorageHandle self){
     return self->timeBase;
 }
 

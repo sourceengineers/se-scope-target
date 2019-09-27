@@ -43,6 +43,8 @@ typedef struct __ControllerPrivateData {
     bool commandPending;
     PACK_TYPES typeToPack;
 
+    uint8_t pendingToPack;
+
 } ControllerPrivateData;
 
 static bool runRx(IRunnableHandle runnable);
@@ -91,32 +93,25 @@ static bool runTx(IRunnableHandle runnable) {
 
     ICommandHandle packCommand;
 
-    switch (self->typeToPack) {
 
-        case PACK_ANNOUNCE:
-            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
-                                                          (const char *) "ev_pack_announce");
-            break;
-        case PACK_DATA:
-            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
-                                                          (const char *) "ev_pack_data");
-            break;
-
-        case PACK_DETECT:
-            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
-                                                          (const char *) "ev_pack_detect");
-            break;
-        default:
-            packCommand = NULL;
-            break;
+    if((self->pendingToPack & PACK_ANNOUNCE) != 0){
+        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                      (const char *) "ev_pack_announce");
+        packCommand->run(packCommand);
+    }
+    if((self->pendingToPack & PACK_DATA) != 0){
+        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                      (const char *) "ev_pack_data");
+        packCommand->run(packCommand);
+    }
+    if((self->pendingToPack & PACK_DETECT) != 0){
+        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                      (const char *) "ev_pack_detect");
+        packCommand->run(packCommand);
     }
 
-    if (packCommand == NULL) {
-        return false;
-    }
-
-    packCommand->run(packCommand);
     self->packCommandPending = false;
+    self->pendingToPack = 0;
     self->packObserver->update(self->packObserver, NULL);
 
     return true;
@@ -144,7 +139,7 @@ static void runCommands(ICommandHandle *commands, size_t numberOfCommands) {
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
     self->packCommandPending = true;
-    self->typeToPack = *(PACK_TYPES *) state;
+    self->pendingToPack |= *(uint8_t*) state;
 }
 
 static void commandUpdate(IObserverHandle observer, void *state) {

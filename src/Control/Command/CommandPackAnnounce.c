@@ -54,7 +54,7 @@ static void run(ICommandHandle command){
     }
     
     const size_t maxAmountOfChannels = AnnounceStorage_getMaxAmountOfChannels(self->announceStorage);
-    const TIME_BASE timeBase = AnnounceStorage_getTimeBase(self->announceStorage);
+    const float timeBase = AnnounceStorage_getTimeBase(self->announceStorage);
 
     char version[SE_SCOPE_TARGET_VERSION_LENGTH];
     AnnounceStorage_getVersion(self->announceStorage, version);

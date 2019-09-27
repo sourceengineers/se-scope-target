@@ -13,6 +13,7 @@
 #include <Scope/GeneralPurpose/DataTypes.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -62,7 +63,6 @@ CommandAddrHandle CommandAddr_create(IScopeHandle scope){
     self->config.newAddresses = malloc(sizeof(void*) * self->amountOfChannels);
     self->config.changedChannels = malloc(sizeof(int) * self->amountOfChannels);
     self->config.types = malloc(sizeof(DATA_TYPES) * self->amountOfChannels);
-
     self->config.numberOfChangedChannels = 0;
 
     self->command.handle = self;

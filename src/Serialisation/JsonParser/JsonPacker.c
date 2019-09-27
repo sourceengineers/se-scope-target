@@ -44,7 +44,7 @@ typedef struct __JsonPackerPrivateData {
     ADDRESS_DATA_TYPE *addresses;
     uint32_t numberOfAddressesToAnnounce;
     bool addressesReady;
-    TIME_BASE timeBase;
+    float timeBase;
     char *version;
     size_t maxChannels;
     bool annoucementReady;
@@ -123,7 +123,7 @@ static void
 prepareAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address);
 
 static void
-prepareAnnouncement(IPackerHandle packer, TIME_BASE timeBase, char *version, size_t maxChannels);
+prepareAnnouncement(IPackerHandle packer, float timeBase, char *version, size_t maxChannels);
 
 static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -416,7 +416,7 @@ prepareAddressAnnouncement(IPackerHandle packer, const char *name, const char *t
     self->dataPendingToBePacked = true;
 }
 
-static void prepareAnnouncement(IPackerHandle packer, TIME_BASE timeBase, char *version, size_t maxChannels) {
+static void prepareAnnouncement(IPackerHandle packer, float timeBase, char *version, size_t maxChannels) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     self->timeBase = timeBase;
@@ -447,7 +447,7 @@ static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded) {
 
     /* Append the version number */
     appendString(self->byteStream, KEYWORD_TIME_BASE, KEYWORD_TIME_BASE_LENGTH, ":", 1);
-    appendSignedInt(self->byteStream, self->timeBase, "", 0);
+    appendFloat(self->timeBase, self->byteStream);
 
     /* Append the channels */
     if (self->addressesReady == true && self->numberOfAddressesToAnnounce > 0) {
