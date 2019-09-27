@@ -11,6 +11,7 @@
 #include <Scope/Control/Command/CommandClear.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -29,6 +30,8 @@ typedef struct __CommandClearParserPrivateData{
 ******************************************************************************/
 CommandClearParserHandle CommandClearParser_create(IScopeHandle scope){
     CommandClearParserHandle self = malloc(sizeof(CommandClearParserPrivateData));
+    assert(self);
+
     self->command = CommandClear_create(scope);
     return self;
 }

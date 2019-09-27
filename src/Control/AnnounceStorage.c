@@ -14,6 +14,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -41,8 +42,9 @@ typedef struct __AnnounceStoragePrivateData{
 AnnounceStorageHandle AnnounceStorage_create(const size_t maxAmountOfAddresses, const size_t maxAmountOfChannels, const float timeBase){
 
     AnnounceStorageHandle self = malloc(sizeof(AnnounceStoragePrivateData));
-
+    assert(self);
     self->addresses = malloc(sizeof(AddressDefinition) * maxAmountOfAddresses);
+    assert(self->addresses);
     self->maxAmountOfAddresses = maxAmountOfAddresses;
     self->version = SE_SCOPE_TARGET_VERSION;
     self->timeBase = timeBase;

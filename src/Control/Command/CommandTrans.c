@@ -12,6 +12,7 @@
 #include <Scope/Core/IScope.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -40,6 +41,8 @@ static void run(ICommandHandle command){
 CommandTransHandle CommandTrans_create(IScopeHandle scope){
 
     CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));
+    assert(self);
+
     self->scope = scope;
 
     self->command.handle = self;

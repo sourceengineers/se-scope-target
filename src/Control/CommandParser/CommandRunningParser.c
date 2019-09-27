@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -35,6 +36,7 @@ typedef struct __CommandRunningParserPrivateData{
 ******************************************************************************/
 CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
     CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
+    assert(self);
     self->command = CommandRunning_create(scope);
     self->unpacker = unpacker;
     return self;

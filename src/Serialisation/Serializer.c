@@ -16,6 +16,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 
 /******************************************************************************
@@ -107,7 +108,7 @@ static void updatePacker(IObserverHandle observer, void* state){
 SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker){
 
     SerializerHandle self = malloc(sizeof(SerializerPrivateData));
-
+    assert(self);
     self->packer = packer;
     self->unpacker = unpacker;
     self->packObserver.handle = self;

@@ -12,6 +12,7 @@
 #include <Scope/GeneralPurpose/IIntStream.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -57,6 +58,7 @@ static TIMESTAMPER_STATES getState(TimestamperHandle self){
 TimestamperHandle Timestamper_create(size_t capacity, uint32_t* referenceTimestamp){
 
     TimestamperHandle self = malloc(sizeof(TimestamperPrivateData));
+    assert(self);
     self->timeIncrement = 1;
     self->referenceTimestamp = referenceTimestamp;
     self->lastTimestamp = 0;

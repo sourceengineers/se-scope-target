@@ -15,6 +15,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -34,6 +35,7 @@ CommandPackParserDispatcherHandle
 CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle addressStorage, IPackerHandle packer){
 
     CommandPackParserDispatcherHandle self = malloc(sizeof(CommandPackParserDispatcherPrivateData));
+    assert(self);
 
     self->commandPackAnnounceParser = CommandPackAnnounceParser_create(addressStorage, packer);
     self->commandPackDataParser = CommandPackDataParser_create(scope, packer);

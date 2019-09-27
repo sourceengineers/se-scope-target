@@ -11,6 +11,7 @@
 #include <Scope/Control/Command/CommandPoll.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -29,6 +30,8 @@ typedef struct __CommandPollParserPrivateData{
 ******************************************************************************/
 CommandPollParserHandle CommandPollParser_create(IScopeHandle scope){
     CommandPollParserHandle self = malloc(sizeof(CommandPollParserPrivateData));
+    assert(self);
+
     self->command = CommandPoll_create(scope);
     return self;
 }

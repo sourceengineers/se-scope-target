@@ -58,11 +58,15 @@ static void run(ICommandHandle command){
 CommandAddrHandle CommandAddr_create(IScopeHandle scope){
 
     CommandAddrHandle self = malloc(sizeof(CommandAddrPrivateData));
+    assert(self);
     self->scope = scope;
     self->amountOfChannels = self->scope->getAmountOfChannels(self->scope);
     self->config.newAddresses = malloc(sizeof(void*) * self->amountOfChannels);
+    assert(self->config.newAddresses);
     self->config.changedChannels = malloc(sizeof(int) * self->amountOfChannels);
+    assert(self->config.changedChannels);
     self->config.types = malloc(sizeof(DATA_TYPES) * self->amountOfChannels);
+    assert(self->config.types);
     self->config.numberOfChangedChannels = 0;
 
     self->command.handle = self;

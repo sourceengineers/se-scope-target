@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -50,6 +51,8 @@ static void run(ICommandHandle command){
 CommandPackDetectHandle CommandPackDetect_create(IPackerHandle packer){
 
     CommandPackDetectHandle self = malloc(sizeof(CommandPackDetectPrivateData));
+    assert(self);
+
     self->packer = packer;
 
     self->command.handle = self;

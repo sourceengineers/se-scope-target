@@ -19,6 +19,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 
 #define INPUT_BUFFER_SIZE 250
@@ -557,6 +558,7 @@ static void activateNewMessage(JsonUnpackerHandle self, char* data){
 JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
 
     JsonUnpackerHandle self = (JsonUnpackerHandle) malloc(sizeof(JsonUnpackerPrivateData));
+    assert(self);
 
     self->numberOfCommands = 0;
     self->unpacker.handle = self;
@@ -575,9 +577,11 @@ JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
     self->dataPending = false;
 
     self->inputTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
+    assert(self->inputTokens);
     self->storageTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
-
+    assert(self->storageTokens);
     self->storageString = (char*) malloc(sizeof(char) * INPUT_BUFFER_SIZE);
+    assert(self->storageString);
 
     jsmn_init(&self->parser);
 

@@ -14,6 +14,7 @@
 #include <Scope/Builders/ScopeRunner.h>
 #include <Scope/Builders/ScopeThreadRunner.h>
 #include <Scope/GeneralPurpose/IMutex.h>
+#include <assert.h>
 
 
 /* The JsonuartStack module stores the JsonUartStackHandle as static in the module.
@@ -48,6 +49,7 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
                           size_t  addressesInAddressAnnouncer, float timebase){
 
     self = malloc(sizeof(JsonUartStackPrivateData));
+    assert(self);
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
     self->outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
@@ -94,6 +96,7 @@ void JsonUartStack_createThreadSafe(size_t sizeOfChannels, size_t  amountOfChann
                           float timebase){
 
     self = malloc(sizeof(JsonUartStackPrivateData));
+    assert(self);
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
     self->outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,

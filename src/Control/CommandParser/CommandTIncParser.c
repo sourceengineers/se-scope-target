@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -34,6 +35,8 @@ typedef struct __CommandTIncParserPrivateData{
 ******************************************************************************/
 CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
     CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
+    assert(self);
+
     self->command = CommandTInc_create(scope);
     self->unpacker = unpacker;
     return self;

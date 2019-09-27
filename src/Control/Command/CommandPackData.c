@@ -20,6 +20,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -95,6 +96,8 @@ static void run(ICommandHandle command){
 CommandPackDataHandle CommandPackData_create(IScopeHandle scope, IPackerHandle packer){
 
     CommandPackDataHandle self = malloc(sizeof(CommandPackDataPrivateData));
+    assert(self);
+
     self->scope = scope;
     self->packer = packer;
 

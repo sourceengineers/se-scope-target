@@ -17,6 +17,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -70,6 +71,7 @@ static int parseStringToEdge(const char* edgeToParse){
 ******************************************************************************/
 CommandTriggerParserHandle CommandTriggerParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
     CommandTriggerParserHandle self = malloc(sizeof(CommandTriggerParserPrivateData));
+    assert(self);
     self->command = CommandTrigger_create(scope);
     self->unpacker = unpacker;
 

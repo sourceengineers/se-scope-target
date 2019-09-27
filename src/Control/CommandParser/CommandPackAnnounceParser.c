@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 #include <Scope/Control/AnnounceStorage.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -30,6 +31,8 @@ typedef struct __CommandPackAnnounceParserPrivateData{
 ******************************************************************************/
 CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(AnnounceStorageHandle addressStorage, IPackerHandle packer){
     CommandPackAnnounceParserHandle self = malloc(sizeof(CommandPackAnnounceParserPrivateData));
+    assert(self);
+
     self->command = CommandPackAnnounce_create(addressStorage, packer);
     return self;
 }

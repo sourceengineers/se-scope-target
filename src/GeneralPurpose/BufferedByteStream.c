@@ -12,6 +12,7 @@
 #include <Scope/GeneralPurpose/IByteStream.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -106,6 +107,7 @@ static size_t getCapacity(IByteStreamHandle stream){
 BufferedByteStreamHandle BufferedByteStream_create(size_t capacity){
 
     BufferedByteStreamHandle self = (BufferedByteStreamHandle) malloc(sizeof(BufferedByteStreamPrivateData));
+    assert(self);
 
     self->buffer = ByteRingBuffer_create(capacity);
 

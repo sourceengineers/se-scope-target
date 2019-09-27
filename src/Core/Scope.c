@@ -21,6 +21,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -221,6 +222,7 @@ ScopeHandle Scope_create(size_t channelSize,
                          uint32_t* referenceTimestamp){
 
     ScopeHandle self = malloc(sizeof(ScopePrivateData));
+    assert(self);
 
     self->channelSize = channelSize;
 
@@ -246,6 +248,8 @@ ScopeHandle Scope_create(size_t channelSize,
     self->runnable.run = &run;
 
     self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
+    assert(self->channels);
+
     self->amountOfChannels = amountOfChannels;
 
     for(size_t i = 0; i < amountOfChannels; i++){

@@ -16,6 +16,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -38,6 +39,8 @@ typedef struct __CommandDetectParserPrivateData{
 ******************************************************************************/
 CommandDetectParserHandle CommandDetectParser_create(IObserverHandle packOverser){
     CommandDetectParserHandle self = malloc(sizeof(CommandDetectParserPrivateData));
+    assert(self);
+
     self->command = CommandDetect_create(packOverser);
     return self;
 }

@@ -12,6 +12,7 @@
 #include <Scope/Core/IScope.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -40,6 +41,8 @@ static void run(ICommandHandle command){
 CommandPollHandle CommandPoll_create(IScopeHandle scope){
 
     CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
+    assert(self);
+
     self->scope = scope;
 
     self->command.handle = self;

@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -47,6 +48,7 @@ CommandParserDispatcherHandle
 CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver, IUnpackerHandle unpacker) {
 
     CommandParserDispatcherHandle self = malloc(sizeof(CommandParserDispatcherPrivateData));
+    assert(self);
 
     /* Initialize needed command parser
     * Not all commands need parser, which is why there are less parser as commands */

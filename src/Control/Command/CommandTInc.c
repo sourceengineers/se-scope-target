@@ -12,6 +12,7 @@
 #include <Scope/Core/IScope.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -42,6 +43,8 @@ static void run(ICommandHandle command){
 CommandTIncHandle CommandTInc_create(IScopeHandle scope){
 
     CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));
+    assert(self);
+
     self->scope = scope;
     self->timeIncrement = 0;
 

@@ -11,6 +11,7 @@
 #include <Scope/Control/Command/CommandPackData.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -29,6 +30,7 @@ typedef struct __CommandPackDataParserPrivateData{
 ******************************************************************************/
 CommandPackDataParserHandle CommandPackDataParser_create(IScopeHandle scope, IPackerHandle packer){
     CommandPackDataParserHandle self = malloc(sizeof(CommandPackDataParserPrivateData));
+    assert(self);
     self->command = CommandPackData_create(scope, packer);
     return self;
 }

@@ -12,6 +12,7 @@
 #include <Scope/Core/IScope.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -57,12 +58,15 @@ static void run(ICommandHandle command){
 CommandRunningHandle CommandRunning_create(IScopeHandle scope){
 
     CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));
+    assert(self);
 
     self->scope = scope;
     self->amountOfChannels = self->scope->getAmountOfChannels(self->scope);
 
     self->config.newStates = malloc(sizeof(CHANNEL_STATES) * self->amountOfChannels);
+    assert(self->config.newStates);
     self->config.changedChannels = malloc(sizeof(int) * self->amountOfChannels);
+    assert(self->config.changedChannels);
     self->config.numberOfChangedChannels = 0;
 
     self->command.handle = self;

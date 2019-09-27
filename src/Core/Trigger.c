@@ -16,6 +16,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 struct __TriggerPrivateData;
 
@@ -349,8 +350,11 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
                                 size_t channelCapacity, TimestamperHandle timestamper){
 
     TriggerHandle self = malloc(sizeof(TriggerPrivateData));
+    assert(self);
     self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
+    assert(self->channels);
     self->channelIsRunning = malloc(sizeof(bool) * amountOfChannels);
+    assert(self->channelIsRunning);
     self->channels = channels;
     self->amountOfChannels = amountOfChannels;
     self->channelCapacity = channelCapacity;

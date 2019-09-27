@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <Scope/Builders/ScopeBuilder.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -44,6 +45,7 @@ typedef struct __ScopeBuilderPrivateData{
 ScopeBuilderHandle ScopeBuilder_create(void){
 
     ScopeBuilderHandle self = malloc(sizeof(ScopeBuilderPrivateData));
+    assert(self);
 
     self->input = NULL;
     self->output = NULL;

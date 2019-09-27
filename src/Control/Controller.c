@@ -20,6 +20,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -154,6 +155,7 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
                                    AnnounceStorageHandle addressStorage) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
+    assert(self);
 
     self->rxRunnable.handle = self;
     self->txRunnable.handle = self;

@@ -15,6 +15,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -118,6 +119,7 @@ EthernetJsonHandle
 EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output) {
 
     EthernetJsonHandle self = malloc(sizeof(EthernetJsonPrivateData));
+    assert(self);
 
     self->communicator.handle = self;
     self->rxRunnable.handle = self;

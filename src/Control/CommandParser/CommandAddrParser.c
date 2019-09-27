@@ -18,6 +18,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -61,6 +62,8 @@ static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t m
 ******************************************************************************/
 CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
     CommandAddrParserHandle self = malloc(sizeof(CommandAddrParserPrivateData));
+    assert(self);
+
     self->command = CommandAddr_create(scope);
     self->unpacker = unpacker;
     return self;

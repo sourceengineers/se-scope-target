@@ -13,6 +13,7 @@
 #include <Scope/Core/ScopeTypes.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -43,6 +44,7 @@ Public functions
 CommandTriggerHandle CommandTrigger_create(IScopeHandle scope){
 
     CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
+    assert(self);
 
     self->command.handle = self;
     self->scope = scope;

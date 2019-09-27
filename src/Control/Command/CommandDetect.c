@@ -12,6 +12,7 @@
 #include <Scope/Core/IScope.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -41,6 +42,8 @@ static void run(ICommandHandle command){
 CommandDetectHandle CommandDetect_create(IObserverHandle packObserver){
 
     CommandDetectHandle self = malloc(sizeof(CommandDetectPrivateData));
+    assert(self);
+
     self->packObserver = packObserver;
 
     self->command.handle = self;

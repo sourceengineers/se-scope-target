@@ -11,6 +11,7 @@
 #include <Scope/Control/Command/CommandTrans.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -29,6 +30,8 @@ typedef struct __CommandTransParserPrivateData{
 ******************************************************************************/
 CommandTransParserHandle CommandTransParser_create(IScopeHandle scope){
     CommandTransParserHandle self = malloc(sizeof(CommandTransParserPrivateData));
+    assert(self);
+
     self->command = CommandTrans_create(scope);
     return self;
 }

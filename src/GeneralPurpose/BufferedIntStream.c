@@ -12,6 +12,7 @@
 #include <Scope/GeneralPurpose/IIntStream.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -108,7 +109,7 @@ static size_t getCapacity(IIntStreamHandle stream){
 BufferedIntStreamHandle BufferedIntStream_create(size_t capacity){
 
     BufferedIntStreamHandle self = (BufferedIntStreamHandle) malloc(sizeof(BufferedIntStreamPrivateData));
-
+    assert(self);
     self->buffer = IntRingBuffer_create(capacity);
 
     self->parent.handle = self;

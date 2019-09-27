@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 typedef enum {
     TRANSPORT_NOT_FOUND, CHECKSUM_FAULTY, CHECKSUM_OK
@@ -175,6 +176,7 @@ static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator) {
 UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output) {
 
     UartJsonHandle self = malloc(sizeof(UartJsonPrivateData));
+    assert(self);
 
     self->communicator.handle = self;
     self->rxRunnable.handle = self;

@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <Version.h>
+#include <assert.h>
 
 #define FLOWCONTROL_BUFFER_SIZE 30
 #define TINC_BUFFER_SIZE 30
@@ -610,17 +611,24 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
                                    IByteStreamHandle byteStream) {
 
     JsonPackerHandle self = (JsonPackerHandle) malloc(sizeof(JsonPackerPrivateData));
-
+    assert(self);
     self->channelBuffers = malloc(sizeof(float *) * maxNumberOfChannels);
+    assert(self->channelBuffers);
     self->channelIds = malloc(sizeof(uint32_t) * maxNumberOfChannels);
+    assert(self->channelIds);
     self->amountOfChannelsToSend = 0;
     self->maxNumberOfChannels = maxNumberOfChannels;
     self->maxAddressesToAnnounce = maxAddressesToAnnounce;
     self->addresses = malloc(sizeof(ADDRESS_DATA_TYPE) * maxAddressesToAnnounce);
+    assert(self->addresses);
     self->namesOfAddresses = malloc(sizeof(char *) * maxAddressesToAnnounce);
+    assert(self->namesOfAddresses);
     self->typesOfAddresses = malloc(sizeof(char *) * maxAddressesToAnnounce);
+    assert(self->typesOfAddresses);
     self->triggerMode = malloc(sizeof(char) * KEYWORD_TGR_MODE_MAX_LENGTH);
+    assert(self->triggerMode);
     self->version = malloc(sizeof(char) * SE_SCOPE_TARGET_VERSION_LENGTH);
+    assert(self->version);
 
     self->byteStream = byteStream;
     self->dataPendingToBePacked = false;

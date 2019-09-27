@@ -11,6 +11,7 @@
 #include <Scope/Control/Command/CommandAnnounce.h>
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -29,6 +30,8 @@ typedef struct __CommandAnnounceParserPrivateData{
 ******************************************************************************/
 CommandAnnounceParserHandle CommandAnnounceParser_create(IObserverHandle packOverser){
     CommandAnnounceParserHandle self = malloc(sizeof(CommandAnnounceParserPrivateData));
+    assert(self);
+
     self->command = CommandAnnounce_create(packOverser);
     return self;
 }
