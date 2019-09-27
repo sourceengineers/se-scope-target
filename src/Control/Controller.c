@@ -9,7 +9,7 @@
 
 #include <Scope/Control/CommandPackParserDispatcher.h>
 #include <Scope/Control/Controller.h>
-#include <Scope/Control/Command/ICommand.h>
+#include <Scope/Control/ICommand.h>
 #include <Scope/Control/CommandParserDispatcher.h>
 #include <Scope/Control/IPacker.h>
 #include <Scope/Control/IUnpacker.h>

@@ -8,15 +8,15 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandParserDispatcher.h>
-#include <Scope/Control/CommandParser/CommandAddrParser.h>
-#include <Scope/Control/CommandParser/CommandAnnounceParser.h>
-#include <Scope/Control/CommandParser/CommandClearParser.h>
-#include <Scope/Control/CommandParser/CommandPollParser.h>
-#include <Scope/Control/CommandParser/CommandRunningParser.h>
-#include <Scope/Control/CommandParser/CommandTIncParser.h>
-#include <Scope/Control/CommandParser/CommandTransParser.h>
-#include <Scope/Control/CommandParser/CommandTriggerParser.h>
-#include <Scope/Control/CommandParser/CommandDetectParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandAddrParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandAnnounceParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandClearParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandPollParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandRunningParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandTIncParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandTransParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandTriggerParser.h>
+#include <Scope/Control/Commands/CommandParser/CommandDetectParser.h>
 #include <Scope/Control/ParserDefinitions.h>
 #include <Scope/Core/ScopeTypes.h>
 

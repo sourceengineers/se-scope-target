@@ -8,9 +8,9 @@
  *****************************************************************************************************************************************/
 
 #include <Scope/Control/CommandPackParserDispatcher.h>
-#include <Scope/Control/CommandParser/CommandPackAnnounceParser.h>
-#include <Scope/Control/CommandParser/CommandPackDataParser.h>
-#include <Scope/Control/CommandParser/CommandPackDetectParser.h>
+#include <Scope/Control/PackCommands/CommandParser/CommandPackAnnounceParser.h>
+#include <Scope/Control/PackCommands/CommandParser/CommandPackDataParser.h>
+#include <Scope/Control/PackCommands/CommandParser/CommandPackDetectParser.h>
 #include <Scope/Core/ScopeTypes.h>
 
 #include <stdlib.h>
