@@ -118,7 +118,7 @@ static void scopeSetTimeIncrement(IScopeHandle scope, uint32_t timeIncrement){
 static uint32_t getTimeIncrement(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
-    return Timerstamper_getTimeIncrement(self->timestamper);
+    return Timestamper_getTimeIncrement(self->timestamper);
 }
 
 static size_t getAmountOfChannels(IScopeHandle scope){
