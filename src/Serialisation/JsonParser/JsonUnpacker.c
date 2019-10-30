@@ -23,7 +23,7 @@
 
 
 #define INPUT_BUFFER_SIZE 250
-#define TOKEN_BUFFER_SIZE 100
+#define TOKEN_BUFFER_SIZE 50
 
 /******************************************************************************
  Define private data
