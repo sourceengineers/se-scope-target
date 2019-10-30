@@ -38,6 +38,14 @@ typedef struct IPackerStruct{
     void (* pack)(IPackerHandle packer);
 
     /**
+     * Returns true if the packer is ready to serialize new data. This is the case if all previously sent data
+     * has been sent and the transmit buffer is empty.
+     * @param packer
+     * @return
+     */
+    bool (* isReady)(IPackerHandle packer);
+
+    /**
      * Prepares channels
      * @param packer
      * @param buffer Passes the Swap buffer into the packer

@@ -144,6 +144,8 @@ static bool packDetect(JsonPackerHandle self, bool commaIsNeeded);
 
 static void reset(IPackerHandle packer);
 
+static bool isReady(IPackerHandle packer);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -421,7 +423,7 @@ static void prepareAnnouncement(IPackerHandle packer, float timeBase, char *vers
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     self->timeBase = timeBase;
-    strncpy(self->version, version, strlen(version));
+    strncpy(self->version, version, SE_SCOPE_TARGET_VERSION_LENGTH);
     self->maxChannels = maxChannels;
 
     self->annoucementReady = true;
@@ -571,7 +573,7 @@ static bool packPayloadMap(JsonPackerHandle self) {
 static void packData(IPackerHandle packer) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
-    if (self->dataPendingToBePacked == false) {
+    if (self->dataPendingToBePacked == false || self->byteStream->length(self->byteStream) != 0) {
         return;
     }
 
@@ -602,6 +604,11 @@ static void reset(IPackerHandle packer) {
     self->detectPending = false;
 
     flushBuffer(self->flowcontrol);
+}
+
+static bool isReady(IPackerHandle packer){
+    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
+    return self->byteStream->length(self->byteStream) == 0;
 }
 
 /******************************************************************************
@@ -645,6 +652,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.reset(&self->packer);
     self->packer.prepareAnnouncement = &prepareAnnouncement;
     self->packer.prepareDetect = &prepareDetect;
+    self->packer.isReady = &isReady;
 
     return self;
 }

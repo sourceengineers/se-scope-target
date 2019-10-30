@@ -92,8 +92,15 @@ static bool runTx(IRunnableHandle runnable) {
         return false;
     }
 
-    ICommandHandle packCommand;
+    if (self->packer == NULL){
+        return false;
+    }
 
+    if (self->packer->isReady(self->packer) == false){
+        return false;
+    }
+
+    ICommandHandle packCommand;
 
     if((self->pendingToPack & PACK_ANNOUNCE) != 0){
         packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
@@ -162,6 +169,7 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->rxRunnable.run = &runRx;
     self->txRunnable.run = &runTx;
     self->unpacker = unpacker;
+    self->packer = packer;
     self->scope = scope;
 
     self->commandPackObserver.handle = self;
