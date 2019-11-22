@@ -20,7 +20,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-#include <Scope/SE-Scope.h>
 
 typedef enum {
     TRANSPORT_NOT_FOUND, CHECKSUM_FAULTY, CHECKSUM_OK
