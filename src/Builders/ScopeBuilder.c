@@ -97,32 +97,32 @@ void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex){
     self->configMutex = mutex;
 }
 
-ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
+ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
 
-    ScopeObject obj;
+    ScopeRunnable runnable;
 
-    obj.runScope = NULL;
-    obj.runCommandParser = NULL;
-    obj.runDataAggregator = NULL;
-    obj.runUnpacker = NULL;
-    obj.runPacker = NULL;
-    obj.runCommunicationRx = NULL;
-    obj.runCommunicationTx = NULL;
+    runnable.runScope = NULL;
+    runnable.runCommandParser = NULL;
+    runnable.runDataAggregator = NULL;
+    runnable.runUnpacker = NULL;
+    runnable.runPacker = NULL;
+    runnable.runCommunicationRx = NULL;
+    runnable.runCommunicationTx = NULL;
 
     if(self->timestamp == NULL){
-        return obj;
+        return runnable;
     }
     if(self->output == NULL){
-        return obj;
+        return runnable;
     }
     if(self->packer == NULL){
-        return obj;
+        return runnable;
     }
     if(self->communicator == NULL){
-        return obj;
+        return runnable;
     }
     if((self->amountOfChannels == 0) || (self->sizeOfChannels == 0)){
-        return obj;
+        return runnable;
     }
 
     /* Create layers */
@@ -137,17 +137,19 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     Controller_attachPackObserver(self->controller, Serializer_getPackObserver(self->serializer));
     Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));
 
-    obj.dataMutex = self->dataMutex;
-    obj.configMutex = self->configMutex;
-    obj.runScope = Scope_getIRunnable(self->scope);
-    obj.runCommandParser = Controller_getRxRunnable(self->controller);
-    obj.runDataAggregator = Controller_getTxRunnable(self->controller);
-    obj.runUnpacker = Serializer_getRxRunnable(self->serializer);
-    obj.runPacker = Serializer_getTxRunnable(self->serializer);
-    obj.runCommunicationRx = self->communicator->getRxRunnable(self->communicator);
-    obj.runCommunicationTx = self->communicator->getTxRunnable(self->communicator);
+    runnable.scope = Scope_getIScope(self->scope);
+    runnable.controller = self->controller;
+    runnable.dataMutex = self->dataMutex;
+    runnable.configMutex = self->configMutex;
+    runnable.runScope = Scope_getIRunnable(self->scope);
+    runnable.runCommandParser = Controller_getRxRunnable(self->controller);
+    runnable.runDataAggregator = Controller_getTxRunnable(self->controller);
+    runnable.runUnpacker = Serializer_getRxRunnable(self->serializer);
+    runnable.runPacker = Serializer_getTxRunnable(self->serializer);
+    runnable.runCommunicationRx = self->communicator->getRxRunnable(self->communicator);
+    runnable.runCommunicationTx = self->communicator->getTxRunnable(self->communicator);
 
-    return obj;
+    return runnable;
 }
 
 void ScopeBuilder_destroy(ScopeBuilderHandle self){

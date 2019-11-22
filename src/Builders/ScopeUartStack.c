@@ -33,7 +33,7 @@ typedef struct __ScopeUartStackPrivateData{
     JsonUnpackerHandle unpacker;
     JsonPackerHandle packer;
     UartJsonHandle uartJson;
-    ScopeObject scope_obj;
+    ScopeRunnable scopeRunnable;
     size_t outputBufferSize;
     size_t inputBufferSize;
     IScopeHandle scope;
@@ -85,7 +85,7 @@ ScopeUartStackHandle ScopeUartStack_create(ScopeUartStackConfig config){
     ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage);
 
     /* Build the scope */
-    self->scope_obj = ScopeBuilder_build(self->builder);
+    self->scopeRunnable = ScopeBuilder_build(self->builder);
 
     return self;
 
@@ -134,21 +134,21 @@ ScopeUartStackHandle ScopeUartStack_createThreadSafe(ScopeUartStackConfig config
     ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage);
 
     /* Build the scope */
-    self->scope_obj = ScopeBuilder_build(self->builder);
+    self->scopeRunnable = ScopeBuilder_build(self->builder);
 
     return self;
 }
 
 void ScopeUartStack_run(ScopeUartStackHandle self){
-    ScopeRunner_run(self->scope_obj);
+    ScopeRunner_run(self->scopeRunnable);
 }
 
 void ScopeUartStack_runThreadScope(ScopeUartStackHandle self){
-    ScopeThreadRunner_runScope(self->scope_obj);
+    ScopeThreadRunner_runScope(self->scopeRunnable);
 }
 
 void ScopeUartStack_runThreadStack(ScopeUartStackHandle self){
-    ScopeThreadRunner_runStack(self->scope_obj);
+    ScopeThreadRunner_runStack(self->scopeRunnable);
 }
 
 AnnounceStorageHandle ScopeUartStack_getAnnounceStorage(ScopeUartStackHandle self){

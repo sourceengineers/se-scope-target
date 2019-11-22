@@ -31,7 +31,7 @@ typedef struct __ScopeBuilderPrivateData* ScopeBuilderHandle;
 /******************************************************************************
  Define interface
 ******************************************************************************/
-typedef struct ScopeObjectStruct{
+typedef struct ScopeRunnableStruct{
 
     IScopeHandle scope;
     ControllerHandle controller;
@@ -47,7 +47,7 @@ typedef struct ScopeObjectStruct{
     IMutexHandle dataMutex;
     IMutexHandle configMutex;
 
-} ScopeObject;
+} ScopeRunnable;
 
 /******************************************************************************
  Public functions
@@ -61,9 +61,9 @@ ScopeBuilderHandle ScopeBuilder_create(void);
 /**
  * Builds the scope and returns an object with runnables
  * @param self
- * @return ScopeObject
+ * @return ScopeRunnable
  */
-ScopeObject ScopeBuilder_build(ScopeBuilderHandle self);
+ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self);
 
 /**
  * Sets the amount and size of channels that have to be build

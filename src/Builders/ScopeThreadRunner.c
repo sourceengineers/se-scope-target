@@ -16,7 +16,7 @@
 /******************************************************************************
  Public functions
 ******************************************************************************/
-void ScopeThreadRunner_runScope(ScopeObject scope) {
+void ScopeThreadRunner_runScope(ScopeRunnable scope) {
 
     if(scope.configMutex == NULL){
         return;
@@ -42,7 +42,7 @@ void ScopeThreadRunner_runScope(ScopeObject scope) {
     scope.configMutex->unlock(scope.configMutex);
 }
 
-void ScopeThreadRunner_runStack(ScopeObject scope) {
+void ScopeThreadRunner_runStack(ScopeRunnable scope) {
 
     if(scope.configMutex == NULL){
         return;
