@@ -7,11 +7,11 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/CommandParser/CommandTriggerParser.h>
-#include <Scope/Control/ParserDefinitions.h>
-#include <Scope/Control/Commands/Command/CommandTrigger.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Core/ScopeTypes.h>
+#include "Scope/Control/Commands/CommandParser/CommandTriggerParser.h"
+#include "Scope/Control/ParserDefinitions.h"
+#include "Scope/Control/Commands/Command/CommandTrigger.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Core/ScopeTypes.h"
 
 #include <stdint.h>
 #include <stdbool.h>

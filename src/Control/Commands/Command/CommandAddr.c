@@ -7,10 +7,11 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/Command/CommandAddr.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Control/Commands/Command/CommandAddr.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
 
 #include <stdlib.h>
 #include <assert.h>

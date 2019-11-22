@@ -7,10 +7,10 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/Command/CommandTrigger.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/Core/ScopeTypes.h>
+#include "Scope/Control/Commands/Command/CommandTrigger.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/Core/ScopeTypes.h"
 
 #include <stdlib.h>
 #include <assert.h>

@@ -7,9 +7,10 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
-#include <Scope/GeneralPurpose/ByteRingBuffer.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
+#include "Scope/GeneralPurpose/IByteStream.h"
+
+#include "Scope/GeneralPurpose/BufferedByteStream.h"
+#include "Scope/GeneralPurpose/ByteRingBuffer.h"
 
 #include <stdlib.h>
 #include <assert.h>

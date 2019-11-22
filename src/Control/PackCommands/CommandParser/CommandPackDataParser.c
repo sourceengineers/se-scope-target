@@ -7,8 +7,8 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/PackCommands/CommandParser/CommandPackDataParser.h>
-#include <Scope/Control/PackCommands/Command/CommandPackData.h>
+#include "Scope/Control/PackCommands/CommandParser/CommandPackDataParser.h"
+#include "Scope/Control/PackCommands/Command/CommandPackData.h"
 
 #include <stdlib.h>
 #include <assert.h>

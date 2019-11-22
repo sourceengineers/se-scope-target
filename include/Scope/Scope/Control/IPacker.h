@@ -14,11 +14,12 @@
 #ifndef IPACKER_H_
 #define IPACKER_H_
 
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
-#include <Scope/GeneralPurpose/IIntStream.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
-#include <Scope/Core/ScopeTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/GeneralPurpose/BufferedByteStream.h"
+#include "Scope/GeneralPurpose/IIntStream.h"
+#include "Scope/GeneralPurpose/FloatRingBuffer.h"
+#include "Scope/Core/ScopeTypes.h"
 
 /******************************************************************************
  Define interface handle data

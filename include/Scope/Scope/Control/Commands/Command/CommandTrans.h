@@ -14,9 +14,10 @@
 #ifndef COMMANDTRANS_H_
 #define COMMANDTRANS_H_
 
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data

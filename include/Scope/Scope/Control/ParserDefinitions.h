@@ -12,8 +12,9 @@
 #ifndef PARSERDEFINITIONS_H_
 #define PARSERDEFINITIONS_H_
 
+#include "Scope/Core/ScopeTypes.h"
+
 #include <stddef.h>
-#include <Scope/Core/ScopeTypes.h>
 
 extern const char* KEYWORD_PAYLOAD;
 extern const char* KEYWORD_TRANSPORT;
@@ -71,15 +72,5 @@ extern const size_t KEYWORD_VERSION_LENGTH;
 extern const size_t KEYWORD_TIME_BASE_LENGTH;
 extern const size_t MAX_COMMAND_LENGTH; // Max length of a command
 extern const size_t MAX_FIELD_LENGTH; // Max length of a field
-
-#define maxAddrNameLength 30 // Max length of an address name
-/**
- * Definitions for the AnnounceStorage
- */
-typedef struct{
-    char name[maxAddrNameLength]; // Name of an address
-    DATA_TYPES type; // Type of the address
-    ADDRESS_DATA_TYPE address; // The address
-} AddressDefinition;
 
 #endif

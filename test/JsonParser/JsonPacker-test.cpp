@@ -28,7 +28,7 @@ TEST(json_packer, unpack_test){
     packer->prepareAddressAnnouncement(packer, "VAR_1", "SE_UINT32", 11111);
     packer->prepareAddressAnnouncement(packer, "VAR_2", "SE_FLOAT", 22222);
 
-    packer->prepareTrigger(packer, true, 1, 1000);
+    packer->prepareTrigger(packer, true, 1, 1000, (char*) "Normal");
 
     packer->prepareTimeIncrement(packer, 10);
     packer->prepareFlowControl(packer, "ACK");

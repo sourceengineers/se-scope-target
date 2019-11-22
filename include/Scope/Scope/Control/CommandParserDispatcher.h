@@ -16,18 +16,18 @@
 #ifndef COMMANDPARSERDISPATCHER_H_
 #define COMMANDPARSERDISPATCHER_H_
 
-#include <Scope/Control/Commands/CommandParser/CommandAddrParser.h>
-#include <Scope/Control/Commands/CommandParser/CommandAnnounceParser.h>
-#include <Scope/Control/Commands/CommandParser/CommandClearParser.h>
-#include <Scope/Control/Commands/CommandParser/CommandPollParser.h>
-#include <Scope/Control/Commands/CommandParser/CommandRunningParser.h>
-#include <Scope/Control/Commands/CommandParser/CommandTIncParser.h>
-#include <Scope/Control/Commands/CommandParser/CommandTransParser.h>
-#include <Scope/Control/Commands/CommandParser/CommandTriggerParser.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/IObserver.h>
+#include "Scope/Control/Commands/CommandParser/CommandAddrParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandAnnounceParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandClearParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandPollParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandRunningParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandTIncParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandTransParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandTriggerParser.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 /******************************************************************************
  Define class handle data

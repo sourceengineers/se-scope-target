@@ -12,7 +12,7 @@
 #ifndef SCOPERUNNER_H
 #define SCOPERUNNER_H
 
-#include <Scope/Builders/ScopeBuilder.h>
+#include "Scope/Builders/ScopeBuilder.h"
 
 /******************************************************************************
  Public functions

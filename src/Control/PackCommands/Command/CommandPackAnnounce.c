@@ -7,16 +7,17 @@
 *
 *****************************************************************************************************************************************/
 
-#include <Scope/Control/PackCommands/Command/CommandPackAnnounce.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Control/PackCommands/Command/CommandPackAnnounce.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/Version.h"
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <Version.h>
 #include <assert.h>
 
 /******************************************************************************

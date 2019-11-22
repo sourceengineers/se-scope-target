@@ -7,9 +7,9 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/CommandParser/CommandTIncParser.h>
-#include <Scope/Control/Commands/Command/CommandTInc.h>
-#include <Scope/Control/IUnpacker.h>
+#include "Scope/Control/Commands/CommandParser/CommandTIncParser.h"
+#include "Scope/Control/Commands/Command/CommandTInc.h"
+#include "Scope/Control/IUnpacker.h"
 
 #include <stdint.h>
 #include <stdbool.h>

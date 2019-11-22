@@ -7,8 +7,8 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/CommandParser/CommandPollParser.h>
-#include <Scope/Control/Commands/Command/CommandPoll.h>
+#include "Scope/Control/Commands/CommandParser/CommandPollParser.h"
+#include "Scope/Control/Commands/Command/CommandPoll.h"
 
 #include <stdlib.h>
 #include <assert.h>

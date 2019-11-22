@@ -13,10 +13,10 @@
 #ifndef COMMANDANNOUNCEPARSER_H_
 #define COMMANDANNOUNCEPARSER_H_
 
-#include <Scope/Control/Commands/Command/CommandAnnounce.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/IObserver.h>
+#include "Scope/Control/Commands/Command/CommandAnnounce.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 /******************************************************************************
  Define class handle data

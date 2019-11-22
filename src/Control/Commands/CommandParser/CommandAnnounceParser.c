@@ -7,8 +7,8 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/CommandParser/CommandAnnounceParser.h>
-#include <Scope/Control/Commands/Command/CommandAnnounce.h>
+#include "Scope/Control/Commands/CommandParser/CommandAnnounceParser.h"
+#include "Scope/Control/Commands/Command/CommandAnnounce.h"
 
 #include <stdlib.h>
 #include <assert.h>

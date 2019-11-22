@@ -12,8 +12,8 @@
 #ifndef SCOPETHREADRUNNER_H
 #define SCOPETHREADRUNNER_H
 
-#include <Scope/GeneralPurpose/IMutex.h>
-#include <Scope/Builders/ScopeBuilder.h>
+#include "Scope/GeneralPurpose/IMutex.h"
+#include "Scope/Builders/ScopeBuilder.h"
 
 /******************************************************************************
  Public functions

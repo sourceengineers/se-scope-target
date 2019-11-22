@@ -13,13 +13,14 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include <Scope/Control/CommandParserDispatcher.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/Control/AnnounceStorage.h>
+#include "Scope/Control/AnnounceStorage.h"
+#include "Scope/GeneralPurpose/IRunnable.h"
+
+#include "Scope/Control/CommandParserDispatcher.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/GeneralPurpose/IObserver.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data
@@ -34,11 +35,11 @@ typedef struct __ControllerPrivateData* ControllerHandle;
  * @param scope
  * @param packer
  * @param unpacker
- * @param addressStorage
+ * @param announceStorage
  * @return
  */
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                   AnnounceStorageHandle addressStorage);
+                                   AnnounceStorageHandle announceStorage);
 
 /**
  * Returns the runnable of the rx controller

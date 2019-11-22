@@ -13,11 +13,12 @@
 #ifndef COMMANDPACKANNOUNCE_H_
 #define COMMANDPACKANNOUNCE_H_
 
-#include <Scope/Control/ICommand.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/Control/AnnounceStorage.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+#include "Scope/Control/AnnounceStorage.h"
+
+#include "Scope/Control/ICommand.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data
@@ -29,11 +30,11 @@ typedef struct __CommandPackAnnouncePrivateData* CommandPackAnnounceHandle;
 ******************************************************************************/
 /**
  * Constructor
- * @param addressStorage
+ * @param announceStorage
  * @param packer
  * @return
  */
-CommandPackAnnounceHandle CommandPackAnnounce_create(AnnounceStorageHandle addressStorage, IPackerHandle packer);
+CommandPackAnnounceHandle CommandPackAnnounce_create(AnnounceStorageHandle announceStorage, IPackerHandle packer);
 
 /**
  * Returns the ICommand interface

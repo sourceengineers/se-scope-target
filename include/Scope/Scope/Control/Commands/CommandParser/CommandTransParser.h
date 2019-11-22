@@ -13,9 +13,9 @@
 #ifndef COMMANDTRANSPARSER_H_
 #define COMMANDTRANSPARSER_H_
 
-#include <Scope/Control/Commands/Command/CommandTrans.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
+#include "Scope/Control/Commands/Command/CommandTrans.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data

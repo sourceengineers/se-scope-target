@@ -11,23 +11,29 @@
  *
  ******************************************************************************/
 
-#ifndef ADDRESSSTORAGE_H_
-#define ADDRESSSTORAGE_H_
+#ifndef ANNOUNCESTORAGE_H_
+#define ANNOUNCESTORAGE_H_
 
-#include <Scope/Control/ParserDefinitions.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/IObserver.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 #include <stdint.h>
 #include <stddef.h>
 #include <stdint.h>
 
+#define maxAddrNameLength 30 // Max length of an address name
+/**
+ * Definitions for the AnnounceStorage
+ */
+typedef struct{
+    char name[maxAddrNameLength]; // Name of an address
+    DATA_TYPES type; // Type of the address
+    ADDRESS_DATA_TYPE address; // The address
+} AddressDefinition;
+
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
 typedef struct __AnnounceStoragePrivateData* AnnounceStorageHandle;
-
-
 
 /******************************************************************************
  Public functions
@@ -68,13 +74,6 @@ size_t AnnounceStorage_getMaxAmountOfChannels(AnnounceStorageHandle self);
  * @return
  */
 float AnnounceStorage_getTimeBase(AnnounceStorageHandle self);
-
-/**
- * Attaches the packObserver to the AnnounceStorage. This can be used to transmit the addresses
- * @param self
- * @param observer packObserver
- */
-void AnnounceStorage_attachObserver(AnnounceStorageHandle self, IObserverHandle observer);
 
 /**
  * Get the version of the se scope

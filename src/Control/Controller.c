@@ -7,16 +7,18 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/CommandPackParserDispatcher.h>
-#include <Scope/Control/Controller.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Control/CommandParserDispatcher.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
+#include "Scope/GeneralPurpose/IRunnable.h"
+
+#include "Scope/Control/CommandPackParserDispatcher.h"
+#include "Scope/Control/Controller.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Control/CommandParserDispatcher.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/GeneralPurpose/IObserver.h"
+#include "Scope/Control/ParserDefinitions.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -159,7 +161,7 @@ static void commandUpdate(IObserverHandle observer, void *state) {
  Public functions
 ******************************************************************************/
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                   AnnounceStorageHandle addressStorage) {
+                                   AnnounceStorageHandle announceStorage) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
     assert(self);
@@ -179,7 +181,7 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->commandObserver.update = &commandUpdate;
 
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
-    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, addressStorage, packer);
+    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer);
 
     self->packCommandPending = false;
     self->commandPending = false;

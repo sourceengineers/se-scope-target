@@ -7,10 +7,10 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/CommandParser/CommandDetectParser.h>
-#include <Scope/Control/Commands/Command/CommandDetect.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Control/ParserDefinitions.h>
+#include "Scope/Control/Commands/CommandParser/CommandDetectParser.h"
+#include "Scope/Control/Commands/Command/CommandDetect.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Control/ParserDefinitions.h"
 
 #include <stdint.h>
 #include <stdbool.h>

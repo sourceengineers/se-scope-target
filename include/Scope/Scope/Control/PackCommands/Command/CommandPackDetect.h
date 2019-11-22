@@ -13,10 +13,11 @@
 #ifndef COMMANDPACKDETECT_H_
 #define COMMANDPACKDETECT_H_
 
-#include <Scope/Control/ICommand.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Control/ICommand.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data
@@ -28,7 +29,7 @@ typedef struct __CommandPackDetectPrivateData* CommandPackDetectHandle;
 ******************************************************************************/
 /**
  * Constructor
- * @param addressStorage
+ * @param announceStorage
  * @param packer
  * @return
  */

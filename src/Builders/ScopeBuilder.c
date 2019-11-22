@@ -7,12 +7,13 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Controller.h>
-#include <Scope/Core/Scope.h>
-#include <Scope/Serialisation/Serializer.h>
+#include "Scope/Builders/ScopeBuilder.h"
+
+#include "Scope/Control/Controller.h"
+#include "Scope/Core/Scope.h"
+#include "Scope/Serialisation/Serializer.h"
 
 #include <stdlib.h>
-#include <Scope/Builders/ScopeBuilder.h>
 #include <assert.h>
 
 /******************************************************************************
@@ -28,7 +29,7 @@ typedef struct __ScopeBuilderPrivateData{
     ScopeHandle scope;
     ControllerHandle controller;
     SerializerHandle serializer;
-    AnnounceStorageHandle addressStorage;
+    AnnounceStorageHandle announceStorage;
 
     IMutexHandle dataMutex;
     IMutexHandle configMutex;
@@ -56,7 +57,7 @@ ScopeBuilderHandle ScopeBuilder_create(void){
     self->controller = NULL;
     self->serializer = NULL;
     self->timestamp = NULL;
-    self->addressStorage = NULL;
+    self->announceStorage = NULL;
 
     return self;
 }
@@ -84,8 +85,8 @@ void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle 
     self->communicator = communicator;
 }
 
-void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle addressStorage){
-    self->addressStorage = addressStorage;
+void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle announceStorage){
+    self->announceStorage = announceStorage;
 }
 
 void ScopeBuilder_setDataMutex(ScopeBuilderHandle self, IMutexHandle mutex){
@@ -126,7 +127,7 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
 
     /* Create layers */
     self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->timestamp);
-    self->controller = Controller_create(Scope_getIScope(self->scope), self->packer, self->unpacker, self->addressStorage);
+    self->controller = Controller_create(Scope_getIScope(self->scope), self->packer, self->unpacker, self->announceStorage);
     self->serializer = Serializer_create(self->packer, self->unpacker);
 
     /* Connect all observers */
@@ -136,15 +137,8 @@ ScopeObject ScopeBuilder_build(ScopeBuilderHandle self){
     Controller_attachPackObserver(self->controller, Serializer_getPackObserver(self->serializer));
     Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));
 
-    if(self->addressStorage != NULL){
-        AnnounceStorage_attachObserver(self->addressStorage, Controller_getCommandPackObserver(self->controller));
-    }
-
-
-    obj.scope = Scope_getIScope(self->scope);
     obj.dataMutex = self->dataMutex;
     obj.configMutex = self->configMutex;
-    obj.controller = self->controller;
     obj.runScope = Scope_getIRunnable(self->scope);
     obj.runCommandParser = Controller_getRxRunnable(self->controller);
     obj.runDataAggregator = Controller_getTxRunnable(self->controller);

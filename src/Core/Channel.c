@@ -7,11 +7,12 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Core/Channel.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/GeneralPurpose/BufferedFloatStream.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Core/Channel.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/GeneralPurpose/BufferedFloatStream.h"
+#include "Scope/GeneralPurpose/FloatRingBuffer.h"
 
 #include <stdint.h>
 #include <stdlib.h>

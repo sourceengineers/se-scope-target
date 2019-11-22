@@ -15,8 +15,9 @@
 #ifndef TIMESTAMPER_H_
 #define TIMESTAMPER_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/IIntStream.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/GeneralPurpose/IIntStream.h"
 
 #include <stdint.h>
 #include <stdbool.h>

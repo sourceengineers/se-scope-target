@@ -7,29 +7,26 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Builders/JsonUartStack.h>
-#include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
-#include <Scope/Communication/Interfaces/UartJson.h>
-#include <Scope/Builders/ScopeRunner.h>
-#include <Scope/Builders/ScopeThreadRunner.h>
-#include <Scope/GeneralPurpose/IMutex.h>
+#include "Scope/Builders/ScopeUartStack.h"
+#include "Scope/Communication/Interfaces/UartJson.h"
+#include "Scope/Builders/ScopeRunner.h"
+#include "Scope/Builders/ScopeThreadRunner.h"
+#include "Scope/GeneralPurpose/IMutex.h"
+
+#include "Scope/Serialisation/JsonParser/JsonPacker.h"
+#include "Scope/Serialisation/JsonParser/JsonUnpacker.h"
+
 #include <assert.h>
-
-
-/* The JsonuartStack module stores the JsonUartStackHandle as static in the module.
- * This is supposed to make it easier for the user to work with the stack.
- * The user therefore doesn't have to take care of the pointer to the stack by themselves.
- * Due to this, there can only be one instance of the stack. */
-static JsonUartStackHandle self;
+#include <stdlib.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __JsonUartStackPrivateData{
+typedef struct __ScopeUartStackPrivateData{
 
-    AnnounceStorageHandle addressStorage;
+    AnnounceStorageHandle announceStorage;
+    ITransceiverHandle transceiver;
     ScopeBuilderHandle builder;
     BufferedByteStreamHandle input;
     BufferedByteStreamHandle output;
@@ -39,21 +36,21 @@ typedef struct __JsonUartStackPrivateData{
     ScopeObject scope_obj;
     size_t outputBufferSize;
     size_t inputBufferSize;
+    IScopeHandle scope;
 
-} JsonUartStackPrivateData;
+} ScopeUartStackPrivateData;
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback, uint32_t* timestamp,
-                          size_t  addressesInAddressAnnouncer, float timebase){
+ScopeUartStackHandle ScopeUartStack_create(ScopeUartStackConfig config){
 
-    self = malloc(sizeof(JsonUartStackPrivateData));
+    ScopeUartStackHandle self = malloc(sizeof(ScopeUartStackPrivateData));
     assert(self);
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
-    self->outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
-                                                            addressesInAddressAnnouncer);
+    self->outputBufferSize = JsonPacker_calculateBufferSize(config.amountOfChannels, config.sizeOfChannels,
+                                                            config.addressesInAddressAnnouncer);
     self->inputBufferSize = JsonUnpacker_calculateBufferSize();
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
@@ -61,46 +58,47 @@ void JsonUartStack_create(size_t sizeOfChannels, size_t  amountOfChannels, UartT
     self->output = BufferedByteStream_create(self->outputBufferSize);
 
     /* Generate the desired packer and unpacker */
-    self->packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer,
+    self->packer = JsonPacker_create(config.amountOfChannels, config.addressesInAddressAnnouncer,
                                      BufferedByteStream_getIByteStream(self->output));
     self->unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(self->input));
 
     /* Generate the communication handler */
-    self->uartJson = UartJson_create(callback, BufferedByteStream_getIByteStream(self->input),
+    self->uartJson = UartJson_create(config.callback, BufferedByteStream_getIByteStream(self->input),
                                      BufferedByteStream_getIByteStream(self->output));
 
     /* Generate the address storage. The address storage is optional and doesn't have to be used */
-    self->addressStorage = AnnounceStorage_create(addressesInAddressAnnouncer, amountOfChannels, timebase);
+    self->announceStorage = AnnounceStorage_create(config.addressesInAddressAnnouncer,
+            config.amountOfChannels, config.timebase);
 
     /* Create the builder itself */
     self->builder = ScopeBuilder_create();
 
     /* Pass all the wanted elements into the builder */
-    ScopeBuilder_setChannels(self->builder, amountOfChannels, sizeOfChannels);
+    ScopeBuilder_setChannels(self->builder, config.amountOfChannels, config.sizeOfChannels);
     ScopeBuilder_setStreams(self->builder, BufferedByteStream_getIByteStream(self->input),
                             BufferedByteStream_getIByteStream(self->output));
     ScopeBuilder_setConfigMutex(self->builder, NULL);
     ScopeBuilder_setDataMutex(self->builder, NULL);
-    ScopeBuilder_setTimestampReference(self->builder, timestamp);
+    ScopeBuilder_setTimestampReference(self->builder, config.timestamp);
     ScopeBuilder_setCommunication(self->builder, UartJson_getCommunicator(self->uartJson));
     ScopeBuilder_setParser(self->builder, JsonPacker_getIPacker(self->packer), JsonUnpacker_getIUnpacker(self->unpacker));
-    ScopeBuilder_setAnnounceStorage(self->builder, self->addressStorage);
+    ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage);
 
     /* Build the scope */
     self->scope_obj = ScopeBuilder_build(self->builder);
 
+    return self;
+
 }
 
-void JsonUartStack_createThreadSafe(size_t sizeOfChannels, size_t  amountOfChannels, UartTransmitCallback callback, uint32_t* timestamp,
-                          size_t  addressesInAddressAnnouncer, IMutexHandle dataMutex, IMutexHandle configMutex,
-                          float timebase){
+ScopeUartStackHandle ScopeUartStack_createThreadSafe(ScopeUartStackConfig config, ScopeUartStackMutex mutexes){
 
-    self = malloc(sizeof(JsonUartStackPrivateData));
+    ScopeUartStackHandle self = malloc(sizeof(ScopeUartStackPrivateData));
     assert(self);
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
-    self->outputBufferSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
-                                                            addressesInAddressAnnouncer);
+    self->outputBufferSize = JsonPacker_calculateBufferSize(config.amountOfChannels, config.sizeOfChannels,
+                                                            config.addressesInAddressAnnouncer);
     self->inputBufferSize = JsonUnpacker_calculateBufferSize();
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
@@ -108,67 +106,65 @@ void JsonUartStack_createThreadSafe(size_t sizeOfChannels, size_t  amountOfChann
     self->output = BufferedByteStream_create(self->outputBufferSize);
 
     /* Generate the desired packer and unpacker */
-    self->packer = JsonPacker_create(amountOfChannels, addressesInAddressAnnouncer,
+    self->packer = JsonPacker_create(config.amountOfChannels, config.addressesInAddressAnnouncer,
                                      BufferedByteStream_getIByteStream(self->output));
     self->unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(self->input));
 
     /* Generate the communication handler */
-    self->uartJson = UartJson_create(callback, BufferedByteStream_getIByteStream(self->input),
+    self->uartJson = UartJson_create(config.callback, BufferedByteStream_getIByteStream(self->input),
                                      BufferedByteStream_getIByteStream(self->output));
 
+    self->transceiver = UartJson_getTransceiver(self->uartJson);
+
     /* Generate the address storage. The address storage is optional and doesn't have to be used */
-    self->addressStorage = AnnounceStorage_create(addressesInAddressAnnouncer, amountOfChannels, timebase);
+    self->announceStorage = AnnounceStorage_create(config.addressesInAddressAnnouncer, config.amountOfChannels, config.timebase);
 
     /* Create the builder itself */
     self->builder = ScopeBuilder_create();
 
     /* Pass all the wanted elements into the builder */
-    ScopeBuilder_setChannels(self->builder, amountOfChannels, sizeOfChannels);
+    ScopeBuilder_setChannels(self->builder, config.amountOfChannels, config.sizeOfChannels);
     ScopeBuilder_setStreams(self->builder, BufferedByteStream_getIByteStream(self->input),
                             BufferedByteStream_getIByteStream(self->output));
-    ScopeBuilder_setConfigMutex(self->builder, configMutex);
-    ScopeBuilder_setDataMutex(self->builder, dataMutex);
-    ScopeBuilder_setTimestampReference(self->builder, timestamp);
+    ScopeBuilder_setConfigMutex(self->builder, mutexes.configMutex);
+    ScopeBuilder_setDataMutex(self->builder, mutexes.dataMutex);
+    ScopeBuilder_setTimestampReference(self->builder, config.timestamp);
     ScopeBuilder_setCommunication(self->builder, UartJson_getCommunicator(self->uartJson));
     ScopeBuilder_setParser(self->builder, JsonPacker_getIPacker(self->packer), JsonUnpacker_getIUnpacker(self->unpacker));
-    ScopeBuilder_setAnnounceStorage(self->builder, self->addressStorage);
+    ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage);
 
     /* Build the scope */
     self->scope_obj = ScopeBuilder_build(self->builder);
 
+    return self;
 }
 
-void JsonUartStack_run(){
+void ScopeUartStack_run(ScopeUartStackHandle self){
     ScopeRunner_run(self->scope_obj);
 }
 
-void JsonUartStack_runThreadScope(void){
+void ScopeUartStack_runThreadScope(ScopeUartStackHandle self){
     ScopeThreadRunner_runScope(self->scope_obj);
 }
 
-void JsonUartStack_runThreadStack(void){
+void ScopeUartStack_runThreadStack(ScopeUartStackHandle self){
     ScopeThreadRunner_runStack(self->scope_obj);
 }
 
-JsonUartPublicStack JsonUartStack_getObject(){
-
-    JsonUartPublicStack stack = {.addressStorage = self->addressStorage,
-            .scope = self->scope_obj.scope,
-            .input = self->input,
-            .output = self->output,
-            .uartJson = self->uartJson,
-            .outputBufferSize = self->outputBufferSize,
-            .inputBufferSize = self->inputBufferSize};
-
-    return stack;
+AnnounceStorageHandle ScopeUartStack_getAnnounceStorage(ScopeUartStackHandle self){
+    return self->announceStorage;
 }
 
-void JsonUartStack_destroy(){
+ITransceiverHandle ScopeUartStack_getTranscevier(ScopeUartStackHandle self){
+    return self->transceiver;
+}
+
+void ScopeUartStack_destroy(ScopeUartStackHandle self){
     BufferedByteStream_destroy(self->input);
     BufferedByteStream_destroy(self->output);
     JsonUnpacker_destroy(self->unpacker);
     JsonPacker_destroy(self->packer);
     UartJson_destroy(self->uartJson);
-    AnnounceStorage_destroy(self->addressStorage);
+    AnnounceStorage_destroy(self->announceStorage);
     ScopeBuilder_destroy(self->builder);
 }

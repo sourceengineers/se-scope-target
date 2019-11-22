@@ -13,10 +13,10 @@
 #ifndef COMMANDRUNNINGPARSER_H_
 #define COMMANDRUNNINGPARSER_H_
 
-#include <Scope/Control/Commands/Command/CommandRunning.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
+#include "Scope/Control/Commands/Command/CommandRunning.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data

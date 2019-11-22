@@ -13,11 +13,12 @@
 #ifndef COMMANDPACKDETECTPARSER_H_
 #define COMMANDPACKDETECTPARSER_H_
 
-#include <Scope/Control/PackCommands/Command/CommandPackDetect.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/Control/AnnounceStorage.h>
+#include "Scope/Control/AnnounceStorage.h"
+
+#include "Scope/Control/PackCommands/Command/CommandPackDetect.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data
@@ -29,7 +30,7 @@ typedef struct __CommandPackDetectParserPrivateData* CommandPackDetectParserHand
 ******************************************************************************/
 /**
  * Constructor
- * @param addressStorage
+ * @param announceStorage
  * @param packer
  * @return
  */

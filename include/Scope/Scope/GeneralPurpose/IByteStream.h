@@ -9,10 +9,10 @@
  *
  *****************************************************************************************************************************************/
 
-#ifndef IByteStream_H_
-#define IByteStream_H_
+#ifndef IBYTESTREAM_H_
+#define IBYTESTREAM_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 /******************************************************************************
  Define interface handle data

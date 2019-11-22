@@ -13,9 +13,10 @@
 #ifndef ICOMMUNICATOR_H_
 #define ICOMMUNICATOR_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/GeneralPurpose/IObserver.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+#include "Scope/GeneralPurpose/IRunnable.h"
+
+#include "Scope/GeneralPurpose/IObserver.h"
 
 /******************************************************************************
  Define interface handle data

@@ -12,7 +12,7 @@
 #ifndef JSONCOMMON_H_
 #define JSONCOMMON_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 
 #if (ARCH_SIZE_32)

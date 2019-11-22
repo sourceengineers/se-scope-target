@@ -7,10 +7,11 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/AnnounceStorage.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Version.h>
+#include "Scope/Control/AnnounceStorage.h"
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/Version.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -27,7 +28,6 @@ typedef struct __AnnounceStoragePrivateData{
     size_t maxAmountOfChannels;
     float timeBase;
     const char* version;
-    IObserverHandle packObserver;
 
 } AnnounceStoragePrivateData;
 
@@ -60,10 +60,6 @@ AnnounceStorageHandle AnnounceStorage_create(const size_t maxAmountOfAddresses, 
     return self;
 }
 
-void AnnounceStorage_attachObserver(AnnounceStorageHandle self, IObserverHandle observer){
-    self->packObserver = observer;
-}
-
 size_t AnnounceStorage_getMaxAmountOfChannels(AnnounceStorageHandle self){
     return self->maxAmountOfChannels;
 }
@@ -74,11 +70,6 @@ float AnnounceStorage_getTimeBase(AnnounceStorageHandle self){
 
 void AnnounceStorage_getVersion(AnnounceStorageHandle self, char* version){
     strncpy(version, self->version, strlen(self->version));
-}
-
-void AnnounceStorage_announce(AnnounceStorageHandle self){
-    PACK_TYPES packType = PACK_ANNOUNCE;
-    self->packObserver->update(self->packObserver, &packType);
 }
 
 size_t AnnounceStorage_getMaxAmountOfAddresses(AnnounceStorageHandle self){

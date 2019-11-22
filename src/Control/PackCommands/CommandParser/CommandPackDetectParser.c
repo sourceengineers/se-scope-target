@@ -7,11 +7,12 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/PackCommands/CommandParser/CommandPackDetectParser.h>
-#include <Scope/Control/PackCommands/Command/CommandPackDetect.h>
+#include "Scope/Control/AnnounceStorage.h"
+
+#include "Scope/Control/PackCommands/CommandParser/CommandPackDetectParser.h"
+#include "Scope/Control/PackCommands/Command/CommandPackDetect.h"
 
 #include <stdlib.h>
-#include <Scope/Control/AnnounceStorage.h>
 #include <assert.h>
 
 /******************************************************************************

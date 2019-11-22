@@ -7,14 +7,14 @@
 *
 *****************************************************************************************************************************************/
 
-#include <Scope/Control/PackCommands/Command/CommandPackData.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
-#include <Scope/GeneralPurpose/IIntStream.h>
-#include <Scope/Control/ParserDefinitions.h>
+#include "Scope/Control/PackCommands/Command/CommandPackData.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/GeneralPurpose/FloatRingBuffer.h"
+#include "Scope/GeneralPurpose/IIntStream.h"
+#include "Scope/Control/ParserDefinitions.h"
 
 #include <stdint.h>
 #include <stdbool.h>

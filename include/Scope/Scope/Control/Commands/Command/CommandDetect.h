@@ -14,11 +14,11 @@
 #ifndef COMMANDDETECT_H_
 #define COMMANDDETECT_H_
 
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/IObserver.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 /******************************************************************************
  Define class handle data

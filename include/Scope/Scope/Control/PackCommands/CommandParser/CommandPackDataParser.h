@@ -13,10 +13,10 @@
 #ifndef COMMANDPACKDATAPARSER_H_
 #define COMMANDPACKDATAPARSER_H_
 
-#include <Scope/Control/PackCommands/Command/CommandPackData.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Core/IScope.h>
+#include "Scope/Control/PackCommands/Command/CommandPackData.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data

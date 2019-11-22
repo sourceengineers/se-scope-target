@@ -7,11 +7,12 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/PackCommands/CommandParser/CommandPackAnnounceParser.h>
-#include <Scope/Control/PackCommands/Command/CommandPackAnnounce.h>
+#include "Scope/Control/AnnounceStorage.h"
+
+#include "Scope/Control/PackCommands/CommandParser/CommandPackAnnounceParser.h"
+#include "Scope/Control/PackCommands/Command/CommandPackAnnounce.h"
 
 #include <stdlib.h>
-#include <Scope/Control/AnnounceStorage.h>
 #include <assert.h>
 
 /******************************************************************************
@@ -29,11 +30,11 @@ typedef struct __CommandPackAnnounceParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(AnnounceStorageHandle addressStorage, IPackerHandle packer){
+CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(AnnounceStorageHandle announceStorage, IPackerHandle packer){
     CommandPackAnnounceParserHandle self = malloc(sizeof(CommandPackAnnounceParserPrivateData));
     assert(self);
 
-    self->command = CommandPackAnnounce_create(addressStorage, packer);
+    self->command = CommandPackAnnounce_create(announceStorage, packer);
     return self;
 }
 

@@ -22,7 +22,6 @@
 #include <stddef.h>
 
 /* Define the string names of the data types */
-
 #define SE_UINT8_NAME "SE_UINT8"
 #define SE_UINT16_NAME "SE_UINT16"
 #define SE_UINT32_NAME "SE_UINT32"
@@ -42,7 +41,7 @@ typedef enum{
     SE_UINT32, // Representing uint_32 data
     SE_UINT64, // Representing uint_64 data
     SE_FLOAT, // Representing Float data
-    SE_DOUBLE // Representing Double data
+    SE_DOUBLE // Representing Double data !!! NOT YET SUPPORTED !!!
 } DATA_TYPES;
 
 /** Define macro to fetch the right data type name */

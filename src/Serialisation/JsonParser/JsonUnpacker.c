@@ -7,12 +7,13 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/ParserDefinitions.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/Serialisation/JsonParser/JsonCommon.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+#include "Scope/GeneralPurpose/IByteStream.h"
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Control/ParserDefinitions.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Serialisation/JsonParser/JsonCommon.h"
+#include "Scope/Serialisation/JsonParser/JsonUnpacker.h"
 
 #include <stdint.h>
 #include <jsmn/jsmn.h>

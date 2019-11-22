@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include "Scope/GeneralPurpose/FloatRingBuffer.h"
 
 #include <stdint.h>
 #include <stdbool.h>

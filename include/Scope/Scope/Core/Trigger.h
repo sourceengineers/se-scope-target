@@ -21,10 +21,11 @@
 #ifndef TRIGGER_H_
 #define TRIGGER_H_
 
-#include <Scope/Core/Channel.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/Core/Timestamper.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Core/Channel.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/Core/Timestamper.h"
 
 #include <stdint.h>
 #include <stdbool.h>

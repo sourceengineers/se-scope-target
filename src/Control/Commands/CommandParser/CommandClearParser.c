@@ -7,8 +7,8 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/CommandParser/CommandClearParser.h>
-#include <Scope/Control/Commands/Command/CommandClear.h>
+#include "Scope/Control/Commands/CommandParser/CommandClearParser.h"
+#include "Scope/Control/Commands/Command/CommandClear.h"
 
 #include <stdlib.h>
 #include <assert.h>

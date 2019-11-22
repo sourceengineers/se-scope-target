@@ -14,7 +14,7 @@
 #ifndef IMUTEX_H
 #define IMUTEX_H
 
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 /******************************************************************************
  Define interface handle data
@@ -41,7 +41,6 @@ typedef struct IMutexStruct{
      * @param self
      */
     void (*unlock)(IMutexHandle self);
-
 
 } IMutex;
 

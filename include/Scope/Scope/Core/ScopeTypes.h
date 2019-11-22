@@ -12,7 +12,7 @@
 #ifndef SCOPETYPES_H
 #define SCOPETYPES_H
 
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 /* Constants to represent the different edges on which the trigger can be
    configured */

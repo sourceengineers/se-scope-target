@@ -12,10 +12,12 @@
 #ifndef UARTJSON_H
 #define UARTJSON_H
 
-#include <Scope/Communication/ICommunicator.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
+#include "Scope/GeneralPurpose/IByteStream.h"
+#include "Scope/GeneralPurpose/IRunnable.h"
+#include "Scope/Communication/ITransceiver.h"
+
+#include "Scope/Communication/ICommunicator.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -25,8 +27,6 @@
  Define class handle data
 ******************************************************************************/
 typedef struct __UartJsonPrivateData* UartJsonHandle;
-
-typedef void(*UartTransmitCallback)(UartJsonHandle self);
 
 /******************************************************************************
  Public functions
@@ -38,7 +38,7 @@ typedef void(*UartTransmitCallback)(UartJsonHandle self);
  * @param output
  * @return
  */
-UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
+UartJsonHandle UartJson_create(TransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
 
 /**
  * Returns the communicator interface
@@ -46,6 +46,13 @@ UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle 
  * @return
  */
 ICommunicatorHandle UartJson_getCommunicator(UartJsonHandle self);
+
+/**
+ * Returns the transceiver interface
+ * @param self
+ * @return
+ */
+ITransceiverHandle UartJson_getTransceiver(UartJsonHandle self);
 
 /**
  * Writes the data to transmit into data

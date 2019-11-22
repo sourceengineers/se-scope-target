@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/GeneralPurpose/IntRingBuffer.h>
+#include "Scope/GeneralPurpose/IntRingBuffer.h"
 
 #include <stdbool.h>
 #include <stdlib.h>

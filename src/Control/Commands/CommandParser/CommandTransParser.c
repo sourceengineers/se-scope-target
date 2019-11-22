@@ -7,8 +7,8 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/CommandParser/CommandTransParser.h>
-#include <Scope/Control/Commands/Command/CommandTrans.h>
+#include "Scope/Control/Commands/CommandParser/CommandTransParser.h"
+#include "Scope/Control/Commands/Command/CommandTrans.h"
 
 #include <stdlib.h>
 #include <assert.h>

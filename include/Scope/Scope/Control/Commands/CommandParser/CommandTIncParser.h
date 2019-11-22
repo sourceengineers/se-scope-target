@@ -13,10 +13,10 @@
 #ifndef COMMANDTINCPARSER_H_
 #define COMMANDTINCPARSER_H_
 
-#include <Scope/Control/Commands/Command/CommandTInc.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
+#include "Scope/Control/Commands/Command/CommandTInc.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data

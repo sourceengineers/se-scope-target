@@ -7,9 +7,9 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/Commands/Command/CommandDetect.h>
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
+#include "Scope/Control/Commands/Command/CommandDetect.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
 
 #include <stdlib.h>
 #include <assert.h>

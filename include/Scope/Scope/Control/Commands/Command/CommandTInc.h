@@ -16,9 +16,10 @@
 #ifndef COMMANDTINC_H_
 #define COMMANDTINC_H_
 
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
 
 #include <stdint.h>
 

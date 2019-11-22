@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/GeneralPurpose/ByteRingBuffer.h>
+#include "Scope/GeneralPurpose/ByteRingBuffer.h"
 
 #include <stdbool.h>
 #include <stdlib.h>

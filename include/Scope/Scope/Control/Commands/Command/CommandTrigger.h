@@ -14,10 +14,11 @@
 #ifndef COMMANDTRIGGER_H_
 #define COMMANDTRIGGER_H_
 
-#include <Scope/Control/ICommand.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Control/ICommand.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/Core/ScopeTypes.h"
 
 /******************************************************************************
  Define class handle data

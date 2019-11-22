@@ -12,16 +12,13 @@
 #ifndef SCOPEBUILDER_H
 #define SCOPEBUILDER_H
 
-#include <Scope/Control/Controller.h>
-#include <Scope/Core/Scope.h>
-#include <Scope/Serialisation/Serializer.h>
-#include <Scope/Communication/ICommunicator.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Control/AnnounceStorage.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/GeneralPurpose/IMutex.h>
+#include "Scope/Control/AnnounceStorage.h"
+#include "Scope/GeneralPurpose/IByteStream.h"
+#include "Scope/GeneralPurpose/IRunnable.h"
+#include "Scope/GeneralPurpose/IMutex.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/Control/Controller.h"
+#include "Scope/Communication/ICommunicator.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -112,9 +109,9 @@ void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle 
  * This can be handy when the addresses aren't known at compile time.
  * This is optional.
  * @param self
- * @param addressStorage
+ * @param announceStorage
  */
-void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle addressStorage);
+void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle announceStorage);
 
 /**
  * Appends the mutex which protects the Tx path of the runner. If no mutex is passed,

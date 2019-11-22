@@ -9,7 +9,7 @@
  *
  ******************************************************************************/
 
-#include <Scope/Control/ParserDefinitions.h>
+#include "Scope/Control/ParserDefinitions.h"
 
 const char* KEYWORD_PAYLOAD = "payload";
 const char* KEYWORD_TRANSPORT = "transport";

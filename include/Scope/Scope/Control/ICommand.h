@@ -17,7 +17,7 @@
 #ifndef ICOMMAND_H_
 #define ICOMMAND_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 #include <stdlib.h>
 

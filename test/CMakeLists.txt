@@ -18,7 +18,7 @@ if (NOT (TARGET gtest AND TARGET gtest_main))
     message(FATAL_ERROR "gtest and gtest_main targets NOT found")
 endif ()
 
-include_directories(../include/Scope)
+include_directories(../include/Scope ../public)
 include_directories(../3rdparty/gtest/googletest/include ../3rdparty/gtest/googlemock/include)
 
 add_executable(${TEST_PROJECT_NAME} ${LIBRARY_TESTS_SOURCE})
