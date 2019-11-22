@@ -12,7 +12,7 @@
 #ifndef SCOPETYPES_H
 #define SCOPETYPES_H
 
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 /* Constants to represent the different edges on which the trigger can be
    configured */
@@ -46,6 +46,7 @@ typedef struct{
     bool isTriggered; // True if the trigger is triggered
     uint32_t channelId; // Channel id which the trigger currently is monitoring
     uint32_t triggerTimestamp; // Timestamp at which the trigger detected matching trigger criteria
+    TRIGGER_MODE mode;
 } TriggeredValues;
 
 /**
@@ -62,8 +63,9 @@ typedef enum{
  * Enum to determine the source of the observer.
  */
 typedef enum{
-    PACK_ANNOUNCE, // Announce data will be packed
-    PACK_DATA // Channel data and trigger will be packed
+    PACK_ANNOUNCE = 1, // Announce data will be packed
+    PACK_DATA = 2, // Channel data and trigger will be packed
+    PACK_DETECT = 4 // Detect package that lets hosts discover the device
 } PACK_TYPES;
 
 #endif

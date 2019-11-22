@@ -7,17 +7,19 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Communication/Interfaces/UartJson.h>
-#include <Scope/Communication/ICommunicator.h>
-#include <Scope/GeneralPurpose/ByteRingBuffer.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
+#include "Scope/Communication/Interfaces/UartJson.h"
+#include "Scope/GeneralPurpose/IRunnable.h"
+#include "Scope/GeneralPurpose/IByteStream.h"
+
+#include "Scope/Communication/ICommunicator.h"
+#include "Scope/GeneralPurpose/ByteRingBuffer.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 typedef enum {
     TRANSPORT_NOT_FOUND, CHECKSUM_FAULTY, CHECKSUM_OK
@@ -33,8 +35,9 @@ static const size_t CHECKSUM_LENGTH = 2;
 /* Class data */
 typedef struct __UartJsonPrivateData {
     ICommunicator communicator;
+    ITransceiver transceiver;
 
-    UartTransmitCallback callback;
+    TransmitCallback callback;
     IByteStreamHandle input;
     IByteStreamHandle output;
     ByteRingBufferHandle transportBuffer;
@@ -103,7 +106,7 @@ static bool runTx(IRunnableHandle runnable) {
     self->output->write(self->output, (const uint8_t *) formatedChecksum, CHECKSUM_LENGTH + 1);
     self->txPendingToValidateAndTransmit = false;
 
-    self->callback(self);
+    self->callback(&self->transceiver);
 
     return true;
 }
@@ -169,12 +172,38 @@ static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator) {
     return &self->txRunnable;
 }
 
+void get(ITransceiverHandle transceiver, uint8_t *data, size_t length) {
+    UartJsonHandle self = (UartJsonHandle) transceiver->handle;
+    UartJson_getTxData(self, data, length);
+}
+
+size_t outputSize(ITransceiverHandle transceiver) {
+    UartJsonHandle self = (UartJsonHandle) transceiver->handle;
+    return UartJson_amountOfTxDataPending(self);
+}
+
+void put(ITransceiverHandle transceiver, uint8_t *data, size_t length) {
+    UartJsonHandle self = (UartJsonHandle) transceiver->handle;
+    UartJson_putRxData(self, data, length);
+}
+
+void resetInput(ITransceiverHandle transceiver) {
+    UartJsonHandle self = (UartJsonHandle) transceiver->handle;
+    UartJson_resetRx(self);
+}
+
+void resetOutput(ITransceiverHandle transceiver) {
+    UartJsonHandle self = (UartJsonHandle) transceiver->handle;
+    UartJson_resetTx(self);
+}
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
-UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output) {
+UartJsonHandle UartJson_create(TransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output) {
 
     UartJsonHandle self = malloc(sizeof(UartJsonPrivateData));
+    assert(self);
 
     self->communicator.handle = self;
     self->rxRunnable.handle = self;
@@ -196,6 +225,13 @@ UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle 
     self->input = input;
     self->output = output;
 
+    self->transceiver.handle = self;
+    self->transceiver.get = &get;
+    self->transceiver.outputSize = &outputSize;
+    self->transceiver.put = &put;
+    self->transceiver.resetInput = &resetInput;
+    self->transceiver.resetOutput = &resetOutput;
+
     self->rxDataReady = false;
     UartJson_resetTx(self);
     UartJson_resetRx(self);
@@ -204,6 +240,10 @@ UartJsonHandle UartJson_create(UartTransmitCallback callback, IByteStreamHandle 
 
 ICommunicatorHandle UartJson_getCommunicator(UartJsonHandle self) {
     return &self->communicator;
+}
+
+ITransceiverHandle UartJson_getTransceiver(UartJsonHandle self) {
+    return &self->transceiver;
 }
 
 void UartJson_getTxData(UartJsonHandle self, uint8_t *data, size_t length) {

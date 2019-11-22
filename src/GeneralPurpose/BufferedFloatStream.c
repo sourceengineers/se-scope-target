@@ -7,11 +7,12 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/GeneralPurpose/BufferedFloatStream.h>
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
-#include <Scope/GeneralPurpose/IFloatStream.h>
+#include "Scope/GeneralPurpose/BufferedFloatStream.h"
+#include "Scope/GeneralPurpose/FloatRingBuffer.h"
+#include "Scope/GeneralPurpose/IFloatStream.h"
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -108,7 +109,7 @@ static size_t getCapacity(IFloatStreamHandle stream){
 BufferedFloatStreamHandle BufferedFloatStream_create(size_t capacity){
 
     BufferedFloatStreamHandle self = (BufferedFloatStreamHandle) malloc(sizeof(BufferedFloatStreamPrivateData));
-
+    assert(self);
     self->buffer = FloatRingBuffer_create(capacity);
 
     self->parent.handle = self;

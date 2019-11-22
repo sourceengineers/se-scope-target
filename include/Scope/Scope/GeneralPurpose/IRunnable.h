@@ -12,7 +12,7 @@
 #ifndef IRUNNABLE_H_
 #define IRUNNABLE_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 /******************************************************************************
  Define interface handle data

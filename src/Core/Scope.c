@@ -7,21 +7,22 @@
  *
 *******************************************************************************/
 
-#include <Scope/Core/Scope.h>
-#include <Scope/Core/Timestamper.h>
-#include <Scope/Control/AddressStorage.h>
-#include <Scope/Core/Channel.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/Core/Trigger.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
-#include <Scope/GeneralPurpose/IIntStream.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
+#include "Scope/GeneralPurpose/IRunnable.h"
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Core/Scope.h"
+#include "Scope/Core/Timestamper.h"
+#include "Scope/Core/Channel.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/Core/Trigger.h"
+#include "Scope/GeneralPurpose/FloatRingBuffer.h"
+#include "Scope/GeneralPurpose/IIntStream.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -118,7 +119,7 @@ static void scopeSetTimeIncrement(IScopeHandle scope, uint32_t timeIncrement){
 static uint32_t getTimeIncrement(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
-    return Timerstamper_getTimeIncrement(self->timestamper);
+    return Timestamper_getTimeIncrement(self->timestamper);
 }
 
 static size_t getAmountOfChannels(IScopeHandle scope){
@@ -178,6 +179,7 @@ static TriggeredValues getTriggerData(IScopeHandle scope){
     values.isTriggered = Trigger_isTriggered(self->trigger);
     values.triggerTimestamp = Trigger_getTriggerIndex(self->trigger);
     values.channelId = Trigger_getChannelId(self->trigger);
+    values.mode = Trigger_getTriggerMode(self->trigger);
 
     return values;
 }
@@ -221,6 +223,7 @@ ScopeHandle Scope_create(size_t channelSize,
                          uint32_t* referenceTimestamp){
 
     ScopeHandle self = malloc(sizeof(ScopePrivateData));
+    assert(self);
 
     self->channelSize = channelSize;
 
@@ -246,6 +249,8 @@ ScopeHandle Scope_create(size_t channelSize,
     self->runnable.run = &run;
 
     self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
+    assert(self->channels);
+
     self->amountOfChannels = amountOfChannels;
 
     for(size_t i = 0; i < amountOfChannels; i++){

@@ -7,20 +7,22 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/CommandParserDispatcher.h>
-#include <Scope/Control/CommandParser/CommandAddrParser.h>
-#include <Scope/Control/CommandParser/CommandAnnounceParser.h>
-#include <Scope/Control/CommandParser/CommandClearParser.h>
-#include <Scope/Control/CommandParser/CommandPollParser.h>
-#include <Scope/Control/CommandParser/CommandRunningParser.h>
-#include <Scope/Control/CommandParser/CommandTIncParser.h>
-#include <Scope/Control/CommandParser/CommandTransParser.h>
-#include <Scope/Control/CommandParser/CommandTriggerParser.h>
-#include <Scope/Control/ParserDefinitions.h>
-#include <Scope/Core/ScopeTypes.h>
+#include "Scope/Control/CommandParserDispatcher.h"
+#include "Scope/Control/Commands/CommandParser/CommandAddrParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandAnnounceParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandClearParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandPollParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandRunningParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandTIncParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandTransParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandTriggerParser.h"
+#include "Scope/Control/Commands/CommandParser/CommandDetectParser.h"
+#include "Scope/Control/ParserDefinitions.h"
+#include "Scope/Core/ScopeTypes.h"
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -35,6 +37,7 @@ typedef struct __CommandParserDispatcherPrivateData {
     CommandAnnounceParserHandle commandAnnounceParser;
     CommandTransParserHandle commandTransParser;
     CommandClearParserHandle commandClearParser;
+    CommandDetectParserHandle commandDetectParser;
 } CommandParserDispatcherPrivateData;
 
 
@@ -45,6 +48,7 @@ CommandParserDispatcherHandle
 CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver, IUnpackerHandle unpacker) {
 
     CommandParserDispatcherHandle self = malloc(sizeof(CommandParserDispatcherPrivateData));
+    assert(self);
 
     /* Initialize needed command parser
     * Not all commands need parser, which is why there are less parser as commands */
@@ -56,6 +60,7 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
     self->commandAnnounceParser = CommandAnnounceParser_create(packObserver);
     self->commandTransParser = CommandTransParser_create(scope);
     self->commandClearParser = CommandClearParser_create(scope);
+    self->commandDetectParser = CommandDetectParser_create(packObserver);
 
     return self;
 }
@@ -86,6 +91,9 @@ ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, c
     } else if (strncmp(command, CommandClearParser_getName(), MAX_COMMAND_LENGTH) == 0) {
         return CommandClearParser_getCommand(self->commandClearParser);
 
+    } else if (strncmp(command, CommandDetectParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+        return CommandDetectParser_getCommand(self->commandDetectParser);
+
     }
 
     return NULL;
@@ -101,6 +109,7 @@ void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self) {
     CommandClearParser_destroy(self->commandClearParser);
     CommandAnnounceParser_destroy(self->commandAnnounceParser);
     CommandTransParser_destroy(self->commandTransParser);
+    CommandDetectParser_destroy(self->commandDetectParser);
 
     free(self);
     self = NULL;

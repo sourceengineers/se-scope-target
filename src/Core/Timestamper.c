@@ -7,11 +7,12 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Core/Timestamper.h>
-#include <Scope/GeneralPurpose/BufferedIntStream.h>
-#include <Scope/GeneralPurpose/IIntStream.h>
+#include "Scope/Core/Timestamper.h"
+#include "Scope/GeneralPurpose/BufferedIntStream.h"
+#include "Scope/GeneralPurpose/IIntStream.h"
 
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -57,6 +58,7 @@ static TIMESTAMPER_STATES getState(TimestamperHandle self){
 TimestamperHandle Timestamper_create(size_t capacity, uint32_t* referenceTimestamp){
 
     TimestamperHandle self = malloc(sizeof(TimestamperPrivateData));
+    assert(self);
     self->timeIncrement = 1;
     self->referenceTimestamp = referenceTimestamp;
     self->lastTimestamp = 0;
@@ -97,6 +99,13 @@ void Timestamper_stamp(TimestamperHandle self){
     stream->writeData(stream, self->lastTimestamp);
 }
 
+void Timestamper_clear(TimestamperHandle self) {
+    IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timestamps[POLL_BUFFER]);
+    stream->flush(stream);
+    stream = BufferedIntStream_getIIntStream(self->timestamps[SWAP_BUFFER]);
+    stream->flush(stream);
+}
+
 void Timestamper_setStateRunning(TimestamperHandle self){
     setState(self, TIMESTAMPER_RUNNING);
 }
@@ -109,19 +118,12 @@ void Timestamper_setStateStopped(TimestamperHandle self){
     setState(self, TIMESTAMPER_STOPPED);
 }
 
-uint32_t Timerstamper_getTimeIncrement(TimestamperHandle self){
+uint32_t Timestamper_getTimeIncrement(TimestamperHandle self){
     return self->timeIncrement;
 }
 
 void Timestamper_configureTimestampIncrement(TimestamperHandle self, uint32_t timstampIncrement){
     self->timeIncrement = timstampIncrement;
-}
-
-void Timestamper_clear(TimestamperHandle self){
-    IIntStreamHandle stream = BufferedIntStream_getIIntStream(self->timestamps[POLL_BUFFER]);
-    stream->flush(stream);
-    stream = BufferedIntStream_getIIntStream(self->timestamps[SWAP_BUFFER]);
-    stream->flush(stream);
 }
 
 bool Timestamper_swapIsPending(TimestamperHandle self) {
@@ -135,7 +137,7 @@ bool Timestamper_swapIsPending(TimestamperHandle self) {
     return pollBufferIsFull && swapBufferIsEmpty;
 }
 
-void Timerstamper_swapBuffers(TimestamperHandle self){
+void Timestamper_swapBuffers(TimestamperHandle self){
     BufferedIntStreamHandle buffer = self->timestamps[SWAP_BUFFER];
     self->timestamps[SWAP_BUFFER] = self->timestamps[POLL_BUFFER];
     self->timestamps[POLL_BUFFER] = buffer;

@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -403,114 +403,139 @@
               <FilePath>..\src\Control\Controller.c</FilePath>
             </File>
             <File>
-              <FileName>CommandAddr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandAddr.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandAnnounce.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandAnnounce.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandClear.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandClear.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandPoll.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandPoll.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandRunning.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandRunning.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTInc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandTInc.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTrans.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandTrans.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTrigger.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandTrigger.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandAddrParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandAddrParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandAnnounceParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandAnnounceParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandClearParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandClearParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandPollParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandPollParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandRunningParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandRunningParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTIncParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandTIncParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTransParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandTransParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandTriggerParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandTriggerParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>AddressStorage.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\AddressStorage.c</FilePath>
-            </File>
-            <File>
               <FileName>CommandPackParserDispatcher.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\CommandPackParserDispatcher.c</FilePath>
             </File>
             <File>
+              <FileName>AnnounceStorage.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\AnnounceStorage.c</FilePath>
+            </File>
+            <File>
+              <FileName>ParserDefinitions.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\ParserDefinitions.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandAddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandAddr.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandAnnounce.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandAnnounce.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandClear.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandClear.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandDetect.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandDetect.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPoll.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandPoll.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandRunning.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandRunning.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandTInc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandTInc.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandTrans.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandTrans.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandTrigger.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\Command\CommandTrigger.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandAddrParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandAddrParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandAnnounceParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandAnnounceParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandClearParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandClearParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandDetectParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandDetectParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPollParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandPollParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandRunningParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandRunningParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandTIncParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandTIncParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandTransParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandTransParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandTriggerParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\Commands\CommandParser\CommandTriggerParser.c</FilePath>
+            </File>
+            <File>
               <FileName>CommandPackAnnounce.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandPackAnnounce.c</FilePath>
+              <FilePath>..\src\Control\PackCommands\Command\CommandPackAnnounce.c</FilePath>
             </File>
             <File>
               <FileName>CommandPackData.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\Command\CommandPackData.c</FilePath>
+              <FilePath>..\src\Control\PackCommands\Command\CommandPackData.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPackDetect.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\PackCommands\Command\CommandPackDetect.c</FilePath>
             </File>
             <File>
               <FileName>CommandPackAnnounceParser.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandPackAnnounceParser.c</FilePath>
+              <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackAnnounceParser.c</FilePath>
             </File>
             <File>
               <FileName>CommandPackDataParser.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Control\CommandParser\CommandPackDataParser.c</FilePath>
+              <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackDataParser.c</FilePath>
+            </File>
+            <File>
+              <FileName>CommandPackDetectParser.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackDetectParser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -598,11 +623,6 @@
           <GroupName>Builder</GroupName>
           <Files>
             <File>
-              <FileName>JsonUartStack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Builders\JsonUartStack.c</FilePath>
-            </File>
-            <File>
               <FileName>ScopeBuilder.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Builders\ScopeBuilder.c</FilePath>
@@ -616,6 +636,11 @@
               <FileName>ScopeThreadRunner.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
+            </File>
+            <File>
+              <FileName>ScopeUartStack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Builders\ScopeUartStack.c</FilePath>
             </File>
           </Files>
         </Group>

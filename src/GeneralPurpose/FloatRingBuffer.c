@@ -7,11 +7,12 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include "Scope/GeneralPurpose/FloatRingBuffer.h"
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -65,9 +66,10 @@ FloatRingBufferHandle FloatRingBuffer_create(size_t capacity){
 
     /* Allocate memory and set _private variables */
     FloatRingBufferHandle self = malloc(sizeof(FloatRingBufferPrivateData));
-
+    assert(self);
     self->capacity = capacity + 1;
     self->data = malloc(sizeof(float) * self->capacity);
+    assert(self->data);
 
     self->tail = self->data;
     self->head = self->data;

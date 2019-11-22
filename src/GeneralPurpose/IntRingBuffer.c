@@ -7,10 +7,11 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/GeneralPurpose/IntRingBuffer.h>
+#include "Scope/GeneralPurpose/IntRingBuffer.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -64,9 +65,10 @@ IntRingBufferHandle IntRingBuffer_create(size_t capacity){
 
     /* Allocate memory and set _private variables */
     IntRingBufferHandle self = malloc(sizeof(IntRingBufferPrivateData));
-
+    assert(self);
     self->capacity = capacity + 1;
     self->data = malloc(sizeof(uint32_t) * self->capacity);
+    assert(self->data);
 
     self->tail = self->data;
     self->head = self->data;

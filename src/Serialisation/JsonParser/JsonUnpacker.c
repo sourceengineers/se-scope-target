@@ -7,22 +7,24 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/ParserDefinitions.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/Serialisation/JsonParser/JsonCommon.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+#include "Scope/GeneralPurpose/IByteStream.h"
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Control/ParserDefinitions.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Serialisation/JsonParser/JsonCommon.h"
+#include "Scope/Serialisation/JsonParser/JsonUnpacker.h"
 
 #include <stdint.h>
 #include <jsmn/jsmn.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 
 #define INPUT_BUFFER_SIZE 250
-#define TOKEN_BUFFER_SIZE 100
+#define TOKEN_BUFFER_SIZE 50
 
 /******************************************************************************
  Define private data
@@ -557,6 +559,7 @@ static void activateNewMessage(JsonUnpackerHandle self, char* data){
 JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
 
     JsonUnpackerHandle self = (JsonUnpackerHandle) malloc(sizeof(JsonUnpackerPrivateData));
+    assert(self);
 
     self->numberOfCommands = 0;
     self->unpacker.handle = self;
@@ -575,9 +578,11 @@ JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
     self->dataPending = false;
 
     self->inputTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
+    assert(self->inputTokens);
     self->storageTokens = (jsmntok_t*) malloc(sizeof(jsmntok_t) * TOKEN_BUFFER_SIZE);
-
+    assert(self->storageTokens);
     self->storageString = (char*) malloc(sizeof(char) * INPUT_BUFFER_SIZE);
+    assert(self->storageString);
 
     jsmn_init(&self->parser);
 

@@ -7,15 +7,15 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Builders/ScopeRunner.h>
-#include <Scope/Core/Scope.h>
-#include <Scope/Control/Controller.h>
-#include <Scope/Serialisation/Serializer.h>
+#include "Scope/Builders/ScopeRunner.h"
+
+#include "Scope/Control/Controller.h"
+#include "Scope/Serialisation/Serializer.h"
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-void ScopeRunner_run(ScopeObject scope){
+void ScopeRunner_run(ScopeRunnable scope){
 
     scope.runCommunicationRx->run(scope.runCommunicationRx);
     scope.runUnpacker->run(scope.runUnpacker);

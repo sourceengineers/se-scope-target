@@ -7,14 +7,16 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Communication/Interfaces/EthernetJson.h>
-#include <Scope/Communication/ICommunicator.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
+#include "Scope/Communication/Interfaces/EthernetJson.h"
+#include "Scope/GeneralPurpose/IByteStream.h"
+#include "Scope/GeneralPurpose/IRunnable.h"
+
+#include "Scope/Communication/ICommunicator.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -22,13 +24,14 @@
 /* Class data */
 typedef struct __EthernetJsonPrivateData{
     ICommunicator communicator;
+    ITransceiver transceiver;
 
     IByteStreamHandle input;
     IByteStreamHandle output;
 
     bool txPendingToValidateAndTransmit;
     bool rxDataReady;
-    EthernetTransmitCallback callback;
+    TransmitCallback callback;
 
     IObserverHandle rxObserver;
     IObserver txObserver;
@@ -80,7 +83,7 @@ static bool runTx(IRunnableHandle runnable) {
 
     self->output->writeByte(self->output, '\0');
 
-    self->callback(self);
+    self->callback(&self->transceiver);
     self->txPendingToValidateAndTransmit = false;
 
     return true;
@@ -111,13 +114,42 @@ static IRunnableHandle getTxRunnable(ICommunicatorHandle communicator) {
     return &self->txRunnable;
 }
 
+void get(ITransceiverHandle transceiver, uint8_t *data, size_t length) {
+    EthernetJsonHandle self = (EthernetJsonHandle) transceiver->handle;
+    self->output->read(self->output, data, length);
+}
+
+size_t outputSize(ITransceiverHandle transceiver) {
+    EthernetJsonHandle self = (EthernetJsonHandle) transceiver->handle;
+    return self->output->length(self->output);
+}
+
+void put(ITransceiverHandle transceiver, uint8_t *data, size_t length) {
+    EthernetJsonHandle self = (EthernetJsonHandle) transceiver->handle;
+    self->input->write(self->input, data, length);
+    self->input->writeByte(self->input, '\0');
+    self->rxDataReady = true;
+}
+
+void resetInput(ITransceiverHandle transceiver) {
+    EthernetJsonHandle self = (EthernetJsonHandle) transceiver->handle;
+    self->input->flush(self->input);
+}
+
+void resetOutput(ITransceiverHandle transceiver) {
+    EthernetJsonHandle self = (EthernetJsonHandle) transceiver->handle;
+    self->output->flush(self->output);
+}
+
+
 /******************************************************************************
  Public functions
 ******************************************************************************/
 EthernetJsonHandle
-EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output) {
+EthernetJson_create(TransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output) {
 
     EthernetJsonHandle self = malloc(sizeof(EthernetJsonPrivateData));
+    assert(self);
 
     self->communicator.handle = self;
     self->rxRunnable.handle = self;
@@ -135,6 +167,13 @@ EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, 
     self->rxRunnable.run = &runRx;
     self->txRunnable.run = &runTx;
 
+    self->transceiver.handle = self;
+    self->transceiver.get = &get;
+    self->transceiver.outputSize = &outputSize;
+    self->transceiver.put = &put;
+    self->transceiver.resetInput = &resetInput;
+    self->transceiver.resetOutput = &resetOutput;
+
     self->txPendingToValidateAndTransmit = false;
     self->rxDataReady = false;
     self->input = input;
@@ -145,6 +184,10 @@ EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, 
 
 ICommunicatorHandle EthernetJson_getCommunicator(EthernetJsonHandle self) {
     return &self->communicator;
+}
+
+ITransceiverHandle EthernetJson_getTransceiver(EthernetJsonHandle self) {
+    return &self->transceiver;
 }
 
 void EthernetJson_getTxData(EthernetJsonHandle self, uint8_t *data, size_t length) {

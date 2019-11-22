@@ -27,7 +27,7 @@ void transmit_data(UartJsonHandle self){
   printf("Implement your transmit function here");
 }
 
-JsonUartStack_create(channelSize, amountOfChannels, transmit_data, &timestamp, announceAddresses);
+ScopeUartStack_create(channelSize, amountOfChannels, transmit_data, &timestamp, announceAddresses);
 ```
 If a stack should be used that is not pre generated, it can be custom build.
 The UartJson class can be used as an example of how to do this.
@@ -59,13 +59,13 @@ void callback(UartJsonHandle self){
 }
 ```
 The transmission doesn't have to happen in the callback, but can be fetched from 
-the object returned from the JsonUartStack_getObject(). This might be useful if the transmission should occur in a interrupted state.
+the object returned from the ScopeUartStack_getObject(). This might be useful if the transmission should occur in a interrupted state.
 
 ## Destroy
 If the scope isn't used anymore, it can be destroyed.
 Every class should supply a destroy function. Therefore everything created for the builder can be destroyed again.
 ```c
-JsonUartStack_destroy(stack);
+ScopeUartStack_destroy(stack);
 ```
 
 ## Thread
@@ -75,13 +75,13 @@ The scope can then be build with a dedicated builder and run with the thread saf
 
 ```c
 /* Builds the scope in a thread safe way. Mutexes have to be supplied to this function. */
-void JsonUartStack_createThreadSafe(...);
+void ScopeUartStack_createThreadSafe(...);
 
 /* Runs the scope in a thread safe way. This should ideally be done in a high priority thread */
-JsonUartStack_runThreadScope();
+ScopeUartStack_runThreadScope();
 
 /* Runs the stack in a thread safe way. This can be done in a lower priority thread */
-JsonUartStack_runThreadStack();
+ScopeUartStack_runThreadStack();
 ```
 # Protocol
 The host and the target are communicating through a custom defined protocol.

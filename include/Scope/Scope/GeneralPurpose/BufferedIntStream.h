@@ -14,8 +14,9 @@
 #ifndef INTSTREAM_H_
 #define INTSTREAM_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/IIntStream.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/GeneralPurpose/IIntStream.h"
 
 #include <stdbool.h>
 #include <stddef.h>

@@ -7,19 +7,22 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/CommandPackParserDispatcher.h>
-#include <Scope/Control/Controller.h>
-#include <Scope/Control/Command/ICommand.h>
-#include <Scope/Control/CommandParserDispatcher.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Core/IScope.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
+#include "Scope/GeneralPurpose/IRunnable.h"
+
+#include "Scope/Control/CommandPackParserDispatcher.h"
+#include "Scope/Control/Controller.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Control/CommandParserDispatcher.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/GeneralPurpose/IObserver.h"
+#include "Scope/Control/ParserDefinitions.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -42,6 +45,8 @@ typedef struct __ControllerPrivateData {
     bool packCommandPending;
     bool commandPending;
     PACK_TYPES typeToPack;
+
+    uint8_t pendingToPack;
 
 } ControllerPrivateData;
 
@@ -89,29 +94,34 @@ static bool runTx(IRunnableHandle runnable) {
         return false;
     }
 
-    ICommandHandle packCommand;
-
-    switch (self->typeToPack) {
-
-        case PACK_ANNOUNCE:
-            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
-                                                          (const char *) "ev_pack_announce");
-            break;
-        case PACK_DATA:
-            packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
-                                                          (const char *) "ev_pack_data");
-            break;
-        default:
-            packCommand = NULL;
-            break;
-    }
-
-    if (packCommand == NULL) {
+    if (self->packer == NULL){
         return false;
     }
 
-    packCommand->run(packCommand);
+    if (self->packer->isReady(self->packer) == false){
+        return false;
+    }
+
+    ICommandHandle packCommand;
+
+    if((self->pendingToPack & PACK_ANNOUNCE) != 0){
+        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                      (const char *) "ev_pack_announce");
+        packCommand->run(packCommand);
+    }
+    if((self->pendingToPack & PACK_DATA) != 0){
+        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                      (const char *) "ev_pack_data");
+        packCommand->run(packCommand);
+    }
+    if((self->pendingToPack & PACK_DETECT) != 0){
+        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
+                                                      (const char *) "ev_pack_detect");
+        packCommand->run(packCommand);
+    }
+
     self->packCommandPending = false;
+    self->pendingToPack = 0;
     self->packObserver->update(self->packObserver, NULL);
 
     return true;
@@ -139,7 +149,7 @@ static void runCommands(ICommandHandle *commands, size_t numberOfCommands) {
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
     self->packCommandPending = true;
-    self->typeToPack = *(PACK_TYPES *) state;
+    self->pendingToPack |= *(uint8_t*) state;
 }
 
 static void commandUpdate(IObserverHandle observer, void *state) {
@@ -151,15 +161,17 @@ static void commandUpdate(IObserverHandle observer, void *state) {
  Public functions
 ******************************************************************************/
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                    AddressStorageHandle addressStorage) {
+                                   AnnounceStorageHandle announceStorage) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
+    assert(self);
 
     self->rxRunnable.handle = self;
     self->txRunnable.handle = self;
     self->rxRunnable.run = &runRx;
     self->txRunnable.run = &runTx;
     self->unpacker = unpacker;
+    self->packer = packer;
     self->scope = scope;
 
     self->commandPackObserver.handle = self;
@@ -169,7 +181,7 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->commandObserver.update = &commandUpdate;
 
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
-    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, addressStorage, packer);
+    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer);
 
     self->packCommandPending = false;
     self->commandPending = false;

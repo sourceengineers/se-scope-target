@@ -12,10 +12,12 @@
 #ifndef ETHERNETJSON_H
 #define ETHERNETJSON_H
 
-#include <Scope/Communication/ICommunicator.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
+#include "Scope/GeneralPurpose/IByteStream.h"
+#include "Scope/GeneralPurpose/IRunnable.h"
+#include "Scope/Communication/ITransceiver.h"
+
+#include "Scope/Communication/ICommunicator.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -25,8 +27,6 @@
  Define class handle data
 ******************************************************************************/
 typedef struct __EthernetJsonPrivateData* EthernetJsonHandle;
-
-typedef void(*EthernetTransmitCallback)(EthernetJsonHandle self);
 
 /******************************************************************************
  Public functions
@@ -39,7 +39,7 @@ typedef void(*EthernetTransmitCallback)(EthernetJsonHandle self);
  * @return
  */
 EthernetJsonHandle
-EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
+EthernetJson_create(TransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
 
 /**
  * Returns the communicator interface
@@ -47,6 +47,13 @@ EthernetJson_create(EthernetTransmitCallback callback, IByteStreamHandle input, 
  * @return
  */
 ICommunicatorHandle EthernetJson_getCommunicator(EthernetJsonHandle self);
+
+/**
+ * Returns the transceiver interface
+ * @param self
+ * @return
+ */
+ITransceiverHandle EthernetJson_getTransceiver(EthernetJsonHandle self);
 
 /**
  * Writes the data to transmit into data

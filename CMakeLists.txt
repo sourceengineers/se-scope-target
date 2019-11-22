@@ -53,12 +53,17 @@ set(PROJECT_SOURCE_DIR src)
 set(PROJECT_DEPENDENCIES_DIR 3rdparty)
 set(PROJECT_DEPENDENCIES jsmn)
 set(PROJECT_INCLUDE_DIR include/Scope)
+set(PROJECT_INCLUDE_DIR_PUBLIC public)
 set(PROJECT_TEST_DIR test)
+
 #######################################################################################################################
 ## Find all needed files
 #######################################################################################################################
 file(GLOB_RECURSE PROJECT_SOURCE "${PROJECT_SOURCE_DIR}/*.c")
 file(GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h")
+file(GLOB_RECURSE PROJECT_HEADER_PUBLIC "${PROJECT_INCLUDE_DIR_PUBLIC}/*.h")
+list (APPEND PROJECT_HEADER ${PROJECT_HEADER_PUBLIC})
+
 ################################################################################
 # GTest
 ################################################################################
@@ -70,10 +75,11 @@ if (SE_TESTING)
     add_subdirectory(test)
     include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 endif ()
+
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
-include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn" "${PROJECT_INCLUDE_DIR}")
+include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn" "${PROJECT_INCLUDE_DIR}" "${PROJECT_INCLUDE_DIR_PUBLIC}")
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
 
@@ -98,3 +104,4 @@ TARGET_INCLUDE_DIRECTORIES(se-scope
 message("-- Project will be installed to: ${CMAKE_INSTALL_PREFIX}")
 install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library)
 install(DIRECTORY "${PROJECT_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
+install(DIRECTORY "${PROJECT_INCLUDE_DIR_PUBLIC}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")

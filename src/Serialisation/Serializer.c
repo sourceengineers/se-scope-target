@@ -7,15 +7,17 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Control/ParserDefinitions.h>
-#include <Scope/Serialisation/Serializer.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/GeneralPurpose/IObserver.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
+#include "Scope/GeneralPurpose/IRunnable.h"
+
+#include "Scope/Control/ParserDefinitions.h"
+#include "Scope/Serialisation/Serializer.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 
 /******************************************************************************
@@ -107,7 +109,7 @@ static void updatePacker(IObserverHandle observer, void* state){
 SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker){
 
     SerializerHandle self = malloc(sizeof(SerializerPrivateData));
-
+    assert(self);
     self->packer = packer;
     self->unpacker = unpacker;
     self->packObserver.handle = self;

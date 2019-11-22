@@ -21,10 +21,11 @@
 #ifndef TRIGGER_H_
 #define TRIGGER_H_
 
-#include <Scope/Core/Channel.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/Core/Timestamper.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Core/Channel.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/Core/Timestamper.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -96,6 +97,13 @@ void Trigger_activate(TriggerHandle self);
  * @param self
  */
 void Trigger_deactivate(TriggerHandle self);
+
+/**
+ * Returns the configured Trigger mode
+ * @param self
+ * @return
+ */
+TRIGGER_MODE Trigger_getTriggerMode(TriggerHandle self);
 
 /**
  * Resets the trigger

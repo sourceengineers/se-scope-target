@@ -14,11 +14,12 @@
 #ifndef SERIALIZER_H
 #define SERIALIZER_H
 
-#include <Scope/Communication/ICommunicator.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/GeneralPurpose/IObserver.h>
+#include "Scope/GeneralPurpose/IRunnable.h"
+
+#include "Scope/Communication/ICommunicator.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Control/IUnpacker.h"
+#include "Scope/GeneralPurpose/IObserver.h"
 
 /******************************************************************************
  Define class handle data

@@ -15,8 +15,9 @@
 #ifndef TIMESTAMPER_H_
 #define TIMESTAMPER_H_
 
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/IIntStream.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/GeneralPurpose/IIntStream.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -53,6 +54,12 @@ bool Timestamper_updateElapsedTime(TimestamperHandle self);
 void Timestamper_stamp(TimestamperHandle self);
 
 /**
+ * Clears the data in the timestamper
+ * @param self
+ */
+void Timestamper_clear(TimestamperHandle self);
+
+/**
  * Set the state to running
  * @param self
  */
@@ -77,7 +84,7 @@ uint32_t Timestamper_getCurrentTime(TimestamperHandle self);
  * @param self
  * @return
  */
-uint32_t Timerstamper_getTimeIncrement(TimestamperHandle self);
+uint32_t Timestamper_getTimeIncrement(TimestamperHandle self);
 
 /**
  * Configures the time increment. This is used for the cf_t_inc command
@@ -85,12 +92,6 @@ uint32_t Timerstamper_getTimeIncrement(TimestamperHandle self);
  * @param timstampIncrement
  */
 void Timestamper_configureTimestampIncrement(TimestamperHandle self, uint32_t timstampIncrement);
-
-/**
- * Clears the data in the buffer
- * @param self
- */
-void Timestamper_clear(TimestamperHandle self);
 
 /**
  * Checks if a swap event is pending or not.
@@ -103,7 +104,7 @@ bool Timestamper_swapIsPending(TimestamperHandle self);
  * Swaps the SWAP and the POLL buffers
  * @param self
  */
-void Timerstamper_swapBuffers(TimestamperHandle self);
+void Timestamper_swapBuffers(TimestamperHandle self);
 
 /**
  * Returns the handle to the buffer

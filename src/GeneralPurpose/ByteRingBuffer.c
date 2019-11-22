@@ -7,10 +7,11 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/GeneralPurpose/ByteRingBuffer.h>
+#include "Scope/GeneralPurpose/ByteRingBuffer.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -64,9 +65,11 @@ ByteRingBufferHandle ByteRingBuffer_create(size_t capacity){
 
     /* Allocate memory and set _private variables */
     ByteRingBufferHandle self = malloc(sizeof(ByteRingBufferPrivateData));
+    assert(self);
 
     self->capacity = capacity + 1;
     self->data = malloc(sizeof(uint8_t) * self->capacity);
+    assert(self->data);
 
     self->tail = self->data;
     self->head = self->data;

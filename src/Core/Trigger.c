@@ -7,15 +7,16 @@
  * 
  ******************************************************************************/
 
-#include <Scope/Core/Timestamper.h>
-#include <Scope/Core/Trigger.h>
-#include <Scope/Core/Channel.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/GeneralPurpose/IFloatStream.h>
+#include "Scope/Core/Timestamper.h"
+#include "Scope/Core/Trigger.h"
+#include "Scope/Core/Channel.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/GeneralPurpose/IFloatStream.h"
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 
 struct __TriggerPrivateData;
 
@@ -55,6 +56,7 @@ typedef struct __TriggerPrivateData{
     bool* channelIsRunning;
 
     TRIGGER_STATES state;
+    TRIGGER_MODE mode;
 
     uint32_t fillUpPollCount;
 
@@ -89,6 +91,8 @@ static void safeChannelStates(TriggerHandle self);
 static void restoreChannelStates(TriggerHandle self);
 
 static void stopChannelsAndTimestamp(TriggerHandle self);
+
+static void resetBuffers(TriggerHandle self);
 
 static bool swapBuffers(TriggerHandle self);
 
@@ -129,7 +133,7 @@ static bool swapBuffers(TriggerHandle self){
     for(int i = 0; i < self->amountOfChannels; ++i){
         Channel_swapBuffers(self->channels[i]);
     }
-    Timerstamper_swapBuffers(self->timestamper);
+    Timestamper_swapBuffers(self->timestamper);
 
     self->isTriggereds[SWAP_BUFFER] = self->isTriggereds[POLL_BUFFER];
     self->triggerIndexes[SWAP_BUFFER] = self->triggerIndexes[POLL_BUFFER];
@@ -142,6 +146,13 @@ static void stopChannelsAndTimestamp(TriggerHandle self){
         Channel_setStateStopped(self->channels[i]);
     }
     Timestamper_setStateStopped(self->timestamper);
+}
+
+static void resetBuffers(TriggerHandle self){
+    for(int i = 0; i < self->amountOfChannels; ++i){
+        Channel_clear(self->channels[i]);
+    }
+    Timestamper_clear(self->timestamper);
 }
 
 static void safeChannelStates(TriggerHandle self){
@@ -208,7 +219,7 @@ static void fillUpTillChannelFull(TriggerHandle self){
         return;
     }
 
-		safeChannelStates(self);
+	safeChannelStates(self);
     setState(self, TRIGGER_CLEANUP);
 }
 
@@ -224,7 +235,7 @@ static void fillUpIfTriggered(TriggerHandle self){
         return;
     }
 		
-		safeChannelStates(self);
+	safeChannelStates(self);
     setState(self, TRIGGER_CLEANUP);
 }
 
@@ -327,6 +338,7 @@ static TriggerStrategy getTriggerStrategy(TriggerHandle self, TRIGGER_MODE mode)
 static void writeConfig(TriggerHandle self, TriggerConfiguration conf){
     self->level = conf.level;
     self->edge = conf.edge;
+    self->mode = conf.mode;
     self->stream = Channel_getTriggerDataStream(self->channels[conf.channelId]);
     self->activeStrategy = getTriggerStrategy(self, conf.mode);
     self->activeChannelId = conf.channelId;
@@ -347,8 +359,11 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
                                 size_t channelCapacity, TimestamperHandle timestamper){
 
     TriggerHandle self = malloc(sizeof(TriggerPrivateData));
+    assert(self);
     self->channels = malloc(sizeof(ChannelHandle) * amountOfChannels);
+    assert(self->channels);
     self->channelIsRunning = malloc(sizeof(bool) * amountOfChannels);
+    assert(self->channelIsRunning);
     self->channels = channels;
     self->amountOfChannels = amountOfChannels;
     self->channelCapacity = channelCapacity;
@@ -359,7 +374,7 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
     continuous.start = &startWhenPaused;
     continuous.detecting = &detectNever;
     continuous.fillUp = &fillUpTillChannelFull;
-    continuous.stop = &stopWithoutStoppingChannels;
+    continuous.stop = &stopIntoPause;
 
     /* Normal trigger strategy */
     TriggerStrategy normal;
@@ -417,16 +432,14 @@ bool Trigger_run(TriggerHandle self){
     if(getState(self) == TRIGGER_PAUSED){
         self->activeStrategy.start(self);
         Trigger_clear(self);
-    }else if(getState(self) == TRIGGER_DETECTING){
+    } else if(getState(self) == TRIGGER_DETECTING){
         self->activeStrategy.detecting(self);
-    }else if(getState(self) == TRIGGER_FILLUP){
+    } else if(getState(self) == TRIGGER_FILLUP){
         self->activeStrategy.fillUp(self);
-    }
-    if(getState(self) == TRIGGER_CLEANUP){
+    } else if(getState(self) == TRIGGER_CLEANUP){
         return self->activeStrategy.stop(self);
-    } else {
-        return false;
     }
+    return false;
 }
 
 bool Trigger_isTriggered(TriggerHandle self){
@@ -440,6 +453,7 @@ uint32_t Trigger_getChannelId(TriggerHandle self){
 void Trigger_activate(TriggerHandle self){
     restoreChannelStates(self);
     setState(self, TRIGGER_DETECTING);
+    resetBuffers(self);
     Trigger_clear(self);
 }
 
@@ -448,6 +462,10 @@ void Trigger_deactivate(TriggerHandle self){
     stopChannelsAndTimestamp(self);
     setState(self, TRIGGER_IDLE);
     self->fillUpPollCount = 0;
+}
+
+TRIGGER_MODE Trigger_getTriggerMode(TriggerHandle self){
+    return self->mode;
 }
 
 void Trigger_clear(TriggerHandle self){

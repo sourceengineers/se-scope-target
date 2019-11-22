@@ -12,16 +12,13 @@
 #ifndef SCOPEBUILDER_H
 #define SCOPEBUILDER_H
 
-#include <Scope/Control/Controller.h>
-#include <Scope/Core/Scope.h>
-#include <Scope/Serialisation/Serializer.h>
-#include <Scope/Communication/ICommunicator.h>
-#include <Scope/Control/IPacker.h>
-#include <Scope/Control/IUnpacker.h>
-#include <Scope/Control/AddressStorage.h>
-#include <Scope/GeneralPurpose/IByteStream.h>
-#include <Scope/GeneralPurpose/IRunnable.h>
-#include <Scope/GeneralPurpose/IMutex.h>
+#include "Scope/Control/AnnounceStorage.h"
+#include "Scope/GeneralPurpose/IByteStream.h"
+#include "Scope/GeneralPurpose/IRunnable.h"
+#include "Scope/GeneralPurpose/IMutex.h"
+#include "Scope/Core/IScope.h"
+#include "Scope/Control/Controller.h"
+#include "Scope/Communication/ICommunicator.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -34,7 +31,7 @@ typedef struct __ScopeBuilderPrivateData* ScopeBuilderHandle;
 /******************************************************************************
  Define interface
 ******************************************************************************/
-typedef struct ScopeObjectStruct{
+typedef struct ScopeRunnableStruct{
 
     IScopeHandle scope;
     ControllerHandle controller;
@@ -50,7 +47,7 @@ typedef struct ScopeObjectStruct{
     IMutexHandle dataMutex;
     IMutexHandle configMutex;
 
-} ScopeObject;
+} ScopeRunnable;
 
 /******************************************************************************
  Public functions
@@ -64,9 +61,9 @@ ScopeBuilderHandle ScopeBuilder_create(void);
 /**
  * Builds the scope and returns an object with runnables
  * @param self
- * @return ScopeObject
+ * @return ScopeRunnable
  */
-ScopeObject ScopeBuilder_build(ScopeBuilderHandle self);
+ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self);
 
 /**
  * Sets the amount and size of channels that have to be build
@@ -108,13 +105,13 @@ void ScopeBuilder_setParser(ScopeBuilderHandle self, IPackerHandle packer, IUnpa
 void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle interface);
 
 /**
- * Add the AddressStorage. With the help of the AddressStorage, addresses and their aliases can be sent to the host
+ * Add the AnnounceStorage. With the help of the AnnounceStorage, addresses and their aliases can be sent to the host
  * This can be handy when the addresses aren't known at compile time.
  * This is optional.
  * @param self
- * @param addressStorage
+ * @param announceStorage
  */
-void ScopeBuilder_setAddressStorage(ScopeBuilderHandle self, AddressStorageHandle addressStorage);
+void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle announceStorage);
 
 /**
  * Appends the mutex which protects the Tx path of the runner. If no mutex is passed,

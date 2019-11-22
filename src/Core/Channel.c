@@ -7,14 +7,16 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Core/Channel.h>
-#include <Scope/Core/ScopeTypes.h>
-#include <Scope/GeneralPurpose/BufferedFloatStream.h>
-#include <Scope/GeneralPurpose/DataTypes.h>
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
+#include "Scope/GeneralPurpose/DataTypes.h"
+
+#include "Scope/Core/Channel.h"
+#include "Scope/Core/ScopeTypes.h"
+#include "Scope/GeneralPurpose/BufferedFloatStream.h"
+#include "Scope/GeneralPurpose/FloatRingBuffer.h"
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <assert.h>
 
 /******************************************************************************
  Define private data
@@ -116,6 +118,7 @@ static CHANNEL_STATES getState(ChannelHandle self) {
 ChannelHandle Channel_create(size_t capacity) {
 
     ChannelHandle self = malloc(sizeof(ChannelPrivateData));
+    assert(self);
     self->stream = BufferedFloatStream_getIFloatStream(BufferedFloatStream_create(4));
 
     /* Set private variables */

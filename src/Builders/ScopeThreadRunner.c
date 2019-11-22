@@ -7,18 +7,16 @@
  *
  *****************************************************************************************************************************************/
 
-#include <Scope/Builders/ScopeThreadRunner.h>
-#include <Scope/Core/Scope.h>
-#include <Scope/Control/Controller.h>
-#include <Scope/Serialisation/Serializer.h>
-#include <Scope/GeneralPurpose/IMutex.h>
+#include "Scope/Builders/ScopeThreadRunner.h"
+#include "Scope/GeneralPurpose/IMutex.h"
+
+#include "Scope/Control/Controller.h"
+#include "Scope/Serialisation/Serializer.h"
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-void ScopeThreadRunner_runScope(ScopeObject scope) {
-
-   // static bool isMutexLocked = false;
+void ScopeThreadRunner_runScope(ScopeRunnable scope) {
 
     if(scope.configMutex == NULL){
         return;
@@ -44,7 +42,7 @@ void ScopeThreadRunner_runScope(ScopeObject scope) {
     scope.configMutex->unlock(scope.configMutex);
 }
 
-void ScopeThreadRunner_runStack(ScopeObject scope) {
+void ScopeThreadRunner_runStack(ScopeRunnable scope) {
 
     if(scope.configMutex == NULL){
         return;
