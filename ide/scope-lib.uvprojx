@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -623,11 +623,6 @@
           <GroupName>Builder</GroupName>
           <Files>
             <File>
-              <FileName>JsonUartStack.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Builders\JsonUartStack.c</FilePath>
-            </File>
-            <File>
               <FileName>ScopeBuilder.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Builders\ScopeBuilder.c</FilePath>
@@ -641,6 +636,11 @@
               <FileName>ScopeThreadRunner.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
+            </File>
+            <File>
+              <FileName>ScopeUartStack.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Builders\ScopeUartStack.c</FilePath>
             </File>
           </Files>
         </Group>
