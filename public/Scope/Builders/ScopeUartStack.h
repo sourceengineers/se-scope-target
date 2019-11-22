@@ -13,8 +13,8 @@
 #define SCOPEUARTSTACK_H_
 
 #include "Scope/Control/AnnounceStorage.h"
-#include "Scope/Communication/Interfaces/UartJson.h"
 #include "Scope/GeneralPurpose/IMutex.h"
+#include "Scope/Communication/ITransceiver.h"
 
 /******************************************************************************
  Configuration interface for the ScopeUartStack
