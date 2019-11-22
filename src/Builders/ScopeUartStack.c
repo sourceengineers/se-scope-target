@@ -36,7 +36,6 @@ typedef struct __ScopeUartStackPrivateData{
     ScopeRunnable scopeRunnable;
     size_t outputBufferSize;
     size_t inputBufferSize;
-    IScopeHandle scope;
 
 } ScopeUartStackPrivateData;
 
@@ -65,6 +64,8 @@ ScopeUartStackHandle ScopeUartStack_create(ScopeUartStackConfig config){
     /* Generate the communication handler */
     self->uartJson = UartJson_create(config.callback, BufferedByteStream_getIByteStream(self->input),
                                      BufferedByteStream_getIByteStream(self->output));
+
+    self->transceiver = UartJson_getTransceiver(self->uartJson);
 
     /* Generate the address storage. The address storage is optional and doesn't have to be used */
     self->announceStorage = AnnounceStorage_create(config.addressesInAddressAnnouncer,
