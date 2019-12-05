@@ -106,7 +106,9 @@ static bool runTx(IRunnableHandle runnable) {
     self->output->write(self->output, (const uint8_t *) formatedChecksum, CHECKSUM_LENGTH + 1);
     self->txPendingToValidateAndTransmit = false;
 
-    self->callback(&self->transceiver);
+    if(self->callback != NULL){
+        self->callback(&self->transceiver);
+    }
 
     return true;
 }
