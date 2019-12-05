@@ -83,7 +83,9 @@ static bool runTx(IRunnableHandle runnable) {
 
     self->output->writeByte(self->output, '\0');
 
-    self->callback(&self->transceiver);
+    if(self->callback != NULL){
+        self->callback(&self->transceiver);
+    }
     self->txPendingToValidateAndTransmit = false;
 
     return true;
