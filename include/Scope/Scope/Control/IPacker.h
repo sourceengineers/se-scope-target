@@ -36,7 +36,7 @@ typedef struct IPackerStruct{
      * Calls the pack function of the packer. It packs the predefined data into the output stream
      * @param packer
      */
-    void (* pack)(IPackerHandle packer);
+    void (* pack)(IPackerHandle packer, MESSAGE_TYPE type);
 
     /**
      * Returns true if the packer is ready to serialize new data. This is the case if all previously sent data
@@ -79,13 +79,6 @@ typedef struct IPackerStruct{
                             const uint32_t timestamp, char* triggerMode);
 
     /**
-     * Prepares flow control
-     * @param packer
-     * @param flowcontrol
-     */
-    void (* prepareFlowControl)(IPackerHandle packer, const char* flowcontrol);
-
-    /**
      * Prepares address announcement
      * @param packer
      * @param name
@@ -102,13 +95,7 @@ typedef struct IPackerStruct{
      * @param version
      * @param maxChannels
      */
-    void (* prepareAnnouncement)(IPackerHandle packer, float timeBase, char* version, size_t maxChannels);
-
-    /**
-     * Prepares detection package
-     * @param packer
-     */
-    void (* prepareDetect)(IPackerHandle packer);
+    void (* prepareAnnouncement)(IPackerHandle packer, float timeBase, const char* version, size_t maxChannels);
 
     /**
      * Resets the packer

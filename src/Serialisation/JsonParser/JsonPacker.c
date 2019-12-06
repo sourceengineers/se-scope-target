@@ -52,6 +52,8 @@ typedef struct __JsonPackerPrivateData {
     size_t maxChannels;
     bool annoucementReady;
 
+    MESSAGE_TYPE type;
+
     IByteStreamHandle byteStream;
 
     /* Channel preparation data */
@@ -74,13 +76,7 @@ typedef struct __JsonPackerPrivateData {
     uint32_t channelId;
     uint32_t triggerTimestamp;
     char *triggerMode;
-
-    /* Flow control data */
-    bool flowcontrolReady;
-    char flowcontrol[4];
     bool dataPendingToBePacked;
-
-    bool detectPending;
 
 } JsonPackerPrivateData;
 
@@ -118,17 +114,13 @@ prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t chan
 
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded);
 
-static void prepareFlowControl(IPackerHandle packer, const char *flowControl);
-
-static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded);
-
 static void
 prepareAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address);
 
 static void
-prepareAnnouncement(IPackerHandle packer, float timeBase, char *version, size_t maxChannels);
+prepareAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels);
 
-static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded);
+static bool packAnnouncement(JsonPackerHandle self);
 
 static bool packChannel(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -136,9 +128,9 @@ static bool channelMapIsEmpty(JsonPackerHandle self);
 
 static bool packChannelMap(JsonPackerHandle self);
 
-static bool packPayloadMap(JsonPackerHandle self);
+static void packPayloadMap(JsonPackerHandle self);
 
-static void packData(IPackerHandle packer);
+static void packData(IPackerHandle packer, MESSAGE_TYPE type);
 
 static void prepareDetect(IPackerHandle packer);
 
@@ -252,13 +244,6 @@ static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrem
     self->dataPendingToBePacked = true;
 }
 
-static void prepareDetect(IPackerHandle packer) {
-    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
-    self->detectPending = true;
-
-    self->dataPendingToBePacked = true;
-}
-
 static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded) {
 
     if (self->tIncReady == false) {
@@ -281,20 +266,6 @@ static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp) {
     self->timestampReady = true;
     self->timestamp = timestamp;
     self->dataPendingToBePacked = true;
-}
-
-static bool packDetect(JsonPackerHandle self, bool commaIsNeeded) {
-
-    if (self->detectPending == false) {
-        return commaIsNeeded;
-    }
-
-    addComma(self->byteStream, commaIsNeeded);
-    appendString(self->byteStream, KEYWORD_SC_DETECT, KEYWORD_SC_DETECT_LENGTH, ":", 1);
-    appendData(self->byteStream, KEYWORD_TRUE, KEYWORD_TRUE_LENGTH, "", 0);
-
-    self->detectPending = false;
-    return true;
 }
 
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded) {
@@ -375,34 +346,6 @@ static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded) {
     return true;
 }
 
-static void prepareFlowControl(IPackerHandle packer, const char *flowControl) {
-    JsonPackerHandle self = (JsonPackerHandle) packer->handle;
-
-    /* Flow control data will be "NAK" or "ACK" which is why longer strings will be rejected by default */
-    if (strlen(flowControl) > 3) {
-        return;
-    }
-
-    self->flowcontrolReady = true;
-    strcpy(self->flowcontrol, flowControl);
-    self->dataPendingToBePacked = true;
-}
-
-static bool packFlowControl(JsonPackerHandle self, bool commaIsNeeded) {
-
-    if (self->flowcontrolReady == false) {
-        return commaIsNeeded;
-    }
-
-    addComma(self->byteStream, commaIsNeeded);
-    appendString(self->byteStream, KEYWORD_FLOW_CTRL, KEYWORD_FLOW_CTRL_LENGTH, ":", 1);
-    appendString(self->byteStream, self->flowcontrol, strlen(self->flowcontrol), "", 0);
-
-    self->flowcontrolReady = false;
-
-    return true;
-}
-
 static void
 prepareAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
@@ -421,7 +364,7 @@ prepareAddressAnnouncement(IPackerHandle packer, const char *name, const char *t
     self->dataPendingToBePacked = true;
 }
 
-static void prepareAnnouncement(IPackerHandle packer, float timeBase, char *version, size_t maxChannels) {
+static void prepareAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     self->timeBase = timeBase;
@@ -433,13 +376,13 @@ static void prepareAnnouncement(IPackerHandle packer, float timeBase, char *vers
 }
 
 
-static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded) {
+static bool packAnnouncement(JsonPackerHandle self) {
 
     if(self->addressesReady == false && self->annoucementReady == false){
-        return commaIsNeeded;
+        return false;
     }
+    appendData(self->byteStream, "{", 1, "", 0);
 
-    addComma(self->byteStream, commaIsNeeded);
     appendString(self->byteStream, KEYWORD_ANNOUNCE, KEYWORD_ANNOUNCE_LENGTH, ":{", 2);
 
     /* Append max number of available channels */
@@ -476,8 +419,8 @@ static bool packAnnouncement(JsonPackerHandle self, bool commaIsNeeded) {
     }
 
     appendData(self->byteStream, "}", 1, "", 0);
+    appendData(self->byteStream, "}", 1, "", 0);
     self->annoucementReady = false;
-
     return true;
 }
 
@@ -540,6 +483,7 @@ static bool packChannelMap(JsonPackerHandle self) {
     if (channelMapIsEmpty(self)) {
         return false;
     }
+    appendData(self->byteStream, "{", 1, "", 0);
 
     bool commaIsNeeded = false;
 
@@ -549,30 +493,22 @@ static bool packChannelMap(JsonPackerHandle self) {
     commaIsNeeded = packChannel(self, commaIsNeeded);
     commaIsNeeded = packTimestamp(self, commaIsNeeded);
     commaIsNeeded = packTimeIncrement(self, commaIsNeeded);
-    commaIsNeeded = packTrigger(self, commaIsNeeded);
-    packAnnouncement(self, commaIsNeeded);
+    packTrigger(self, commaIsNeeded);
 
     appendData(self->byteStream, "}", 1, "", 0);
-
+    appendData(self->byteStream, "}", 1, "", 0);
     return true;
 }
 
-static bool packPayloadMap(JsonPackerHandle self) {
+static void packPayloadMap(JsonPackerHandle self) {
 
     appendData(self->byteStream, "{", 1, "", 0);
-    appendString(self->byteStream, KEYWORD_PAYLOAD, KEYWORD_PAYLOAD_LENGTH, ":{", 2);
-
-    bool commaIsNeeded = packChannelMap(self);
-    commaIsNeeded = packFlowControl(self, commaIsNeeded);
-    commaIsNeeded = packDetect(self, commaIsNeeded);
-
+    packChannelMap(self);
+    packAnnouncement(self);
     appendData(self->byteStream, "}", 1, "", 0);
-    appendData(self->byteStream, "}", 1, "", 0);
-
-    return commaIsNeeded;
 }
 
-static void packData(IPackerHandle packer) {
+static void packData(IPackerHandle packer, MESSAGE_TYPE type) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     if (self->dataPendingToBePacked == false || self->byteStream->length(self->byteStream) != 0) {
@@ -580,7 +516,13 @@ static void packData(IPackerHandle packer) {
     }
 
     self->byteStream->flush(self->byteStream);
-    packPayloadMap(self);
+
+    if(type == SC_DATA){
+        packChannelMap(self);
+    } else if(type == SC_ANNOUNCE){
+        packAnnouncement(self);
+    }
+
     packer->reset(packer);
 }
 
@@ -601,11 +543,7 @@ static void reset(IPackerHandle packer) {
     self->timestampReady = false;
     self->timestamp = NULL;
     self->triggerReady = false;
-    self->flowcontrolReady = false;
     self->dataPendingToBePacked = false;
-    self->detectPending = false;
-
-    flushBuffer(self->flowcontrol);
 }
 
 static bool isReady(IPackerHandle packer){
@@ -646,14 +584,12 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.pack = &packData;
     self->packer.reset = &reset;
     self->packer.prepareChannel = prepareChannel;
-    self->packer.prepareFlowControl = &prepareFlowControl;
     self->packer.prepareTimeIncrement = &prepareTimeIncrement;
     self->packer.prepareTimestamp = &prepareTimestamp;
     self->packer.prepareTrigger = &prepareTrigger;
     self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
     self->packer.reset(&self->packer);
     self->packer.prepareAnnouncement = &prepareAnnouncement;
-    self->packer.prepareDetect = &prepareDetect;
     self->packer.isReady = &isReady;
 
     return self;

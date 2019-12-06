@@ -17,7 +17,6 @@
 #include <string.h>
 #include <assert.h>
 
-
 /******************************************************************************
  Define private data
 ******************************************************************************/
@@ -45,17 +44,18 @@ CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle ann
     return self;
 }
 
-ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, const char* command){
+ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, MESSAGE_TYPE type){
 
-    if(strncmp(command, CommandPackDataParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    if(type == SC_DATA){
         return CommandPackDataParser_getCommand(self->commandPackDataParser);
-
-    }else if(strncmp(command, CommandPackAnnounceParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    }else if(type == SC_ANNOUNCE){
         return CommandPackAnnounceParser_getCommand(self->commandPackAnnounceParser);
-
-    }else if(strncmp(command, CommandPackDetectParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    }else if(type == SC_DETECT){
         return CommandPackDetectParser_getCommand(self->commandPackDetectParser);
-
+    }else if(type == SE_ACK || type == SE_NAK){
+        // TODO: Add flow control command
+        return NULL;
+        return CommandPackDetectParser_getCommand(self->commandPackDetectParser);
     }
 
     return NULL;

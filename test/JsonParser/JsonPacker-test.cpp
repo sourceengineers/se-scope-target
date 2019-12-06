@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <string>
 
 extern "C" {
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
@@ -10,73 +11,94 @@ extern "C" {
 using namespace testing;
 using namespace std;
 
-TEST(json_packer, unpack_test){
+class JsonPackerTest : public ::testing::Test{
+#define MAX_NUMBER_OF_CHANNELS (3)
+#define SIZE_OF_CHANNELS (10)
+#define ADDRESSES_TO_ANNOUNCE (2)
 
-    size_t channelSize = 400;
-    size_t sizes = JsonPacker_calculateBufferSize(5, 10, channelSize);
+protected:
+    JsonPackerTest()
+            : Test(){
+    }
+
+    void SetUp() override{
+        size_t channelSize = 400;
+        size_t sizes = JsonPacker_calculateBufferSize(MAX_NUMBER_OF_CHANNELS, SIZE_OF_CHANNELS, ADDRESSES_TO_ANNOUNCE);
+        float value;
+        _outputStream = BufferedByteStream_getIByteStream(BufferedByteStream_create(sizes));
+        _packer = JsonPacker_create(MAX_NUMBER_OF_CHANNELS, ADDRESSES_TO_ANNOUNCE, _outputStream);
+        _iPacker = JsonPacker_getIPacker(_packer);
+    }
+
+    void TearDown() override{
+    }
+
+    string getOutput(){
+        size_t dataPending = _outputStream->length(_outputStream);
+        char data[dataPending + 1];
+        _outputStream->read(_outputStream, (uint8_t*) data, dataPending);
+        data[dataPending] = '\0';
+        string str(data);
+        return str;
+    }
+
+    ~JsonPackerTest() override{
+        JsonPacker_destroy(_packer);
+    }
+
+    JsonPackerHandle _packer;
+    IPackerHandle _iPacker;
+    IByteStreamHandle _outputStream;
+};
+
+
+TEST_F(JsonPackerTest, pack_announce){
+
+    _iPacker->prepareAddressAnnouncement(_iPacker, "test_var_1", "SE_FLOAT", 0xFFFF);
+    _iPacker->prepareAddressAnnouncement(_iPacker, "test_var_2", "SE_FLOAT", 0xaaaa);
+    _iPacker->prepareAnnouncement(_iPacker, 1.5f, "0.3", MAX_NUMBER_OF_CHANNELS);
+    _iPacker->pack(_iPacker, SC_ANNOUNCE);
+
+    EXPECT_EQ(getOutput(),
+              "{\"sc_announce\":{\"cl_amount\":3,\"version\":\"0.3\",\"time_base\":1.5,\"channels\":{\"test_var_1\":[65535,\"SE_FLOAT\"],\"test_var_2\":[43690,\"SE_FLOAT\"]}}}");
+}
+
+TEST_F(JsonPackerTest, pack_data){
+    IIntStreamHandle timestamp = BufferedIntStream_getIIntStream(BufferedIntStream_create(SIZE_OF_CHANNELS));
+    FloatRingBufferHandle buf1 = FloatRingBuffer_create(SIZE_OF_CHANNELS);
+    FloatRingBufferHandle buf2 = FloatRingBuffer_create(SIZE_OF_CHANNELS);
+
+    _iPacker->prepareTrigger(_iPacker, true, 1, 1000, (char*) "Normal");
+    _iPacker->prepareTimeIncrement(_iPacker, 10);
 
     float value;
-
-    IByteStreamHandle outputStream = BufferedByteStream_getIByteStream(BufferedByteStream_create(sizes));
-
-    IIntStreamHandle timestamp = BufferedIntStream_getIIntStream(BufferedIntStream_create(channelSize));
-    FloatRingBufferHandle buf1 = FloatRingBuffer_create(channelSize);
-    FloatRingBufferHandle buf2 = FloatRingBuffer_create(channelSize);
-
-    IPackerHandle packer = JsonPacker_getIPacker(JsonPacker_create(5, 10, outputStream));
-
-    packer->prepareAddressAnnouncement(packer, "VAR_1", "SE_UINT32", 11111);
-    packer->prepareAddressAnnouncement(packer, "VAR_2", "SE_FLOAT", 22222);
-
-    packer->prepareTrigger(packer, true, 1, 1000, (char*) "Normal");
-
-    packer->prepareTimeIncrement(packer, 10);
-    packer->prepareFlowControl(packer, "ACK");
-
     value = -23.5354f;
     FloatRingBuffer_write(buf1, &value, 1);
     FloatRingBuffer_write(buf2, &value, 1);
     timestamp->writeData(timestamp, 0);
-
     value = 234534523.5354f;
     FloatRingBuffer_write(buf1, &value, 1);
     FloatRingBuffer_write(buf2, &value, 1);
     timestamp->writeData(timestamp, 1);
-
     value = 0.00000345;
     FloatRingBuffer_write(buf1, &value, 1);
     FloatRingBuffer_write(buf2, &value, 1);
     timestamp->writeData(timestamp, 2);
-
     value = -0.00000345f;
     FloatRingBuffer_write(buf1, &value, 1);
     FloatRingBuffer_write(buf2, &value, 1);
     timestamp->writeData(timestamp, 3);
-
     value = 0.0f;
     FloatRingBuffer_write(buf1, &value, 1);
     FloatRingBuffer_write(buf2, &value, 1);
     timestamp->writeData(timestamp, 4);
-
     value = 1.5f;
     FloatRingBuffer_write(buf1, &value, 1);
     FloatRingBuffer_write(buf2, &value, 1);
     timestamp->writeData(timestamp, 5);
-
-    packer->prepareTimestamp(packer, timestamp);
-
-    packer->prepareChannel(packer, buf1, 0);
-    packer->prepareChannel(packer, buf2, 1);
-
-    packer->pack(packer);
-
-    size_t dataPending = outputStream->length(outputStream);
-    char data[dataPending + 1];
-
-    outputStream->read(outputStream, (uint8_t*) data, dataPending);
-    data[dataPending] = '\0';
-
-    EXPECT_STREQ(data,
-                 "{\"payload\":{\"sc_data\":{\"cl_data\":{\"0\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5],\"1\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5]},\"t_stmp\":[0,1,2,3,4,5],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"cl_id\":1},\"sc_announce\":{\"VAR_1\":[11111,\"SE_UINT32\"],\"VAR_2\":[22222,\"SE_FLOAT\"],\"cl_amount\":5}},\"flow_ctrl\":\"ACK\"}}");
-
+    _iPacker->prepareTimestamp(_iPacker, timestamp);
+    _iPacker->prepareChannel(_iPacker, buf1, 0);
+    _iPacker->prepareChannel(_iPacker, buf2, 1);
+    _iPacker->pack(_iPacker, SC_DATA);
+    EXPECT_EQ(getOutput(), "{\"sc_data\":{\"cl_data\":{\"0\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5],\"1\":[-23.54,2.345e+08,3.45e-06,-3.45e-06,0,1.5]},\"t_stmp\":[0,1,2,3,4,5],\"t_inc\":10,\"tgr\":{\"found\":true,\"cl_data_ind\":1000,\"mode\":\"Normal\",\"cl_id\":1}}}");
 }

@@ -65,35 +65,26 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
     return self;
 }
 
-ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, const char *command) {
+ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, MESSAGE_TYPE type) {
 
-    if (strncmp(command, CommandRunningParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    if (type == CF_RUNNING) {
         return CommandRunningParser_getCommand(self->commandRunningParser);
-
-    } else if (strncmp(command, CommandPollParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_POLL) {
         return CommandPollParser_getCommand(self->commandPollParser);
-
-    } else if (strncmp(command, CommandAddrParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == CF_ADDR) {
         return CommandAddrParser_getCommand(self->commandAddrParser);
-
-    } else if (strncmp(command, CommandTIncParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == CF_T_INC) {
         return CommandTIncParser_getCommand(self->commandTIncParser);
-
-    } else if (strncmp(command, CommandTransParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_TRANS) {
         return CommandTransParser_getCommand(self->commandTransParser);
-
-    } else if (strncmp(command, CommandTriggerParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == CF_TRIGGER) {
         return CommandTriggerParser_getCommand(self->commandTriggerParser);
-
-    } else if (strncmp(command, CommandAnnounceParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_ANNOUNCE) {
         return CommandAnnounceParser_getCommand(self->commandAnnounceParser);
-
-    } else if (strncmp(command, CommandClearParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_CLEAR) {
         return CommandClearParser_getCommand(self->commandClearParser);
-
-    } else if (strncmp(command, CommandDetectParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_DETECT) {
         return CommandDetectParser_getCommand(self->commandDetectParser);
-
     }
 
     return NULL;

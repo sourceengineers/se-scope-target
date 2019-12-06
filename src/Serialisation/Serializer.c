@@ -30,8 +30,8 @@ typedef struct __SerializerPrivateData{
     IPackerHandle packer;
     IUnpackerHandle unpacker;
 
-    bool unpackingPending;
-    bool packingPending;
+    MESSAGE_TYPE unpackingPending;
+    MESSAGE_TYPE packingPending;
 
     IObserver packObserver;
     IObserver unpackObserver;
@@ -54,7 +54,7 @@ static void updatePacker(IObserverHandle observer, void* state);
 static bool runRx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
-    if(self->unpackingPending == false){
+    if(self->unpackingPending != SE_NONE){
         return false;
     }
 
@@ -62,15 +62,10 @@ static bool runRx(IRunnableHandle runnable){
         return false;
     }
 
-    bool parsingIsValid = self->unpacker->unpack(self->unpacker);
+    bool parsingIsValid = self->unpacker->unpack(self->unpacker, self->unpackingPending);
 
-    if(parsingIsValid == false){
-        self->packer->prepareFlowControl(self->packer, FLOWCONTROL_NAK);
-        self->packObserver.update(&self->packObserver, NULL);
-    }else{
-        self->packer->prepareFlowControl(self->packer, FLOWCONTROL_ACK);
-        self->packObserver.update(&self->packObserver, NULL);
-    }
+    // TODO: Add ACK here!
+    self->packObserver.update(&self->packObserver, NULL);
 
     self->unpackingPending = false;
 
@@ -82,11 +77,11 @@ static bool runRx(IRunnableHandle runnable){
 static bool runTx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
-    if(self->packingPending == false){
+    if(self->packingPending != SE_NONE){
         return false;
     }
 
-    self->packer->pack(self->packer);
+    self->packer->pack(self->packer, self->unpackingPending);
     self->packingPending = false;
     self->communicationObserver->update(self->communicationObserver, NULL);
 
@@ -95,12 +90,12 @@ static bool runTx(IRunnableHandle runnable){
 
 static void updateUnpacker(IObserverHandle observer, void* state){
     SerializerHandle self = (SerializerHandle) observer->handle;
-    self->unpackingPending = true;
+    self->unpackingPending = *(MESSAGE_TYPE*) state;
 }
 
 static void updatePacker(IObserverHandle observer, void* state){
     SerializerHandle self = (SerializerHandle) observer->handle;
-    self->packingPending = true;
+    self->packingPending = *(MESSAGE_TYPE*) state;
 }
 
 /******************************************************************************

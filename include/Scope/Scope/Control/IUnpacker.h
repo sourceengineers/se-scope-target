@@ -15,6 +15,7 @@
 #define IUNPACKER_H_
 
 #include "Scope/GeneralPurpose/DataTypes.h"
+#include "Scope/Core/ScopeTypes.h"
 
 /******************************************************************************
  Define interface handle datar
@@ -40,24 +41,7 @@ typedef struct IUnpackerStruct{
      * @param unpacker
      * @return
      */
-    bool (* unpack)(IUnpackerHandle unpacker);
-
-    /**
-     * Returns the number of commands which were unpacked
-     * @param unpacker
-     * @return
-     */
-    size_t (* getNumberOfCommands)(IUnpackerHandle unpacker);
-
-    /**
-     * Returns the name of the command at index
-     * @param unpacker
-     * @param name string into which the name will be written into
-     * @param maxLenght maximal length of the name field
-     * @param index
-     * @return
-     */
-    bool (* getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+    bool (* unpack)(IUnpackerHandle unpacker, MESSAGE_TYPE type);
 
     /**
      * Returns an int value

@@ -61,11 +61,7 @@ static int matchKeyToIndex(const char* json, jsmntok_t* tok, const char* key, in
 
 static bool jsoneq(const char* json, jsmntok_t* tok, const char* key);
 
-static bool unpack(IUnpackerHandle unpacker);
-
-static size_t getNumberOfCommands(IUnpackerHandle unpacker);
-
-static bool getNameOfCommand(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+static bool unpack(IUnpackerHandle unpacker, MESSAGE_TYPE type);
 
 static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information);
 
@@ -137,8 +133,9 @@ static jsmntok_t* getToken(const char* json, jsmntok_t* tok, const char* key, in
 }
 
 static jsmntok_t* getCommandField(JsonUnpackerHandle self){
-    jsmntok_t* tok = getToken(self->storageString, self->storageTokens, (const char*) "sc_cmd", TOKEN_BUFFER_SIZE);
+//    jsmntok_t* tok = getToken(self->storageString, self->storageTokens, (const char*) "sc_cmd", TOKEN_BUFFER_SIZE);
 
+    jsmntok_t* tok = self->storageTokens;
     if(tok == NULL){
         return NULL;
     }
@@ -207,32 +204,23 @@ static jsmntok_t* getField(JsonUnpackerHandle self, jsmntok_t* command, const ch
 
 static jsmntok_t* getCommand(JsonUnpackerHandle self, const char* commandName){
 
-    jsmntok_t* tok = getCommandField(self);
+    for(size_t i = 0; i < TOKEN_BUFFER_SIZE; ++i){
 
-    if(tok == NULL){
-        return false;
-    }
-
-    if(tok->type != JSMN_OBJECT){
-        return false;
-    }
-
-    for(uint32_t i = 0; i < self->numberOfCommands; ++i){
-
-        jsmntok_t* command = getElementInObject(self, tok + 1, i);
-
-        if(command == NULL || command->type != JSMN_STRING){
+        if(self->inputTokens[i].type == JSMN_UNDEFINED){
             return NULL;
         }
 
-        char name[MAX_LENGTH_OF_FIELD_NAME];
-        copyString(name, self->storageString + command->start, (size_t) (command->end - command->start));
+        if(self->inputTokens[i].type == JSMN_STRING){
+            char name[MAX_LENGTH_OF_FIELD_NAME];
+            copyString(name, self->storageString + self->inputTokens[i].start,
+                    (self->inputTokens[i].end - self->inputTokens[i].start));
 
-        if(strncmp(name, commandName, MAX_LENGTH_OF_FIELD_NAME) == 0){
-            return command;
+            if(strncmp(name, commandName, MAX_LENGTH_OF_FIELD_NAME) == 0){
+                return &self->inputTokens[i];
+            }
         }
-
     }
+
     return NULL;
 }
 
@@ -255,7 +243,7 @@ static bool jsoneq(const char* json, jsmntok_t* tok, const char* key){
     return false;
 }
 
-static bool unpack(IUnpackerHandle unpacker){
+static bool unpack(IUnpackerHandle unpacker, MESSAGE_TYPE type){
     JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
 
     if(self->stream == NULL){
@@ -285,72 +273,10 @@ static bool unpack(IUnpackerHandle unpacker){
         return false;
     }
 
-    jsmntok_t* tok = getToken(data, self->inputTokens, KEYWORD_PAYLOAD, TOKEN_BUFFER_SIZE);
-
-    if(tok == NULL){
-        return false;
-    }
-
-    tok = getToken(data, self->inputTokens, KEYWORD_SC_CMD, TOKEN_BUFFER_SIZE);
-
-    if(tok == NULL){
-        return false;
-    }
-
-    if((tok + 1)->type != JSMN_OBJECT){
-        return false;
-    }
-
-    if((tok + 1)->size <= 0){
-        return false;
-    }
-
     activateNewMessage(self, data);
 
     return true;
 
-}
-
-static size_t getNumberOfCommands(IUnpackerHandle unpacker){
-    JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
-
-    return self->numberOfCommands;
-}
-
-static bool getNameOfCommand(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index){
-    JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
-
-    jsmntok_t* tok = getCommandField(self);
-
-    if(tok == NULL){
-        return false;
-    }
-
-    if(tok->type != JSMN_OBJECT){
-        return false;
-    }
-
-    if(tok->size <= index){
-        return false;
-    }
-
-    jsmntok_t* field = getElementInObject(self, tok + 1, (uint32_t) index);
-
-    if(field == NULL){
-        return false;
-    }
-
-    if(field->type != JSMN_STRING){
-        return false;
-    }
-
-    if(field->size > maxLenght){
-        return false;
-    }
-
-    copyString(name, self->storageString + field->start, (size_t) (field->end - field->start));
-
-    return true;
 }
 
 static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information){
@@ -568,8 +494,6 @@ JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream){
     self->unpacker.getFloatFromCommand = &getFloatFromCommand;
     self->unpacker.getIntFromCommand = &getIntFromCommand;
     self->unpacker.getStringFromCommand = &getStringFromCommand;
-    self->unpacker.getNameOfCommand = &getNameOfCommand;
-    self->unpacker.getNumberOfCommands = &getNumberOfCommands;
     self->unpacker.getNumberOfFields = &getNumberOfFields;
     self->unpacker.getNameOfField = &getNameOfField;
 

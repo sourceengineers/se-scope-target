@@ -62,10 +62,28 @@ typedef enum{
 /**
  * Enum to determine the source of the observer.
  */
-typedef enum{
-    PACK_ANNOUNCE = 1, // Announce data will be packed
-    PACK_DATA = 2, // Channel data and trigger will be packed
-    PACK_DETECT = 4 // Detect package that lets hosts discover the device
-} PACK_TYPES;
+typedef enum __MESSAGE_TYPE {
+
+    SE_NONE = 0,
+    SE_NAK = 1,
+    SE_ACK = 2,
+
+    SC_DATA = 50,
+    SC_ANNOUNCE = 51,
+    SC_DETECT = 52,
+    SC_STREAM = 53,
+    SC_LOG = 54,
+
+    EV_ANNOUNCE = 100,
+    EV_CLEAR = 101,
+    EV_POLL = 102,
+    EV_TRANS = 103,
+    EV_DETECT = 104,
+    CF_RUNNING = 105,
+    CF_TRIGGER = 106,
+    CF_T_INC = 107,
+    CF_ADDR = 108,
+
+} MESSAGE_TYPE;
 
 #endif

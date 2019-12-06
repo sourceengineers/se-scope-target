@@ -24,6 +24,9 @@
 #include <stdlib.h>
 #include <assert.h>
 
+
+#define MAX_COMMANDS_PEDNING_TO_PACK 5
+
 /******************************************************************************
  Define private data
 ******************************************************************************/
@@ -42,9 +45,11 @@ typedef struct __ControllerPrivateData {
 
     IObserverHandle packObserver;
 
-    bool packCommandPending;
-    bool commandPending;
-    PACK_TYPES typeToPack;
+    MESSAGE_TYPE packCommandPending[MAX_COMMANDS_PEDNING_TO_PACK];
+    size_t messagesPendingToPack;
+
+    MESSAGE_TYPE commandPending;
+
 
     uint8_t pendingToPack;
 
@@ -69,20 +74,18 @@ static void commandUpdate(IObserverHandle observer, void *state);
 static bool runRx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
-    if (self->commandPending == false) {
+    if (self->commandPending == SE_NONE) {
         return false;
     }
 
-    if (self->unpacker == NULL) {
-        return false;
-    }
+    ICommandHandle command = CommandParserDispatcher_run(self->commandParserDispatcher, self->commandPending);
+    command->run(command);
 
-    size_t numberOfCommands = self->unpacker->getNumberOfCommands(self->unpacker);
-    ICommandHandle commands[numberOfCommands];
-
-    fetchCommands(self, self->unpacker, commands, numberOfCommands);
-    runCommands(commands, numberOfCommands);
-    self->commandPending = false;
+//    size_t numberOfCommands = self->unpacker->getNumberOfCommands(self->unpacker);
+//    ICommandHandle commands[numberOfCommands];
+//    fetchCommands(self, self->unpacker, commands, numberOfCommands);
+//    runCommands(commands, numberOfCommands);
+    self->commandPending = SE_NONE;
 
     return true;
 }
@@ -90,66 +93,58 @@ static bool runRx(IRunnableHandle runnable) {
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
-    if (self->packCommandPending == false) {
-        return false;
-    }
-
-    if (self->packer == NULL){
-        return false;
-    }
-
     if (self->packer->isReady(self->packer) == false){
+        return false;
+    }
+
+    // Check if messages have to be packed
+    if (self->messagesPendingToPack <= 0) {
+        return false;
+    }
+
+    // If so, decrease the count and fetch the message
+    self->messagesPendingToPack -= 1;
+    MESSAGE_TYPE type = self->packCommandPending[self->messagesPendingToPack];
+
+    if(type == SE_NONE){
         return false;
     }
 
     ICommandHandle packCommand;
 
-    if((self->pendingToPack & PACK_ANNOUNCE) != 0){
-        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
-                                                      (const char *) "ev_pack_announce");
-        packCommand->run(packCommand);
-    }
-    if((self->pendingToPack & PACK_DATA) != 0){
-        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
-                                                      (const char *) "ev_pack_data");
-        packCommand->run(packCommand);
-    }
-    if((self->pendingToPack & PACK_DETECT) != 0){
-        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher,
-                                                      (const char *) "ev_pack_detect");
-        packCommand->run(packCommand);
-    }
+    packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, type);
+    packCommand->run(packCommand);
 
-    self->packCommandPending = false;
-    self->pendingToPack = 0;
-    self->packObserver->update(self->packObserver, NULL);
+    self->packObserver->update(self->packObserver, &type);
 
     return true;
 }
 
-static void
-fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle *commands, size_t numberOfCommands) {
-
-    char commandName[MAX_COMMAND_LENGTH];
-
-    for (size_t i = 0; i < numberOfCommands; ++i) {
-        unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
-        commands[i] = CommandParserDispatcher_run(self->commandParserDispatcher, commandName);
-    }
-}
-
-static void runCommands(ICommandHandle *commands, size_t numberOfCommands) {
-    for (size_t i = 0; i < numberOfCommands; ++i) {
-        if (commands[i] != NULL) {
-            commands[i]->run(commands[i]);
-        }
-    }
-}
+// static void
+// fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle *commands, size_t numberOfCommands) {
+//
+//     char commandName[MAX_COMMAND_LENGTH];
+//
+//     for (size_t i = 0; i < numberOfCommands; ++i) {
+//         unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
+//         commands[i] = CommandParserDispatcher_run(self->commandParserDispatcher, commandName);
+//     }
+// }
+//
+// static void runCommands(ICommandHandle *commands, size_t numberOfCommands) {
+//     for (size_t i = 0; i < numberOfCommands; ++i) {
+//         if (commands[i] != NULL) {
+//             commands[i]->run(commands[i]);
+//         }
+//     }
+// }
 
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
-    self->packCommandPending = true;
-    self->pendingToPack |= *(uint8_t*) state;
+    if(self->messagesPendingToPack < MAX_COMMANDS_PEDNING_TO_PACK){
+        self->packCommandPending[self->messagesPendingToPack] = *(MESSAGE_TYPE*) state;
+        self->messagesPendingToPack += 1;
+    }
 }
 
 static void commandUpdate(IObserverHandle observer, void *state) {
@@ -183,8 +178,12 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
     self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer);
 
-    self->packCommandPending = false;
     self->commandPending = false;
+    self->messagesPendingToPack = 0;
+
+    for(int i = 0; i < MAX_COMMANDS_PEDNING_TO_PACK; ++i){
+        self->packCommandPending[i] = SE_NONE;
+    }
 
     return self;
 }

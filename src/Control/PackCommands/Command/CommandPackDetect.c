@@ -42,7 +42,7 @@ static void run(ICommandHandle command){
         return;
     }
 
-    self->packer->prepareDetect(self->packer);
+//    self->packer->prepareDetect(self->packer);
 
 }
 

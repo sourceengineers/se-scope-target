@@ -8,66 +8,57 @@ using namespace testing;
 using namespace std;
 
 
-static const char* data = (const char*) "{\"payload\": {"
-                                        "\"sc_cmd\": {"
-                                        "\"ev_announce\": null,"
-                                        "\"ev_trans\": null,"
-                                        "\"cf_addr\": {"
-                                        "\"cl_id_1\": [111, \"SE_UINT8\"],"
-                                        "\"cl_id_2\": [222,\"SE_UINT16\"],"
-                                        "\"cl_id_3\": [333,\"SE_FLOAT\"]"
-                                        "},"
-                                        "\"cf_tgr\": {"
-                                        "\"cl_id\": 15,"
-                                        "\"mode\": \"Continous\","
-                                        "\"level\": 1.75,"
-                                        "\"edge\": \"fallig\""
-                                        "}"
-                                        "}"
-                                        "}"
+static const char* validInput = (const char*) ""
+                                        "{"
+                                            "\"ev_announce\": null,"
+                                            "\"ev_trans\": null,"
+                                            "\"cf_addr\": {"
+                                                "\"cl_id_1\": [111, \"SE_UINT8\"],"
+                                                "\"cl_id_2\": [222,\"SE_UINT16\"],"
+                                                "\"cl_id_3\": [333,\"SE_FLOAT\"]"
+                                            "},"
+                                            "\"cf_tgr\": {"
+                                                "\"cl_id\": 15,"
+                                                "\"mode\": \"Continous\","
+                                                "\"level\": 1.75,"
+                                                "\"edge\": \"fallig\""
+                                            "}"
                                         "}";
 
-TEST(json_unpacker, unpack_test){
 
-    IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream, (uint8_t*) data, strlen(data));
-    stream->writeByte(stream, '\0');
-    IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
-    bool unpackSuccessful = unpacker->unpack(unpacker);
+class JsonUnpackerTest : public ::testing::Test{
+#define INPUT_BUFFER_SIZE (400)
 
-    EXPECT_EQ(unpackSuccessful, true);
+protected:
+    JsonUnpackerTest()
+            : Test(){
+    }
 
-    int numberOfCommands = unpacker->getNumberOfCommands(unpacker);
+    void SetUp() override{
+        _input = BufferedByteStream_create(INPUT_BUFFER_SIZE);
+        _iinput = BufferedByteStream_getIByteStream(_input);
+        _unpacker = JsonUnpacker_create(_iinput);
+        _iUnpacker = JsonUnpacker_getIUnpacker(_unpacker);
+    }
 
-    EXPECT_EQ(numberOfCommands, 4);
-}
+    void TearDown() override{
+        BufferedByteStream_destroy(_input);
+        JsonUnpacker_destroy(_unpacker);
+    }
 
-TEST(json_unpacker, command_name){
+    ~JsonUnpackerTest() override{
+    }
 
-    IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream, (uint8_t*) data, strlen(data));
-    stream->writeByte(stream, '\0');
-    IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
-    bool unpackSuccessful = unpacker->unpack(unpacker);
+    BufferedByteStreamHandle _input;
+    IByteStreamHandle _iinput;
+    JsonUnpackerHandle _unpacker;
+    IUnpackerHandle _iUnpacker;
+};
 
-    char name[20];
-    unpacker->getNameOfCommand(unpacker, name, 20, 0);
-    EXPECT_STREQ(name, "ev_announce");
-    unpacker->getNameOfCommand(unpacker, name, 20, 1);
-    EXPECT_STREQ(name, "ev_trans");
-    unpacker->getNameOfCommand(unpacker, name, 20, 2);
-    EXPECT_STREQ(name, "cf_addr");
-    unpacker->getNameOfCommand(unpacker, name, 20, 3);
-    EXPECT_STREQ(name, "cf_tgr");
-}
-
-TEST(json_unpacker, values_from_commands){
-    IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream, (uint8_t*) data, strlen(data));
-    stream->writeByte(stream, '\0');
-    IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
-    bool unpackSuccessful = unpacker->unpack(unpacker);
-
+TEST_F(JsonUnpackerTest, values_from_commands){
+    _iinput->write(_iinput, (uint8_t*) validInput, strlen(validInput));
+    _iinput->writeByte(_iinput, '\0');
+    bool unpackSuccessful = _iUnpacker->unpack(_iUnpacker, CF_TRIGGER);
 
     CommandFetchingInformation info = {
             .commandName = (char*) "cf_tgr",
@@ -76,40 +67,40 @@ TEST(json_unpacker, values_from_commands){
             .arrayIndex = 0
     };
 
-    int data = unpacker->getIntFromCommand(unpacker, &info);
+    int data = _iUnpacker->getIntFromCommand(_iUnpacker, &info);
     EXPECT_EQ(15, data);
 
     info.fieldName = (char*) "level";
 
-    float fdata = unpacker->getFloatFromCommand(unpacker, &info);
+    float fdata = _iUnpacker->getFloatFromCommand(_iUnpacker, &info);
     EXPECT_EQ(1.75, fdata);
 
     char mode[20];
     info.fieldName = (char*) "mode";
-    unpacker->getStringFromCommand(unpacker, &info, mode, 20);
+    _iUnpacker->getStringFromCommand(_iUnpacker, &info, mode, 20);
     EXPECT_STREQ(mode, "Continous");
 
     int numberOfFields;
-    numberOfFields = unpacker->getNumberOfFields(unpacker, (const char*) "cf_addr");
+    numberOfFields = _iUnpacker->getNumberOfFields(_iUnpacker, (const char*) "cf_addr");
     EXPECT_EQ(numberOfFields, 3);
 
     char nameOfField[30];
-    unpacker->getNameOfField(unpacker, (const char*) "cf_tgr", nameOfField, 30, 0);
+    _iUnpacker->getNameOfField(_iUnpacker, (const char*) "cf_tgr", nameOfField, 30, 0);
     EXPECT_STREQ(nameOfField, "cl_id");
-    unpacker->getNameOfField(unpacker, (const char*) "cf_tgr", nameOfField, 30, 1);
+    _iUnpacker->getNameOfField(_iUnpacker, (const char*) "cf_tgr", nameOfField, 30, 1);
     EXPECT_STREQ(nameOfField, "mode");
-    unpacker->getNameOfField(unpacker, (const char*) "cf_tgr", nameOfField, 30, 2);
+    _iUnpacker->getNameOfField(_iUnpacker, (const char*) "cf_tgr", nameOfField, 30, 2);
     EXPECT_STREQ(nameOfField, "level");
-    unpacker->getNameOfField(unpacker, (const char*) "cf_tgr", nameOfField, 30, 3);
+    _iUnpacker->getNameOfField(_iUnpacker, (const char*) "cf_tgr", nameOfField, 30, 3);
     EXPECT_STREQ(nameOfField, "edge");
 }
 
-TEST(json_unpacker, values_from_array){
-    IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream, (uint8_t*) data, strlen(data));
-    stream->writeByte(stream, '\0');
-    IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
-    bool unpackSuccessful = unpacker->unpack(unpacker);
+TEST_F(JsonUnpackerTest, values_from_array){
+
+    _iinput->write(_iinput, (uint8_t*) validInput, strlen(validInput));
+    _iinput->writeByte(_iinput, '\0');
+
+    bool unpackSuccessful = _iUnpacker->unpack(_iUnpacker, CF_ADDR);
 
     CommandFetchingInformation info = {
             .commandName = (char*) "cf_addr",
@@ -118,69 +109,61 @@ TEST(json_unpacker, values_from_array){
             .arrayIndex = 0
     };
 
-    int data = unpacker->getIntFromCommand(unpacker, &info);
+    int data = _iUnpacker->getIntFromCommand(_iUnpacker, &info);
     EXPECT_EQ(111, data);
 
     info.fieldName = (char*) "cl_id_2";
     info.arrayIndex = 1;
 
     char dataType[20];
-    unpacker->getStringFromCommand(unpacker, &info, dataType, 20);
+    _iUnpacker->getStringFromCommand(_iUnpacker, &info, dataType, 20);
     EXPECT_STREQ(dataType, "SE_UINT16");
 
 }
 
-static const char* faultyData = (const char*) "{\"payload\": {"
-                                              "\"sc_cmd\": {"
-                                              "\"ev_announce\": null,"
-                                              "\"ev_trans\": null,"
-                                              "\"cf_addr\": {"
-                                              "\"cl_id_1\": [\"111\", \"SE_UINT8\"],"
-                                              "\"cl_id_2\": [222,\"SE_UINT16\"],"
-                                              "\"cl_id_3\": [333,\"SE_FLOAT\"]"
-                                              "},"
-                                              "\"cf_tgr\": {"
-                                              "\"cl_\": 15,"
-                                              "\"mode\": \"Continous\","
-                                              "\"level\": 1.75,"
-                                              "\"edge\": \"fallig\""
-                                              "}"
-                                              "}"
-                                              "}"
+static const char* faultyData = (const char*)
+                                              "{"
+                                                "\"ev_announce\": null,"
+                                                "\"ev_trans\": null,"
+                                                "\"cf_addr\": {"
+                                                    "\"cl_id_1\": [\"111\", \"SE_UINT8\"],"
+                                                    "\"cl_id_2\": [222,\"SE_UINT16\"],"
+                                                    "\"cl_id_3\": [333,\"SE_FLOAT\"]"
+                                                "},"
+                                                "\"cf_tgr\": {"
+                                                    "\"cl_\": 15,"
+                                                    "\"mode\": \"Continous\","
+                                                    "\"level\": 1.75,"
+                                                    "\"edge\": \"fallig\""
+                                                "}"
                                               "}";
 
 
-static const char* notParsingData = (const char*) "\"payload\": {"
-                                                  "\"sc_cmd\": {"
+static const char* notParsingData = (const char*)
                                                   "\"ev_announce\": null,"
                                                   "\"ev_trans\": null,"
                                                   "\"cf_addr\": {"
-                                                  "\"cl_id_1\": [\"111\", \"SE_UINT8\"],"
-                                                  "\"cl_id_2\": [222,\"SE_UINT16\"],"
-                                                  "\"cl_id_3\": [333,\"SE_FLOAT\"]"
+                                                    "\"cl_id_1\": [\"111\", \"SE_UINT8\"],"
+                                                    "\"cl_id_2\": [222,\"SE_UINT16\"],"
+                                                    "\"cl_id_3\": [333,\"SE_FLOAT\"]"
                                                   "},"
                                                   "\"cf_tgr\": {"
-                                                  "\"cl_\": 15,"
-                                                  "\"mode\": \"Continous\","
-                                                  "\"level\": 1.75,"
-                                                  "\"edge\": \"falig\""
-                                                  "}"
-                                                  "}"
+                                                    "\"cl_\": 15,"
+                                                    "\"mode\": \"Continous\","
+                                                    "\"level\": 1.75,"
+                                                    "\"edge\": \"falig\""
                                                   "}";
 
-TEST(json_unpacker, edge_cases){
-    IByteStreamHandle stream = BufferedByteStream_getIByteStream(BufferedByteStream_create(400));
-    stream->write(stream, (uint8_t*) notParsingData, strlen(notParsingData));
-    stream->writeByte(stream, '\0');
-    IUnpackerHandle unpacker = JsonUnpacker_getIUnpacker(JsonUnpacker_create(stream));
-
-    bool unpackSuccessful = unpacker->unpack(unpacker);
+TEST_F(JsonUnpackerTest, edge_cases){
+    _iinput->write(_iinput, (uint8_t*) notParsingData, strlen(notParsingData));
+    _iinput->writeByte(_iinput, '\0');
+    bool unpackSuccessful = _iUnpacker->unpack(_iUnpacker, CF_TRIGGER);
 
     ASSERT_EQ(unpackSuccessful, false);
 
-    stream->write(stream, (uint8_t*) faultyData, strlen(faultyData));
-    stream->writeByte(stream, '\0');
-    unpacker->unpack(unpacker);
+    _iinput->write(_iinput, (uint8_t*) faultyData, strlen(faultyData));
+    _iinput->writeByte(_iinput, '\0');
+    _iUnpacker->unpack(_iUnpacker, CF_TRIGGER);
 
     CommandFetchingInformation info = {
             .commandName = (char*) "cf_tgr",
@@ -189,14 +172,14 @@ TEST(json_unpacker, edge_cases){
             .arrayIndex = 0
     };
 
-    int res = (int) unpacker->getIntFromCommand(unpacker, &info);
+    int res = (int) _iUnpacker->getIntFromCommand(_iUnpacker, &info);
     EXPECT_EQ(0, res);
 
     info.commandName = (char*) "cf_addr";
     info.fieldName = (char*) "cl_id_1";
     info.isInArray = true;
     info.arrayIndex = 0;
-    res = unpacker->getIntFromCommand(unpacker, &info);
+    res = _iUnpacker->getIntFromCommand(_iUnpacker, &info);
     EXPECT_EQ(0, res);
 
     info.commandName = (char*) "cf_tgr";
@@ -204,7 +187,7 @@ TEST(json_unpacker, edge_cases){
     info.isInArray = false;
     info.arrayIndex = 0;
 
-    res = unpacker->getIntFromCommand(unpacker, &info);
+    res = _iUnpacker->getIntFromCommand(_iUnpacker, &info);
     EXPECT_EQ(1, res);
 
     info.commandName = (char*) "cf_addr";
@@ -212,6 +195,6 @@ TEST(json_unpacker, edge_cases){
     info.isInArray = true;
     info.arrayIndex = 2;
 
-    res = unpacker->getIntFromCommand(unpacker, &info);
+    res = _iUnpacker->getIntFromCommand(_iUnpacker, &info);
     EXPECT_EQ(0, res);
 }
