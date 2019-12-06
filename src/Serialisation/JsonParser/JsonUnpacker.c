@@ -61,7 +61,7 @@ static int matchKeyToIndex(const char* json, jsmntok_t* tok, const char* key, in
 
 static bool jsoneq(const char* json, jsmntok_t* tok, const char* key);
 
-static bool unpack(IUnpackerHandle unpacker, MESSAGE_TYPE type);
+static bool unpack(IUnpackerHandle unpacker, MessageType type);
 
 static ADDRESS_DATA_TYPE getIntFromCommand(IUnpackerHandle unpacker, CommandFetchingInformation* information);
 
@@ -243,7 +243,7 @@ static bool jsoneq(const char* json, jsmntok_t* tok, const char* key){
     return false;
 }
 
-static bool unpack(IUnpackerHandle unpacker, MESSAGE_TYPE type){
+static bool unpack(IUnpackerHandle unpacker, MessageType type){
     JsonUnpackerHandle self = (JsonUnpackerHandle) unpacker->handle;
 
     if(self->stream == NULL){

@@ -41,7 +41,7 @@ typedef struct IUnpackerStruct{
      * @param unpacker
      * @return
      */
-    bool (* unpack)(IUnpackerHandle unpacker, MESSAGE_TYPE type);
+    bool (* unpack)(IUnpackerHandle unpacker, MessageType type);
 
     /**
      * Returns an int value

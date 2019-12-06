@@ -65,7 +65,7 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
     return self;
 }
 
-ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, MESSAGE_TYPE type) {
+ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, MessageType type) {
 
     if (type == CF_RUNNING) {
         return CommandRunningParser_getCommand(self->commandRunningParser);

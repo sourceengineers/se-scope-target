@@ -30,8 +30,8 @@ typedef struct __SerializerPrivateData{
     IPackerHandle packer;
     IUnpackerHandle unpacker;
 
-    MESSAGE_TYPE unpackingPending;
-    MESSAGE_TYPE packingPending;
+    MessageType unpackingPending;
+    MessageType packingPending;
 
     IObserver packObserver;
     IObserver unpackObserver;
@@ -90,12 +90,12 @@ static bool runTx(IRunnableHandle runnable){
 
 static void updateUnpacker(IObserverHandle observer, void* state){
     SerializerHandle self = (SerializerHandle) observer->handle;
-    self->unpackingPending = *(MESSAGE_TYPE*) state;
+    self->unpackingPending = *(MessageType*) state;
 }
 
 static void updatePacker(IObserverHandle observer, void* state){
     SerializerHandle self = (SerializerHandle) observer->handle;
-    self->packingPending = *(MESSAGE_TYPE*) state;
+    self->packingPending = *(MessageType*) state;
 }
 
 /******************************************************************************

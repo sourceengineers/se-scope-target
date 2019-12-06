@@ -54,7 +54,7 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
  * @param command
  * @return Returns NULL if command matches no name of a command
  */
-ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, MESSAGE_TYPE type);
+ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, MessageType type);
 
 /**
  * Deconstructor

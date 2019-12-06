@@ -20,10 +20,25 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <Scope/Core/ScopeTypes.h>
+
+#define LENGTH_OF_LENGTH_FIELD 4
+#define LENGTH_OF_CHECKSUM_FIELD 2
 
 typedef enum {
     TRANSPORT_NOT_FOUND, CHECKSUM_FAULTY, CHECKSUM_OK
 } ChecksumCheck;
+
+typedef enum {
+
+    START_FLAG,
+    TYPE,
+    LENGTH,
+    DATA,
+    CHECKSUM,
+    END_FLAG
+
+} FrameState;
 
 /******************************************************************************
  Define private data
@@ -40,9 +55,7 @@ typedef struct __UartJsonPrivateData {
     TransmitCallback callback;
     IByteStreamHandle input;
     IByteStreamHandle output;
-    ByteRingBufferHandle transportBuffer;
 
-    uint8_t inputChecksum;
     bool rxDataReady;
     bool txPendingToValidateAndTransmit;
 
@@ -52,15 +65,18 @@ typedef struct __UartJsonPrivateData {
     IRunnable rxRunnable;
     IRunnable txRunnable;
 
+    uint32_t rxExpectedLength;
+    MessageType rxType;
+    size_t rxStateByteCount;
+    uint16_t rxChecksum;
+    uint16_t rxChecksumCompare;
+    FrameState rxFrameState;
+
 } UartJsonPrivateData;
 
 static bool runRx(IRunnableHandle runnable);
 
 static bool runTx(IRunnableHandle runnable);
-
-static void createOutputChecksum(UartJsonHandle self, char *data);
-
-static ChecksumCheck validateInput(UartJsonHandle self);
 
 static void update(IObserverHandle observer, void *state);
 
@@ -82,8 +98,9 @@ static bool runRx(IRunnableHandle runnable) {
         return false;
     }
 
+    self->rxObserver->update(self->rxObserver, &self->rxType);
     self->rxDataReady = false;
-    self->rxObserver->update(self->rxObserver, NULL);
+    self->rxType = SE_NONE;
 
     return true;
 }
@@ -111,42 +128,6 @@ static bool runTx(IRunnableHandle runnable) {
     }
 
     return true;
-}
-
-static void createOutputChecksum(UartJsonHandle self, char *data) {
-
-    size_t length = self->output->length(self->output);
-    uint8_t checksum = 0;
-
-    for (int i = 0; i < length; ++i) {
-
-        uint8_t dataChunk = self->output->readByte(self->output);
-        checksum += dataChunk;
-        self->output->writeByte(self->output, dataChunk);
-    }
-
-    sprintf(data, "%02X", checksum);
-}
-
-static ChecksumCheck validateInput(UartJsonHandle self) {
-
-    uint8_t checkData[KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH];
-
-    ByteRingBuffer_readNoPosInc(self->transportBuffer, checkData, KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH);
-
-    if (strncmp((const char *) checkData, KEYWORD_TRANSPORT, KEYWORD_TRANSPORT_LENGTH) != 0) {
-        return TRANSPORT_NOT_FOUND;
-    }
-
-    /* One byte in size has to be added, since sprintf wants to add a deelimiter */
-    char checksum[CHECKSUM_LENGTH + 1];
-    sprintf(checksum, "%02X", self->inputChecksum);
-
-    if (strncmp((const char *) &checkData[KEYWORD_TRANSPORT_LENGTH], checksum, CHECKSUM_LENGTH) != 0) {
-        return CHECKSUM_FAULTY;
-    }
-
-    return CHECKSUM_OK;
 }
 
 static void update(IObserverHandle observer, void *state) {
@@ -222,7 +203,6 @@ UartJsonHandle UartJson_create(TransmitCallback callback, IByteStreamHandle inpu
     self->rxRunnable.run = &runRx;
     self->txRunnable.run = &runTx;
 
-    self->transportBuffer = ByteRingBuffer_create(KEYWORD_TRANSPORT_LENGTH + CHECKSUM_LENGTH);
     self->callback = callback;
     self->input = input;
     self->output = output;
@@ -257,10 +237,14 @@ size_t UartJson_amountOfTxDataPending(UartJsonHandle self) {
 }
 
 void UartJson_resetRx(UartJsonHandle self) {
-    ByteRingBuffer_clear(self->transportBuffer);
     self->input->flush(self->input);
-    self->inputChecksum = 0;
+    self->rxChecksum = 0;
     self->rxDataReady = false;
+    self->rxExpectedLength = 0;
+    self->rxType = SE_NONE;
+    self->rxStateByteCount = 0;
+    self->rxChecksumCompare = 0;
+    self->rxFrameState = START_FLAG;
 }
 
 void UartJson_resetTx(UartJsonHandle self) {
@@ -268,48 +252,121 @@ void UartJson_resetTx(UartJsonHandle self) {
     self->txPendingToValidateAndTransmit = false;
 }
 
-void UartJson_putRxData(UartJsonHandle self, uint8_t *data, size_t length) {
+bool UartJson_putRxData(UartJsonHandle self, const uint8_t* data, size_t length){
 
-    if (self->rxDataReady == true) {
-        return;
+    if(self->rxDataReady == true){
+        return false;
     }
 
-    for (int i = 0; i < length; ++i) {
+    bool frameValid = false;
+    size_t dataOffSet = 0;
 
-        if (data[i] == '\0') {
-            continue;
-        }
-
-        if (ByteRingBuffer_write(self->transportBuffer, &data[i], 1) == -1) {
-            uint8_t transportByte;
-            ByteRingBuffer_read(self->transportBuffer, &transportByte, 1);
-            ByteRingBuffer_write(self->transportBuffer, &data[i], 1);
-
-            self->inputChecksum += transportByte;
-
-            self->input->writeByte(self->input, transportByte);
-
-            ChecksumCheck res = validateInput(self);
-
-            if (res == CHECKSUM_OK) {
-                self->input->writeByte(self->input, (uint8_t) '\0');
-                ByteRingBuffer_clear(self->transportBuffer);
-                self->rxDataReady = true;
-                self->inputChecksum = 0;
-                break;
-            } else if (res == CHECKSUM_FAULTY) {
-                UartJson_resetRx(self);
-                break;
-            } else {
-                continue;
+    // Loop over the data until every byte was checked. This is done so if data partial data is appended the framing can
+    // handle it. Ex. [protocol][pro. The driver shouldn't discard this.
+    do{
+        if(self->rxFrameState == START_FLAG){
+            for(; dataOffSet < length; ++dataOffSet){
+                if((char) data[dataOffSet] == '['){
+                    self->rxFrameState = TYPE;
+                    dataOffSet++;
+                    break;
+                }
             }
         }
-    }
+
+        if(self->rxFrameState == TYPE){
+            if(dataOffSet < length){
+                self->rxType = data[dataOffSet];
+                dataOffSet++;
+                self->rxFrameState = LENGTH;
+            } else {
+                // Type wasn't found in frame
+                break;
+            }
+        }
+
+        // Fetch the length
+        if(self->rxFrameState == LENGTH){
+
+            for(; self->rxStateByteCount < LENGTH_OF_LENGTH_FIELD && dataOffSet < length; self->rxStateByteCount++){
+                uint8_t byte = data[dataOffSet];
+                // Shifty shift
+                self->rxExpectedLength += byte << (LENGTH_OF_LENGTH_FIELD - self->rxStateByteCount - 1) * 4;
+                dataOffSet++;
+            }
+
+            if(self->rxStateByteCount == LENGTH_OF_LENGTH_FIELD){
+                self->rxStateByteCount = 0;
+                self->rxFrameState = DATA;
+            }else{
+                // Length field couldn't be found before end of data
+                break;
+            }
+        }
+
+        if(self->rxFrameState == DATA){
+
+            for(; self->input->length(self->input) < self->rxExpectedLength && dataOffSet < length; dataOffSet++){
+                uint8_t byte = data[dataOffSet];
+                self->rxChecksum += byte;
+                self->input->writeByte(self->input, byte);
+            }
+
+            size_t writtenData = self->input->length(self->input);
+
+
+            if(writtenData == self->rxExpectedLength){
+                self->rxFrameState = CHECKSUM;
+            }
+            if(length == dataOffSet){
+                // Reached the end of the array
+                break;
+            }
+        }
+
+        if(self->rxFrameState == CHECKSUM){
+
+            for(; self->rxStateByteCount < LENGTH_OF_CHECKSUM_FIELD && dataOffSet < length; dataOffSet++){
+                uint8_t byte = data[dataOffSet];
+                self->rxChecksumCompare += (byte << (LENGTH_OF_CHECKSUM_FIELD - self->rxStateByteCount - 1) * 4);
+                self->rxStateByteCount++;
+            }
+
+            if(self->rxStateByteCount == LENGTH_OF_CHECKSUM_FIELD){
+                if(self->rxChecksumCompare == self->rxChecksum){
+                    self->rxStateByteCount = 0;
+                    self->rxFrameState = END_FLAG;
+                    self->rxChecksumCompare = 0;
+                    self->rxChecksum = 0;
+                }else{
+                    UartJson_resetRx(self);
+                    // Checksum was wrong
+                    break;
+                }
+            }
+        }
+
+        if(self->rxFrameState == END_FLAG){
+            uint8_t byte = data[dataOffSet];
+            dataOffSet++;
+            if(byte == ']'){
+                self->rxFrameState = START_FLAG;
+                self->rxDataReady = true;
+                frameValid = true;
+                self->rxExpectedLength = 0;
+            }else{
+                UartJson_resetRx(self);
+                // Endflag wasn't found. Which means that something probably went wrong...
+                break;
+            }
+        }
+
+    }while(dataOffSet < length);
+
+    return frameValid;
 }
 
 void UartJson_destroy(UartJsonHandle self) {
-    ByteRingBuffer_destroy(self->transportBuffer);
-
     free(self);
     self = NULL;
 }

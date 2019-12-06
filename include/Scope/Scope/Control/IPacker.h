@@ -36,7 +36,7 @@ typedef struct IPackerStruct{
      * Calls the pack function of the packer. It packs the predefined data into the output stream
      * @param packer
      */
-    void (* pack)(IPackerHandle packer, MESSAGE_TYPE type);
+    void (* pack)(IPackerHandle packer, MessageType type);
 
     /**
      * Returns true if the packer is ready to serialize new data. This is the case if all previously sent data

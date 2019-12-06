@@ -44,7 +44,7 @@ CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle ann
     return self;
 }
 
-ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, MESSAGE_TYPE type){
+ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, MessageType type){
 
     if(type == SC_DATA){
         return CommandPackDataParser_getCommand(self->commandPackDataParser);

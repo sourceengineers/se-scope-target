@@ -76,7 +76,7 @@ void UartJson_getTxData(UartJsonHandle self, uint8_t* data, size_t length);
  * @param data data to be written into the stream
  * @param length amount of data to be written into the stream
  */
-void UartJson_putRxData(UartJsonHandle self, uint8_t* data, size_t length);
+bool UartJson_putRxData(UartJsonHandle self, const uint8_t* data, size_t length);
 
 /**
  * Resets the input stream

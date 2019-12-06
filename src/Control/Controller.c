@@ -45,10 +45,10 @@ typedef struct __ControllerPrivateData {
 
     IObserverHandle packObserver;
 
-    MESSAGE_TYPE packCommandPending[MAX_COMMANDS_PEDNING_TO_PACK];
+    MessageType packCommandPending[MAX_COMMANDS_PEDNING_TO_PACK];
     size_t messagesPendingToPack;
 
-    MESSAGE_TYPE commandPending;
+    MessageType commandPending;
 
 
     uint8_t pendingToPack;
@@ -104,7 +104,7 @@ static bool runTx(IRunnableHandle runnable) {
 
     // If so, decrease the count and fetch the message
     self->messagesPendingToPack -= 1;
-    MESSAGE_TYPE type = self->packCommandPending[self->messagesPendingToPack];
+    MessageType type = self->packCommandPending[self->messagesPendingToPack];
 
     if(type == SE_NONE){
         return false;
@@ -142,7 +142,7 @@ static bool runTx(IRunnableHandle runnable) {
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
     if(self->messagesPendingToPack < MAX_COMMANDS_PEDNING_TO_PACK){
-        self->packCommandPending[self->messagesPendingToPack] = *(MESSAGE_TYPE*) state;
+        self->packCommandPending[self->messagesPendingToPack] = *(MessageType*) state;
         self->messagesPendingToPack += 1;
     }
 }

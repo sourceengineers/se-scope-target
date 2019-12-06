@@ -52,7 +52,7 @@ typedef struct __JsonPackerPrivateData {
     size_t maxChannels;
     bool annoucementReady;
 
-    MESSAGE_TYPE type;
+    MessageType type;
 
     IByteStreamHandle byteStream;
 
@@ -130,7 +130,7 @@ static bool packChannelMap(JsonPackerHandle self);
 
 static void packPayloadMap(JsonPackerHandle self);
 
-static void packData(IPackerHandle packer, MESSAGE_TYPE type);
+static void packData(IPackerHandle packer, MessageType type);
 
 static void prepareDetect(IPackerHandle packer);
 
@@ -508,7 +508,7 @@ static void packPayloadMap(JsonPackerHandle self) {
     appendData(self->byteStream, "}", 1, "", 0);
 }
 
-static void packData(IPackerHandle packer, MESSAGE_TYPE type) {
+static void packData(IPackerHandle packer, MessageType type) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     if (self->dataPendingToBePacked == false || self->byteStream->length(self->byteStream) != 0) {

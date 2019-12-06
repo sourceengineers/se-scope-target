@@ -62,7 +62,7 @@ typedef enum{
 /**
  * Enum to determine the source of the observer.
  */
-typedef enum __MESSAGE_TYPE {
+typedef enum __MessageType {
 
     SE_NONE = 0,
     SE_NAK = 1,
@@ -84,6 +84,6 @@ typedef enum __MESSAGE_TYPE {
     CF_T_INC = 107,
     CF_ADDR = 108,
 
-} MESSAGE_TYPE;
+} MessageType;
 
 #endif
