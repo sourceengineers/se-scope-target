@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <Scope/Core/ScopeTypes.h>
 #include <gmock/gmock-matchers.h>
+#include <stdbool.h>
 
 extern "C" {
 #include <Scope/Communication/Interfaces/UartJson.h>
@@ -31,8 +32,10 @@ protected:
         comm->attachObserver(comm, ObserverMock_getIObserver(_observer));
     }
 
-    void runTx () {
+    void runTx (MessageType type) {
         ICommunicatorHandle comm = UartJson_getCommunicator(_uart);
+        IObserverHandle obs = comm->getObserver(comm);
+        obs->update(obs, &type);
         IRunnableHandle runTx = comm->getTxRunnable(comm);
         runTx->run(runTx);
     }
@@ -102,21 +105,21 @@ TEST_F(UartTest, input_accept){
     writeChecksum(data, dataLength, v_i);
     v_i.push_back(']');
 
-    UartJson_putRxData(_uart, &v_i[0], v_i.size());
-
+    bool parsingValid = UartJson_putRxData(_uart, &v_i[0], v_i.size());
+    EXPECT_TRUE(parsingValid);
     runRx();
 
-    ASSERT_TRUE(_observer->updateHasBeenCalled);
-    ASSERT_EQ(_observer->updateCalledWidth, 100);
+    EXPECT_TRUE(_observer->updateHasBeenCalled);
+    EXPECT_EQ(_observer->updateCalledWidth, 100);
 
     size_t length = _iinput->length(_iinput);
-    ASSERT_EQ(length, 5);
+    EXPECT_EQ(length, 5);
 
     uint8_t readData[length];
     _iinput->read(_iinput, readData, length);
     vector<uint8_t> v_o;
     v_o.assign(readData, readData + length);
-    ASSERT_THAT(v_o, ElementsAre(1,2,3,4,5));
+    EXPECT_THAT(v_o, ElementsAre(1,2,3,4,5));
 }
 
 /**
@@ -141,32 +144,32 @@ TEST_F(UartTest, input_accept_feed_as_chuncks){
     v_i.push_back(']');
 
     bool parsed = UartJson_putRxData(_uart, &v_i[0], 3);
-    ASSERT_FALSE(parsed);
+    EXPECT_FALSE(parsed);
     runRx();
 
     parsed = UartJson_putRxData(_uart, &v_i[3], 6);
-    ASSERT_FALSE(parsed);
+    EXPECT_FALSE(parsed);
     runRx();
 
     parsed = UartJson_putRxData(_uart, &v_i[9], 2);
-    ASSERT_FALSE(parsed);
+    EXPECT_FALSE(parsed);
     runRx();
 
     parsed = UartJson_putRxData(_uart, &v_i[11], 5);
-    ASSERT_TRUE(parsed);
+    EXPECT_TRUE(parsed);
     runRx();
 
-    ASSERT_TRUE(_observer->updateHasBeenCalled);
-    ASSERT_EQ(_observer->updateCalledWidth, 100);
+    EXPECT_TRUE(_observer->updateHasBeenCalled);
+    EXPECT_EQ(_observer->updateCalledWidth, 100);
 
     size_t length = _iinput->length(_iinput);
-    ASSERT_EQ(length, 5);
+    EXPECT_EQ(length, 5);
 
     uint8_t readData[length];
     _iinput->read(_iinput, readData, length);
     vector<uint8_t> v_o;
     v_o.assign(readData, readData + length);
-    ASSERT_THAT(v_o, ElementsAre(1,2,3,4,5));
+    EXPECT_THAT(v_o, ElementsAre(1,2,3,4,5));
 }
 
 TEST_F(UartTest, input_accept_feed_full_and_partial){
@@ -192,19 +195,19 @@ TEST_F(UartTest, input_accept_feed_full_and_partial){
     writeLength(5, v_i);
 
     bool valid = UartJson_putRxData(_uart, &v_i[0], v_i.size());
-    ASSERT_TRUE(valid);
+    EXPECT_TRUE(valid);
     runRx();
-    ASSERT_TRUE(_observer->updateHasBeenCalled);
-    ASSERT_EQ(_observer->updateCalledWidth, 100);
+    EXPECT_TRUE(_observer->updateHasBeenCalled);
+    EXPECT_EQ(_observer->updateCalledWidth, 100);
 
     size_t length = _iinput->length(_iinput);
-    ASSERT_EQ(length, 5);
+    EXPECT_EQ(length, 5);
 
     uint8_t readData[length];
     _iinput->read(_iinput, readData, length);
     vector<uint8_t> v_o;
     v_o.assign(readData, readData + length);
-    ASSERT_THAT(v_o, ElementsAre(1,2,3,4,5));
+    EXPECT_THAT(v_o, ElementsAre(1,2,3,4,5));
 }
 
 TEST_F(UartTest, input_accept_feed_multiple){
@@ -227,19 +230,19 @@ TEST_F(UartTest, input_accept_feed_multiple){
         v_i.push_back(']');
 
         bool valid = UartJson_putRxData(_uart, &v_i[0], v_i.size());
-        ASSERT_TRUE(valid);
+        EXPECT_EQ(true,valid);
         runRx();
-        ASSERT_TRUE(_observer->updateHasBeenCalled);
-        ASSERT_EQ(_observer->updateCalledWidth, 100);
+        EXPECT_TRUE(_observer->updateHasBeenCalled);
+        EXPECT_EQ(_observer->updateCalledWidth, 100);
 
         size_t length = _iinput->length(_iinput);
-        ASSERT_EQ(length, 5);
+        EXPECT_EQ(length, 5);
 
         uint8_t readData[length];
         _iinput->read(_iinput, readData, length);
         vector<uint8_t> v_o;
         v_o.assign(readData, readData + length);
-        ASSERT_THAT(v_o, ElementsAre(1,2,3,4,5));
+        EXPECT_THAT(v_o, ElementsAre(1,2,3,4,5));
     }
 }
 
@@ -263,9 +266,9 @@ TEST_F(UartTest, input_accept_feed_garbage){
     writeChecksum(data, dataLength, v_i);
     v_i.push_back(']');
     bool parsed = UartJson_putRxData(_uart, &v_i[0], v_i.size());
-    ASSERT_FALSE(parsed);
+    EXPECT_FALSE(parsed);
     runRx();
-    ASSERT_FALSE(_observer->updateHasBeenCalled);
+    EXPECT_FALSE(_observer->updateHasBeenCalled);
 
     // Write wrong checksum
     v_i.clear();
@@ -278,9 +281,9 @@ TEST_F(UartTest, input_accept_feed_garbage){
     writeChecksum(data, dataLength - 2 , v_i);      // Use wrong length to produce checksum, chause a faulty sum
     v_i.push_back(']');
     parsed = UartJson_putRxData(_uart, &v_i[0], v_i.size());
-    ASSERT_FALSE(parsed);
+    EXPECT_FALSE(parsed);
     runRx();
-    ASSERT_FALSE(_observer->updateHasBeenCalled);
+    EXPECT_FALSE(_observer->updateHasBeenCalled);
 
     // Wrong data length
     v_i.clear();
@@ -293,9 +296,9 @@ TEST_F(UartTest, input_accept_feed_garbage){
     writeChecksum(data, dataLength, v_i);
     v_i.push_back(']');
     parsed = UartJson_putRxData(_uart, &v_i[0], v_i.size());
-    ASSERT_FALSE(parsed);
+    EXPECT_FALSE(parsed);
     runRx();
-    ASSERT_FALSE(_observer->updateHasBeenCalled);
+    EXPECT_FALSE(_observer->updateHasBeenCalled);
 
     // No stop flag
     v_i.clear();
@@ -307,9 +310,9 @@ TEST_F(UartTest, input_accept_feed_garbage){
     }
     writeChecksum(data, dataLength, v_i);
     parsed = UartJson_putRxData(_uart, &v_i[0], v_i.size());
-    ASSERT_FALSE(parsed);
+    EXPECT_FALSE(parsed);
     runRx();
-    ASSERT_FALSE(_observer->updateHasBeenCalled);
+    EXPECT_FALSE(_observer->updateHasBeenCalled);
 
     /**
      * Normal test case as before. The protocol has to be able to recover after receiving a bunch of faulty data
@@ -326,17 +329,33 @@ TEST_F(UartTest, input_accept_feed_garbage){
     writeChecksum(data, dataLength, v_i);
     v_i.push_back(']');
     parsed = UartJson_putRxData(_uart, &v_i[0], v_i.size());
-    ASSERT_TRUE(parsed);
+    EXPECT_TRUE(parsed);
     runRx();
-    ASSERT_TRUE(_observer->updateHasBeenCalled);
-    ASSERT_EQ(_observer->updateCalledWidth, 100);
+    EXPECT_TRUE(_observer->updateHasBeenCalled);
+    EXPECT_EQ(_observer->updateCalledWidth, 100);
     size_t length = _iinput->length(_iinput);
-    ASSERT_EQ(length, 5);
+    EXPECT_EQ(length, 5);
 
     uint8_t readData[length];
     _iinput->read(_iinput, readData, length);
     vector<uint8_t> v_o;
     v_o.assign(readData, readData + length);
-    ASSERT_THAT(v_o, ElementsAre(1,2,3,4,5));
+    EXPECT_THAT(v_o, ElementsAre(1,2,3,4,5));
+
+}
+
+
+TEST_F(UartTest, output_normal){
+
+
+    for(uint8_t i = 0; i < 6; ++i){
+        _ioutput->writeByte(_ioutput, i);
+    }
+    runTx(SC_ANNOUNCE);
+    size_t dataPending = UartJson_amountOfTxDataPending(_uart);
+    EXPECT_EQ(dataPending, 15);
+    vector<uint8_t> v_o;
+    UartJson_getTxData(_uart, &v_o[0], dataPending);
+    EXPECT_THAT(v_o, ElementsAre('[', 100, 0, 0, 0, 15, 1, 2, 3, 4, 5, 6, 0, 21,']'));
 
 }
