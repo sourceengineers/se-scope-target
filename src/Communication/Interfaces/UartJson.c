@@ -24,6 +24,9 @@
 
 #define LENGTH_OF_LENGTH_FIELD 4
 #define LENGTH_OF_CHECKSUM_FIELD 2
+#define START_LENGTH 1
+#define END_LENGTH 1
+#define TYPE_LENGTH 1
 
 typedef enum{
 
@@ -34,7 +37,14 @@ typedef enum{
     CHECKSUM,
     END_FLAG
 
-} FrameState;
+} RxFrameState;
+
+typedef enum{
+    HEAD,
+    BODY,
+    FOOT,
+    NONE,
+} TxFrameState;
 
 /******************************************************************************
  Define private data
@@ -48,8 +58,6 @@ typedef struct __UartJsonPrivateData{
     IByteStreamHandle input;
     IByteStreamHandle output;
 
-    bool txPendingToValidateAndTransmit;
-    MessageType txType;
     ByteRingBufferHandle frameHead;
     ByteRingBufferHandle frameTail;
 
@@ -59,13 +67,18 @@ typedef struct __UartJsonPrivateData{
     IRunnable rxRunnable;
     IRunnable txRunnable;
 
+    bool txDataFramingReady;
+    MessageType txType;
+    uint16_t txChecksum;
+    TxFrameState txFrameState;
+
     bool rxDataReady;
     uint32_t rxExpectedLength;
     MessageType rxType;
     size_t rxStateByteCount;
     uint16_t rxChecksum;
     uint16_t rxChecksumCompare;
-    FrameState rxFrameState;
+    RxFrameState rxFrameState;
 
 } UartJsonPrivateData;
 
@@ -235,7 +248,11 @@ static bool runRx(IRunnableHandle runnable){
 static bool runTx(IRunnableHandle runnable){
     UartJsonHandle self = (UartJsonHandle) runnable->handle;
 
-    if(self->txPendingToValidateAndTransmit == false){
+    if(self->txFrameState != NONE) {
+        return false;
+    }
+
+    if(self->txDataFramingReady== false){
         return false;
     }
 
@@ -244,21 +261,21 @@ static bool runTx(IRunnableHandle runnable){
         return false;
     }
 
-    ByteRingBuffer_write(self->frameHead, (uint8_t*) '[', 1);
-    ByteRingBuffer_write(self->frameHead, (uint8_t*) self->txType, 1);
+    // Write the startbyte in a temporary buffer
+    char startByte = '[';
+    ByteRingBuffer_write(self->frameHead, (uint8_t*) &startByte, 1);
 
+    // Write the type in a temporary buffer
+    ByteRingBuffer_write(self->frameHead, (uint8_t*) &self->txType, 1);
+
+    // Write the length in a temporary buffer
     for(size_t i = 0; i < LENGTH_OF_LENGTH_FIELD; ++i){
         uint8_t byte = (outputBufferLength >> (LENGTH_OF_LENGTH_FIELD - i - 1) * 4) & 0xF;
         ByteRingBuffer_write(self->frameHead, &byte, 1);
     }
+    self->txDataFramingReady = false;
 
-
-
-
-
-
-    self->txPendingToValidateAndTransmit = false;
-
+    self->txFrameState = HEAD;
     if(self->callback != NULL){
         self->callback(&self->transceiver);
     }
@@ -268,7 +285,7 @@ static bool runTx(IRunnableHandle runnable){
 
 static void update(IObserverHandle observer, void* state){
     UartJsonHandle self = (UartJsonHandle) observer->handle;
-    self->txPendingToValidateAndTransmit = true;
+    self->txDataFramingReady = true;
     self->txType = *(MessageType*) state;
 }
 
@@ -351,8 +368,8 @@ UartJsonHandle UartJson_create(TransmitCallback callback, IByteStreamHandle inpu
     self->transceiver.resetInput = &resetInput;
     self->transceiver.resetOutput = &resetOutput;
 
-    self->frameHead = ByteRingBuffer_create(6);
-    self->frameTail = ByteRingBuffer_create(3);
+    self->frameHead = ByteRingBuffer_create(START_LENGTH + LENGTH_OF_LENGTH_FIELD + TYPE_LENGTH);
+    self->frameTail = ByteRingBuffer_create(LENGTH_OF_CHECKSUM_FIELD + END_LENGTH);
 
     self->rxDataReady = false;
     UartJson_resetTx(self);
@@ -369,11 +386,74 @@ ITransceiverHandle UartJson_getTransceiver(UartJsonHandle self){
 }
 
 void UartJson_getTxData(UartJsonHandle self, uint8_t* data, size_t length){
-    self->output->read(self->output, data, length);
+
+    if(self->txFrameState == NONE){
+        return;
+    }
+
+    size_t index = 0;
+
+    if(self->txFrameState == HEAD){
+        for(; index < length; index++){
+            uint8_t byte;
+            ByteRingBuffer_read(self->frameHead, &byte, 1);
+            data[index] = byte;
+
+            if(ByteRingBuffer_getNumberOfUsedData(self->frameHead) == 0){
+                self->txFrameState = BODY;
+                index++;
+                break;
+            }
+        }
+    }
+
+    if(self->txFrameState == BODY){
+        for(; index < length; index++){
+            // Looping the bytes in one by one to allow to produce a checksum while doing so.
+            uint8_t byte = self->output->readByte(self->output);
+            data[index] = byte;
+            self->txChecksum += byte;
+            if(self->output->length(self->output) == 0){
+                self->txFrameState = FOOT;
+                index++;
+                // Currently the checksum is not written in the buffer yet
+                uint8_t checksumLeft = (self->txChecksum & 0xF0) >> 4;
+                uint8_t checksumRight = self->txChecksum & 0xF;
+                self->txChecksum = 0;
+                ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumLeft, 1);
+                ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumRight, 1);
+                char endByte = ']';
+                ByteRingBuffer_write(self->frameTail, (uint8_t*) &endByte, 1);
+                break;
+            }
+        }
+    }
+
+    if(self->txFrameState == FOOT){
+        for(; index < length; index++){
+
+            uint8_t byte;
+            ByteRingBuffer_read(self->frameTail, &byte, 1);
+            data[index] = byte;
+            if(ByteRingBuffer_getNumberOfUsedData(self->frameTail) == 0){
+                self->txFrameState = NONE;
+                index++;
+                break;
+            }
+        }
+    }
 }
 
 size_t UartJson_amountOfTxDataPending(UartJsonHandle self){
-    return self->output->length(self->output);
+    if(self->txFrameState == HEAD){
+        return ByteRingBuffer_getNumberOfUsedData(self->frameHead) + self->output->length(self->output)
+               + ByteRingBuffer_getCapacity(self->frameTail);
+    }else if(self->txFrameState == BODY){
+        return self->output->length(self->output) + ByteRingBuffer_getCapacity(self->frameTail);
+    }else if(self->txFrameState == FOOT){
+        return ByteRingBuffer_getNumberOfUsedData(self->frameTail);
+    }
+    return 0;
 }
 
 void UartJson_resetRx(UartJsonHandle self){
@@ -389,8 +469,9 @@ void UartJson_resetRx(UartJsonHandle self){
 
 void UartJson_resetTx(UartJsonHandle self){
     self->output->flush(self->output);
-    self->txPendingToValidateAndTransmit = false;
+    self->txDataFramingReady = true;
     self->txType = SE_NONE;
+    self->txFrameState = NONE;
 }
 
 bool UartJson_putRxData(UartJsonHandle self, const uint8_t* data, size_t length){
@@ -420,6 +501,8 @@ bool UartJson_putRxData(UartJsonHandle self, const uint8_t* data, size_t length)
 }
 
 void UartJson_destroy(UartJsonHandle self){
+    ByteRingBuffer_destroy(self->frameHead);
+    ByteRingBuffer_destroy(self->frameTail);
     free(self);
     self = NULL;
 }
