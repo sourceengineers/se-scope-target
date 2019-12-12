@@ -33,11 +33,12 @@ typedef struct __CommandTIncParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
+CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
+        IObserverHandle observer){
     CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
     assert(self);
 
-    self->command = CommandTInc_create(scope);
+    self->command = CommandTInc_create(scope, observer);
     self->unpacker = unpacker;
     return self;
 }

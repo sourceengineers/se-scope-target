@@ -54,7 +54,7 @@ static void updatePacker(IObserverHandle observer, void* state);
 static bool runRx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
-    if(self->unpackingPending != SE_NONE){
+    if(self->unpackingPending == SE_NONE){
         return false;
     }
 
@@ -64,12 +64,13 @@ static bool runRx(IRunnableHandle runnable){
 
     bool parsingIsValid = self->unpacker->unpack(self->unpacker, self->unpackingPending);
 
-    // TODO: Add ACK here!
-    self->packObserver.update(&self->packObserver, NULL);
-
-    self->unpackingPending = false;
-
-    self->controlObserver->update(self->controlObserver, NULL);
+    if(parsingIsValid == true){
+        self->controlObserver->update(self->controlObserver, &self->unpackingPending);
+    } else {
+        MessageType type = SE_NAK;
+        self->controlObserver->update(self->controlObserver, &type);
+    }
+    self->packingPending = SE_NONE;
 
     return true;
 }
@@ -77,13 +78,13 @@ static bool runRx(IRunnableHandle runnable){
 static bool runTx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
-    if(self->packingPending != SE_NONE){
+    if(self->packingPending == SE_NONE){
         return false;
     }
 
-    self->packer->pack(self->packer, self->unpackingPending);
-    self->packingPending = false;
-    self->communicationObserver->update(self->communicationObserver, NULL);
+    self->packer->pack(self->packer, self->packingPending);
+    self->communicationObserver->update(self->communicationObserver, &self->packingPending);
+    self->packingPending = SE_NONE;
 
     return true;
 }

@@ -28,11 +28,11 @@ typedef struct __CommandClearParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandClearParserHandle CommandClearParser_create(IScopeHandle scope){
+CommandClearParserHandle CommandClearParser_create(IScopeHandle scope, IObserverHandle packObserver){
     CommandClearParserHandle self = malloc(sizeof(CommandClearParserPrivateData));
     assert(self);
 
-    self->command = CommandClear_create(scope);
+    self->command = CommandClear_create(scope, packObserver);
     return self;
 }
 

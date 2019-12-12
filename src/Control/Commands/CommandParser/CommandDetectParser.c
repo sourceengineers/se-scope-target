@@ -37,11 +37,11 @@ typedef struct __CommandDetectParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandDetectParserHandle CommandDetectParser_create(IObserverHandle packOverser){
+CommandDetectParserHandle CommandDetectParser_create(IObserverHandle observer){
     CommandDetectParserHandle self = malloc(sizeof(CommandDetectParserPrivateData));
     assert(self);
 
-    self->command = CommandDetect_create(packOverser);
+    self->command = CommandDetect_create(observer);
     return self;
 }
 

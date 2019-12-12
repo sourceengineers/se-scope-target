@@ -32,7 +32,8 @@ typedef struct __CommandTIncParserPrivateData* CommandTIncParserHandle;
  * @param unpacker
  * @return
  */
-CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
+CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
+                                                 IObserverHandle observer);
 
 /**
  * Returns the command

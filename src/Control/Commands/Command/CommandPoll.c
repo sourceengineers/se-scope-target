@@ -22,6 +22,7 @@ typedef struct __CommandPollPrivateData{
     ICommand command;
 
     IScopeHandle scope;
+    IObserverHandle observer;
 
 } CommandPollPrivateData;
 
@@ -33,18 +34,21 @@ static void run(ICommandHandle command);
 static void run(ICommandHandle command){
     CommandPollHandle self = (CommandPollHandle) command->handle;
     self->scope->poll(self->scope);
+    MessageType resp = SE_ACK;
+    self->observer->update(self->observer, &resp);
 }
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPollHandle CommandPoll_create(IScopeHandle scope){
+CommandPollHandle CommandPoll_create(IScopeHandle scope, IObserverHandle observer){
 
     CommandPollHandle self = malloc(sizeof(CommandPollPrivateData));
     assert(self);
 
     self->scope = scope;
 
+    self->observer = observer;
     self->command.handle = self;
     self->command.run = &run;
 

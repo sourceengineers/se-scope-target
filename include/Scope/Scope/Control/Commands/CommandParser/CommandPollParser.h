@@ -30,7 +30,7 @@ typedef struct __CommandPollParserPrivateData* CommandPollParserHandle;
  * @param scope
  * @return
  */
-CommandPollParserHandle CommandPollParser_create(IScopeHandle scope);
+CommandPollParserHandle CommandPollParser_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Returns the command

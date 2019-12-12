@@ -61,11 +61,11 @@ static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t m
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
+CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker, IObserverHandle observer){
     CommandAddrParserHandle self = malloc(sizeof(CommandAddrParserPrivateData));
     assert(self);
 
-    self->command = CommandAddr_create(scope);
+    self->command = CommandAddr_create(scope, observer);
     self->unpacker = unpacker;
     return self;
 }

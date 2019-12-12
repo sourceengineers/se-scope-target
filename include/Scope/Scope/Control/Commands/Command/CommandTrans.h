@@ -14,6 +14,7 @@
 #ifndef COMMANDTRANS_H_
 #define COMMANDTRANS_H_
 
+#include "Scope/GeneralPurpose/IObserver.h"
 #include "Scope/GeneralPurpose/DataTypes.h"
 
 #include "Scope/Control/ICommand.h"
@@ -32,7 +33,7 @@ typedef struct __CommandTransPrivateData* CommandTransHandle;
  * @param scope
  * @return
  */
-CommandTransHandle CommandTrans_create(IScopeHandle scope);
+CommandTransHandle CommandTrans_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Returns the ICommand interface

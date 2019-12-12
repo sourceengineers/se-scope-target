@@ -383,9 +383,9 @@
           <GroupName>Communication</GroupName>
           <Files>
             <File>
-              <FileName>UartJson.c</FileName>
+              <FileName>FramedIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Communication\Interfaces\UartJson.c</FilePath>
+              <FilePath>..\src\Communication\Interfaces\FramedIO.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -638,9 +638,9 @@
               <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
             </File>
             <File>
-              <FileName>ScopeUartStack.c</FileName>
+              <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Builders\ScopeUartStack.c</FilePath>
+              <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1033,9 +1033,9 @@
           <GroupName>Communication</GroupName>
           <Files>
             <File>
-              <FileName>UartJson.c</FileName>
+              <FileName>FramedIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Communication\Interfaces\UartJson.c</FilePath>
+              <FilePath>..\src\Communication\Interfaces\FramedIO.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1288,9 +1288,9 @@
               <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
             </File>
             <File>
-              <FileName>ScopeUartStack.c</FileName>
+              <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Builders\ScopeUartStack.c</FilePath>
+              <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1683,9 +1683,9 @@
           <GroupName>Communication</GroupName>
           <Files>
             <File>
-              <FileName>UartJson.c</FileName>
+              <FileName>FramedIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Communication\Interfaces\UartJson.c</FilePath>
+              <FilePath>..\src\Communication\Interfaces\FramedIO.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1938,9 +1938,9 @@
               <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
             </File>
             <File>
-              <FileName>ScopeUartStack.c</FileName>
+              <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Builders\ScopeUartStack.c</FilePath>
+              <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
             </File>
           </Files>
         </Group>

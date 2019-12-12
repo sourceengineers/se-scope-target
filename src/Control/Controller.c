@@ -50,7 +50,6 @@ typedef struct __ControllerPrivateData {
 
     MessageType commandPending;
 
-
     uint8_t pendingToPack;
 
 } ControllerPrivateData;
@@ -78,13 +77,17 @@ static bool runRx(IRunnableHandle runnable) {
         return false;
     }
 
-    ICommandHandle command = CommandParserDispatcher_run(self->commandParserDispatcher, self->commandPending);
-    command->run(command);
+    if (self->commandPending == SE_NAK) {
+        self->commandPackObserver.update(&self->commandPackObserver, &self->commandPending);
+        self->commandPending = SE_NONE;
+        return true;
+    }
 
-//    size_t numberOfCommands = self->unpacker->getNumberOfCommands(self->unpacker);
-//    ICommandHandle commands[numberOfCommands];
-//    fetchCommands(self, self->unpacker, commands, numberOfCommands);
-//    runCommands(commands, numberOfCommands);
+    ICommandHandle command = CommandParserDispatcher_run(self->commandParserDispatcher, self->commandPending);
+    if(command != NULL){
+        command->run(command);
+    }
+
     self->commandPending = SE_NONE;
 
     return true;
@@ -113,31 +116,14 @@ static bool runTx(IRunnableHandle runnable) {
     ICommandHandle packCommand;
 
     packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, type);
-    packCommand->run(packCommand);
+    if(packCommand != NULL){
+        packCommand->run(packCommand);
+    }
 
     self->packObserver->update(self->packObserver, &type);
 
     return true;
 }
-
-// static void
-// fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle *commands, size_t numberOfCommands) {
-//
-//     char commandName[MAX_COMMAND_LENGTH];
-//
-//     for (size_t i = 0; i < numberOfCommands; ++i) {
-//         unpacker->getNameOfCommand(unpacker, commandName, MAX_COMMAND_LENGTH, i);
-//         commands[i] = CommandParserDispatcher_run(self->commandParserDispatcher, commandName);
-//     }
-// }
-//
-// static void runCommands(ICommandHandle *commands, size_t numberOfCommands) {
-//     for (size_t i = 0; i < numberOfCommands; ++i) {
-//         if (commands[i] != NULL) {
-//             commands[i]->run(commands[i]);
-//         }
-//     }
-// }
 
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
@@ -149,7 +135,7 @@ static void commandPackUpdate(IObserverHandle observer, void *state) {
 
 static void commandUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
-    self->commandPending = true;
+    self->commandPending = *(MessageType*) state;
 }
 
 /******************************************************************************

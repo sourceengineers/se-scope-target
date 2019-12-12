@@ -22,6 +22,7 @@ typedef struct __CommandTransPrivateData{
     ICommand command;
 
     IScopeHandle scope;
+    IObserverHandle observer;
 
 } CommandTransPrivateData;
 
@@ -33,18 +34,21 @@ static void run(ICommandHandle command);
 static void run(ICommandHandle command){
     CommandTransHandle self = (CommandTransHandle) command->handle;
     self->scope->transmit(self->scope);
+    MessageType resp = SE_ACK;
+    self->observer->update(self->observer, &resp);
 }
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandTransHandle CommandTrans_create(IScopeHandle scope){
+CommandTransHandle CommandTrans_create(IScopeHandle scope, IObserverHandle observer){
 
     CommandTransHandle self = malloc(sizeof(CommandTransPrivateData));
     assert(self);
 
     self->scope = scope;
 
+    self->observer = observer;
     self->command.handle = self;
     self->command.run = &run;
 

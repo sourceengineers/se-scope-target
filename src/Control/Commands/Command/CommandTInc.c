@@ -23,6 +23,7 @@ typedef struct __CommandTIncPrivateData{
     ICommand command;
 
     IScopeHandle scope;
+    IObserverHandle observer;
 
     uint32_t timeIncrement;
 } CommandTIncPrivateData;
@@ -35,12 +36,14 @@ static void run(ICommandHandle command);
 static void run(ICommandHandle command){
     CommandTIncHandle self = (CommandTIncHandle) command->handle;
     self->scope->setTimeIncrement(self->scope, self->timeIncrement);
+    MessageType resp = SE_ACK;
+    self->observer->update(self->observer, &resp);
 }
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandTIncHandle CommandTInc_create(IScopeHandle scope){
+CommandTIncHandle CommandTInc_create(IScopeHandle scope, IObserverHandle observer){
 
     CommandTIncHandle self = malloc(sizeof(CommandTIncPrivateData));
     assert(self);
@@ -48,6 +51,7 @@ CommandTIncHandle CommandTInc_create(IScopeHandle scope){
     self->scope = scope;
     self->timeIncrement = 0;
 
+    self->observer = observer;
     self->command.handle = self;
     self->command.run = &run;
 

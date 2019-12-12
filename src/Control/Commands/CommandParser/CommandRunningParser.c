@@ -34,10 +34,11 @@ typedef struct __CommandRunningParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
+CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
+        IObserverHandle observer){
     CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
     assert(self);
-    self->command = CommandRunning_create(scope);
+    self->command = CommandRunning_create(scope, observer);
     self->unpacker = unpacker;
     return self;
 }

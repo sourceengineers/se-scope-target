@@ -26,6 +26,7 @@ typedef struct __CommandRunningPrivateData{
     IScopeHandle scope;
 
     size_t amountOfChannels;
+    IObserverHandle observer;
 
 } CommandRunningPrivateData;
 
@@ -50,12 +51,14 @@ static void run(ICommandHandle command){
             self->scope->setChannelStopped(self->scope, idOfChannelChanged);
         }
     }
+    MessageType resp = SE_ACK;
+    self->observer->update(self->observer, &resp);
 }
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningHandle CommandRunning_create(IScopeHandle scope){
+CommandRunningHandle CommandRunning_create(IScopeHandle scope, IObserverHandle observer){
 
     CommandRunningHandle self = malloc(sizeof(CommandRunningPrivateData));
     assert(self);
@@ -68,6 +71,7 @@ CommandRunningHandle CommandRunning_create(IScopeHandle scope){
     self->config.changedChannels = malloc(sizeof(int) * self->amountOfChannels);
     assert(self->config.changedChannels);
     self->config.numberOfChangedChannels = 0;
+    self->observer = observer;
 
     self->command.handle = self;
     self->command.run = &run;

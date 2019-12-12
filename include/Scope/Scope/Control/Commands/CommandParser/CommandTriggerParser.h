@@ -32,7 +32,8 @@ typedef struct __CommandTriggerParserPrivateData* CommandTriggerParserHandle;
  * @param unpacker
  * @return
  */
-CommandTriggerParserHandle CommandTriggerParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
+CommandTriggerParserHandle CommandTriggerParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
+        IObserverHandle observer);
 
 /**
  * Returns the command

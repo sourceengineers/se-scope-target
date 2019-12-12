@@ -52,14 +52,14 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
 
     /* Initialize needed command parser
     * Not all commands need parser, which is why there are less parser as commands */
-    self->commandAddrParser = CommandAddrParser_create(scope, unpacker);
-    self->commandRunningParser = CommandRunningParser_create(scope, unpacker);
-    self->commandTIncParser = CommandTIncParser_create(scope, unpacker);
-    self->commandTriggerParser = CommandTriggerParser_create(scope, unpacker);
-    self->commandPollParser = CommandPollParser_create(scope);
+    self->commandAddrParser = CommandAddrParser_create(scope, unpacker, packObserver);
+    self->commandRunningParser = CommandRunningParser_create(scope, unpacker, packObserver);
+    self->commandTIncParser = CommandTIncParser_create(scope, unpacker, packObserver);
+    self->commandTriggerParser = CommandTriggerParser_create(scope, unpacker, packObserver);
+    self->commandPollParser = CommandPollParser_create(scope, packObserver);
     self->commandAnnounceParser = CommandAnnounceParser_create(packObserver);
-    self->commandTransParser = CommandTransParser_create(scope);
-    self->commandClearParser = CommandClearParser_create(scope);
+    self->commandTransParser = CommandTransParser_create(scope, packObserver);
+    self->commandClearParser = CommandClearParser_create(scope, packObserver);
     self->commandDetectParser = CommandDetectParser_create(packObserver);
 
     return self;

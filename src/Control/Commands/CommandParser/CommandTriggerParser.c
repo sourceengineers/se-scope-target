@@ -69,10 +69,11 @@ static int parseStringToEdge(const char* edgeToParse){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandTriggerParserHandle CommandTriggerParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
+CommandTriggerParserHandle CommandTriggerParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
+        IObserverHandle observer){
     CommandTriggerParserHandle self = malloc(sizeof(CommandTriggerParserPrivateData));
     assert(self);
-    self->command = CommandTrigger_create(scope);
+    self->command = CommandTrigger_create(scope, observer);
     self->unpacker = unpacker;
 
     return self;

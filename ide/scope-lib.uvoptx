@@ -1407,8 +1407,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\src\Communication\Interfaces\UartJson.c</PathWithFileName>
-      <FilenameWithoutPath>UartJson.c</FilenameWithoutPath>
+      <PathWithFileName>..\src\Communication\Interfaces\FramedIO.c</PathWithFileName>
+      <FilenameWithoutPath>FramedIO.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1999,8 +1999,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\src\Builders\ScopeUartStack.c</PathWithFileName>
-      <FilenameWithoutPath>ScopeUartStack.c</FilenameWithoutPath>
+      <PathWithFileName>..\src\Builders\ScopeFramedStack.c</PathWithFileName>
+      <FilenameWithoutPath>ScopeFramedStack.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

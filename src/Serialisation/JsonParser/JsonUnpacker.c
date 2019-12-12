@@ -253,7 +253,7 @@ static bool unpack(IUnpackerHandle unpacker, MessageType type){
     size_t length = self->stream->length(self->stream);
 
     if(length <= 0){
-        return false;
+        return true;
     }
 
     char data[length];
@@ -360,10 +360,6 @@ static bool getBoolFromCommand(IUnpackerHandle unpacker, CommandFetchingInformat
     if(information->isInArray == true && field->type == JSMN_ARRAY){
         field = getValueFromArray(self, field, information->arrayIndex);
     }else if(information->isInArray ^ (field->type == JSMN_ARRAY)){
-        return false;
-    }
-
-    if(field->type != JSMN_PRIMITIVE){
         return false;
     }
 

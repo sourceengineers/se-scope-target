@@ -30,7 +30,7 @@ typedef struct __CommandTransParserPrivateData* CommandTransParserHandle;
  * @param scope
  * @return
  */
-CommandTransParserHandle CommandTransParser_create(IScopeHandle scope);
+CommandTransParserHandle CommandTransParser_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Returns the command

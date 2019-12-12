@@ -30,6 +30,7 @@
 #include "Scope/Core/IScope.h"
 
 #include <stdint.h>
+#include "Scope/GeneralPurpose/IObserver.h"
 
 /* Definition of the configuration struct */
 /**
@@ -56,7 +57,7 @@ typedef struct __CommandAddrPrivateData* CommandAddrHandle;
  * @param scope Dependency to the scope interface
  * @return
  */
-CommandAddrHandle CommandAddr_create(IScopeHandle scope);
+CommandAddrHandle CommandAddr_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Set the attributes which the command will use to configure the scope

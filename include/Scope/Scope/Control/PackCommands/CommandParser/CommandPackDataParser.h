@@ -13,6 +13,7 @@
 #ifndef COMMANDPACKDATAPARSER_H_
 #define COMMANDPACKDATAPARSER_H_
 
+#include "Scope/GeneralPurpose/IObserver.h"
 #include "Scope/Control/PackCommands/Command/CommandPackData.h"
 #include "Scope/Control/ICommand.h"
 #include "Scope/Control/IPacker.h"

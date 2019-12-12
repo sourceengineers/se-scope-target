@@ -22,6 +22,7 @@ typedef struct __CommandClearPrivateData{
     ICommand command;
 
     IScopeHandle scope;
+    IObserverHandle observer;
 
 } CommandClearPrivateData;
 
@@ -33,17 +34,20 @@ static void run(ICommandHandle command);
 static void run(ICommandHandle command){
     CommandClearHandle self = (CommandClearHandle) command->handle;
     self->scope->clear(self->scope);
+    MessageType resp = SE_ACK;
+    self->observer->update(self->observer, &resp);
 }
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandClearHandle CommandClear_create(IScopeHandle scope){
+CommandClearHandle CommandClear_create(IScopeHandle scope, IObserverHandle observer){
 
     CommandClearHandle self = malloc(sizeof(CommandClearPrivateData));
     assert(self);
 
     self->scope = scope;
+    self->observer = observer;
 
     self->command.handle = self;
     self->command.run = &run;

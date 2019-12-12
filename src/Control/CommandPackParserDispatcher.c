@@ -10,7 +10,6 @@
 #include "Scope/Control/CommandPackParserDispatcher.h"
 #include "Scope/Control/PackCommands/CommandParser/CommandPackAnnounceParser.h"
 #include "Scope/Control/PackCommands/CommandParser/CommandPackDataParser.h"
-#include "Scope/Control/PackCommands/CommandParser/CommandPackDetectParser.h"
 #include "Scope/Control/ParserDefinitions.h"
 
 #include <stdlib.h>
@@ -24,7 +23,6 @@
 typedef struct __CommandPackParserDispatcherPrivateData{
     CommandPackDataParserHandle commandPackDataParser;
     CommandPackAnnounceParserHandle commandPackAnnounceParser;
-    CommandPackDetectParserHandle commandPackDetectParser;
 } CommandPackParserDispatcherPrivateData;
 
 
@@ -39,7 +37,6 @@ CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle ann
 
     self->commandPackAnnounceParser = CommandPackAnnounceParser_create(announceStorage, packer);
     self->commandPackDataParser = CommandPackDataParser_create(scope, packer);
-    self->commandPackDetectParser = CommandPackDetectParser_create(packer);
 
     return self;
 }
@@ -50,12 +47,6 @@ ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle
         return CommandPackDataParser_getCommand(self->commandPackDataParser);
     }else if(type == SC_ANNOUNCE){
         return CommandPackAnnounceParser_getCommand(self->commandPackAnnounceParser);
-    }else if(type == SC_DETECT){
-        return CommandPackDetectParser_getCommand(self->commandPackDetectParser);
-    }else if(type == SE_ACK || type == SE_NAK){
-        // TODO: Add flow control command
-        return NULL;
-        return CommandPackDetectParser_getCommand(self->commandPackDetectParser);
     }
 
     return NULL;
@@ -65,7 +56,6 @@ void CommandPackParserDispatcher_destroy(CommandPackParserDispatcherHandle self)
 
     CommandPackDataParser_destroy(self->commandPackDataParser);
     CommandPackAnnounceParser_destroy(self->commandPackAnnounceParser);
-    CommandPackDetectParser_destroy(self->commandPackDetectParser);
 
     free(self);
     self = NULL;
