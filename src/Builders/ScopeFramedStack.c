@@ -42,9 +42,9 @@ typedef struct __ScopeFramedStackPrivateData{
 /******************************************************************************
  Private functions
 ******************************************************************************/
-ScopeFramendStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config){
+ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config){
 
-    ScopeFramendStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
+    ScopeFramedStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
     assert(self);
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
@@ -92,9 +92,9 @@ ScopeFramendStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config){
 
 }
 
-ScopeFramendStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig config, ScopeFramedStackMutex mutexes){
+ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig config, ScopeFramedStackMutex mutexes){
 
-    ScopeFramendStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
+    ScopeFramedStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
     assert(self);
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
@@ -140,27 +140,27 @@ ScopeFramendStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig
     return self;
 }
 
-void ScopeFramedStack_run(ScopeFramendStackHandle self){
+void ScopeFramedStack_run(ScopeFramedStackHandle self){
     ScopeRunner_run(self->scopeRunnable);
 }
 
-void ScopeFramedStack_runThreadScope(ScopeFramendStackHandle self){
+void ScopeFramedStack_runThreadScope(ScopeFramedStackHandle self){
     ScopeThreadRunner_runScope(self->scopeRunnable);
 }
 
-void ScopeFramedStack_runThreadStack(ScopeFramendStackHandle self){
+void ScopeFramedStack_runThreadStack(ScopeFramedStackHandle self){
     ScopeThreadRunner_runStack(self->scopeRunnable);
 }
 
-AnnounceStorageHandle ScopeFramedStack_getAnnounceStorage(ScopeFramendStackHandle self){
+AnnounceStorageHandle ScopeFramedStack_getAnnounceStorage(ScopeFramedStackHandle self){
     return self->announceStorage;
 }
 
-ITransceiverHandle ScopeFramedStack_getTranscevier(ScopeFramendStackHandle self){
+ITransceiverHandle ScopeFramedStack_getTranscevier(ScopeFramedStackHandle self){
     return self->transceiver;
 }
 
-void ScopeFramedStack_destroy(ScopeFramendStackHandle self){
+void ScopeFramedStack_destroy(ScopeFramedStackHandle self){
     BufferedByteStream_destroy(self->input);
     BufferedByteStream_destroy(self->output);
     JsonUnpacker_destroy(self->unpacker);

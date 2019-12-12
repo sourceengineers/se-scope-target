@@ -1,0 +1,14 @@
+.\debug-g071\trigger.o: ..\src\Core\Trigger.c
+.\debug-g071\trigger.o: ..\include\Scope\Scope/Core/Timestamper.h
+.\debug-g071\trigger.o: ..\public\Scope/GeneralPurpose/DataTypes.h
+.\debug-g071\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\debug-g071\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\debug-g071\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\debug-g071\trigger.o: ..\include\Scope\Scope/GeneralPurpose/IIntStream.h
+.\debug-g071\trigger.o: ..\include\Scope\Scope/Core/Trigger.h
+.\debug-g071\trigger.o: ..\include\Scope\Scope/Core/Channel.h
+.\debug-g071\trigger.o: ..\include\Scope\Scope/Core/ScopeTypes.h
+.\debug-g071\trigger.o: ..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h
+.\debug-g071\trigger.o: ..\include\Scope\Scope/GeneralPurpose/IFloatStream.h
+.\debug-g071\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\debug-g071\trigger.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h

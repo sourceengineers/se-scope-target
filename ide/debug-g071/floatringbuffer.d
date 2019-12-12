@@ -1,0 +1,9 @@
+.\debug-g071\floatringbuffer.o: ..\src\GeneralPurpose\FloatRingBuffer.c
+.\debug-g071\floatringbuffer.o: ..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h
+.\debug-g071\floatringbuffer.o: ..\public\Scope/GeneralPurpose/DataTypes.h
+.\debug-g071\floatringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\debug-g071\floatringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\debug-g071\floatringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\debug-g071\floatringbuffer.o: ..\include\Scope\Scope/GeneralPurpose/IFloatStream.h
+.\debug-g071\floatringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\debug-g071\floatringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h

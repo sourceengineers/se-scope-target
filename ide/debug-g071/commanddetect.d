@@ -1,0 +1,15 @@
+.\debug-g071\commanddetect.o: ..\src\Control\Commands\Command\CommandDetect.c
+.\debug-g071\commanddetect.o: ..\include\Scope\Scope/Control/Commands/Command/CommandDetect.h
+.\debug-g071\commanddetect.o: ..\public\Scope/GeneralPurpose/DataTypes.h
+.\debug-g071\commanddetect.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\debug-g071\commanddetect.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\debug-g071\commanddetect.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\debug-g071\commanddetect.o: ..\include\Scope\Scope/Control/ICommand.h
+.\debug-g071\commanddetect.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\debug-g071\commanddetect.o: ..\include\Scope\Scope/Core/IScope.h
+.\debug-g071\commanddetect.o: ..\include\Scope\Scope/GeneralPurpose/IIntStream.h
+.\debug-g071\commanddetect.o: ..\include\Scope\Scope/Core/ScopeTypes.h
+.\debug-g071\commanddetect.o: ..\include\Scope\Scope/GeneralPurpose/FloatRingBuffer.h
+.\debug-g071\commanddetect.o: ..\include\Scope\Scope/GeneralPurpose/IFloatStream.h
+.\debug-g071\commanddetect.o: ..\include\Scope\Scope/GeneralPurpose/IObserver.h
+.\debug-g071\commanddetect.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h

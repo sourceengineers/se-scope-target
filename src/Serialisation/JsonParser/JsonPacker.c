@@ -128,13 +128,7 @@ static bool channelMapIsEmpty(JsonPackerHandle self);
 
 static bool packChannelMap(JsonPackerHandle self);
 
-static void packPayloadMap(JsonPackerHandle self);
-
 static void packData(IPackerHandle packer, MessageType type);
-
-static void prepareDetect(IPackerHandle packer);
-
-static bool packDetect(JsonPackerHandle self, bool commaIsNeeded);
 
 static void reset(IPackerHandle packer);
 
@@ -498,14 +492,6 @@ static bool packChannelMap(JsonPackerHandle self) {
     appendData(self->byteStream, "}", 1, "", 0);
     appendData(self->byteStream, "}", 1, "", 0);
     return true;
-}
-
-static void packPayloadMap(JsonPackerHandle self) {
-
-    appendData(self->byteStream, "{", 1, "", 0);
-    packChannelMap(self);
-    packAnnouncement(self);
-    appendData(self->byteStream, "}", 1, "", 0);
 }
 
 static void packData(IPackerHandle packer, MessageType type) {
