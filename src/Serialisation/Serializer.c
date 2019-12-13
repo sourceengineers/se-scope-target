@@ -64,13 +64,14 @@ static bool runRx(IRunnableHandle runnable){
 
     bool parsingIsValid = self->unpacker->unpack(self->unpacker, self->unpackingPending);
 
-    if(parsingIsValid == true){
+    if(parsingIsValid){
         self->controlObserver->update(self->controlObserver, &self->unpackingPending);
     } else {
         MessageType type = SE_NAK;
         self->controlObserver->update(self->controlObserver, &type);
     }
-    self->packingPending = SE_NONE;
+		
+    self->unpackingPending = SE_NONE;
 
     return true;
 }
@@ -119,8 +120,8 @@ SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacke
     self->runRx.run = &runRx;
     self->runTx.run = &runTx;
 
-    self->unpackingPending = false;
-    self->packingPending = false;
+    self->unpackingPending = SE_NONE;
+    self->packingPending = SE_NONE;
     return self;
 }
 

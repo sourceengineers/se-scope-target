@@ -414,8 +414,8 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
             } else {
                 self->txFramedIOState = FOOT;
                 // Currently the checksum is not written in the buffer yet
-                uint8_t checksumLeft = (self->txChecksum & 0xF0) >> 4;
-                uint8_t checksumRight = self->txChecksum & 0xF;
+                uint8_t checksumLeft = (self->txChecksum & 0xFF00) >> 8;
+                uint8_t checksumRight = self->txChecksum & 0xFF;
                 self->txChecksum = 0;
                 ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumLeft, 1);
                 ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumRight, 1);

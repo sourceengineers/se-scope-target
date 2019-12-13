@@ -10,7 +10,7 @@ cmake-build-debug/
 examples/embedded/atollic-toolchain\.cmake
 
 examples/embedded/dev_tool_conf\.yaml
-
+ide/debug-g071/
 *.pyc
 
 tools/dev/rx
@@ -26,5 +26,5 @@ ide/Listings/scope-lib\.map
 
 *.schuepbs
 *.vscode/
-
+*.o
 tools/dev/__pycache__/
