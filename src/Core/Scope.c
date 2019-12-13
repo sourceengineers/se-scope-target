@@ -286,7 +286,7 @@ void Scope_destroy(ScopeHandle self){
 }
 
 void Scope_transmit(ScopeHandle self){
-    MessageType typeToPack = SC_DETECT;
+    MessageType typeToPack = SC_DATA;
     self->observer->update(self->observer, &typeToPack);
 }
 

@@ -256,9 +256,9 @@ static bool unpack(IUnpackerHandle unpacker, MessageType type){
         return true;
     }
 
-    char data[length];
+    char data[length + 1];
     self->stream->read(self->stream, (uint8_t*) data, length);
-
+		data[length] = '\0';
     if(strlen(data) >= INPUT_BUFFER_SIZE){
         return false;
     }
