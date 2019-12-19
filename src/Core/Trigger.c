@@ -417,7 +417,7 @@ uint32_t Trigger_getTriggerIndex(TriggerHandle self){
 
 bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
 
-    if(configSanityCheck(self, conf) == false){
+    if(!configSanityCheck(self, conf)){
         return false;
     }
     writeConfig(self, conf);

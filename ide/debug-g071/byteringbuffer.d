@@ -1,9 +1,0 @@
-.\debug-g071\byteringbuffer.o: ..\src\GeneralPurpose\ByteRingBuffer.c
-.\debug-g071\byteringbuffer.o: ..\include\Scope\Scope/GeneralPurpose/ByteRingBuffer.h
-.\debug-g071\byteringbuffer.o: ..\public\Scope/GeneralPurpose/DataTypes.h
-.\debug-g071\byteringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
-.\debug-g071\byteringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\debug-g071\byteringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-.\debug-g071\byteringbuffer.o: ..\include\Scope\Scope/GeneralPurpose/IByteStream.h
-.\debug-g071\byteringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
-.\debug-g071\byteringbuffer.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\assert.h

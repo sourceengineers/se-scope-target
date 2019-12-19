@@ -24,9 +24,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-
-#define MAX_COMMANDS_PEDNING_TO_PACK 5
-
 /******************************************************************************
  Define private data
 ******************************************************************************/
@@ -45,8 +42,7 @@ typedef struct __ControllerPrivateData {
 
     IObserverHandle packObserver;
 
-    MessageType packCommandPending[MAX_COMMANDS_PEDNING_TO_PACK];
-    size_t messagesPendingToPack;
+    MessageType packCommandPending;
 
     MessageType commandPending;
 
@@ -57,11 +53,6 @@ typedef struct __ControllerPrivateData {
 static bool runRx(IRunnableHandle runnable);
 
 static bool runTx(IRunnableHandle runnable);
-
-static void
-fetchCommands(ControllerHandle self, IUnpackerHandle unpacker, ICommandHandle *commands, size_t numberOfCommands);
-
-static void runCommands(ICommandHandle *commands, size_t numberOfCommands);
 
 static void commandPackUpdate(IObserverHandle observer, void *state);
 
@@ -101,36 +92,29 @@ static bool runTx(IRunnableHandle runnable) {
     }
 
     // Check if messages have to be packed
-    if (self->messagesPendingToPack <= 0) {
-        return false;
-    }
-
-    // If so, decrease the count and fetch the message
-    self->messagesPendingToPack -= 1;
-    MessageType type = self->packCommandPending[self->messagesPendingToPack];
-
-    if(type == SE_NONE){
+    if (self->packCommandPending == SE_NONE) {
         return false;
     }
 
     ICommandHandle packCommand;
 
-    packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, type);
+    packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
     if(packCommand != NULL){
         packCommand->run(packCommand);
     }
 
-    self->packObserver->update(self->packObserver, &type);
-
+    self->packObserver->update(self->packObserver, &self->packCommandPending);
+		self->packCommandPending = SE_NONE;
+		
     return true;
 }
 
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
-    if(self->messagesPendingToPack < MAX_COMMANDS_PEDNING_TO_PACK){
-        self->packCommandPending[self->messagesPendingToPack] = *(MessageType*) state;
-        self->messagesPendingToPack += 1;
+    if(self->packCommandPending != SE_NONE){
+        return;
     }
+    self->packCommandPending = *(MessageType*) state;
 }
 
 static void commandUpdate(IObserverHandle observer, void *state) {
@@ -164,13 +148,7 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
     self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer);
 
-    self->commandPending = false;
-    self->messagesPendingToPack = 0;
-
-    for(int i = 0; i < MAX_COMMANDS_PEDNING_TO_PACK; ++i){
-        self->packCommandPending[i] = SE_NONE;
-    }
-
+    self->commandPending = SE_NONE;
     return self;
 }
 
