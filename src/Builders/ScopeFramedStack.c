@@ -13,11 +13,9 @@
 #include "Scope/Builders/ScopeThreadRunner.h"
 #include "Scope/GeneralPurpose/IMutex.h"
 
-#include "Scope/Serialisation/JsonParser/JsonPacker.h"
-#include "Scope/Serialisation/JsonParser/JsonUnpacker.h"
-
 #include <assert.h>
 #include <stdlib.h>
+#include "Scope/Serialisation/Serializer.h"
 
 /******************************************************************************
  Define private data
@@ -30,8 +28,6 @@ typedef struct __ScopeFramedStackPrivateData{
     ScopeBuilderHandle builder;
     BufferedByteStreamHandle input;
     BufferedByteStreamHandle output;
-    JsonUnpackerHandle unpacker;
-    JsonPackerHandle packer;
     FramedIOHandle framedIO;
     ScopeRunnable scopeRunnable;
     size_t outputBufferSize;
@@ -48,18 +44,13 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config){
     assert(self);
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
-    self->outputBufferSize = JsonPacker_calculateBufferSize(config.amountOfChannels, config.sizeOfChannels,
+    self->outputBufferSize = Serializer_txCalculateBufferSize(config.amountOfChannels, config.sizeOfChannels,
                                                             config.addressesInAddressAnnouncer);
-    self->inputBufferSize = JsonUnpacker_calculateBufferSize();
+    self->inputBufferSize = Serializer_rxCalculateBufferSize();
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
     self->input = BufferedByteStream_create(self->inputBufferSize);
     self->output = BufferedByteStream_create(self->outputBufferSize);
-
-    /* Generate the desired packer and unpacker */
-    self->packer = JsonPacker_create(config.amountOfChannels, config.addressesInAddressAnnouncer,
-                                     BufferedByteStream_getIByteStream(self->output));
-    self->unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(self->input));
 
     /* Generate the communication handler */
     self->framedIO = FramedIO_create(config.callback, BufferedByteStream_getIByteStream(self->input),
@@ -82,8 +73,7 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config){
     ScopeBuilder_setDataMutex(self->builder, NULL);
     ScopeBuilder_setTimestampReference(self->builder, config.timestamp);
     ScopeBuilder_setCommunication(self->builder, FramedIO_getCommunicator(self->framedIO));
-    ScopeBuilder_setParser(self->builder, JsonPacker_getIPacker(self->packer), JsonUnpacker_getIUnpacker(self->unpacker));
-    ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage);
+    ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage, config.addressesInAddressAnnouncer);
 
     /* Build the scope */
     self->scopeRunnable = ScopeBuilder_build(self->builder);
@@ -98,18 +88,13 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig 
     assert(self);
 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
-    self->outputBufferSize = JsonPacker_calculateBufferSize(config.amountOfChannels, config.sizeOfChannels,
+    self->outputBufferSize = Serializer_txCalculateBufferSize(config.amountOfChannels, config.sizeOfChannels,
                                                             config.addressesInAddressAnnouncer);
-    self->inputBufferSize = JsonUnpacker_calculateBufferSize();
+    self->inputBufferSize = Serializer_rxCalculateBufferSize();
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
     self->input = BufferedByteStream_create(self->inputBufferSize);
     self->output = BufferedByteStream_create(self->outputBufferSize);
-
-    /* Generate the desired packer and unpacker */
-    self->packer = JsonPacker_create(config.amountOfChannels, config.addressesInAddressAnnouncer,
-                                     BufferedByteStream_getIByteStream(self->output));
-    self->unpacker = JsonUnpacker_create(BufferedByteStream_getIByteStream(self->input));
 
     /* Generate the communication handler */
     self->framedIO = FramedIO_create(config.callback, BufferedByteStream_getIByteStream(self->input),
@@ -131,8 +116,7 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig 
     ScopeBuilder_setDataMutex(self->builder, mutexes.dataMutex);
     ScopeBuilder_setTimestampReference(self->builder, config.timestamp);
     ScopeBuilder_setCommunication(self->builder, FramedIO_getCommunicator(self->framedIO));
-    ScopeBuilder_setParser(self->builder, JsonPacker_getIPacker(self->packer), JsonUnpacker_getIUnpacker(self->unpacker));
-    ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage);
+    ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage, config.addressesInAddressAnnouncer);
 
     /* Build the scope */
     self->scopeRunnable = ScopeBuilder_build(self->builder);
@@ -163,8 +147,6 @@ ITransceiverHandle ScopeFramedStack_getTranscevier(ScopeFramedStackHandle self){
 void ScopeFramedStack_destroy(ScopeFramedStackHandle self){
     BufferedByteStream_destroy(self->input);
     BufferedByteStream_destroy(self->output);
-    JsonUnpacker_destroy(self->unpacker);
-    JsonPacker_destroy(self->packer);
     FramedIO_destroy(self->framedIO);
     AnnounceStorage_destroy(self->announceStorage);
     ScopeBuilder_destroy(self->builder);

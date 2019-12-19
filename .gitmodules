@@ -4,3 +4,9 @@
 [submodule "3rdparty/jsmn/jsmn"]
 	path = 3rdparty/jsmn/jsmn
 	url = https://github.com/zserge/jsmn.git
+[submodule "3rdparty/nanopb"]
+	path = 3rdparty/nanopb
+	url = https://github.com/nanopb/nanopb.git
+[submodule "resources/protobuf"]
+	path = resources/protobuf
+	url = git@bitbucket.org:rockresu/se-scope-protocol.git

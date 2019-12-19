@@ -38,7 +38,7 @@ protected:
         _unpacker = JsonUnpacker_create(_iinput);
 
         _scopeMock = ScopeMock_create(MAX_CHANNELS);
-        _serializer = Serializer_create(JsonPacker_getIPacker(_packer), JsonUnpacker_getIUnpacker(_unpacker));
+        _serializer = Serializer_create(MAX_CHANNELS, MAX_ANNOUNCE, _ioutput);
         _controller = Controller_create(ScopeMock_getIScope(_scopeMock), JsonPacker_getIPacker(_packer), JsonUnpacker_getIUnpacker(_unpacker), NULL);
 
         _transceiver = FramedIO_getTransceiver(_frame);

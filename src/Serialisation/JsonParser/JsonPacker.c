@@ -98,27 +98,27 @@ inline static void appendUnsignedInt(IByteStreamHandle destination, ADDRESS_DATA
 inline static void appendSignedInt(IByteStreamHandle destination, int16_t origin, const char *endWith,
                                    size_t endWithSize);
 
-static void prepareChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
+static void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
 
-static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
+static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
 
 static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded);
 
-static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
+static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded);
 
 static void
-prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
+addTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
                char *triggerMode);
 
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded);
 
 static void
-prepareAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address);
+addAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address);
 
 static void
-prepareAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels);
+addAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels);
 
 static bool packAnnouncement(JsonPackerHandle self);
 
@@ -209,7 +209,7 @@ inline static void appendSignedInt(IByteStreamHandle destination, int16_t origin
     }
 }
 
-static void prepareChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId) {
+static void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     if (channelId >= self->maxNumberOfChannels) {
@@ -229,7 +229,7 @@ static void prepareChannel(IPackerHandle packer, FloatRingBufferHandle buffer, c
     self->dataPendingToBePacked = true;
 }
 
-static void prepareTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement) {
+static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     self->tIncReady = true;
@@ -254,7 +254,7 @@ static bool packTimeIncrement(JsonPackerHandle self, bool commaIsNeeded) {
 }
 
 
-static void prepareTimestamp(IPackerHandle packer, IIntStreamHandle timestamp) {
+static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     self->timestampReady = true;
@@ -296,7 +296,7 @@ static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded) {
 }
 
 static void
-prepareTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
+addTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
                char *triggerMode) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
@@ -341,7 +341,7 @@ static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded) {
 }
 
 static void
-prepareAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address) {
+addAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     if (self->numberOfAddressesToAnnounce >= self->maxAddressesToAnnounce) {
@@ -358,7 +358,7 @@ prepareAddressAnnouncement(IPackerHandle packer, const char *name, const char *t
     self->dataPendingToBePacked = true;
 }
 
-static void prepareAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels) {
+static void addAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
     self->timeBase = timeBase;
@@ -569,13 +569,13 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     self->packer.handle = self;
     self->packer.pack = &packData;
     self->packer.reset = &reset;
-    self->packer.prepareChannel = prepareChannel;
-    self->packer.prepareTimeIncrement = &prepareTimeIncrement;
-    self->packer.prepareTimestamp = &prepareTimestamp;
-    self->packer.prepareTrigger = &prepareTrigger;
-    self->packer.prepareAddressAnnouncement = &prepareAddressAnnouncement;
+    self->packer.addChannel = addChannel;
+    self->packer.addTimeIncrement = &addTimeIncrement;
+    self->packer.addTimestamp = &addTimestamp;
+    self->packer.addTrigger = &addTrigger;
+    self->packer.addAddressAnnouncement = &addAddressAnnouncement;
     self->packer.reset(&self->packer);
-    self->packer.prepareAnnouncement = &prepareAnnouncement;
+    self->packer.addAnnouncement = &addAnnouncement;
     self->packer.isReady = &isReady;
 
     return self;

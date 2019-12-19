@@ -52,21 +52,21 @@ typedef struct IPackerStruct{
      * @param buffer Passes the Swap buffer into the packer
      * @param channelId id of the channel
      */
-    void (* prepareChannel)(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
+    void (* addChannel)(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
 
     /**
      * Prepares the time increment
      * @param packer
      * @param timeIncrement
      */
-    void (* prepareTimeIncrement)(IPackerHandle packer, const uint32_t timeIncrement);
+    void (* addTimeIncrement)(IPackerHandle packer, const uint32_t timeIncrement);
 
     /**
      * Prepares the timestamp
      * @param packer
      * @param timestamp Reference to the timestamp stream
      */
-    void (* prepareTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
+    void (* addTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
 
     /**
      * Prepares the trigger
@@ -75,8 +75,8 @@ typedef struct IPackerStruct{
      * @param channelId
      * @param timestamp
      */
-    void (* prepareTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId,
-                            const uint32_t timestamp, char* triggerMode);
+    void (* addTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId,
+                            const uint32_t timestamp, TRIGGER_MODE triggerMode);
 
     /**
      * Prepares address announcement
@@ -85,7 +85,7 @@ typedef struct IPackerStruct{
      * @param type
      * @param address
      */
-    void (* prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type,
+    void (* addAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type,
                                         const ADDRESS_DATA_TYPE address);
 
     /**
@@ -95,7 +95,7 @@ typedef struct IPackerStruct{
      * @param version
      * @param maxChannels
      */
-    void (* prepareAnnouncement)(IPackerHandle packer, float timeBase, const char* version, size_t maxChannels);
+    void (* addAnnouncement)(IPackerHandle packer, float timeBase, const char* version, size_t maxChannels);
 
     /**
      * Resets the packer

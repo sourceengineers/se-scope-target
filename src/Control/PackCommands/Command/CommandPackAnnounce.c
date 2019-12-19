@@ -50,7 +50,7 @@ static void run(ICommandHandle command){
         AddressDefinition* addr = AnnounceStorage_getAddressToTransmit(self->announceStorage, i);
 
         if(addr != NULL){
-            self->packer->prepareAddressAnnouncement(self->packer, addr->name, getDataTypeName(addr->type),
+            self->packer->addAddressAnnouncement(self->packer, addr->name, getDataTypeName(addr->type),
                                                      addr->address);
         }
     }
@@ -61,7 +61,7 @@ static void run(ICommandHandle command){
     char version[SE_SCOPE_TARGET_VERSION_LENGTH];
     AnnounceStorage_getVersion(self->announceStorage, version);
 
-    self->packer->prepareAnnouncement(self->packer, timeBase, version, maxAmountOfChannels);
+    self->packer->addAnnouncement(self->packer, timeBase, version, maxAmountOfChannels);
 }
 
 /******************************************************************************

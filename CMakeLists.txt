@@ -6,43 +6,8 @@ set(PROJECT_NAME se-scope)
 ################################################################################
 # Set options
 ################################################################################
-if (ARCHITECTURE STREQUAL "X86")
-
-    # This option is used if the tests should be executed on a host machine,
-    # supporting 32 Bit architectures. This is useful since the micro controllers
-    # will probably run on 32 bit, but there are only few operating systems support this option
-    message("-- x86 architecture is on")
-    set(CMAKE_C_FLAGS -m32)
-    set(CMAKE_CXX_FLAGS "-m32 -fpermissive")
-
-    set(SE_TESTING ON)
-
-    # Inform the compiler to compile for 32 bit code
-    add_definitions(-DARCH_SIZE_32=1)
-
-elseif (ARCHITECTURE STREQUAL "X64" OR ARCHITECTURE STREQUAL "")
-
-    # X64 Host machines should be able to run tests as well as examples
-    message("-- x64 architecture is on")
-
-    set(SE_TESTING ON)
-
-    # Inform the compiler to compile for 64 bit code
-    add_definitions(-DARCH_SIZE_32=0)
-
-    set(CMAKE_MACOSX_RPATH 1)
-
-elseif (ARCHITECTURE STREQUAL "EMBEDDED")
-    message("-- EMBEDDED architecture is on")
-
-    # Disable testing and examples because they will not run on the
-    # host with a embedded compiler anyway
-    set(SE_TESTING OFF)
-
-    # Inform the compiler to compile for 32 bit code
-    add_definitions(-DARCH_SIZE_32=1)
-
-endif ()
+# Inform the compiler to compile for 32 bit code
+add_definitions(-DARCH_SIZE_32=1)
 
 project(${PROJECT_NAME} C ASM)
 
@@ -67,27 +32,23 @@ list (APPEND PROJECT_HEADER ${PROJECT_HEADER_PUBLIC})
 ################################################################################
 # GTest
 ################################################################################
-if (SE_TESTING)
-    enable_testing()
-    set(BUILD_GMOCK ON)
-    add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
-    set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
-    add_subdirectory(test)
-    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-endif ()
+enable_testing()
+option(BUILD_GMOCK ON)
+add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
+set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
+add_subdirectory(test)
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
-include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn" "${PROJECT_INCLUDE_DIR}" "${PROJECT_INCLUDE_DIR_PUBLIC}")
+include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn" "${PROJECT_DEPENDENCIES_DIR}/nanopb" "${PROJECT_INCLUDE_DIR}" "${PROJECT_INCLUDE_DIR_PUBLIC}")
+
+add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/jsmn)
+add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/nanopb)
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
-
-foreach (DEPENDENCY ${PROJECT_DEPENDENCIES})
-    add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/${DEPENDENCY})
-endforeach (DEPENDENCY)
-
-target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
+target_link_libraries(${PROJECT_NAME} jsmn protobuf-nanopb-static)
 
 ################################################################################
 # Install project

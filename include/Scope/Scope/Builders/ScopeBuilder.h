@@ -90,14 +90,6 @@ void ScopeBuilder_setStreams(ScopeBuilderHandle self, IByteStreamHandle input, I
 void ScopeBuilder_setTimestampReference(ScopeBuilderHandle self, uint32_t* timestamp);
 
 /**
- * Set the used protocol
- * @param self
- * @param packer Packer which will serialize the data of the scope.
- * @param unpacker Unpacker used to deserialize the commands.
- */
-void ScopeBuilder_setParser(ScopeBuilderHandle self, IPackerHandle packer, IUnpackerHandle unpacker);
-
-/**
  * Set the used communication interface
  * @param self
  * @param interface
@@ -110,8 +102,9 @@ void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle 
  * This is optional.
  * @param self
  * @param announceStorage
+ * @param maxAddresses
  */
-void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle announceStorage);
+void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle announceStorage, size_t maxAddresses);
 
 /**
  * Appends the mutex which protects the Tx path of the runner. If no mutex is passed,

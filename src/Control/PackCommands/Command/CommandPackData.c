@@ -66,7 +66,7 @@ static void run(ICommandHandle command){
     for(uint32_t i = 0; i < self->scope->getAmountOfChannels(self->scope); ++i){
         if(self->scope->channelHasToBePacked(self->scope, i) == true){
             FloatRingBufferHandle buffer = self->scope->getChannelBuffer(self->scope, i);
-            self->packer->prepareChannel(self->packer, buffer, i);
+            self->packer->addChannel(self->packer, buffer, i);
               anyChannelIsReady = true;
         }
     }
@@ -77,17 +77,17 @@ static void run(ICommandHandle command){
 
     TriggeredValues triggeredValues = self->scope->getTriggerData(self->scope);
 
-    char triggerMode[KEYWORD_TGR_MODE_MAX_LENGTH];
-    mapTriggerModeToString(triggeredValues.mode, triggerMode, KEYWORD_TGR_MODE_MAX_LENGTH);
+//    char triggerMode[KEYWORD_TGR_MODE_MAX_LENGTH];
+//    mapTriggerModeToString(triggeredValues.mode, triggerMode, KEYWORD_TGR_MODE_MAX_LENGTH);
 
-    self->packer->prepareTrigger(self->packer, triggeredValues.isTriggered, triggeredValues.channelId, \
-                                   triggeredValues.triggerTimestamp, triggerMode);
+    self->packer->addTrigger(self->packer, triggeredValues.isTriggered, triggeredValues.channelId, \
+                                   triggeredValues.triggerTimestamp, triggeredValues.mode);
 
     IIntStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
-    self->packer->prepareTimestamp(self->packer, scopeTimestamp);
+    self->packer->addTimestamp(self->packer, scopeTimestamp);
 
     const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
-    self->packer->prepareTimeIncrement(self->packer, timeIncrement);
+    self->packer->addTimeIncrement(self->packer, timeIncrement);
 }
 
 /******************************************************************************

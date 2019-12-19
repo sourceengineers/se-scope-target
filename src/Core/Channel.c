@@ -42,7 +42,7 @@ static float castDataToFloat(ChannelHandle self);
 
 /* Pushes the latest data point into the trigger stream and copies the last one
  * further back */
-static void prepareTriggerData(ChannelHandle self, float triggerData);
+static void addTriggerData(ChannelHandle self, float triggerData);
 
 /* Sets a new state */
 static void setState(ChannelHandle self, CHANNEL_STATES state);
@@ -94,7 +94,7 @@ static float castDataToFloat(ChannelHandle self) {
     return data;
 }
 
-static void prepareTriggerData(ChannelHandle self, float triggerData) {
+static void addTriggerData(ChannelHandle self, float triggerData) {
 
     self->stream->flush(self->stream);
 
@@ -187,7 +187,7 @@ IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self) {
 void Channel_poll(ChannelHandle self) {
     if (getState(self) == CHANNEL_RUNNING) {
         const float polledData = castDataToFloat(self);
-        prepareTriggerData(self, polledData);
+        addTriggerData(self, polledData);
 
         /* Channel start reading data out of the buffer if it is full */
         if (FloatRingBuffer_write(self->buffers[POLL_BUFFER], &polledData, 1) == -1) {
