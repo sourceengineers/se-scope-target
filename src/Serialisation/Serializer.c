@@ -40,6 +40,7 @@ typedef struct __SerializerPrivateData{
     IObserver unpackObserver;
     JsonPackerHandle jsonPacker;
     NanopbPackerHandle nanopbPacker;
+    JsonUnpackerHandle jsonUnpacker;
     IByteStreamHandle output;
 
     IObserverHandle controlObserver;
@@ -124,7 +125,7 @@ void pack(IPackerHandle packer, MessageType type){
 
 bool isReady(IPackerHandle packer){
     SerializerHandle self = (SerializerHandle) packer->handle;
-    return self->packingPending != SE_NONE && self->output->length(self->output) == 0;
+    return self->packingPending == SE_NONE && self->output->length(self->output) == 0;
 }
 
 void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId){
@@ -169,13 +170,16 @@ void reset(IPackerHandle packer){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-        SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByteStreamHandle output){
+SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByteStreamHandle output,
+        IUnpackerHandle unpacker){
 
     SerializerHandle self = malloc(sizeof(SerializerPrivateData));
     assert(self);
 
     self->jsonPacker = JsonPacker_create(maxChannels, maxAddresses, output);
     self->nanopbPacker = NanopbPacker_create(maxChannels, maxAddresses, output);
+
+    self->unpacker = unpacker;
 
     self->packObserver.handle = self;
     self->unpackObserver.handle = self;
@@ -186,6 +190,17 @@ void reset(IPackerHandle packer){
     self->runRx.run = &runRx;
     self->runTx.run = &runTx;
     self->output = output;
+
+    self->packer.handle = self;
+    self->packer.addTimeIncrement = &addTimeIncrement;
+    self->packer.addTrigger = &addTrigger;
+    self->packer.reset = &reset;
+    self->packer.pack = &pack;
+    self->packer.addAnnouncement = &addAnnouncement;
+    self->packer.isReady = &isReady;
+    self->packer.addChannel = &addChannel;
+    self->packer.addAddressAnnouncement = &addAddressAnnouncement;
+    self->packer.addTimestamp = &addTimestamp;
 
     self->unpackingPending = SE_NONE;
     self->packingPending = SE_NONE;

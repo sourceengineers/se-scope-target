@@ -121,7 +121,7 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
     self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->timestamp);
     self->unpacker = JsonUnpacker_create(self->input);
 
-    self->serializer = Serializer_create(self->amountOfChannels, self->maxAddresses, self->output);
+    self->serializer = Serializer_create(self->amountOfChannels, self->maxAddresses, self->output, JsonUnpacker_getIUnpacker(self->unpacker));
     self->controller = Controller_create(Scope_getIScope(self->scope), Serializer_getPacker(self->serializer), JsonUnpacker_getIUnpacker(self->unpacker), self->announceStorage);
 
     /* Connect all observers */

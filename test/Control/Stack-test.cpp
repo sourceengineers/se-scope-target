@@ -34,12 +34,14 @@ protected:
         _ioutput = BufferedByteStream_getIByteStream(_output);
         _frame = FramedIO_create(NULL, _iinput, _ioutput);
 
-        _packer = JsonPacker_create(MAX_CHANNELS, MAX_ANNOUNCE, _ioutput);
         _unpacker = JsonUnpacker_create(_iinput);
 
+        _serializer = Serializer_create(MAX_CHANNELS, MAX_ANNOUNCE, _ioutput, JsonUnpacker_getIUnpacker(_unpacker));
+
+        _packer = Serializer_getPacker(_serializer);
+
         _scopeMock = ScopeMock_create(MAX_CHANNELS);
-        _serializer = Serializer_create(MAX_CHANNELS, MAX_ANNOUNCE, _ioutput);
-        _controller = Controller_create(ScopeMock_getIScope(_scopeMock), JsonPacker_getIPacker(_packer), JsonUnpacker_getIUnpacker(_unpacker), NULL);
+        _controller = Controller_create(ScopeMock_getIScope(_scopeMock), _packer, JsonUnpacker_getIUnpacker(_unpacker), NULL);
 
         _transceiver = FramedIO_getTransceiver(_frame);
         _communicator = FramedIO_getCommunicator(_frame);
@@ -136,7 +138,7 @@ protected:
     SerializerHandle _serializer;
     ControllerHandle _controller;
     JsonUnpackerHandle _unpacker;
-    JsonPackerHandle _packer;
+    IPackerHandle _packer;
     ITransceiverHandle _transceiver;
     ICommunicatorHandle _communicator;
     IObserverHandle _scopeUpdate;

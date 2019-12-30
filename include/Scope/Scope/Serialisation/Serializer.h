@@ -35,7 +35,8 @@ typedef struct __SerializerPrivateData* SerializerHandle;
  * @param unpacker
  * @return
  */
-SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByteStreamHandle output);
+SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByteStreamHandle output,
+                                   IUnpackerHandle unpacker);
 
 /**
  * Returns the runnable for the Rx path
