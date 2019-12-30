@@ -30,23 +30,18 @@ typedef enum _SC_Trigger_Mode {
 /* Struct definitions */
 typedef struct _SC_Channel {
     pb_callback_t data;
-    bool has_id;
     uint32_t id;
 } SC_Channel;
 
 typedef struct _SC_Trigger {
-    bool has_cl_id;
     uint32_t cl_id;
-    bool has_cl_data_ind;
     uint32_t cl_data_ind;
-    bool has_mode;
     SC_Trigger_Mode mode;
 } SC_Trigger;
 
 typedef struct _SC_Data {
     pb_callback_t channels;
     pb_callback_t timestamps;
-    bool has_t_inc;
     uint32_t t_inc;
     bool has_trigger;
     SC_Trigger trigger;
@@ -64,12 +59,12 @@ typedef struct _SC_Data {
 
 
 /* Initializer values for message structs */
-#define SC_Trigger_init_default                  {false, 0, false, 0, false, _SC_Trigger_Mode_MIN}
-#define SC_Channel_init_default                  {{{NULL}, NULL}, false, 0}
-#define SC_Data_init_default                     {{{NULL}, NULL}, {{NULL}, NULL}, false, 0, false, SC_Trigger_init_default}
-#define SC_Trigger_init_zero                     {false, 0, false, 0, false, _SC_Trigger_Mode_MIN}
-#define SC_Channel_init_zero                     {{{NULL}, NULL}, false, 0}
-#define SC_Data_init_zero                        {{{NULL}, NULL}, {{NULL}, NULL}, false, 0, false, SC_Trigger_init_zero}
+#define SC_Trigger_init_default                  {0, 0, _SC_Trigger_Mode_MIN}
+#define SC_Channel_init_default                  {{{NULL}, NULL}, 0}
+#define SC_Data_init_default                     {{{NULL}, NULL}, {{NULL}, NULL}, 0, false, SC_Trigger_init_default}
+#define SC_Trigger_init_zero                     {0, 0, _SC_Trigger_Mode_MIN}
+#define SC_Channel_init_zero                     {{{NULL}, NULL}, 0}
+#define SC_Data_init_zero                        {{{NULL}, NULL}, {{NULL}, NULL}, 0, false, SC_Trigger_init_zero}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define SC_Channel_data_tag                      1
@@ -84,22 +79,22 @@ typedef struct _SC_Data {
 
 /* Struct field encoding specification for nanopb */
 #define SC_Trigger_FIELDLIST(X, a) \
-X(a, STATIC, OPTIONAL, UINT32, cl_id, 1) \
-X(a, STATIC, OPTIONAL, UINT32, cl_data_ind, 2) \
-X(a, STATIC, OPTIONAL, UENUM, mode, 3)
+X(a, STATIC, SINGULAR, UINT32, cl_id, 1) \
+X(a, STATIC, SINGULAR, UINT32, cl_data_ind, 2) \
+X(a, STATIC, SINGULAR, UENUM, mode, 3)
 #define SC_Trigger_CALLBACK NULL
 #define SC_Trigger_DEFAULT NULL
 
 #define SC_Channel_FIELDLIST(X, a) \
 X(a, CALLBACK, REPEATED, FLOAT, data, 1) \
-X(a, STATIC, OPTIONAL, UINT32, id, 2)
+X(a, STATIC, SINGULAR, UINT32, id, 2)
 #define SC_Channel_CALLBACK pb_default_field_callback
 #define SC_Channel_DEFAULT NULL
 
 #define SC_Data_FIELDLIST(X, a) \
 X(a, CALLBACK, REPEATED, MESSAGE, channels, 1) \
-X(a, CALLBACK, REPEATED, UINT32, timestamps, 2) \
-X(a, STATIC, OPTIONAL, UINT32, t_inc, 3) \
+X(a, CALLBACK, REPEATED, FIXED32, timestamps, 2) \
+X(a, STATIC, SINGULAR, UINT32, t_inc, 3) \
 X(a, STATIC, OPTIONAL, MESSAGE, trigger, 4)
 #define SC_Data_CALLBACK pb_default_field_callback
 #define SC_Data_DEFAULT NULL

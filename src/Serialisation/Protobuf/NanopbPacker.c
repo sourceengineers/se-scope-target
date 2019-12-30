@@ -85,6 +85,7 @@ static bool writeStreamCallback(pb_ostream_t *stream, const pb_byte_t *buf, size
 
 static void pack(IPackerHandle packer, MessageType type);
 
+static size_t getWidthOfVarint(uint32_t data);
 /******************************************************************************
  Private functions
 ******************************************************************************/
@@ -141,47 +142,87 @@ static bool writeStreamCallback(pb_ostream_t *stream, const pb_byte_t *buf, size
     return true;
 }
 
-
-static bool writeChannelData(pb_ostream_t* stream, const pb_field_t* field, void* const* arg){
-    if(!pb_encode_tag_for_field(stream, field))
-        return false;
-
-    ChannelDef channel = *(ChannelDef*) (*arg);
-    size_t length = FloatRingBuffer_getNumberOfUsedData(channel.stream);
-    for(size_t i = 0; i < length; i++){
-        float data;
-        FloatRingBuffer_read(channel.stream, &data, 1);
-        pb_encode_fixed32(stream, &data);
+static size_t getWidthOfVarint(uint32_t data){
+    for(size_t i = 1; i < 4; i++){
+        if(data >> i * 4 == 0){
+            return i;
+        }
     }
-    return true;
+    return 1;
 }
 
 static bool writeTimestamp(pb_ostream_t* stream, const pb_field_t* field, void* const* arg){
-    if(!pb_encode_tag_for_field(stream, field))
-        return false;
-
     IIntStreamHandle timestamp = (IIntStreamHandle) (*arg);
     size_t length = timestamp->length(timestamp);
+
+    if(!pb_encode_tag(stream, PB_WT_STRING, field->tag))
+        return false;
+
+    if(!pb_encode_varint(stream, length * 4))
+        return false;
+
     for(size_t i = 0; i < length; i++){
         uint32_t data = timestamp->readData(timestamp);
-        pb_encode_varint(stream, &data);
+        if(pb_encode_fixed32(stream, &data) == false){
+            return false;
+        };
     }
     return true;
 }
 
+static bool writeChannelData(pb_ostream_t* stream, const pb_field_t* field, void* const* arg){
+    ChannelDef channel = *(ChannelDef*) (*arg);
+    size_t length = FloatRingBuffer_getNumberOfUsedData(channel.stream);
 
-static bool writeChannel(pb_ostream_t* stream, const pb_field_t* field, void* const* arg){
-
-    if(!pb_encode_tag_for_field(stream, field))
+    if(!pb_encode_tag(stream, PB_WT_STRING, field->tag))
         return false;
 
+    if(!pb_encode_varint(stream, length * 4))
+        return false;
+
+    for(size_t i = 0; i < length; i++){
+        float data;
+        FloatRingBuffer_read(channel.stream, &data, 1);
+
+        if(pb_encode_fixed32(stream, &data) == false){
+            return false;
+        };
+    }
+    return true;
+}
+
+static bool writeChannel(pb_ostream_t* stream, const pb_field_t* field, void* const* arg){
     ChannelsDef channels = *(ChannelsDef*) (*arg);
     SC_Channel channel = SC_Channel_init_zero;
-    channel.data.funcs.encode = &writeChannelData;
+
     for(size_t i = 0; i < channels.amountOfChannels; i++){
         channel.data.arg = &channels.channels[i];
+        channel.data.funcs.encode = &writeChannelData;
         channel.id = channels.channels[i].id;
-        pb_encode(stream, SC_Channel_fields, &channel);
+
+        if(!pb_encode_tag(stream, PB_WT_STRING, field->tag))
+            return false;
+
+        size_t length = FloatRingBuffer_getNumberOfUsedData(channels.channels[i].stream);
+
+        // Length of data: length * 4 for float data
+        // channel data wiretype + field id = 1
+        // inner length of data calculated with getWidthOfVarint()
+
+        // Id is only included when != 0
+        // channel id in varint calculated with getWidthOfVarint()
+        // channel id wiretype + field id = 1
+        size_t idSize = 0;
+        if(channels.channels[i].id != 0){
+            idSize = 1 + getWidthOfVarint(channels.channels[i].id);
+        }
+
+        if(!pb_encode_varint(stream, length * 4 + 1 + idSize + getWidthOfVarint(length)))
+            return false;
+
+        if(!pb_encode(stream, SC_Channel_fields, &channel)){
+            return false;
+        };
     }
     return true;
 }
@@ -189,7 +230,6 @@ static bool writeChannel(pb_ostream_t* stream, const pb_field_t* field, void* co
 static void packScData(NanopbPackerHandle self){
 
     SC_Data data = SC_Data_init_zero;
-    data.has_trigger = false;
 
     if(self->trigger.isTriggered){
         data.has_trigger = true;
@@ -198,11 +238,17 @@ static void packScData(NanopbPackerHandle self){
         data.trigger.mode  = (SC_Trigger_Mode) self->trigger.triggerMode;
     }
 
-    data.timestamps.funcs.encode = &writeTimestamp;
-    data.timestamps.arg = self->timestamp;
+    data.t_inc = self->timeIncrement;
 
-    data.channels.arg = &self->channels;
-    data.channels.funcs.encode = &writeChannel;
+    if(self->timestamp != NULL){
+        data.timestamps.funcs.encode = &writeTimestamp;
+        data.timestamps.arg = self->timestamp;
+    }
+
+    if(self->channels.amountOfChannels > 0){
+        data.channels.arg = &self->channels;
+        data.channels.funcs.encode = &writeChannel;
+    }
 
     pb_encode(&self->wrapped, SC_Data_fields, &data);
 
@@ -215,7 +261,6 @@ static void pack(IPackerHandle packer, MessageType type){
         packScData(self);
     }
 }
-
 
 /******************************************************************************
  Public functions

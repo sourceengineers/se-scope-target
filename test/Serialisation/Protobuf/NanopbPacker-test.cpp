@@ -50,8 +50,6 @@ TEST_F(NanopbPackerTest, pack_announce
     IIntStreamHandle timestamp = BufferedIntStream_getIIntStream(BufferedIntStream_create(SIZE_OF_CHANNELS));
     FloatRingBufferHandle buf1 = FloatRingBuffer_create(SIZE_OF_CHANNELS);
     FloatRingBufferHandle buf2 = FloatRingBuffer_create(SIZE_OF_CHANNELS);
-    _iPacker->addTrigger(_iPacker, true, 1, 1000, TRIGGER_NORMAL);
-    _iPacker->addTimeIncrement(_iPacker, 10);
     float value;
     value = -23.5354f;
     FloatRingBuffer_write(buf1, &value, 1);
@@ -81,12 +79,18 @@ TEST_F(NanopbPackerTest, pack_announce
     _iPacker->addChannel(_iPacker, buf1, 0);
     _iPacker->addChannel(_iPacker, buf2, 1);
     _iPacker->addTrigger(_iPacker, true, 1, 100, TRIGGER_ONESHOT);
+    _iPacker->addTimeIncrement(_iPacker, 10);
     _iPacker->pack(_iPacker, SC_DATA);
-
 
     size_t dataPending = _outputStream->length(_outputStream);
     char data[dataPending];
     _outputStream->read(_outputStream, (uint8_t*) data, dataPending);
 
-    // How do we properly compare the produced output?
+    vector<uint8_t> v_o;
+    v_o.assign(data, data + dataPending);
+    EXPECT_THAT(v_o, ElementsAre(10, 26, 10, 24, 128, 72, 188, 193, 104, 171, 95, 77, 140, 134, 103, 54, 140,
+            134, 103, 182, 0, 0, 0, 0, 0, 0, 192, 63, 10, 28, 10, 24, 128, 72, 188, 193, 104, 171, 95, 77, 140, 134,
+            103, 54, 140, 134, 103, 182, 0, 0, 0, 0, 0, 0, 192, 63, 16, 1, 18, 24, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0,
+            3, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0, 24, 10, 34, 6, 8, 1, 16, 100, 24, 2
+    ));
 }
