@@ -59,6 +59,7 @@ typedef struct __NanopbPackerPrivateData {
     TriggerDef trigger;
     uint32_t timeIncrement;
     IIntStreamHandle timestamp;
+		IByteStreamHandle output;
 
 } NanopbPackerPrivateData;
 
@@ -78,6 +79,8 @@ static void
 addAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels);
 
 static void reset(IPackerHandle packer);
+
+static void resetSelf(NanopbPackerHandle self);
 
 static bool isReady(IPackerHandle packer);
 
@@ -130,6 +133,7 @@ static void addAnnouncement(IPackerHandle packer, float timeBase, const char *ve
 
 static void reset(IPackerHandle packer) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
+		resetSelf(self);
 }
 
 static bool isReady(IPackerHandle packer){
@@ -254,12 +258,23 @@ static void packScData(NanopbPackerHandle self){
 
 }
 
+static void resetSelf(NanopbPackerHandle self){
+    self->channels.amountOfChannels = 0;
+		self->wrapped.bytes_written = 0;
+}
+
 static void pack(IPackerHandle packer, MessageType type){
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
 
+		if(self->output->length(self->output) != 0) {
+        return;
+    }
+	
     if(type == SC_DATA) {
         packScData(self);
     }
+		
+		resetSelf(self);
 }
 
 /******************************************************************************
@@ -274,7 +289,9 @@ NanopbPackerHandle NanopbPacker_create(size_t maxNumberOfChannels, size_t maxAdd
     self->wrapped.callback = &writeStreamCallback;
     self->wrapped.max_size = output->capacity(output);
     self->wrapped.bytes_written = 0;
+																	
 
+		self->output = output;
     self->channels.channels = malloc(sizeof(ChannelDef) * maxNumberOfChannels);
     self->maxNumberOfChannels = maxNumberOfChannels;
 

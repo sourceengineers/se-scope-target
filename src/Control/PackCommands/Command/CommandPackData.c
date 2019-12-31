@@ -77,9 +77,6 @@ static void run(ICommandHandle command){
 
     TriggeredValues triggeredValues = self->scope->getTriggerData(self->scope);
 
-//    char triggerMode[KEYWORD_TGR_MODE_MAX_LENGTH];
-//    mapTriggerModeToString(triggeredValues.mode, triggerMode, KEYWORD_TGR_MODE_MAX_LENGTH);
-
     self->packer->addTrigger(self->packer, triggeredValues.isTriggered, triggeredValues.channelId, \
                                    triggeredValues.triggerTimestamp, triggeredValues.mode);
 
