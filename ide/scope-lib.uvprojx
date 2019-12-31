@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\;..\3rdparty\nanopb\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -606,6 +606,31 @@
               <FileName>JsonUnpacker.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
+            </File>
+            <File>
+              <FileName>NanopbPacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
+            </File>
+            <File>
+              <FileName>se-scope.pb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_decode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_decode.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_encode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1247,6 +1272,31 @@
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
             </File>
+            <File>
+              <FileName>NanopbPacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
+            </File>
+            <File>
+              <FileName>se-scope.pb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_decode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_decode.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_encode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1886,6 +1936,31 @@
               <FileName>JsonUnpacker.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
+            </File>
+            <File>
+              <FileName>NanopbPacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
+            </File>
+            <File>
+              <FileName>se-scope.pb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_decode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_decode.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_encode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
             </File>
           </Files>
         </Group>
