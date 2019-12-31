@@ -21,7 +21,6 @@
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Serialisation/Protobuf/NanopbPacker.h>
 #include <Scope/Serialisation/Protobuf/NanopbUnpacker.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h.dep>
 
 
 /******************************************************************************

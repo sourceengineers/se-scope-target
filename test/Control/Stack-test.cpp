@@ -9,7 +9,6 @@ extern "C" {
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/Serialisation/Serializer.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h.dep>
 #include <Scope/Serialisation/Serializer.h>
 }
 

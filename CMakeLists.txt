@@ -16,7 +16,6 @@ project(${PROJECT_NAME} C ASM)
 ################################################################################
 set(PROJECT_SOURCE_DIR src)
 set(PROJECT_DEPENDENCIES_DIR 3rdparty)
-set(PROJECT_DEPENDENCIES jsmn)
 set(PROJECT_INCLUDE_DIR include/Scope)
 set(PROJECT_INCLUDE_DIR_PUBLIC public)
 set(PROJECT_TEST_DIR test)
@@ -42,13 +41,12 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
-include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn" "${PROJECT_DEPENDENCIES_DIR}/nanopb" "${PROJECT_INCLUDE_DIR}" "${PROJECT_INCLUDE_DIR_PUBLIC}")
+include_directories( "${PROJECT_DEPENDENCIES_DIR}/nanopb" "${PROJECT_INCLUDE_DIR}" "${PROJECT_INCLUDE_DIR_PUBLIC}")
 
-add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/jsmn)
 add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/nanopb)
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
-target_link_libraries(${PROJECT_NAME} jsmn protobuf-nanopb-static)
+target_link_libraries(${PROJECT_NAME} protobuf-nanopb-static)
 
 ################################################################################
 # Install project
