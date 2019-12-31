@@ -21,9 +21,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "cf_running";
-
 /* Class data */
 typedef struct __CommandRunningParserPrivateData{
     CommandRunningHandle command;
@@ -49,52 +46,29 @@ ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
         return NULL;
     }
 
-    const int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, (const char*) commandName);
+    const size_t amount = self->unpacker->cfRunning_getAmount(self->unpacker);
 
-    if(numberOfFields == -1){
-        return NULL;
-    }
+    uint32_t channelIds[amount];
+    CHANNEL_STATES newStates[amount];
 
-    uint32_t channelIds[numberOfFields];
-    CHANNEL_STATES newStates[numberOfFields];
+    for(size_t i = 0; i < amount; ++i){
 
-    char nameOfField[MAX_FIELD_LENGTH];
-
-    for(size_t i = 0; i < numberOfFields; ++i){
-
-        bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField, MAX_FIELD_LENGTH, i);
-
-        if(foundField == true){
-            char* endPtr;
-            channelIds[i] = (uint32_t) strtoul(nameOfField, &endPtr, 10);
-
-            if(*endPtr != '\0'){
-                return NULL;
-            }
-
-            CommandFetchingInformation information = {.commandName = commandName, .fieldName = nameOfField,
-                    .isInArray = false, .arrayIndex = 0};
-
-            bool newState = self->unpacker->getBoolFromCommand(self->unpacker, &information);
-            if(newState == true){
-                newStates[i] = CHANNEL_RUNNING;
-            }else{
-                newStates[i] = CHANNEL_STOPPED;
-            }
+        CfRunningDef running = self->unpacker->cfRunning_getChannel(self->unpacker, i);
+        channelIds[i] = running.id;
+        if(running.newState == true){
+            newStates[i] = CHANNEL_RUNNING;
+        }else{
+            newStates[i] = CHANNEL_STOPPED;
         }
     }
 
     CommandRunningConf conf = {.newStates = newStates, \
                           .changedChannels = channelIds, \
-                          .numberOfChangedChannels = numberOfFields};
+                          .numberOfChangedChannels = amount};
 
     CommandRunning_setAttributes(self->command, conf);
 
     return CommandRunning_getICommand(self->command);
-}
-
-char* CommandRunningParser_getName(void){
-    return commandName;
 }
 
 void CommandRunningParser_destroy(CommandRunningParserHandle self){

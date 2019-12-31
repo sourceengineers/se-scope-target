@@ -33,8 +33,7 @@ typedef enum{
  */
 typedef struct{
     float level;    // Level on which the trigger detects for
-    int edge;       // Edge which the trigger detects. This will be either TRIGGER_EDGE_POSITIVE or
-                    // TRIGGER_EDGE_NEGATIVE
+    bool edge;       // Edge which the trigger detects. False -> Negative, True -> Positive
     TRIGGER_MODE mode; // Mode which the trigger runs in
     uint32_t channelId; // Channel which the trigger should monitor
 } TriggerConfiguration;

@@ -9,7 +9,7 @@ extern "C" {
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/Serialisation/Serializer.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+#include <Scope/Serialisation/JsonParser/JsonUnpacker.h.dep>
 #include <Scope/Serialisation/Serializer.h>
 }
 
@@ -20,6 +20,7 @@ class StackTest : public ::testing::Test{
 #define BUFFER_SIZE (300)
 #define MAX_CHANNELS (3)
 #define MAX_ANNOUNCE (3)
+#define CHANNEL_SIZE 50
 
 protected:
     StackTest()
@@ -30,18 +31,16 @@ protected:
         _input = BufferedByteStream_create(BUFFER_SIZE);
         _iinput = BufferedByteStream_getIByteStream(_input);
 
-        _output = BufferedByteStream_create(BUFFER_SIZE);
+        _output = BufferedByteStream_create(Serializer_txCalculateBufferSize(MAX_CHANNELS, CHANNEL_SIZE, MAX_ANNOUNCE));
         _ioutput = BufferedByteStream_getIByteStream(_output);
         _frame = FramedIO_create(NULL, _iinput, _ioutput);
 
-        _unpacker = JsonUnpacker_create(_iinput);
-
-        _serializer = Serializer_create(MAX_CHANNELS, MAX_ANNOUNCE, _ioutput, JsonUnpacker_getIUnpacker(_unpacker));
+        _serializer = Serializer_create(MAX_CHANNELS, MAX_ANNOUNCE, _ioutput, _iinput);
 
         _packer = Serializer_getPacker(_serializer);
 
         _scopeMock = ScopeMock_create(MAX_CHANNELS);
-        _controller = Controller_create(ScopeMock_getIScope(_scopeMock), _packer, JsonUnpacker_getIUnpacker(_unpacker), NULL);
+        _controller = Controller_create(ScopeMock_getIScope(_scopeMock), _packer, Serializer_getUnpacker(_serializer), NULL);
 
         _transceiver = FramedIO_getTransceiver(_frame);
         _communicator = FramedIO_getCommunicator(_frame);
@@ -137,7 +136,6 @@ protected:
 
     SerializerHandle _serializer;
     ControllerHandle _controller;
-    JsonUnpackerHandle _unpacker;
     IPackerHandle _packer;
     ITransceiverHandle _transceiver;
     ICommunicatorHandle _communicator;

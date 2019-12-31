@@ -36,27 +36,9 @@ typedef struct __CommandPackDataPrivateData{
 
 static void run(ICommandHandle command);
 
-static bool mapTriggerModeToString(TRIGGER_MODE mode, char* buffer, size_t maxBufferSize);
-
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static bool mapTriggerModeToString(TRIGGER_MODE mode, char* buffer, size_t maxBufferSize){
-
-    if(mode == TRIGGER_CONTINUOUS){
-        strncpy(buffer, KEYWORD_CF_TGR_MODE_CONTINOUS, maxBufferSize);
-        return true;
-    } else if(mode == TRIGGER_NORMAL){
-        strncpy(buffer, KEYWORD_CF_TGR_MODE_NORMAL, maxBufferSize);
-        return true;
-    } else if(mode == TRIGGER_ONESHOT){
-        strncpy(buffer, KEYWORD_CF_TGR_MODE_ONESHOT, maxBufferSize);
-        return true;
-    }
-
-    strncpy(buffer, "", 1);
-    return false;
-}
 
 static void run(ICommandHandle command){
     CommandPackDataHandle self = (CommandPackDataHandle) command->handle;
@@ -66,8 +48,11 @@ static void run(ICommandHandle command){
     for(uint32_t i = 0; i < self->scope->getAmountOfChannels(self->scope); ++i){
         if(self->scope->channelHasToBePacked(self->scope, i) == true){
             FloatRingBufferHandle buffer = self->scope->getChannelBuffer(self->scope, i);
-            self->packer->addChannel(self->packer, buffer, i);
-              anyChannelIsReady = true;
+            ScDataChannelDef channel;
+            channel.stream = buffer;
+            channel.id = i;
+            self->packer->addChannel(self->packer, channel);
+            anyChannelIsReady = true;
         }
     }
 
@@ -77,8 +62,13 @@ static void run(ICommandHandle command){
 
     TriggeredValues triggeredValues = self->scope->getTriggerData(self->scope);
 
-    self->packer->addTrigger(self->packer, triggeredValues.isTriggered, triggeredValues.channelId, \
-                                   triggeredValues.triggerTimestamp, triggeredValues.mode);
+    ScDataTriggerDef trigger;
+    trigger.timestamp = triggeredValues.triggerTimestamp;
+    trigger.channelId = triggeredValues.channelId;
+    trigger.triggerMode = triggeredValues.mode;
+    trigger.isTriggered = triggeredValues.isTriggered;
+
+    self->packer->addTrigger(self->packer, trigger);
 
     IIntStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
     self->packer->addTimestamp(self->packer, scopeTimestamp);

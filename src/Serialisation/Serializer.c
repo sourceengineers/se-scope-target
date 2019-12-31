@@ -20,7 +20,8 @@
 #include <assert.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Serialisation/Protobuf/NanopbPacker.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
+#include <Scope/Serialisation/Protobuf/NanopbUnpacker.h>
+#include <Scope/Serialisation/JsonParser/JsonUnpacker.h.dep>
 
 
 /******************************************************************************
@@ -31,7 +32,7 @@ typedef struct __SerializerPrivateData{
     IRunnable runRx;
     IRunnable runTx;
     IPacker packer;
-    IUnpackerHandle unpacker;
+    IUnpacker unpacker;
 
     MessageType unpackingPending;
     MessageType packingPending;
@@ -40,8 +41,9 @@ typedef struct __SerializerPrivateData{
     IObserver unpackObserver;
     JsonPackerHandle jsonPacker;
     NanopbPackerHandle nanopbPacker;
-    JsonUnpackerHandle jsonUnpacker;
+    NanopbUnpackerHandle nanopbUnpacker;
     IByteStreamHandle output;
+    IByteStreamHandle input;
 
     IObserverHandle controlObserver;
     IObserverHandle communicationObserver;
@@ -57,9 +59,66 @@ static void updatePacker(IObserverHandle observer, void* state);
 
 static IPackerHandle getPacker(SerializerHandle self, MessageType type);
 
+static IUnpackerHandle getUnpacker(SerializerHandle self, MessageType type);
+
+static bool unpack(IUnpackerHandle unpacker, MessageType type);
+
+static uint32_t evPoll_getTimestamp(IUnpackerHandle unpacker);
+
+static size_t cfRunning_getAmount(IUnpackerHandle unpacker);
+
+static CfRunningDef cfRunning_getChannel(IUnpackerHandle unpacker, uint32_t index);
+
+static CfTriggerDef cfTrigger_getTriggerConfig(IUnpackerHandle unpacker);
+
+static uint32_t cfTInc_getInc(IUnpackerHandle unpacker);
+
+static uint32_t cfAddress_getAmount(IUnpackerHandle unpacker);
+
+static CfAddressDef cfAddress_getChannel(IUnpackerHandle unpacker, uint32_t index);
+
+static void addChannel(IPackerHandle packer, ScDataChannelDef channel);
+
+static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
+
+static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger);
+
+static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
+
+static void
+addAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address);
+
+static void
+addAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels);
+
+static void reset(IPackerHandle packer);
+
 /******************************************************************************
  Private functions
 ******************************************************************************/
+static IPackerHandle getPacker(SerializerHandle self, MessageType type){
+    if(type == SC_DATA){
+        return NanopbPacker_getIPacker(self->nanopbPacker);
+    }else if(type == SC_ANNOUNCE){
+        return JsonPacker_getIPacker(self->jsonPacker);
+    }else{
+        return NULL;
+    }
+}
+
+static IUnpackerHandle getUnpacker(SerializerHandle self, MessageType type){
+    if(type == EV_POLL ||
+       type == CF_ADDR ||
+       type == CF_RUNNING ||
+       type == CF_T_INC ||
+       type == CF_TRIGGER)
+    {
+        return NanopbUnpacker_getIUnpacker(self->nanopbUnpacker);
+    } else {
+        return NULL;
+    }
+}
+
 static bool runRx(IRunnableHandle runnable){
     SerializerHandle self = (SerializerHandle) runnable->handle;
 
@@ -67,11 +126,12 @@ static bool runRx(IRunnableHandle runnable){
         return false;
     }
 
-    if(self->unpacker == NULL){
-        return false;
-    }
+    IUnpackerHandle unpacker = getUnpacker(self, self->unpackingPending);
+    bool parsingIsValid = true;
 
-    bool parsingIsValid = self->unpacker->unpack(self->unpacker, self->unpackingPending);
+    if(unpacker != NULL){
+        parsingIsValid = unpacker->unpack(unpacker, self->unpackingPending);
+    }
 
     if(parsingIsValid){
         self->controlObserver->update(self->controlObserver, &self->unpackingPending);
@@ -83,14 +143,6 @@ static bool runRx(IRunnableHandle runnable){
     self->unpackingPending = SE_NONE;
 
     return true;
-}
-
-static IPackerHandle getPacker(SerializerHandle self, MessageType type){
-    if(type == SC_DATA){
-        return NanopbPacker_getIPacker(self->nanopbPacker);
-    }else{
-        return JsonPacker_getIPacker(self->jsonPacker);
-    }
 }
 
 static bool runTx(IRunnableHandle runnable){
@@ -120,6 +172,11 @@ static void updatePacker(IObserverHandle observer, void* state){
 void pack(IPackerHandle packer, MessageType type){
     SerializerHandle self = (SerializerHandle) packer->handle;
     IPackerHandle currentPacker = getPacker(self, type);
+
+    if(currentPacker == NULL){
+        return;
+    }
+
     currentPacker->pack(currentPacker, type);
 }
 
@@ -128,41 +185,93 @@ bool isReady(IPackerHandle packer){
     return self->packingPending == SE_NONE && self->output->length(self->output) == 0;
 }
 
-void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId){
+void addChannel(IPackerHandle packer, ScDataChannelDef channel){
     SerializerHandle self = (SerializerHandle) packer->handle;
-    IPackerHandle currentPacker = NanopbPacker_getIPacker(self->nanopbPacker);
-    currentPacker->addChannel(currentPacker, buffer, channelId);
+    IPackerHandle currentPacker = getPacker(self, SC_DATA);
+    currentPacker->addChannel(currentPacker, channel);
 }
 
 void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement){
     SerializerHandle self = (SerializerHandle) packer->handle;
-    IPackerHandle currentPacker = NanopbPacker_getIPacker(self->nanopbPacker);
+    IPackerHandle currentPacker = getPacker(self, SC_DATA);
     currentPacker->addTimeIncrement(currentPacker, timeIncrement);
 }
 
 void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp){
     SerializerHandle self = (SerializerHandle) packer->handle;
-    IPackerHandle currentPacker = NanopbPacker_getIPacker(self->nanopbPacker);
+    IPackerHandle currentPacker = getPacker(self, SC_DATA);
     currentPacker->addTimestamp(currentPacker, timestamp);
 }
 
-void addTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId,
-                    const uint32_t timestamp, TRIGGER_MODE triggerMode){
+void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger){
     SerializerHandle self = (SerializerHandle) packer->handle;
-    IPackerHandle currentPacker = NanopbPacker_getIPacker(self->nanopbPacker);
-    currentPacker->addTrigger(currentPacker, isTriggered, channelId, timestamp, triggerMode);
+    IPackerHandle currentPacker = getPacker(self, SC_DATA);
+    currentPacker->addTrigger(currentPacker, trigger);
 }
 
 void addAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, const ADDRESS_DATA_TYPE address){
     SerializerHandle self = (SerializerHandle) packer->handle;
-    IPackerHandle currentPacker = JsonPacker_getIPacker(self->jsonPacker);
+    IPackerHandle currentPacker = getPacker(self, SC_ANNOUNCE);
     currentPacker->addAddressAnnouncement(currentPacker, name, type, address);
 }
+
 void addAnnouncement(IPackerHandle packer, float timeBase, const char* version, size_t maxChannels){
     SerializerHandle self = (SerializerHandle) packer->handle;
-    IPackerHandle currentPacker = JsonPacker_getIPacker(self->jsonPacker);
+    IPackerHandle currentPacker = getPacker(self, SC_ANNOUNCE);
     currentPacker->addAnnouncement(currentPacker, timeBase, version, maxChannels);
 }
+
+static bool unpack(IUnpackerHandle unpacker, MessageType type){
+    SerializerHandle self = (SerializerHandle) unpacker->handle;
+    IUnpackerHandle currentUnpacker = getUnpacker(self, type);
+    if(currentUnpacker == NULL){
+        return NULL;
+    }
+    return currentUnpacker->unpack(currentUnpacker, type);
+}
+
+static uint32_t evPoll_getTimestamp(IUnpackerHandle unpacker){
+    SerializerHandle self = (SerializerHandle) unpacker->handle;
+    IUnpackerHandle currentUnpacker = getUnpacker(self, EV_POLL);
+    return currentUnpacker->evPoll_getTimestamp(currentUnpacker);
+}
+
+static size_t cfRunning_getAmount(IUnpackerHandle unpacker){
+    SerializerHandle self = (SerializerHandle) unpacker->handle;
+    IUnpackerHandle currentUnpacker = getUnpacker(self, CF_RUNNING);
+    return currentUnpacker->cfRunning_getAmount(currentUnpacker);
+}
+
+static CfRunningDef cfRunning_getChannel(IUnpackerHandle unpacker, uint32_t index){
+    SerializerHandle self = (SerializerHandle) unpacker->handle;
+    IUnpackerHandle currentUnpacker = getUnpacker(self, CF_RUNNING);
+    return currentUnpacker->cfRunning_getChannel(currentUnpacker, index);
+}
+
+static CfTriggerDef cfTrigger_getTriggerConfig(IUnpackerHandle unpacker){
+    SerializerHandle self = (SerializerHandle) unpacker->handle;
+    IUnpackerHandle currentUnpacker = getUnpacker(self, CF_TRIGGER);
+    return currentUnpacker->cfTrigger_getTriggerConfig(currentUnpacker);
+}
+
+static uint32_t cfTInc_getInc(IUnpackerHandle unpacker){
+    SerializerHandle self = (SerializerHandle) unpacker->handle;
+    IUnpackerHandle currentUnpacker = getUnpacker(self, CF_RUNNING);
+    return currentUnpacker->cfTInc_getInc(currentUnpacker);
+}
+
+static uint32_t cfAddress_getAmount(IUnpackerHandle unpacker){
+    SerializerHandle self = (SerializerHandle) unpacker->handle;
+    IUnpackerHandle currentUnpacker = getUnpacker(self, CF_ADDR);
+    return currentUnpacker->cfAddress_getAmount(currentUnpacker);
+}
+
+static CfAddressDef cfAddress_getChannel(IUnpackerHandle unpacker, uint32_t index){
+    SerializerHandle self = (SerializerHandle) unpacker->handle;
+    IUnpackerHandle currentUnpacker = getUnpacker(self, CF_ADDR);
+    return currentUnpacker->cfAddress_getChannel(currentUnpacker, index);
+}
+
 void reset(IPackerHandle packer){
     return;
 };
@@ -171,7 +280,7 @@ void reset(IPackerHandle packer){
  Public functions
 ******************************************************************************/
 SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByteStreamHandle output,
-        IUnpackerHandle unpacker){
+        IByteStreamHandle input){
 
     SerializerHandle self = malloc(sizeof(SerializerPrivateData));
     assert(self);
@@ -179,7 +288,7 @@ SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByt
     self->jsonPacker = JsonPacker_create(maxChannels, maxAddresses, output);
     self->nanopbPacker = NanopbPacker_create(maxChannels, maxAddresses, output);
 
-    self->unpacker = unpacker;
+    self->nanopbUnpacker = NanopbUnpacker_create(input, maxChannels);
 
     self->packObserver.handle = self;
     self->unpackObserver.handle = self;
@@ -190,6 +299,7 @@ SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByt
     self->runRx.run = &runRx;
     self->runTx.run = &runTx;
     self->output = output;
+    self->input = input;
 
     self->packer.handle = self;
     self->packer.addTimeIncrement = &addTimeIncrement;
@@ -201,6 +311,16 @@ SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByt
     self->packer.addChannel = &addChannel;
     self->packer.addAddressAnnouncement = &addAddressAnnouncement;
     self->packer.addTimestamp = &addTimestamp;
+
+    self->unpacker.handle = self;
+    self->unpacker.cfAddress_getAmount = &cfAddress_getAmount;
+    self->unpacker.cfAddress_getChannel = &cfAddress_getChannel;
+    self->unpacker.cfRunning_getAmount = &cfRunning_getAmount;
+    self->unpacker.cfRunning_getChannel = &cfRunning_getChannel;
+    self->unpacker.cfTInc_getInc = &cfTInc_getInc;
+    self->unpacker.cfTrigger_getTriggerConfig = &cfTrigger_getTriggerConfig;
+    self->unpacker.evPoll_getTimestamp = &evPoll_getTimestamp;
+    self->unpacker.unpack = &unpack;
 
     self->unpackingPending = SE_NONE;
     self->packingPending = SE_NONE;
@@ -235,13 +355,23 @@ IPackerHandle Serializer_getPacker(SerializerHandle self){
     return &self->packer;
 }
 
-
-size_t Serializer_txCalculateBufferSize(size_t amountOfChannels, size_t sizeOfChannels, size_t addressesInAddressAnnouncer){
-    return NanopbPacker_calculateBufferSize(amountOfChannels, sizeOfChannels, addressesInAddressAnnouncer);
+IUnpackerHandle Serializer_getUnpacker(SerializerHandle self){
+    return &self->unpacker;
 }
 
-size_t Serializer_rxCalculateBufferSize(){
-    return JsonUnpacker_calculateBufferSize();
+size_t
+Serializer_txCalculateBufferSize(size_t amountOfChannels, size_t sizeOfChannels, size_t addressesInAddressAnnouncer){
+    size_t jsonPackerSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
+                                                           addressesInAddressAnnouncer);
+    size_t nanopbPackerSize = NanopbPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
+                                                               addressesInAddressAnnouncer);
+
+    // Return the biggest size. The buffer will be big enough for both
+    return jsonPackerSize > nanopbPackerSize ? jsonPackerSize : nanopbPackerSize;
+}
+
+size_t Serializer_rxCalculateBufferSize(size_t maxChannels){
+    return NanopbUnpacker_calculateBufferSize(maxChannels);
 }
 
 void Serializer_destroy(SerializerHandle self){

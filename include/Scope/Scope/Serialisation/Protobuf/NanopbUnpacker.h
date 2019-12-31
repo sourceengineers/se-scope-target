@@ -1,59 +1,62 @@
 /*!****************************************************************************************************************************************
- * @file         JsonUnpacker.h
+ * @file         NanopbUnpacker.h
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
- * @brief        Implements the deserialisation of input data for the json format by implementing the
+ * @brief        Implements the serialisation of the scope data for the protobuf format by implementing the
  *               IUnpacker interface.
- *               It uses the jsmn library to do so.
  *
  *****************************************************************************************************************************************/
 
-#ifndef JSONUNPACKER_H_
-#define JSONUNPACKER_H_
+#ifndef NANOPBUNPACKER_H_
+#define NANOPBUNPACKER_H_
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/GeneralPurpose/IByteStream.h"
 
+#include "Scope/Communication/ICommunicator.h"
 #include "Scope/Control/IUnpacker.h"
-#include "Scope/GeneralPurpose/BufferedByteStream.h"
+#include "Scope/Core/ScopeTypes.h"
 
 #include <stddef.h>
 
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __JsonUnpackerPrivateData* JsonUnpackerHandle;
+typedef struct __NanopbUnpackerPrivateData* NanopbUnpackerHandle;
 
 /******************************************************************************
- Public functions
+ Public functions 
 ******************************************************************************/
 /**
  * Constructor
- * @param stream Input stream
+ * @param input
+ * @param amountOfChannels
  * @return
  */
-JsonUnpackerHandle JsonUnpacker_create(IByteStreamHandle stream);
+NanopbUnpackerHandle NanopbUnpacker_create(IByteStreamHandle input, size_t amountOfChannels);
 
 /**
- * Returns the IUnpacker interface
+ * Calculates how much space the buffers need
+ * This is used, so that the input byte buffer can be defined without having to be generated in the NanopbUnpacker
+ * @param maxNumberOfChannels
+ * @return
+ */
+size_t NanopbUnpacker_calculateBufferSize(size_t maxNumberOfChannels);
+
+/**
+ * Returns the packer interface
  * @param self
  * @return
  */
-IUnpackerHandle JsonUnpacker_getIUnpacker(JsonUnpackerHandle self);
-
-/**
- * Estimates how big the input buffer needs to be
- * @return
- */
-size_t JsonUnpacker_calculateBufferSize(void);
+IUnpackerHandle NanopbUnpacker_getIUnpacker(NanopbUnpackerHandle self);
 
 /**
  * Deconstructor
  * @param self
  */
-void JsonUnpacker_destroy(JsonUnpackerHandle self);
+void NanopbUnpacker_destroy(NanopbUnpackerHandle self);
 
 #endif

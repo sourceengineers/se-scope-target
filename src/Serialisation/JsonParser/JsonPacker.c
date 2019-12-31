@@ -75,7 +75,7 @@ typedef struct __JsonPackerPrivateData {
     bool isTriggered;
     uint32_t channelId;
     uint32_t triggerTimestamp;
-    char *triggerMode;
+    TRIGGER_MODE triggerMode;
     bool dataPendingToBePacked;
 
 } JsonPackerPrivateData;
@@ -98,7 +98,7 @@ inline static void appendUnsignedInt(IByteStreamHandle destination, ADDRESS_DATA
 inline static void appendSignedInt(IByteStreamHandle destination, int16_t origin, const char *endWith,
                                    size_t endWithSize);
 
-static void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
+static void addChannel(IPackerHandle packer, ScDataChannelDef channel);
 
 static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
 
@@ -108,9 +108,7 @@ static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 
 static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded);
 
-static void
-addTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
-               char *triggerMode);
+static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger);
 
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded);
 
@@ -209,10 +207,10 @@ inline static void appendSignedInt(IByteStreamHandle destination, int16_t origin
     }
 }
 
-static void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId) {
+static void addChannel(IPackerHandle packer, ScDataChannelDef channel) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
-    if (channelId >= self->maxNumberOfChannels) {
+    if (channel.id >= self->maxNumberOfChannels) {
         return;
     }
 
@@ -220,8 +218,8 @@ static void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const
         return;
     }
 
-    self->channelIds[self->amountOfChannelsToSend] = channelId;
-    self->channelBuffers[self->amountOfChannelsToSend] = buffer;
+    self->channelIds[self->amountOfChannelsToSend] = channel.id;
+    self->channelBuffers[self->amountOfChannelsToSend] = channel.stream;
 
     self->amountOfChannelsToSend++;
 
@@ -296,16 +294,14 @@ static bool packTimestamp(JsonPackerHandle self, bool commaIsNeeded) {
 }
 
 static void
-addTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
-               char *triggerMode) {
+addTrigger(IPackerHandle packer, ScDataTriggerDef trigger) {
     JsonPackerHandle self = (JsonPackerHandle) packer->handle;
 
+    self->triggerMode = trigger.triggerMode;
+    self->triggerTimestamp = trigger.timestamp;
     self->triggerReady = true;
-    self->isTriggered = isTriggered;
-    self->channelId = channelId;
-    self->triggerTimestamp = timestamp;
-    strncpy(self->triggerMode, triggerMode, KEYWORD_TGR_MODE_MAX_LENGTH);
-    self->dataPendingToBePacked = true;
+    self->isTriggered = trigger.isTriggered;
+    self->channelId = trigger.channelId;
 }
 
 static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded) {
@@ -326,7 +322,7 @@ static bool packTrigger(JsonPackerHandle self, bool commaIsNeeded) {
         appendUnsignedInt(self->byteStream, self->triggerTimestamp, ",", 1);
 
         appendString(self->byteStream, KEYWORD_CF_TGR_MODE, KEYWORD_TGR_MODE_LENGTH, ":", 1);
-        appendString(self->byteStream, self->triggerMode, strlen(self->triggerMode), ",", 1);
+        appendUnsignedInt(self->byteStream, self->triggerMode, "}", 1);
 
         appendString(self->byteStream, KEYWORD_TGR_CL_ID, KEYWORD_TGR_CL_ID_LENGTH, ":", 1);
         appendUnsignedInt(self->byteStream, self->channelId, "}", 1);
@@ -558,8 +554,7 @@ JsonPackerHandle JsonPacker_create(size_t maxNumberOfChannels, size_t maxAddress
     assert(self->namesOfAddresses);
     self->typesOfAddresses = malloc(sizeof(char *) * maxAddressesToAnnounce);
     assert(self->typesOfAddresses);
-    self->triggerMode = malloc(sizeof(char) * KEYWORD_TGR_MODE_MAX_LENGTH);
-    assert(self->triggerMode);
+    self->triggerMode = 0;
     self->version = malloc(sizeof(char) * SE_SCOPE_TARGET_VERSION_LENGTH);
     assert(self->version);
 
@@ -600,30 +595,15 @@ void JsonPacker_destroy(JsonPackerHandle self) {
 
 size_t
 JsonPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t sizeOfChannels, size_t maxAddressesToAnnounce) {
-
-
-    /* The channel buffer needs enough space to print all data points. This allows for all channels to have numbers whith MAX_LENGTH_OF_NUMBER digits.
-     * 20 bytes will be reserved for the over head
-     * sizeOfChannels has to be added to allow space for the ,*/
-    size_t channelBufferSize =
-            ((MAX_LENGTH_OF_NUMBER + 1) * sizeOfChannels + MAX_CONTROL_SIGN_SIZE) * maxNumberOfChannels +
-            MAX_CONTROL_SIGN_SIZE;
-
-    /* The timestamp buffer needs enough space to print all data points.
-     * Again approximately 20 bytes should be used for the overhead
-     * sizeOfChannels has to be added to allow space for the ,*/
-    size_t timestampBufferSize = ((MAX_LENGTH_OF_NUMBER + 1) * sizeOfChannels + MAX_CONTROL_SIGN_SIZE);
     size_t announcementBufferSize =
             (MAX_LENGTH_OF_NUMBER + maxAddrNameLength) * maxAddressesToAnnounce + MAX_CONTROL_SIGN_SIZE +
             MAX_LENGTH_OF_NUMBER * 5;
     size_t scopeDataBufferSize =
-            announcementBufferSize + timestampBufferSize + channelBufferSize + MAX_CONTROL_SIGN_SIZE \
- + TINC_BUFFER_SIZE + TRIGGER_BUFFER_SIZE;
-    size_t payloadBufferSize = scopeDataBufferSize + MAX_CONTROL_SIGN_SIZE + FLOWCONTROL_BUFFER_SIZE;
+            announcementBufferSize + MAX_CONTROL_SIGN_SIZE;
+    size_t payloadBufferSize = scopeDataBufferSize + MAX_CONTROL_SIGN_SIZE;
     size_t outputBufferSize = payloadBufferSize + 30;
 
     return outputBufferSize;
-
 }
 
 IPackerHandle JsonPacker_getIPacker(JsonPackerHandle self) {

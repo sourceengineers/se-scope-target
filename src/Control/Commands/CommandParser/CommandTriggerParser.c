@@ -22,8 +22,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "cf_tgr";
 
 /* Class data */
 typedef struct __CommandTriggerParserPrivateData{
@@ -85,39 +83,18 @@ ICommandHandle CommandTriggerParser_getCommand(CommandTriggerParserHandle self){
         return NULL;
     }
 
-    const size_t maxStringSize = 20;
+    CfTriggerDef trigger = self->unpacker->cfTrigger_getTriggerConfig(self->unpacker);
 
-    CommandFetchingInformation information = {.commandName = commandName, .fieldName = KEYWORD_CF_TGR_CL_ID,
-            .isInArray = false, .arrayIndex = 0};
-
-    /* Get the correct data stream */
-    const uint32_t channelId = self->unpacker->getIntFromCommand(self->unpacker, &information);
-
-    /* Get the trigger level */
-    information.fieldName = KEYWORD_CF_TGR_LEVEL;
-    const float level = self->unpacker->getFloatFromCommand(self->unpacker, &information);
-
-    /* Get the trigger mode */
-    char triggerModeToParse[maxStringSize];
-    information.fieldName = KEYWORD_CF_TGR_MODE;
-    self->unpacker->getStringFromCommand(self->unpacker, &information, triggerModeToParse, maxStringSize);
-    TRIGGER_MODE mode = parseStringToTriggerMode(triggerModeToParse);
-
-    /* Get the trigger edge */
-    char edgeToParse[maxStringSize];
-    information.fieldName = KEYWORD_CF_TGR_EDGE;
-    self->unpacker->getStringFromCommand(self->unpacker, &information, edgeToParse, maxStringSize);
-    int edge = parseStringToEdge(edgeToParse);
-
-    TriggerConfiguration conf = {.level = level, .mode = mode, .edge = edge, .channelId = channelId};
+    TriggerConfiguration conf = {
+            .level = trigger.level,
+            .mode = trigger.mode,
+            .edge = trigger.edge,
+            .channelId = trigger.channelId
+    };
 
     CommandTrigger_setAttributes(self->command, conf);
 
     return CommandTrigger_getICommand(self->command);
-}
-
-char* CommandTriggerParser_getName(void){
-    return commandName;
 }
 
 void CommandTriggerParser_destroy(CommandTriggerParserHandle self){

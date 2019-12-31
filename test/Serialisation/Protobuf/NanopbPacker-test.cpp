@@ -75,10 +75,22 @@ TEST_F(NanopbPackerTest, pack_announce
     FloatRingBuffer_write(buf1, &value, 1);
     FloatRingBuffer_write(buf2, &value, 1);
     timestamp->writeData(timestamp, 5);
+
+    ScDataChannelDef channel;
+    channel.stream = buf1;
+    channel.id = 0;
     _iPacker->addTimestamp(_iPacker, timestamp);
-    _iPacker->addChannel(_iPacker, buf1, 0);
-    _iPacker->addChannel(_iPacker, buf2, 1);
-    _iPacker->addTrigger(_iPacker, true, 1, 100, TRIGGER_ONESHOT);
+    _iPacker->addChannel(_iPacker, channel);
+    channel.stream = buf2;
+    channel.id = 1;
+    _iPacker->addChannel(_iPacker, channel);
+
+    ScDataTriggerDef trigger;
+    trigger.isTriggered = true;
+    trigger.triggerMode = TRIGGER_ONESHOT;
+    trigger.channelId = 1;
+    trigger.timestamp = 100;
+    _iPacker->addTrigger(_iPacker, trigger);
     _iPacker->addTimeIncrement(_iPacker, 10);
     _iPacker->pack(_iPacker, SC_DATA);
 

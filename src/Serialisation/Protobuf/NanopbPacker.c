@@ -9,14 +9,12 @@
 
 #include "Scope/GeneralPurpose/IByteStream.h"
 #include "Scope/GeneralPurpose/DataTypes.h"
-#include "Scope/Control/AnnounceStorage.h"
 
 #include "Scope/Serialisation/Protobuf/NanopbPacker.h"
 #include "Scope/Control/IPacker.h"
 #include "Scope/Core/ScopeTypes.h"
 #include "Scope/GeneralPurpose/FloatRingBuffer.h"
 #include "Scope/GeneralPurpose/IIntStream.h"
-#include "Scope/Version.h"
 #include "Scope/Serialisation/Protobuf/se-scope.pb.h"
 
 #include <assert.h>
@@ -24,51 +22,32 @@
 #include <stdlib.h>
 #include <pb_encode.h>
 
-#define FLOWCONTROL_BUFFER_SIZE 30
-#define TINC_BUFFER_SIZE 30
-#define TRIGGER_BUFFER_SIZE 60
-#define MAX_CONTROL_SIGN_SIZE 30
+typedef struct __ScDataChannelsDef {
+    ScDataChannelDef* channels;
+    size_t amountOfChannels;
+} ScDataChannelsDef;
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Class data */
-typedef struct __ChannelDef {
-    FloatRingBufferHandle stream;
-    uint32_t id;
-} ChannelDef;
-
-typedef struct __ChannelsDef {
-    ChannelDef* channels;
-    size_t amountOfChannels;
-} ChannelsDef;
-
-typedef struct __TriggerDef {
-    bool isTriggered;
-    uint32_t channelId;
-    uint32_t timestamp;
-    TRIGGER_MODE triggerMode;
-} TriggerDef;
-
 typedef struct __NanopbPackerPrivateData {
 
     IPacker packer;
     pb_ostream_t wrapped;
-    ChannelsDef channels;
+    ScDataChannelsDef channels;
     size_t maxNumberOfChannels;
-    TriggerDef trigger;
+    ScDataTriggerDef trigger;
     uint32_t timeIncrement;
     IIntStreamHandle timestamp;
 		IByteStreamHandle output;
 
 } NanopbPackerPrivateData;
 
-static void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
+static void addChannel(IPackerHandle packer, ScDataChannelDef channel);
 
 static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
 
-static void addTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
-                       TRIGGER_MODE triggerMode);
+static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger);
 
 static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 
@@ -92,11 +71,8 @@ static size_t getWidthOfVarint(uint32_t data);
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static void addChannel(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId) {
+static void addChannel(IPackerHandle packer, ScDataChannelDef channel) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
-    ChannelDef channel;
-    channel.stream = buffer;
-    channel.id = channelId;
     self->channels.channels[self->channels.amountOfChannels] = channel;
     self->channels.amountOfChannels += 1;
 }
@@ -111,33 +87,32 @@ static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp) {
     self->timestamp = timestamp;
 }
 
-static void addTrigger(IPackerHandle packer, const bool isTriggered, const uint32_t channelId, const uint32_t timestamp,
-               TRIGGER_MODE triggerMode) {
+static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
-    self->trigger.channelId = channelId;
-    self->trigger.isTriggered = isTriggered;
-    self->trigger.timestamp = timestamp;
-    self->trigger.triggerMode = triggerMode;
+    self->trigger = trigger;
 }
 
 static void
 addAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
-
+    // Not yet implemented for nanopb
+    return;
 }
 
 static void addAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels){
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
-
+    // Not yet implemented for nanopb
+    return;
 }
 
 static void reset(IPackerHandle packer) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
-		resetSelf(self);
+    resetSelf(self);
 }
 
 static bool isReady(IPackerHandle packer){
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
+    return self->wrapped.bytes_written == 0;
 }
 
 static bool writeStreamCallback(pb_ostream_t *stream, const pb_byte_t *buf, size_t count){
@@ -175,7 +150,7 @@ static bool writeTimestamp(pb_ostream_t* stream, const pb_field_t* field, void* 
 }
 
 static bool writeChannelData(pb_ostream_t* stream, const pb_field_t* field, void* const* arg){
-    ChannelDef channel = *(ChannelDef*) (*arg);
+    ScDataChannelDef channel = *(ScDataChannelDef*) (*arg);
     size_t length = FloatRingBuffer_getNumberOfUsedData(channel.stream);
 
     if(!pb_encode_tag(stream, PB_WT_STRING, field->tag))
@@ -196,8 +171,8 @@ static bool writeChannelData(pb_ostream_t* stream, const pb_field_t* field, void
 }
 
 static bool writeChannel(pb_ostream_t* stream, const pb_field_t* field, void* const* arg){
-    ChannelsDef channels = *(ChannelsDef*) (*arg);
-    SC_Channel channel = SC_Channel_init_zero;
+    ScDataChannelsDef channels = *(ScDataChannelsDef*) (*arg);
+    PB_SC_Channel channel = PB_SC_Channel_init_zero;
 
     for(size_t i = 0; i < channels.amountOfChannels; i++){
         channel.data.arg = &channels.channels[i];
@@ -224,7 +199,7 @@ static bool writeChannel(pb_ostream_t* stream, const pb_field_t* field, void* co
         if(!pb_encode_varint(stream, length * 4 + 1 + idSize + getWidthOfVarint(length)))
             return false;
 
-        if(!pb_encode(stream, SC_Channel_fields, &channel)){
+        if(!pb_encode(stream, PB_SC_Channel_fields, &channel)){
             return false;
         };
     }
@@ -233,13 +208,13 @@ static bool writeChannel(pb_ostream_t* stream, const pb_field_t* field, void* co
 
 static void packScData(NanopbPackerHandle self){
 
-    SC_Data data = SC_Data_init_zero;
+    PB_SC_Data data = PB_SC_Data_init_zero;
 
     if(self->trigger.isTriggered){
         data.has_trigger = true;
         data.trigger.cl_data_ind = self->trigger.timestamp;
         data.trigger.cl_id = self->trigger.channelId;
-        data.trigger.mode  = (SC_Trigger_Mode) self->trigger.triggerMode;
+        data.trigger.mode  = (PB_Trigger_Mode) self->trigger.triggerMode;
     }
 
     data.t_inc = self->timeIncrement;
@@ -254,7 +229,7 @@ static void packScData(NanopbPackerHandle self){
         data.channels.funcs.encode = &writeChannel;
     }
 
-    pb_encode(&self->wrapped, SC_Data_fields, &data);
+    pb_encode(&self->wrapped, PB_SC_Data_fields, &data);
 
 }
 
@@ -266,7 +241,7 @@ static void resetSelf(NanopbPackerHandle self){
 static void pack(IPackerHandle packer, MessageType type){
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
 
-		if(self->output->length(self->output) != 0) {
+    if(self->output->length(self->output) != 0) {
         return;
     }
 	
@@ -274,7 +249,7 @@ static void pack(IPackerHandle packer, MessageType type){
         packScData(self);
     }
 		
-		resetSelf(self);
+    resetSelf(self);
 }
 
 /******************************************************************************
@@ -285,14 +260,18 @@ NanopbPackerHandle NanopbPacker_create(size_t maxNumberOfChannels, size_t maxAdd
 
     NanopbPackerHandle self = (NanopbPackerHandle) malloc(sizeof(NanopbPackerPrivateData));
 
+    assert(self);
+
     self->wrapped.state = output;
     self->wrapped.callback = &writeStreamCallback;
     self->wrapped.max_size = output->capacity(output);
     self->wrapped.bytes_written = 0;
-																	
 
-		self->output = output;
-    self->channels.channels = malloc(sizeof(ChannelDef) * maxNumberOfChannels);
+    self->output = output;
+    self->channels.channels = malloc(sizeof(ScDataChannelDef) * maxNumberOfChannels);
+
+    assert(self->channels.channels);
+
     self->maxNumberOfChannels = maxNumberOfChannels;
 
     self->packer.handle = self;
@@ -310,15 +289,24 @@ NanopbPackerHandle NanopbPacker_create(size_t maxNumberOfChannels, size_t maxAdd
 }
 
 void NanopbPacker_destroy(NanopbPackerHandle self) {
-
     free(self);
     self = NULL;
 }
 
 size_t
 NanopbPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t sizeOfChannels, size_t maxAddressesToAnnounce) {
-    // TODO: ACTUALLY calulate this...
-    return 2000;
+    // Wiretypes and id will always only take up 1 byte. Wiretypes and Index are indicated with WI in the comments.
+    // Actual data will always max take up 4 bytes -> 32 bits.
+
+    // ChannelWI + ArrWI + IdWi + ID + ChannelSize + ArrSize
+    size_t channelMetaData = 1 + 1 + 1 + (1 + 1 + 1) * 4; // -> 3 Byte overhead per channel
+    size_t dataSpace = (sizeOfChannels * 4 + channelMetaData) * maxNumberOfChannels;
+    size_t triggerSize = PB_SC_Trigger_size;
+    // Data + WI
+    size_t tIncSize = 1 * 4 + 1;
+    // Data + Arrlenght + WI
+    size_t timestampSize = (sizeOfChannels + 1) * 4 + 1;
+    return dataSpace + triggerSize + tIncSize + timestampSize;
 }
 
 IPackerHandle NanopbPacker_getIPacker(NanopbPackerHandle self) {

@@ -43,12 +43,6 @@ CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpa
 ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandRunningParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

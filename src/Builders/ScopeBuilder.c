@@ -15,7 +15,6 @@
 
 #include <stdlib.h>
 #include <assert.h>
-#include <Scope/Serialisation/JsonParser/JsonUnpacker.h>
 
 /******************************************************************************
  Define private data
@@ -27,7 +26,6 @@ typedef struct __ScopeBuilderPrivateData{
     ICommunicatorHandle communicator;
     ScopeHandle scope;
 
-    JsonUnpackerHandle unpacker;
     ControllerHandle controller;
     SerializerHandle serializer;
     AnnounceStorageHandle announceStorage;
@@ -119,10 +117,10 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
 
     /* Create layers */
     self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->timestamp);
-    self->unpacker = JsonUnpacker_create(self->input);
 
-    self->serializer = Serializer_create(self->amountOfChannels, self->maxAddresses, self->output, JsonUnpacker_getIUnpacker(self->unpacker));
-    self->controller = Controller_create(Scope_getIScope(self->scope), Serializer_getPacker(self->serializer), JsonUnpacker_getIUnpacker(self->unpacker), self->announceStorage);
+    self->serializer = Serializer_create(self->amountOfChannels, self->maxAddresses, self->output, self->input);
+    self->controller = Controller_create(Scope_getIScope(self->scope), Serializer_getPacker(self->serializer),
+            Serializer_getUnpacker(self->serializer), self->announceStorage);
 
     /* Connect all observers */
     self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));

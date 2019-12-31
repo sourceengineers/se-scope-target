@@ -49,8 +49,6 @@ static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t m
         return SE_UINT16;
     }else if(strncmp(dataTypeName, SE_UINT32_NAME, maxLength) == 0){
         return SE_UINT32;
-    }else if(strncmp(dataTypeName, SE_UINT64_NAME, maxLength) == 0){
-        return SE_UINT64;
     }else if(strncmp(dataTypeName, SE_FLOAT_NAME, maxLength) == 0){
         return SE_FLOAT;
     }
@@ -61,7 +59,8 @@ static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t m
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker, IObserverHandle observer){
+CommandAddrParserHandle
+CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker, IObserverHandle observer){
     CommandAddrParserHandle self = malloc(sizeof(CommandAddrParserPrivateData));
     assert(self);
 
@@ -76,50 +75,23 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self){
         return NULL;
     }
 
-    const int numberOfFields = self->unpacker->getNumberOfFields(self->unpacker, commandName);
+    const size_t amount = self->unpacker->cfAddress_getAmount(self->unpacker);
 
-    if(numberOfFields == -1){
-        return NULL;
-    }
+    uint32_t channelIds[amount];
+    void* newAddresses[amount];
+    DATA_TYPES types[amount];
 
-    uint32_t channelIds[numberOfFields];
-    void* newAddresses[numberOfFields];
-    DATA_TYPES types[numberOfFields];
-
-    char nameOfField[MAX_FIELD_LENGTH];
-
-    for(uint32_t i = 0; i < numberOfFields; i++){
-
-        const bool foundField = self->unpacker->getNameOfField(self->unpacker, commandName, nameOfField,
-                                                               MAX_FIELD_LENGTH, i);
-
-        /* Only start parsing if the field was found, and its not a data type field */
-        if(foundField == true){
-            char* endPtr;
-            channelIds[i] = (uint32_t) strtoul(nameOfField, &endPtr, 10);
-
-            if(*endPtr != '\0'){
-                return NULL;
-            }
-
-            CommandFetchingInformation information = {.commandName = commandName, .fieldName = nameOfField,
-                    .isInArray = true, .arrayIndex = 0};
-
-            newAddresses[i] = (void*) (ADDRESS_DATA_TYPE) self->unpacker->getIntFromCommand(self->unpacker,
-                                                                                            &information);
-
-
-            char requestedDataType[20];
-            information.arrayIndex = 1;
-            self->unpacker->getStringFromCommand(self->unpacker, &information, requestedDataType, 20);
-            types[i] = parseStringToDataType(requestedDataType, 20);
-        }
+    for(uint32_t i = 0; i < amount; i++){
+        CfAddressDef addr = self->unpacker->cfAddress_getChannel(self->unpacker, i);
+        newAddresses[i] = (void*) (ADDRESS_DATA_TYPE) addr.address;
+        channelIds[i] = addr.id;
+        types[i] = addr.type;
     }
 
     CommandAddrConf conf = {.newAddresses = newAddresses, \
                           .changedChannels = channelIds, \
                           .types = types, \
-                          .numberOfChangedChannels = numberOfFields};
+                          .numberOfChangedChannels = amount};
 
     CommandAddr_setAttributes(self->command, conf);
 

@@ -43,7 +43,6 @@ typedef enum{
     SE_UINT8, // Representing uint_8 data
     SE_UINT16, // Representing uint_16 data
     SE_UINT32, // Representing uint_32 data
-    SE_UINT64, // Representing uint_64 data
     SE_FLOAT, // Representing Float data
     SE_DOUBLE // Representing Double data !!! NOT YET SUPPORTED !!!
 } DATA_TYPES;

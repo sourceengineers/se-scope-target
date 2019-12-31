@@ -42,7 +42,7 @@ typedef enum{
 /* Class data */
 typedef struct __TriggerPrivateData{
     float level;
-    int edge;
+    bool edge;
     uint32_t triggerIndexes[2];
     IFloatStreamHandle stream;
     TriggerStrategy triggerStrategies[3];
@@ -284,7 +284,7 @@ static bool checkCurrentData(TriggerHandle self, const float* triggerData){
     const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
     const float dataLast = triggerData[CHANNEL_CURRENT_DATA];
     const float triggerLevel = self->level;
-    const int edge = dataCurrent > dataLast ? 1 : -1;
+    const bool edge = dataCurrent > dataLast;
 
     if(dataCurrent == dataLast){
         return false;
@@ -319,10 +319,6 @@ static bool configSanityCheck(TriggerHandle self, TriggerConfiguration conf){
     if((conf.mode != TRIGGER_NORMAL)
        && (conf.mode != TRIGGER_CONTINUOUS)
        && (conf.mode != TRIGGER_ONESHOT)){
-        return false;
-    }
-    if((conf.edge != TRIGGER_EDGE_NEGATIVE)
-       && (conf.edge != TRIGGER_EDGE_POSITIVE)){
         return false;
     }
     if(conf.channelId >= self->amountOfChannels){

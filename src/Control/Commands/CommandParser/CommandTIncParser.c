@@ -49,18 +49,9 @@ ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self){
         return NULL;
     }
 
-    CommandFetchingInformation information = {.commandName = commandName, .fieldName = (char*) "",
-            .isInArray = false, .arrayIndex = 0};
-
-    const uint32_t timeIncrement = self->unpacker->getIntFromCommand(self->unpacker, &information);
-
+    const uint32_t timeIncrement = self->unpacker->cfTInc_getInc(self->unpacker);
     CommandTInc_setAttributes(self->command, timeIncrement);
-
     return CommandTInc_getICommand(self->command);
-}
-
-char* CommandTIncParser_getName(void){
-    return commandName;
 }
 
 void CommandTIncParser_destroy(CommandTIncParserHandle self){

@@ -30,13 +30,15 @@ typedef struct __SerializerPrivateData* SerializerHandle;
  Public functions
 ******************************************************************************/
 /**
- * Creates the Serializer layer and attaches the packer und unpacker
- * @param packer
- * @param unpacker
+ *
+ * @param maxChannels
+ * @param maxAddresses
+ * @param output
+ * @param input
  * @return
  */
 SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByteStreamHandle output,
-                                   IUnpackerHandle unpacker);
+                                   IByteStreamHandle input);
 
 /**
  * Returns the runnable for the Rx path
@@ -80,11 +82,33 @@ IObserverHandle Serializer_getPackObserver(SerializerHandle self);
  */
 IObserverHandle Serializer_getUnpackObserver(SerializerHandle self);
 
-
+/**
+ *
+ * @param self
+ * @return
+ */
 IPackerHandle Serializer_getPacker(SerializerHandle self);
 
+/**
+ *
+ * @param self
+ * @return
+ */
+IUnpackerHandle Serializer_getUnpacker(SerializerHandle self);
+
+/**
+ *
+ * @param amountOfChannels
+ * @param sizeOfChannels
+ * @param addressesInAddressAnnouncer
+ * @return
+ */
 size_t Serializer_txCalculateBufferSize(size_t amountOfChannels, size_t sizeOfChannels, size_t addressesInAddressAnnouncer);
 
+/**
+ *
+ * @return
+ */
 size_t Serializer_rxCalculateBufferSize();
 
 /**

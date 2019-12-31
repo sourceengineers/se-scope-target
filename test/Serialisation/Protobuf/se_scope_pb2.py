@@ -17,15 +17,15 @@ _sym_db = _symbol_database.Default()
 
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='se-scope.proto',
-  package='SC',
+  package='PB',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0ese-scope.proto\x12\x02SC\"M\n\x07Trigger\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x13\n\x0b\x63l_data_ind\x18\x02 \x01(\r\x12\x1e\n\x04mode\x18\x03 \x01(\x0e\x32\x10.SC.Trigger_Mode\"#\n\x07\x43hannel\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x02\x12\n\n\x02id\x18\x02 \x01(\r\"f\n\x04\x44\x61ta\x12\x1d\n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x0b.SC.Channel\x12\x12\n\ntimestamps\x18\x02 \x03(\x07\x12\r\n\x05t_inc\x18\x03 \x01(\r\x12\x1c\n\x07trigger\x18\x04 \x01(\x0b\x32\x0b.SC.Trigger*D\n\x08Var_Type\x12\x0c\n\x08SE_UINT8\x10\x00\x12\r\n\tSE_UINT16\x10\x01\x12\r\n\tSE_UINT32\x10\x02\x12\x0c\n\x08SE_FLOAT\x10\x03*8\n\x0cTrigger_Mode\x12\n\n\x06NORMAL\x10\x00\x12\x0e\n\nCONTINUOUS\x10\x01\x12\x0c\n\x08ONE_SHOT\x10\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x0ese-scope.proto\x12\x02PB\"P\n\nSC_Trigger\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x13\n\x0b\x63l_data_ind\x18\x02 \x01(\r\x12\x1e\n\x04mode\x18\x03 \x01(\x0e\x32\x10.PB.Trigger_Mode\"&\n\nSC_Channel\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x02\x12\n\n\x02id\x18\x02 \x01(\r\"o\n\x07SC_Data\x12 \n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x0e.PB.SC_Channel\x12\x12\n\ntimestamps\x18\x02 \x03(\x07\x12\r\n\x05t_inc\x18\x03 \x01(\r\x12\x1f\n\x07trigger\x18\x04 \x01(\x0b\x32\x0e.PB.SC_Trigger\"K\n\rAddressConfig\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x0f\n\x07\x61\x64\x64ress\x18\x02 \x01(\r\x12\x1a\n\x04type\x18\x03 \x01(\x0e\x32\x0c.PB.Var_Type\"2\n\nCF_Address\x12$\n\taddresses\x18\x01 \x03(\x0b\x32\x11.PB.AddressConfig\"1\n\rRunningConfig\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x11\n\tnew_state\x18\x02 \x01(\x08\"0\n\nCF_Running\x12\"\n\x07running\x18\x01 \x03(\x0b\x32\x11.PB.RunningConfig\"X\n\nCF_Trigger\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x1e\n\x04mode\x18\x02 \x01(\x0e\x32\x10.PB.Trigger_Mode\x12\r\n\x05level\x18\x03 \x01(\x02\x12\x0c\n\x04\x65\x64ge\x18\x04 \x01(\x08\"\x18\n\x07\x43\x46_TInc\x12\r\n\x05t_inc\x18\x01 \x01(\r\"\x1c\n\x07\x45V_Poll\x12\x11\n\ttimestamp\x18\x01 \x01(\r*D\n\x08Var_Type\x12\x0c\n\x08SE_UINT8\x10\x00\x12\r\n\tSE_UINT16\x10\x01\x12\r\n\tSE_UINT32\x10\x02\x12\x0c\n\x08SE_FLOAT\x10\x03*8\n\x0cTrigger_Mode\x12\n\n\x06NORMAL\x10\x00\x12\x0e\n\nCONTINUOUS\x10\x01\x12\x0c\n\x08ONE_SHOT\x10\x02\x62\x06proto3')
 )
 
 _VAR_TYPE = _descriptor.EnumDescriptor(
   name='Var_Type',
-  full_name='SC.Var_Type',
+  full_name='PB.Var_Type',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -48,15 +48,15 @@ _VAR_TYPE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=242,
-  serialized_end=310,
+  serialized_start=633,
+  serialized_end=701,
 )
 _sym_db.RegisterEnumDescriptor(_VAR_TYPE)
 
 Var_Type = enum_type_wrapper.EnumTypeWrapper(_VAR_TYPE)
 _TRIGGER_MODE = _descriptor.EnumDescriptor(
   name='Trigger_Mode',
-  full_name='SC.Trigger_Mode',
+  full_name='PB.Trigger_Mode',
   filename=None,
   file=DESCRIPTOR,
   values=[
@@ -75,8 +75,8 @@ _TRIGGER_MODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=312,
-  serialized_end=368,
+  serialized_start=703,
+  serialized_end=759,
 )
 _sym_db.RegisterEnumDescriptor(_TRIGGER_MODE)
 
@@ -91,29 +91,29 @@ ONE_SHOT = 2
 
 
 
-_TRIGGER = _descriptor.Descriptor(
-  name='Trigger',
-  full_name='SC.Trigger',
+_SC_TRIGGER = _descriptor.Descriptor(
+  name='SC_Trigger',
+  full_name='PB.SC_Trigger',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='cl_id', full_name='SC.Trigger.cl_id', index=0,
+      name='cl_id', full_name='PB.SC_Trigger.cl_id', index=0,
       number=1, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='cl_data_ind', full_name='SC.Trigger.cl_data_ind', index=1,
+      name='cl_data_ind', full_name='PB.SC_Trigger.cl_data_ind', index=1,
       number=2, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='mode', full_name='SC.Trigger.mode', index=2,
+      name='mode', full_name='PB.SC_Trigger.mode', index=2,
       number=3, type=14, cpp_type=8, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -132,26 +132,26 @@ _TRIGGER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=22,
-  serialized_end=99,
+  serialized_end=102,
 )
 
 
-_CHANNEL = _descriptor.Descriptor(
-  name='Channel',
-  full_name='SC.Channel',
+_SC_CHANNEL = _descriptor.Descriptor(
+  name='SC_Channel',
+  full_name='PB.SC_Channel',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='data', full_name='SC.Channel.data', index=0,
+      name='data', full_name='PB.SC_Channel.data', index=0,
       number=1, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='id', full_name='SC.Channel.id', index=1,
+      name='id', full_name='PB.SC_Channel.id', index=1,
       number=2, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
@@ -169,41 +169,41 @@ _CHANNEL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=101,
-  serialized_end=136,
+  serialized_start=104,
+  serialized_end=142,
 )
 
 
-_DATA = _descriptor.Descriptor(
-  name='Data',
-  full_name='SC.Data',
+_SC_DATA = _descriptor.Descriptor(
+  name='SC_Data',
+  full_name='PB.SC_Data',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     _descriptor.FieldDescriptor(
-      name='channels', full_name='SC.Data.channels', index=0,
+      name='channels', full_name='PB.SC_Data.channels', index=0,
       number=1, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='timestamps', full_name='SC.Data.timestamps', index=1,
+      name='timestamps', full_name='PB.SC_Data.timestamps', index=1,
       number=2, type=7, cpp_type=3, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='t_inc', full_name='SC.Data.t_inc', index=2,
+      name='t_inc', full_name='PB.SC_Data.t_inc', index=2,
       number=3, type=13, cpp_type=3, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
-      name='trigger', full_name='SC.Data.trigger', index=3,
+      name='trigger', full_name='PB.SC_Data.trigger', index=3,
       number=4, type=11, cpp_type=10, label=1,
       has_default_value=False, default_value=None,
       message_type=None, enum_type=None, containing_type=None,
@@ -221,40 +221,359 @@ _DATA = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=138,
-  serialized_end=240,
+  serialized_start=144,
+  serialized_end=255,
 )
 
-_TRIGGER.fields_by_name['mode'].enum_type = _TRIGGER_MODE
-_DATA.fields_by_name['channels'].message_type = _CHANNEL
-_DATA.fields_by_name['trigger'].message_type = _TRIGGER
-DESCRIPTOR.message_types_by_name['Trigger'] = _TRIGGER
-DESCRIPTOR.message_types_by_name['Channel'] = _CHANNEL
-DESCRIPTOR.message_types_by_name['Data'] = _DATA
+
+_ADDRESSCONFIG = _descriptor.Descriptor(
+  name='AddressConfig',
+  full_name='PB.AddressConfig',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cl_id', full_name='PB.AddressConfig.cl_id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='address', full_name='PB.AddressConfig.address', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='PB.AddressConfig.type', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=257,
+  serialized_end=332,
+)
+
+
+_CF_ADDRESS = _descriptor.Descriptor(
+  name='CF_Address',
+  full_name='PB.CF_Address',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='addresses', full_name='PB.CF_Address.addresses', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=334,
+  serialized_end=384,
+)
+
+
+_RUNNINGCONFIG = _descriptor.Descriptor(
+  name='RunningConfig',
+  full_name='PB.RunningConfig',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cl_id', full_name='PB.RunningConfig.cl_id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='new_state', full_name='PB.RunningConfig.new_state', index=1,
+      number=2, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=386,
+  serialized_end=435,
+)
+
+
+_CF_RUNNING = _descriptor.Descriptor(
+  name='CF_Running',
+  full_name='PB.CF_Running',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='running', full_name='PB.CF_Running.running', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=437,
+  serialized_end=485,
+)
+
+
+_CF_TRIGGER = _descriptor.Descriptor(
+  name='CF_Trigger',
+  full_name='PB.CF_Trigger',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cl_id', full_name='PB.CF_Trigger.cl_id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='mode', full_name='PB.CF_Trigger.mode', index=1,
+      number=2, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='level', full_name='PB.CF_Trigger.level', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='edge', full_name='PB.CF_Trigger.edge', index=3,
+      number=4, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=487,
+  serialized_end=575,
+)
+
+
+_CF_TINC = _descriptor.Descriptor(
+  name='CF_TInc',
+  full_name='PB.CF_TInc',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='t_inc', full_name='PB.CF_TInc.t_inc', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=577,
+  serialized_end=601,
+)
+
+
+_EV_POLL = _descriptor.Descriptor(
+  name='EV_Poll',
+  full_name='PB.EV_Poll',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='timestamp', full_name='PB.EV_Poll.timestamp', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=603,
+  serialized_end=631,
+)
+
+_SC_TRIGGER.fields_by_name['mode'].enum_type = _TRIGGER_MODE
+_SC_DATA.fields_by_name['channels'].message_type = _SC_CHANNEL
+_SC_DATA.fields_by_name['trigger'].message_type = _SC_TRIGGER
+_ADDRESSCONFIG.fields_by_name['type'].enum_type = _VAR_TYPE
+_CF_ADDRESS.fields_by_name['addresses'].message_type = _ADDRESSCONFIG
+_CF_RUNNING.fields_by_name['running'].message_type = _RUNNINGCONFIG
+_CF_TRIGGER.fields_by_name['mode'].enum_type = _TRIGGER_MODE
+DESCRIPTOR.message_types_by_name['SC_Trigger'] = _SC_TRIGGER
+DESCRIPTOR.message_types_by_name['SC_Channel'] = _SC_CHANNEL
+DESCRIPTOR.message_types_by_name['SC_Data'] = _SC_DATA
+DESCRIPTOR.message_types_by_name['AddressConfig'] = _ADDRESSCONFIG
+DESCRIPTOR.message_types_by_name['CF_Address'] = _CF_ADDRESS
+DESCRIPTOR.message_types_by_name['RunningConfig'] = _RUNNINGCONFIG
+DESCRIPTOR.message_types_by_name['CF_Running'] = _CF_RUNNING
+DESCRIPTOR.message_types_by_name['CF_Trigger'] = _CF_TRIGGER
+DESCRIPTOR.message_types_by_name['CF_TInc'] = _CF_TINC
+DESCRIPTOR.message_types_by_name['EV_Poll'] = _EV_POLL
 DESCRIPTOR.enum_types_by_name['Var_Type'] = _VAR_TYPE
 DESCRIPTOR.enum_types_by_name['Trigger_Mode'] = _TRIGGER_MODE
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-Trigger = _reflection.GeneratedProtocolMessageType('Trigger', (_message.Message,), dict(
-  DESCRIPTOR = _TRIGGER,
+SC_Trigger = _reflection.GeneratedProtocolMessageType('SC_Trigger', (_message.Message,), dict(
+  DESCRIPTOR = _SC_TRIGGER,
   __module__ = 'se_scope_pb2'
-  # @@protoc_insertion_point(class_scope:SC.Trigger)
+  # @@protoc_insertion_point(class_scope:PB.SC_Trigger)
   ))
-_sym_db.RegisterMessage(Trigger)
+_sym_db.RegisterMessage(SC_Trigger)
 
-Channel = _reflection.GeneratedProtocolMessageType('Channel', (_message.Message,), dict(
-  DESCRIPTOR = _CHANNEL,
+SC_Channel = _reflection.GeneratedProtocolMessageType('SC_Channel', (_message.Message,), dict(
+  DESCRIPTOR = _SC_CHANNEL,
   __module__ = 'se_scope_pb2'
-  # @@protoc_insertion_point(class_scope:SC.Channel)
+  # @@protoc_insertion_point(class_scope:PB.SC_Channel)
   ))
-_sym_db.RegisterMessage(Channel)
+_sym_db.RegisterMessage(SC_Channel)
 
-Data = _reflection.GeneratedProtocolMessageType('Data', (_message.Message,), dict(
-  DESCRIPTOR = _DATA,
+SC_Data = _reflection.GeneratedProtocolMessageType('SC_Data', (_message.Message,), dict(
+  DESCRIPTOR = _SC_DATA,
   __module__ = 'se_scope_pb2'
-  # @@protoc_insertion_point(class_scope:SC.Data)
+  # @@protoc_insertion_point(class_scope:PB.SC_Data)
   ))
-_sym_db.RegisterMessage(Data)
+_sym_db.RegisterMessage(SC_Data)
+
+AddressConfig = _reflection.GeneratedProtocolMessageType('AddressConfig', (_message.Message,), dict(
+  DESCRIPTOR = _ADDRESSCONFIG,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.AddressConfig)
+  ))
+_sym_db.RegisterMessage(AddressConfig)
+
+CF_Address = _reflection.GeneratedProtocolMessageType('CF_Address', (_message.Message,), dict(
+  DESCRIPTOR = _CF_ADDRESS,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.CF_Address)
+  ))
+_sym_db.RegisterMessage(CF_Address)
+
+RunningConfig = _reflection.GeneratedProtocolMessageType('RunningConfig', (_message.Message,), dict(
+  DESCRIPTOR = _RUNNINGCONFIG,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.RunningConfig)
+  ))
+_sym_db.RegisterMessage(RunningConfig)
+
+CF_Running = _reflection.GeneratedProtocolMessageType('CF_Running', (_message.Message,), dict(
+  DESCRIPTOR = _CF_RUNNING,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.CF_Running)
+  ))
+_sym_db.RegisterMessage(CF_Running)
+
+CF_Trigger = _reflection.GeneratedProtocolMessageType('CF_Trigger', (_message.Message,), dict(
+  DESCRIPTOR = _CF_TRIGGER,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.CF_Trigger)
+  ))
+_sym_db.RegisterMessage(CF_Trigger)
+
+CF_TInc = _reflection.GeneratedProtocolMessageType('CF_TInc', (_message.Message,), dict(
+  DESCRIPTOR = _CF_TINC,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.CF_TInc)
+  ))
+_sym_db.RegisterMessage(CF_TInc)
+
+EV_Poll = _reflection.GeneratedProtocolMessageType('EV_Poll', (_message.Message,), dict(
+  DESCRIPTOR = _EV_POLL,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.EV_Poll)
+  ))
+_sym_db.RegisterMessage(EV_Poll)
 
 
 # @@protoc_insertion_point(module_scope)

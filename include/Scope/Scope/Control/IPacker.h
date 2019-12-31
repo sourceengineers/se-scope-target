@@ -21,6 +21,18 @@
 #include "Scope/GeneralPurpose/FloatRingBuffer.h"
 #include "Scope/Core/ScopeTypes.h"
 
+typedef struct __ScDataChannelDef {
+    FloatRingBufferHandle stream;
+    uint32_t id;
+} ScDataChannelDef;
+
+typedef struct __ScDataTriggerDef {
+    bool isTriggered;
+    uint32_t channelId;
+    uint32_t timestamp;
+    TRIGGER_MODE triggerMode;
+} ScDataTriggerDef;
+
 /******************************************************************************
  Define interface handle data
 ******************************************************************************/
@@ -52,7 +64,7 @@ typedef struct IPackerStruct{
      * @param buffer Passes the Swap buffer into the packer
      * @param channelId id of the channel
      */
-    void (* addChannel)(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
+    void (* addChannel)(IPackerHandle packer, ScDataChannelDef channel);
 
     /**
      * Prepares the time increment
@@ -75,8 +87,7 @@ typedef struct IPackerStruct{
      * @param channelId
      * @param timestamp
      */
-    void (* addTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId,
-                            const uint32_t timestamp, TRIGGER_MODE triggerMode);
+    void (* addTrigger)(IPackerHandle packer, ScDataTriggerDef trigger);
 
     /**
      * Prepares address announcement
