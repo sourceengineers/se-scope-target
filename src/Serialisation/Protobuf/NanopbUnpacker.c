@@ -79,7 +79,7 @@ static bool addressConfigCallback(pb_istream_t *stream, const pb_field_t *field,
     CfAddress* address =  (CfAddress*) (*arg);
     address->channels[address->amount].id = config.cl_id;
     address->channels[address->amount].type = (DATA_TYPES) config.type;
-    address->channels[address->amount].address = (DATA_TYPES) config.address;
+    address->channels[address->amount].address = config.address;
     address->amount += 1;
 
     return true;
@@ -253,9 +253,21 @@ void NanopbUnpacker_destroy(NanopbUnpackerHandle self){
 }
 
 size_t NanopbUnpacker_calculateBufferSize(size_t maxNumberOfChannels){
- 
-	// TODO: Actually calcualte this
-	return 300;
+
+    size_t possibleSizes = 5;
+
+    size_t sizes[] = {PB_CF_Trigger_size, PB_CF_TInc_size, PB_EV_Poll_size, PB_AddressConfig_size * maxNumberOfChannels,
+                      PB_RunningConfig_size * maxNumberOfChannels};
+
+    size_t biggest = 0;
+
+    for (int i = 0; i < possibleSizes; ++i) {
+        if(sizes[i] > biggest){
+            biggest = sizes[i];
+        }
+    }
+
+	return biggest;
 }
 
 IUnpackerHandle NanopbUnpacker_getIUnpacker(NanopbUnpackerHandle self){
