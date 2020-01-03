@@ -41,12 +41,6 @@ CommandClearParserHandle CommandClearParser_create(IScopeHandle scope, IObserver
 ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandClearParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

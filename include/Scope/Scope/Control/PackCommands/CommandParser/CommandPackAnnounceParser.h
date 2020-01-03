@@ -45,12 +45,6 @@ CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(AnnounceStorage
 ICommandHandle CommandPackAnnounceParser_getCommand(CommandPackAnnounceParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandPackAnnounceParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

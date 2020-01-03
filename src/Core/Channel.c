@@ -76,16 +76,6 @@ static float castDataToFloat(ChannelHandle self) {
             transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
             data = ((float) *((float *) &transportAddr));
             break;
-#if !(ARCH_SIZE_32)
-        case SE_UINT64:
-            transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
-            data = ((uint64_t) *((uint64_t *) &transportAddr));
-            break;
-#endif
-/*    case SE_DOUBLE:
-      transportAddr = *((ADDRESS_DATA_TYPE*)self->pollAddress);
-      data = ((double)*((double*)&transportAddr));
-      break;*/
         default:
             transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
             data = ((float) *((float *) &transportAddr));

@@ -43,12 +43,6 @@ CommandPackDataParserHandle CommandPackDataParser_create(IScopeHandle scope, IPa
 ICommandHandle CommandPackDataParser_getCommand(CommandPackDataParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandPackDataParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

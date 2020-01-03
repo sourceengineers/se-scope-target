@@ -18,9 +18,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "ev_pack_announce";
-
 /* Class data */
 typedef struct __CommandPackAnnounceParserPrivateData{
     CommandPackAnnounceHandle command;
@@ -40,10 +37,6 @@ CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(AnnounceStorage
 
 ICommandHandle CommandPackAnnounceParser_getCommand(CommandPackAnnounceParserHandle self){
     return CommandPackAnnounce_getICommand(self->command);
-}
-
-char* CommandPackAnnounceParser_getName(void){
-    return commandName;
 }
 
 void CommandPackAnnounceParser_destroy(CommandPackAnnounceParserHandle self){

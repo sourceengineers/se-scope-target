@@ -16,9 +16,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-//* Name of the command */
-static char* commandName = "ev_poll";
-
 /* Class data */
 typedef struct __CommandPollParserPrivateData{
     CommandPollHandle command;
@@ -39,10 +36,6 @@ CommandPollParserHandle CommandPollParser_create(IScopeHandle scope, IObserverHa
 ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self){
 
     return CommandPoll_getICommand(self->command);
-}
-
-char* CommandPollParser_getName(void){
-    return commandName;
 }
 
 void CommandPollParser_destroy(CommandPollParserHandle self){

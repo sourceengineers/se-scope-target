@@ -42,12 +42,6 @@ CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHa
 ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandAddrParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

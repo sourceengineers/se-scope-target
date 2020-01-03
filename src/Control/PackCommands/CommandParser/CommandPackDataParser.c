@@ -16,9 +16,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "ev_pack_data";
-
 /* Class data */
 typedef struct __CommandPackDataParserPrivateData{
     CommandPackDataHandle command;
@@ -37,10 +34,6 @@ CommandPackDataParserHandle CommandPackDataParser_create(IScopeHandle scope, IPa
 
 ICommandHandle CommandPackDataParser_getCommand(CommandPackDataParserHandle self){
     return CommandPackData_getICommand(self->command);
-}
-
-char* CommandPackDataParser_getName(void){
-    return commandName;
 }
 
 void CommandPackDataParser_destroy(CommandPackDataParserHandle self){

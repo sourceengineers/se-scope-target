@@ -40,12 +40,6 @@ CommandPollParserHandle CommandPollParser_create(IScopeHandle scope, IObserverHa
 ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandPollParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

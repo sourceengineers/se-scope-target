@@ -16,9 +16,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "ev_trans";
-
 /* Class data */
 typedef struct __CommandTransParserPrivateData{
     CommandTransHandle command;
@@ -38,10 +35,6 @@ CommandTransParserHandle CommandTransParser_create(IScopeHandle scope, IObserver
 
 ICommandHandle CommandTransParser_getCommand(CommandTransParserHandle self){
     return CommandTrans_getICommand(self->command);
-}
-
-char* CommandTransParser_getName(void){
-    return commandName;
 }
 
 void CommandTransParser_destroy(CommandTransParserHandle self){

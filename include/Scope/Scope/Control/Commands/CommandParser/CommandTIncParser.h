@@ -43,12 +43,6 @@ CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHa
 ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandTIncParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

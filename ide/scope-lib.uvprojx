@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\;..\3rdparty\nanopb\</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\nanopb\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -603,11 +603,6 @@
               <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
             </File>
             <File>
-              <FileName>JsonUnpacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
-            </File>
-            <File>
               <FileName>NanopbPacker.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
@@ -631,6 +626,11 @@
               <FileName>pb_encode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
+            </File>
+            <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -656,16 +656,6 @@
               <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Json</GroupName>
-          <Files>
-            <File>
-              <FileName>jsmn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\3rdparty\jsmn\jsmn\jsmn.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1268,11 +1258,6 @@
               <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
             </File>
             <File>
-              <FileName>JsonUnpacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
-            </File>
-            <File>
               <FileName>NanopbPacker.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
@@ -1296,6 +1281,11 @@
               <FileName>pb_encode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
+            </File>
+            <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1321,16 +1311,6 @@
               <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Json</GroupName>
-          <Files>
-            <File>
-              <FileName>jsmn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\3rdparty\jsmn\jsmn\jsmn.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1933,11 +1913,6 @@
               <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
             </File>
             <File>
-              <FileName>JsonUnpacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
-            </File>
-            <File>
               <FileName>NanopbPacker.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
@@ -1961,6 +1936,11 @@
               <FileName>pb_encode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
+            </File>
+            <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1986,16 +1966,6 @@
               <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Json</GroupName>
-          <Files>
-            <File>
-              <FileName>jsmn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\3rdparty\jsmn\jsmn\jsmn.c</FilePath>
             </File>
           </Files>
         </Group>

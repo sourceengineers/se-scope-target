@@ -109,7 +109,7 @@ size_t Serializer_txCalculateBufferSize(size_t amountOfChannels, size_t sizeOfCh
  *
  * @return
  */
-size_t Serializer_rxCalculateBufferSize();
+size_t Serializer_rxCalculateBufferSize(size_t maxChannels);
 
 /**
  * Deconstructor

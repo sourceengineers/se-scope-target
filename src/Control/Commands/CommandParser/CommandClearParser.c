@@ -16,9 +16,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "ev_clear";
-
 /* Class data */
 typedef struct __CommandClearParserPrivateData{
     CommandClearHandle command;
@@ -38,10 +35,6 @@ CommandClearParserHandle CommandClearParser_create(IScopeHandle scope, IObserver
 
 ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self){
     return CommandClear_getICommand(self->command);
-}
-
-char* CommandClearParser_getName(void){
-    return commandName;
 }
 
 void CommandClearParser_destroy(CommandClearParserHandle self){

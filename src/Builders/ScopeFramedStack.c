@@ -46,7 +46,7 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config){
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
     self->outputBufferSize = Serializer_txCalculateBufferSize(config.amountOfChannels, config.sizeOfChannels,
                                                             config.addressesInAddressAnnouncer);
-    self->inputBufferSize = Serializer_rxCalculateBufferSize();
+    self->inputBufferSize = Serializer_rxCalculateBufferSize(config.amountOfChannels);
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
     self->input = BufferedByteStream_create(self->inputBufferSize);
@@ -90,7 +90,7 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig 
     /* Let the Packer and Unpacker calculate how much buffer space they are going to use */
     self->outputBufferSize = Serializer_txCalculateBufferSize(config.amountOfChannels, config.sizeOfChannels,
                                                             config.addressesInAddressAnnouncer);
-    self->inputBufferSize = Serializer_rxCalculateBufferSize();
+    self->inputBufferSize = Serializer_rxCalculateBufferSize(config.amountOfChannels);
 
     /* Generate the input and output buffers, based on the previously calculated sizes */
     self->input = BufferedByteStream_create(self->inputBufferSize);

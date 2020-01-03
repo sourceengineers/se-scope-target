@@ -21,9 +21,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-//* Name of the command */
-static char* commandName = "ev_detect";
-
 /* Class data */
 typedef struct __CommandDetectParserPrivateData{
     CommandDetectHandle command;
@@ -56,8 +53,4 @@ void CommandDetectParser_destroy(CommandDetectParserHandle self){
 
     free(self);
     self = NULL;
-}
-
-char* CommandDetectParser_getName(void){
-    return commandName;
 }

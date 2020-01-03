@@ -41,13 +41,6 @@ CommandAnnounceParserHandle CommandAnnounceParser_create(IObserverHandle packObs
 ICommandHandle CommandAnnounceParser_getCommand(CommandAnnounceParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandAnnounceParser_getName(void);
-
-
-/**
  * Deconstructor
  * @param self
  */

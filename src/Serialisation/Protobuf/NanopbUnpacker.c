@@ -253,8 +253,9 @@ void NanopbUnpacker_destroy(NanopbUnpackerHandle self){
 }
 
 size_t NanopbUnpacker_calculateBufferSize(size_t maxNumberOfChannels){
-    // Wiretypes and id will always only take up 1 byte. Wiretypes and Index are indicated with WI in the comments.
-    // Actual data will always max take up 4 bytes -> 32 bits.
+ 
+	// TODO: Actually calcualte this
+	return 300;
 }
 
 IUnpackerHandle NanopbUnpacker_getIUnpacker(NanopbUnpackerHandle self){

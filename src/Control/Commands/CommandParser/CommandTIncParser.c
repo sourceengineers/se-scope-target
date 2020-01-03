@@ -19,9 +19,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "cf_t_inc";
-
 /* Class data */
 typedef struct __CommandTIncParserPrivateData{
     CommandTIncHandle command;

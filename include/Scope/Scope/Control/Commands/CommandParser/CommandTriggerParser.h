@@ -43,12 +43,6 @@ CommandTriggerParserHandle CommandTriggerParser_create(IScopeHandle scope, IUnpa
 ICommandHandle CommandTriggerParser_getCommand(CommandTriggerParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandTriggerParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

@@ -24,9 +24,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-//* Name of the command */
-static char* commandName = "cf_addr";
-
 /* Class data */
 typedef struct __CommandAddrParserPrivateData{
     CommandAddrHandle command;
@@ -35,26 +32,9 @@ typedef struct __CommandAddrParserPrivateData{
 
 } CommandAddrParserPrivateData;
 
-/* Takes a String as input and retrieves the matching data type defined in "DataTypes.h> */
-static DATA_TYPES parseStringToDataType(const char* dataTypeName, size_t maxLength);
-
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static DATA_TYPES parseStringToDataType(const char* dataTypeName, const size_t maxLength){
-
-    if(strncmp(dataTypeName, SE_UINT8_NAME, maxLength) == 0){
-        return SE_UINT8;
-    }else if(strncmp(dataTypeName, SE_UINT16_NAME, maxLength) == 0){
-        return SE_UINT16;
-    }else if(strncmp(dataTypeName, SE_UINT32_NAME, maxLength) == 0){
-        return SE_UINT32;
-    }else if(strncmp(dataTypeName, SE_FLOAT_NAME, maxLength) == 0){
-        return SE_FLOAT;
-    }
-
-    return SE_FLOAT;
-}
 
 /******************************************************************************
  Public functions
@@ -104,8 +84,4 @@ void CommandAddrParser_destroy(CommandAddrParserHandle self){
 
     free(self);
     self = NULL;
-}
-
-char* CommandAddrParser_getName(void){
-    return commandName;
 }

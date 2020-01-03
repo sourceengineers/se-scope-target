@@ -40,12 +40,6 @@ CommandTransParserHandle CommandTransParser_create(IScopeHandle scope, IObserver
 ICommandHandle CommandTransParser_getCommand(CommandTransParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandTransParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */

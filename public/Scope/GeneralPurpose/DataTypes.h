@@ -29,12 +29,10 @@
 #define SE_UINT8_NAME "SE_UINT8"
 #define SE_UINT16_NAME "SE_UINT16"
 #define SE_UINT32_NAME "SE_UINT32"
-#define SE_UINT64_NAME "SE_UINT64"
 #define SE_FLOAT_NAME "SE_FLOAT"
-#define SE_DOUBLE_NAME "SE_DOUBLE"
 
 /** Define list of names for easy access, matching the DATA_TYPES enum entries */
-static const char* DATA_TYPE_NAMES[6] = {SE_UINT8_NAME, SE_UINT16_NAME, SE_UINT32_NAME, SE_UINT64_NAME, SE_FLOAT_NAME, SE_DOUBLE_NAME};
+static const char* DATA_TYPE_NAMES[4] = {SE_UINT8_NAME, SE_UINT16_NAME, SE_UINT32_NAME, SE_FLOAT_NAME};
 
 /**
  * Enum representing the data types
@@ -44,7 +42,6 @@ typedef enum{
     SE_UINT16, // Representing uint_16 data
     SE_UINT32, // Representing uint_32 data
     SE_FLOAT, // Representing Float data
-    SE_DOUBLE // Representing Double data !!! NOT YET SUPPORTED !!!
 } DATA_TYPES;
 
 /** Define macro to fetch the right data type name */

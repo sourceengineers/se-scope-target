@@ -41,12 +41,6 @@ CommandDetectParserHandle CommandDetectParser_create(IObserverHandle observer);
 ICommandHandle CommandDetectParser_getCommand(CommandDetectParserHandle self);
 
 /**
- * Returns the name of the command
- * @return
- */
-char* CommandDetectParser_getName(void);
-
-/**
  * Deconstructor
  * @param self
  */
