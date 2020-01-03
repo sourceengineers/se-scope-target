@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock-matchers.h>
+#include <Communication/FramedIOTestFunctions.h>
 
 extern "C" {
 #include <ScopeMock/ScopeMock.h>
@@ -9,7 +10,6 @@ extern "C" {
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
 #include <Scope/Serialisation/Serializer.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
-#include <Scope/Serialisation/Serializer.h>
 }
 
 using namespace testing;
@@ -85,42 +85,6 @@ protected:
         vector<uint8_t> v_o;
         v_o.assign(recData, recData + bytesPending);
         return v_o;
-    }
-
-    void writeLength(uint32_t length, vector<uint8_t> &container){
-        for(size_t i = 0; i < 4; ++i){
-            uint8_t byte = (length >> (3 - i) * 8) & 0xFF;
-            container.push_back(byte);
-        }
-    }
-
-    void writeChecksum(uint8_t* data, size_t length, vector<uint8_t> &container){
-
-        uint16_t checksum = 0;
-        for(size_t i = 0; i < length; ++i){
-            uint8_t byte = data[i];
-            checksum += byte;
-        }
-
-        container.push_back((checksum & 0xFF00) >> 8);
-        container.push_back(checksum & 0xFF);
-    }
-
-    vector<uint8_t> prepareMessage(MessageType type, string message){
-
-        vector<uint8_t> v_i;
-        v_i.push_back('[');
-        v_i.push_back(type);
-        writeLength(message.size(), v_i);
-
-        for(int i = 0; i < message.size(); ++i){
-            v_i.push_back(message.c_str()[i]);
-        }
-
-        writeChecksum((uint8_t*) message.c_str(), message.size(), v_i);
-        v_i.push_back(']');
-
-        return v_i;
     }
 
     ~StackTest() override{

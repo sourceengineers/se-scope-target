@@ -1,12 +1,12 @@
 #include <gtest/gtest.h>
 #include <Scope/Core/ScopeTypes.h>
 #include <gmock/gmock-matchers.h>
-#include <stdbool.h>
+#include "./FramedIOTestFunctions.h"
 
 extern "C" {
 #include <Scope/Communication/Interfaces/FramedIO.h>
 #include <Scope/GeneralPurpose/BufferedByteStream.h>
-#include "../../Observer/ObserverMock.h"
+#include "Observer/ObserverMock.h"
 }
 
 using namespace testing;
@@ -51,26 +51,6 @@ protected:
         BufferedByteStream_destroy(_input);
         FramedIO_destroy(_frame);
     }
-
-    void writeLength(uint32_t length, vector<uint8_t> &container){
-        for(size_t i = 0; i < 4; ++i){
-            uint8_t byte = (length >> (3 - i) * 8) & 0xFF;
-            container.push_back(byte);
-        }
-    }
-
-    void writeChecksum(uint8_t* data, size_t length, vector<uint8_t> &container){
-
-        uint16_t checksum = 0;
-        for(size_t i = 0; i < length; ++i){
-            uint8_t byte = data[i];
-            checksum += byte;
-        }
-
-        container.push_back((checksum & 0xFF00) >> 8);
-        container.push_back(checksum & 0xFF);
-    }
-
 
     ~FramedTest() override{
     }

@@ -53,7 +53,7 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
 
                                     uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress);
 
-void transmit(IScopeHandle scope);
+static void transmit(IScopeHandle scope);
 
 static bool run(IRunnableHandle runnable);
 
@@ -141,7 +141,7 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
     self->configureChannelAddressHasBeenCalled = true;
 }
 
-void transmit(IScopeHandle scope){
+static void transmit(IScopeHandle scope){
     ScopeMockHandle self = (ScopeMockHandle) scope->handle;
 
     self->transmitHasBeenCalled = true;

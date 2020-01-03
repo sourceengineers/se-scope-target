@@ -226,8 +226,8 @@ NanopbUnpackerHandle NanopbUnpacker_create(IByteStreamHandle input, size_t amoun
     self->wrapped.state = self->input;
     self->maxNumberOfChannels = amountOfChannels;
 
-    self->address.channels = malloc(sizeof(CfAddressDef) * amountOfChannels);
-    self->running.channels = malloc(sizeof(CfRunningDef) * amountOfChannels);
+    self->address.channels = (CfAddressDef*) malloc(sizeof(CfAddressDef) * amountOfChannels);
+    self->running.channels = (CfRunningDef*) malloc(sizeof(CfRunningDef) * amountOfChannels);
 
     self->unpacker.handle = self;
     self->unpacker.cfAddress_getAmount = &cfAddress_getAmount;
