@@ -15,10 +15,13 @@ extern "C" {
 
 /* Enum definitions */
 typedef enum _PB_Var_Type {
-    PB_Var_Type_SE_UINT8 = 0,
-    PB_Var_Type_SE_UINT16 = 1,
-    PB_Var_Type_SE_UINT32 = 2,
-    PB_Var_Type_SE_FLOAT = 3
+    PB_Var_Type_SE_INT8 = 0,
+    PB_Var_Type_SE_INT16 = 1,
+    PB_Var_Type_SE_INT32 = 2,
+    PB_Var_Type_SE_UINT8 = 3,
+    PB_Var_Type_SE_UINT16 = 4,
+    PB_Var_Type_SE_UINT32 = 5,
+    PB_Var_Type_SE_FLOAT = 6
 } PB_Var_Type;
 
 typedef enum _PB_Trigger_Mode {
@@ -83,7 +86,7 @@ typedef struct _PB_SC_Data {
 
 
 /* Helper constants for enums */
-#define _PB_Var_Type_MIN PB_Var_Type_SE_UINT8
+#define _PB_Var_Type_MIN PB_Var_Type_SE_INT8
 #define _PB_Var_Type_MAX PB_Var_Type_SE_FLOAT
 #define _PB_Var_Type_ARRAYSIZE ((PB_Var_Type)(PB_Var_Type_SE_FLOAT+1))
 
