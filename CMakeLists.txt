@@ -43,6 +43,7 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 ################################################################################
 include_directories( "${PROJECT_DEPENDENCIES_DIR}/nanopb" "${PROJECT_INCLUDE_DIR}" "${PROJECT_INCLUDE_DIR_PUBLIC}")
 
+option(nanopb_BUILD_GENERATOR OFF)
 add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/nanopb)
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})

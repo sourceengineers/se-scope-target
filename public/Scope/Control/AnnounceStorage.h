@@ -60,9 +60,8 @@ AnnounceStorageHandle AnnounceStorage_create(const size_t maxAmountOfConfiguredA
  * @param type type of the address
  * @param addressId position into which the address should be written
  */
-void AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* name, const void* address,
-                                       const DATA_TYPES type,
-                                       const uint32_t addressId);
+bool AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* name, const void* address,
+                                       const DATA_TYPES type);
 
 /**
  * Returns the max amount of channels that can be configured in the system. This is used to let the host know
@@ -105,6 +104,14 @@ size_t AnnounceStorage_getMaxAmountOfAddresses(AnnounceStorageHandle self);
  * @return Yiels NULL if id > AnnounceStorage_getMaxAmountOfAddresses
  */
 AddressDefinition* AnnounceStorage_getAddressToTransmit(AnnounceStorageHandle self, const uint32_t addressId);
+
+
+/**
+ * Returns the amount of configured addresses
+ * @param self
+ * @return
+ */
+size_t AnnounceStorage_getAmountOfConfiguredAddresses(AnnounceStorageHandle self);
 
 /**
  * Deconstructor

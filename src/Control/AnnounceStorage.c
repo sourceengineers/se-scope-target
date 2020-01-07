@@ -22,7 +22,7 @@
 ******************************************************************************/
 /* Class data */
 typedef struct __AnnounceStoragePrivateData{
-
+    size_t configuredAmountOfAddresses;
     AddressDefinition* addresses;
     size_t maxAmountOfAddresses;
     size_t maxAmountOfChannels;
@@ -43,6 +43,7 @@ AnnounceStorageHandle AnnounceStorage_create(const size_t maxAmountOfAddresses, 
 
     AnnounceStorageHandle self = malloc(sizeof(AnnounceStoragePrivateData));
     assert(self);
+    self->configuredAmountOfAddresses = 0;
     self->addresses = malloc(sizeof(AddressDefinition) * maxAmountOfAddresses);
     assert(self->addresses);
     self->maxAmountOfAddresses = maxAmountOfAddresses;
@@ -80,21 +81,27 @@ AddressDefinition* AnnounceStorage_getAddressToTransmit(AnnounceStorageHandle se
     return &self->addresses[addressId];
 }
 
-void AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* name, const void* address,
-                                       const DATA_TYPES type,
-                                       const uint32_t addressId){
+size_t AnnounceStorage_getAmountOfConfiguredAddresses(AnnounceStorageHandle self){
+    return self -> configuredAmountOfAddresses;
+}
 
-    if(addressId >= self->maxAmountOfAddresses){
-        return;
+bool AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* name, const void* address,
+                                       const DATA_TYPES type){
+    //
+    if(self->configuredAmountOfAddresses >= self->maxAmountOfAddresses){
+        return false;
     }
 
     if(strlen(name) > maxAddrNameLength){
-        return;
+        return false;
     }
 
-    self->addresses[addressId].type = type;
-    self->addresses[addressId].address = (ADDRESS_DATA_TYPE) address;
-    strncpy(self->addresses[addressId].name, name, maxAddrNameLength);
+    self->addresses[self->configuredAmountOfAddresses].type = type;
+    self->addresses[self->configuredAmountOfAddresses].address = (ADDRESS_DATA_TYPE) address;
+    strncpy(self->addresses[self->configuredAmountOfAddresses].name, name, maxAddrNameLength);
+
+    self->configuredAmountOfAddresses++;
+    return true;
 }
 
 void AnnounceStorage_destroy(AnnounceStorageHandle self){
