@@ -76,6 +76,27 @@ TEST(Channel, test_data_types){
     Channel_read(channel, &answer, 1);
     EXPECT_EQ((uint32_t) answer, 12);
 
+
+    int8_t int8Data = -12;
+    Channel_setPollAddress(channel, &int8Data, SE_INT8);
+    Channel_poll(channel);
+    Channel_swapBuffers(channel);
+    Channel_read(channel, &answer, 1);
+    EXPECT_EQ((int8_t) answer, -12);
+
+    int16_t int16Data = -12;
+    Channel_setPollAddress(channel, &int16Data, SE_INT16);
+    Channel_poll(channel);
+    Channel_swapBuffers(channel);
+    Channel_read(channel, &answer, 1);
+    EXPECT_EQ((int16_t) answer, -12);
+
+    int32_t int32Data = -12;
+    Channel_setPollAddress(channel, &int32Data, SE_INT32);
+    Channel_poll(channel);
+    Channel_swapBuffers(channel);
+    Channel_read(channel, &answer, 1);
+    EXPECT_EQ((int32_t) answer, -12);
 }
 
 TEST(Channel, test_states){
