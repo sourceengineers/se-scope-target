@@ -14,9 +14,9 @@
 #define ICOMMUNICATOR_H_
 
 #include "Scope/GeneralPurpose/DataTypes.h"
-#include "Scope/GeneralPurpose/IRunnable.h"
+#include <se-lib-c/util/runnable/IRunnable.h>
 
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 /******************************************************************************
  Define interface handle data

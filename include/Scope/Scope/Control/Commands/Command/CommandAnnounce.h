@@ -14,11 +14,11 @@
 #ifndef COMMANDANNOUNCE_H_
 #define COMMANDANNOUNCE_H_
 
-#include "Scope/GeneralPurpose/DataTypes.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
+#include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/IScope.h"
-#include "Scope/GeneralPurpose/IObserver.h"
 
 
 /******************************************************************************

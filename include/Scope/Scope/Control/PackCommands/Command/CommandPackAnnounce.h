@@ -13,7 +13,7 @@
 #ifndef COMMANDPACKANNOUNCE_H_
 #define COMMANDPACKANNOUNCE_H_
 
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Control/AnnounceStorage.h"
 

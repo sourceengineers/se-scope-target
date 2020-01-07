@@ -14,7 +14,7 @@
 #ifndef COMMANDCLEAR_H_
 #define COMMANDCLEAR_H_
 
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 #include "Scope/GeneralPurpose/DataTypes.h"
 
 #include "Scope/Control/ICommand.h"

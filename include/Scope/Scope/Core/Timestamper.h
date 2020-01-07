@@ -17,7 +17,7 @@
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 
-#include "Scope/GeneralPurpose/IIntStream.h"
+#include <se-lib-c/stream/IIntStream.h>
 
 #include <stdint.h>
 #include <stdbool.h>

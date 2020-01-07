@@ -22,7 +22,7 @@
 #include "Scope/Core/IScope.h"
 
 #include <stdint.h>
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 /******************************************************************************
  Define class handle data

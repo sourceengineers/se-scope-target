@@ -27,7 +27,7 @@
 #include "Scope/Control/ICommand.h"
 #include "Scope/Control/IUnpacker.h"
 #include "Scope/Core/IScope.h"
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 /******************************************************************************
  Define class handle data

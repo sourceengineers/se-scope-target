@@ -12,12 +12,12 @@
 #ifndef FRAMEDIO_H
 #define FRAMEDIO_H
 
-#include "Scope/GeneralPurpose/IByteStream.h"
-#include "Scope/GeneralPurpose/IRunnable.h"
-#include "Scope/Communication/ITransceiver.h"
+#include <se-lib-c/stream/IByteStream.h>
+#include <se-lib-c/util/runnable/IRunnable.h>
 
+#include "Scope/Communication/ITransceiver.h"
 #include "Scope/Communication/ICommunicator.h"
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 #include <stdint.h>
 #include <stddef.h>

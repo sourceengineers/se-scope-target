@@ -14,7 +14,7 @@
 #define NANOPBPACKER_H_
 
 #include "Scope/GeneralPurpose/DataTypes.h"
-#include "Scope/GeneralPurpose/IByteStream.h"
+#include <se-lib-c/stream/IByteStream.h>
 
 #include "Scope/Communication/ICommunicator.h"
 #include "Scope/Control/IPacker.h"

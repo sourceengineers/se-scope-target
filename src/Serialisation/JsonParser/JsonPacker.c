@@ -7,7 +7,10 @@
  *
  *****************************************************************************************************************************************/
 
-#include "Scope/GeneralPurpose/IByteStream.h"
+#include <se-lib-c/stream/IByteStream.h>
+#include <se-lib-c/stream/IIntStream.h>
+#include <se-lib-c/container/FloatRingBuffer.h>
+
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Control/AnnounceStorage.h"
 
@@ -16,8 +19,6 @@
 #include "Scope/Serialisation/JsonParser/JsonPacker.h"
 #include "Scope/Control/IPacker.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
 #include "Scope/Version.h"
 
 #include <stdint.h>

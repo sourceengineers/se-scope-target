@@ -6,12 +6,12 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  * 
  ******************************************************************************/
+#include <se-lib-c/stream/IFloatStream.h>
 
 #include "Scope/Core/Timestamper.h"
 #include "Scope/Core/Trigger.h"
 #include "Scope/Core/Channel.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/IFloatStream.h"
 
 #include <stdint.h>
 #include <stdbool.h>

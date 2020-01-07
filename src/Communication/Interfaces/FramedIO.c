@@ -6,14 +6,13 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  *****************************************************************************************************************************************/
+#include <se-lib-c/util/runnable/IRunnable.h>
+#include <se-lib-c/stream/IByteStream.h>
+#include <se-lib-c/util/observer/IObserver.h>
+#include <se-lib-c/container/ByteRingBuffer.h>
 
 #include "Scope/Communication/Interfaces/FramedIO.h"
-#include "Scope/GeneralPurpose/IRunnable.h"
-#include "Scope/GeneralPurpose/IByteStream.h"
-
 #include "Scope/Communication/ICommunicator.h"
-#include "Scope/GeneralPurpose/ByteRingBuffer.h"
-#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdbool.h>
 #include <stdio.h>

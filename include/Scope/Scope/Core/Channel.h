@@ -15,8 +15,8 @@
 #include "Scope/GeneralPurpose/DataTypes.h"
 
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
-#include "Scope/GeneralPurpose/IFloatStream.h"
+#include <se-lib-c/container/FloatRingBuffer.h>
+#include <se-lib-c/stream/IFloatStream.h>
 
 #include <stdbool.h>
 #include <stddef.h>

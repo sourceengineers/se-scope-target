@@ -11,12 +11,11 @@
 
 #ifndef ISCOPE_H_
 #define ISCOPE_H_
+#include <se-lib-c/stream/IIntStream.h>
+#include <se-lib-c/container/FloatRingBuffer.h>
 
 #include "Scope/GeneralPurpose/DataTypes.h"
-
-#include "Scope/GeneralPurpose/IIntStream.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
 
 /******************************************************************************
  Define interface handle data

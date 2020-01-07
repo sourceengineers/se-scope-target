@@ -12,8 +12,8 @@
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/ScopeTypes.h"
 #include "Scope/Core/IScope.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
+#include <se-lib-c/container/FloatRingBuffer.h>
+#include <se-lib-c/stream/IIntStream.h>
 #include "Scope/Control/ParserDefinitions.h"
 
 #include <stdint.h>

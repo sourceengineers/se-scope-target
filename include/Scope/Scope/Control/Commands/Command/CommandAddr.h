@@ -24,13 +24,14 @@
 #ifndef COMMANDADDR_H_
 #define COMMANDADDR_H_
 
-#include "Scope/GeneralPurpose/DataTypes.h"
+#include <stdint.h>
 
+#include <se-lib-c/util/observer/IObserver.h>
+
+#include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/IScope.h"
 
-#include <stdint.h>
-#include "Scope/GeneralPurpose/IObserver.h"
 
 /* Definition of the configuration struct */
 /**

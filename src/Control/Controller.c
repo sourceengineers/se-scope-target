@@ -7,7 +7,8 @@
  *
  *****************************************************************************************************************************************/
 
-#include "Scope/GeneralPurpose/IRunnable.h"
+#include <se-lib-c/util/runnable/IRunnable.h>
+#include <se-lib-c/util/observer/IObserver.h>
 
 #include "Scope/Control/CommandPackParserDispatcher.h"
 #include "Scope/Control/Controller.h"
@@ -17,7 +18,6 @@
 #include "Scope/Control/IUnpacker.h"
 #include "Scope/Core/IScope.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/IObserver.h"
 #include "Scope/Control/ParserDefinitions.h"
 
 #include <stdbool.h>

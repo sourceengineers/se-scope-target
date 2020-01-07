@@ -16,9 +16,9 @@
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 
-#include "Scope/GeneralPurpose/BufferedByteStream.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
+#include <se-lib-c/stream/BufferedByteStream.h>
+#include <se-lib-c/stream/IIntStream.h>
+#include <se-lib-c/container/FloatRingBuffer.h>
 #include "Scope/Core/ScopeTypes.h"
 
 typedef struct __ScDataChannelDef {

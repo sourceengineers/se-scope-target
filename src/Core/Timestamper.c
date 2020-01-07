@@ -7,10 +7,9 @@
  *
  *****************************************************************************************************************************************/
 
+#include <se-lib-c/stream/BufferedIntStream.h>
+#include <se-lib-c/stream/IIntStream.h>
 #include "Scope/Core/Timestamper.h"
-#include "Scope/GeneralPurpose/BufferedIntStream.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
-
 #include <stdlib.h>
 #include <assert.h>
 

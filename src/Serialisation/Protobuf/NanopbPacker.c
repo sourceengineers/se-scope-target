@@ -7,14 +7,14 @@
  *
  *****************************************************************************************************************************************/
 
-#include "Scope/GeneralPurpose/IByteStream.h"
-#include "Scope/GeneralPurpose/DataTypes.h"
+#include <se-lib-c/stream/IByteStream.h>
 
+#include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Serialisation/Protobuf/NanopbPacker.h"
 #include "Scope/Control/IPacker.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
+#include <se-lib-c/container/FloatRingBuffer.h>
+#include <se-lib-c/stream/IIntStream.h>
 #include "Scope/Serialisation/Protobuf/se-scope.pb.h"
 
 #include <assert.h>

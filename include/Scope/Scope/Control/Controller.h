@@ -13,12 +13,12 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "Scope/Control/AnnounceStorage.h"
-#include "Scope/GeneralPurpose/IRunnable.h"
+#include <se-lib-c/util/runnable/IRunnable.h>
+#include <se-lib-c/util/observer/IObserver.h>
 
+#include "Scope/Control/AnnounceStorage.h"
 #include "Scope/Control/CommandParserDispatcher.h"
 #include "Scope/Control/IPacker.h"
-#include "Scope/GeneralPurpose/IObserver.h"
 #include "Scope/Control/IUnpacker.h"
 #include "Scope/Core/IScope.h"
 

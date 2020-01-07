@@ -13,8 +13,8 @@
 #define SCOPEBUILDER_H
 
 #include "Scope/Control/AnnounceStorage.h"
-#include "Scope/GeneralPurpose/IByteStream.h"
-#include "Scope/GeneralPurpose/IRunnable.h"
+#include <se-lib-c/stream/IByteStream.h>
+#include <se-lib-c/util/runnable/IRunnable.h>
 #include "Scope/GeneralPurpose/IMutex.h"
 #include "Scope/Core/IScope.h"
 #include "Scope/Control/Controller.h"

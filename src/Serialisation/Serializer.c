@@ -7,13 +7,13 @@
  *
  *****************************************************************************************************************************************/
 
-#include "Scope/GeneralPurpose/IRunnable.h"
+#include <se-lib-c/util/runnable/IRunnable.h>
+#include <se-lib-c/util/observer/IObserver.h>
 
 #include "Scope/Control/ParserDefinitions.h"
 #include "Scope/Serialisation/Serializer.h"
 #include "Scope/Control/IPacker.h"
 #include "Scope/Control/IUnpacker.h"
-#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
