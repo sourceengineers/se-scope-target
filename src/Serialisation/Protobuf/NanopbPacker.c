@@ -270,7 +270,7 @@ static bool writeAddress(pb_ostream_t* stream, const pb_field_t* field, void* co
         // size from the written stream, as suggested by the nanopb author.
         // This should not be significantly slower than measuring it with strlen. And speed isn't the most crucial
         // for the SC_ANNOUNCE
-        const size_t maxBufferSize = PB_SC_Channel_Configuration_size + 10;
+        const size_t maxBufferSize = PB_SC_Channel_Configuration_size;
         pb_byte_t buffer[maxBufferSize];
         pb_ostream_t tmpStream = pb_ostream_from_buffer(buffer, maxBufferSize);
         if(!pb_encode(&tmpStream, PB_SC_Channel_Configuration_fields, &channel)){
@@ -381,7 +381,12 @@ NanopbPacker_calculateBufferSize(size_t maxNumberOfChannels, size_t sizeOfChanne
     size_t tIncSize = 1 * 4 + 1;
     // Data + Arrlenght + WI
     size_t timestampSize = (sizeOfChannels + 1) * 4 + 1;
-    return dataSpace + triggerSize + tIncSize + timestampSize;
+    size_t scDataSize = dataSpace + triggerSize + tIncSize + timestampSize;
+
+    size_t announceMetaDataSize = (5 * 3);
+    size_t scAnnounceSize = PB_SC_Channel_Configuration_size * maxAddressesToAnnounce + announceMetaDataSize;
+
+    return scAnnounceSize > scDataSize ? scAnnounceSize : scDataSize;
 }
 
 IPackerHandle NanopbPacker_getIPacker(NanopbPackerHandle self) {
