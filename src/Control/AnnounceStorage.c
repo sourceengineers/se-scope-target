@@ -27,7 +27,7 @@ typedef struct __AnnounceStoragePrivateData{
     size_t maxAmountOfAddresses;
     size_t maxAmountOfChannels;
     float timeBase;
-    const char* version;
+    char* version;
 } AnnounceStoragePrivateData;
 
 /******************************************************************************
@@ -68,7 +68,7 @@ float AnnounceStorage_getTimeBase(AnnounceStorageHandle self){
     return self->timeBase;
 }
 
-const char* AnnounceStorage_getVersion(AnnounceStorageHandle self){
+char* AnnounceStorage_getVersion(AnnounceStorageHandle self){
     return self->version;
 }
 

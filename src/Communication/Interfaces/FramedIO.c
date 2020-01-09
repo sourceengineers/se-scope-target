@@ -126,7 +126,7 @@ static bool checkStartFlag(FramedIOHandle self, const uint8_t* data, uint32_t le
 static bool checkType(FramedIOHandle self, const uint8_t* data, uint32_t length, uint32_t* dataOffset){
     if(self->rxFramedIOState == TYPE){
         if(*dataOffset < length){
-            self->rxType = data[*dataOffset];
+            self->rxType = (MessageType) data[*dataOffset];
             (*dataOffset)++;
             self->rxFramedIOState = LENGTH;
             return true;
