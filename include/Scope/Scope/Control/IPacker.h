@@ -42,7 +42,7 @@ typedef struct IPackerStruct* IPackerHandle;
  Define interface
 ******************************************************************************/
 typedef struct IPackerStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Calls the pack function of the packer. It packs the predefined data into the output stream

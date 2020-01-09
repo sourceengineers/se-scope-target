@@ -3,7 +3,7 @@
 
 extern "C" {
 #include <Scope/Core/Trigger.h>
-#include <Scope/GeneralPurpose/BufferedFloatStream.h>
+#include <se-lib-c/stream/BufferedFloatStream.h>
 }
 using namespace std;
 

@@ -30,7 +30,7 @@ typedef struct ICommandStruct* ICommandHandle;
  Define interface
 ******************************************************************************/
 typedef struct ICommandStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Runnable

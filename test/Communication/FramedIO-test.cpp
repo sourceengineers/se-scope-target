@@ -5,7 +5,7 @@
 
 extern "C" {
 #include <Scope/Communication/Interfaces/FramedIO.h>
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
+#include <se-lib-c/stream/BufferedByteStream.h>
 #include "Observer/ObserverMock.h"
 }
 

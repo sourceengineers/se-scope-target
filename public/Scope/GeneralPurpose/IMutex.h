@@ -29,7 +29,7 @@ typedef struct IMutexStruct* IMutexHandle;
  Define interface
 ******************************************************************************/
 typedef struct IMutexStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Implement lock for the specific operating system mutex lock operation.

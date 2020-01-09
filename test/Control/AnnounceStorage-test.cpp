@@ -3,7 +3,7 @@
 #include <Communication/FramedIOTestFunctions.h>
 
 extern "C" {
-#include <public/Scope/Control/AnnounceStorage.h>
+#include "Scope/Control/AnnounceStorage.h"
 }
 
 using namespace testing;

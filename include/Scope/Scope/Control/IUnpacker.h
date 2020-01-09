@@ -44,7 +44,7 @@ typedef struct __CfAddressDef{
  Define interface
 ******************************************************************************/
 typedef struct IUnpackerStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Unpacks the data in the input stream

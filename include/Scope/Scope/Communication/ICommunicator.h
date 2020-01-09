@@ -27,7 +27,7 @@ typedef struct ICommunicatorStruct* ICommunicatorHandle;
  Define interface
 ******************************************************************************/
 typedef struct ICommunicatorStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Returns the observer which is used to update the Tx path

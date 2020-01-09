@@ -1,0 +1,45 @@
+# Add sourcecode
+set(SE_SCOPE_SOURCES
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandClearParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandTIncParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandTransParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandRunningParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandPollParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandDetectParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandAnnounceParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandTriggerParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/CommandParser/CommandAddrParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandTInc.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandDetect.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandTrigger.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandAnnounce.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandTrans.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandAddr.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandPoll.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandRunning.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Commands/Command/CommandClear.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/AnnounceStorage.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/CommandPackParserDispatcher.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/CommandParserDispatcher.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/ParserDefinitions.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/PackCommands/CommandParser/CommandPackAnnounceParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/PackCommands/CommandParser/CommandPackDataParser.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/PackCommands/Command/CommandPackAnnounce.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/PackCommands/Command/CommandPackData.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Control/Controller.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Core/Timestamper.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Core/Channel.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Core/Scope.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Core/Trigger.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Communication/Interfaces/FramedIO.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Builders/ScopeRunner.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Builders/ScopeFramedStack.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Builders/ScopeThreadRunner.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Builders/ScopeBuilder.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/Protobuf/NanopbUnpacker.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/Protobuf/se-scope.pb.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/Protobuf/NanopbPacker.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/Serializer.c
+        ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/JsonParser/JsonPacker.c
+
+        )

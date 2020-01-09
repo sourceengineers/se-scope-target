@@ -5,9 +5,8 @@
 extern "C" {
 #include <ScopeMock/ScopeMock.h>
 #include <Scope/Core/ScopeTypes.h>
-#include <Scope/Control/Controller.h>
 #include <Scope/Communication/Interfaces/FramedIO.h>
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
+#include <Scope/Control/Controller.h>
 #include <Scope/Serialisation/Serializer.h>
 #include <Scope/Serialisation/JsonParser/JsonPacker.h>
 }

@@ -11,11 +11,12 @@
 
 #ifndef ISCOPE_H_
 #define ISCOPE_H_
+
 #include <se-lib-c/stream/IIntStream.h>
 #include <se-lib-c/container/FloatRingBuffer.h>
 
-#include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Core/ScopeTypes.h"
+#include "Scope/GeneralPurpose/DataTypes.h"
 
 /******************************************************************************
  Define interface handle data
@@ -26,7 +27,7 @@ typedef struct IScopeStruct* IScopeHandle;
  Define interface
 ******************************************************************************/
 typedef struct IScopeStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Tells the scope to poll data in the active channels

@@ -40,15 +40,15 @@ static const char* DATA_TYPE_NAMES[7] = {SE_INT8_NAME, SE_INT16_NAME, SE_INT32_N
 /**
  * Enum representing the data types
  */
-typedef enum{
+typedef enum  __DATA_TYPES {
     SE_INT8,
     SE_INT16,
     SE_INT32,
     SE_UINT8,
     SE_UINT16,
     SE_UINT32,
-    SE_FLOAT,
-} DATA_TYPES;
+    SE_FLOAT
+} DATA_TYPES ;
 
 /** Define macro to fetch the right data type name */
 #define getDataTypeName(type) DATA_TYPE_NAMES[type]
@@ -60,7 +60,7 @@ typedef enum{
 #define ADDRESS_DATA_TYPE uint64_t
 #endif
 
-#define GenericReference void*
+#define SeScopeGenericReference void*
 
 
 #endif

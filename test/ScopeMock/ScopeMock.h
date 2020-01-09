@@ -13,11 +13,11 @@
 #define SCOPEMOCK_H_
 
 #include "Scope/GeneralPurpose/DataTypes.h"
-#include "Scope/GeneralPurpose/IRunnable.h"
 
+#include <se-lib-c/util/runnable/IRunnable.h>
+#include <se-lib-c/util/observer/IObserver.h>
 #include "Scope/Core/IScope.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdint.h>
 #include <stddef.h>

@@ -16,7 +16,6 @@
 
 #include <se-lib-c/util/observer/IObserver.h>
 
-#include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/IScope.h"
 

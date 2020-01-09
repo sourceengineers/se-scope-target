@@ -7,15 +7,15 @@
  *
 *******************************************************************************/
 
-#include "Scope/GeneralPurpose/IRunnable.h"
 #include "Scope/GeneralPurpose/DataTypes.h"
 
 #include "Scope/Core/IScope.h"
 #include "Scope/Core/ScopeTypes.h"
 #include "Scope/Core/Trigger.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
-#include "Scope/GeneralPurpose/IObserver.h"
+
+#include <se-lib-c/container/FloatRingBuffer.h>
+#include <se-lib-c/stream/IIntStream.h>
+#include <se-lib-c/util/observer/IObserver.h>
 #include "ScopeMock.h"
 
 #include <stdbool.h>

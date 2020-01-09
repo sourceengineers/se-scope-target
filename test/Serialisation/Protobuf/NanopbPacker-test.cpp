@@ -4,9 +4,9 @@
 
 extern "C" {
 #include <Scope/Serialisation/Protobuf/NanopbPacker.h>
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
-#include <Scope/GeneralPurpose/BufferedIntStream.h>
-#include <Scope/GeneralPurpose/BufferedFloatStream.h>
+#include <se-lib-c/stream/BufferedByteStream.h>
+#include <se-lib-c/stream/BufferedIntStream.h>
+#include <se-lib-c/stream/BufferedFloatStream.h>
 }
 
 using namespace testing;

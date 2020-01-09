@@ -1,31 +1,33 @@
-cmake_minimum_required(VERSION 3.0.0)
 
-set(TEST_PROJECT_NAME
-        scope-test
+set(SE_SCOPE_TESTS_NAME ${SE_SCOPE_PROJECT_NAME}_TEST)
+
+project(${SE_SCOPE_TESTS_NAME})
+
+include(cmake/UnitTestFiles.cmake)
+
+if(NOT TARGET gtest)
+    add_subdirectory(cmake/gtest)
+endif()
+
+add_test(${SE_SCOPE_TESTS_NAME} ${SE_SCOPE_TESTS_NAME})
+
+add_executable(${SE_SCOPE_TESTS_NAME}
+        ${SE_SCOPE_UNIT_TESTS}
+        ${SE_SCOPE_TEST_MOCKS}
         )
 
-file(GLOB_RECURSE TEST_FILES *.cpp *.c *.cc)
+set_target_properties(${SE_SCOPE_TESTS_NAME} PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(${SE_SCOPE_TESTS_NAME} PUBLIC cmake-build-debug/gtest/googletest-src/googletest/include)
+target_include_directories(${SE_SCOPE_TESTS_NAME} PUBLIC cmake-build-debug/gtest/googletest-src/googlemock/include)
+target_include_directories(${SE_SCOPE_TESTS_NAME} PRIVATE ../include/Scope)
+target_include_directories(${SE_SCOPE_TESTS_NAME} PRIVATE ../public)
+target_include_directories(${SE_SCOPE_TESTS_NAME} PRIVATE ../ext/se-lib-c/include)
+target_include_directories(${SE_SCOPE_TESTS_NAME} PRIVATE .)
 
-set(LIBRARY_TESTS_SOURCE
-        ${TEST_FILES}
-        )
-
-project(${TEST_PROJECT_NAME})
-
-enable_testing()
-
-if (NOT (TARGET gtest AND TARGET gtest_main))
-    message(FATAL_ERROR "gtest and gtest_main targets NOT found")
-endif ()
-
-include_directories(../include/Scope ../public . ../3rdparty/nanopb)
-include_directories(../3rdparty/gtest/googletest/include ../3rdparty/gtest/googlemock/include)
-
-add_executable(${TEST_PROJECT_NAME} ${LIBRARY_TESTS_SOURCE})
-target_link_libraries(${TEST_PROJECT_NAME}
-        gtest
-        gtest_main
-        se-scope
-        )
-
-add_test(${TEST_PROJECT_NAME} ${TEST_PROJECT_NAME})
+target_link_libraries(
+        ${SE_SCOPE_TESTS_NAME}
+        PUBLIC
+        $<BUILD_INTERFACE:se-lib-c>
+        $<BUILD_INTERFACE:protobuf-nanopb-static>
+        $<BUILD_INTERFACE:se-scope>
+        $<BUILD_INTERFACE:gtest_main>)

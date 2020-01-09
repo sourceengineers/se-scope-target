@@ -6,9 +6,9 @@ extern "C" {
 #include <Scope/Core/Scope.h>
 #include <Observer/ObserverMock.h>
 #include <Scope/Serialisation/Protobuf/NanopbPacker.h>
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
-#include <Scope/GeneralPurpose/BufferedIntStream.h>
-#include <Scope/GeneralPurpose/BufferedFloatStream.h>
+#include <se-lib-c/stream/BufferedByteStream.h>
+#include <se-lib-c/stream/BufferedIntStream.h>
+#include <se-lib-c/stream/BufferedFloatStream.h>
 #include <Scope/Control/AnnounceStorage.h>
 #include <Scope/Builders/ScopeBuilder.h>
 #include <Scope/Serialisation/Serializer.h>

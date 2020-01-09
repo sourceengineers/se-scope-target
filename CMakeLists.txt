@@ -1,67 +1,70 @@
 cmake_minimum_required(VERSION 3.0.0)
 set(CMAKE_CXX_STANDARD 11)
-
 # Set the Project name
-set(PROJECT_NAME se-scope)
+set(SE_SCOPE_PROJECT_NAME se-scope)
+project(${SE_SCOPE_PROJECT_NAME} C ASM)
+
 ################################################################################
 # Set options
 ################################################################################
+option(SE_SCOPE_BUILD_TESTS "Build the tests" ON)
+
 # Inform the compiler to compile for 32 bit code
 add_definitions(-DARCH_SIZE_32=1)
 
-project(${PROJECT_NAME} C ASM)
-
 ################################################################################
 # Set options
 ################################################################################
-set(PROJECT_SOURCE_DIR src)
-set(PROJECT_DEPENDENCIES_DIR 3rdparty)
-set(PROJECT_INCLUDE_DIR include/Scope)
-set(PROJECT_INCLUDE_DIR_PUBLIC public)
-set(PROJECT_TEST_DIR test)
+set(SE_SCOPE_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(SE_SCOPE_PROJECT_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
+set(SE_SCOPE_PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/Scope)
+set(SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public)
+set(SE_SCOPE_PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 
 #######################################################################################################################
 ## Find all needed files
 #######################################################################################################################
-file(GLOB_RECURSE PROJECT_SOURCE "${PROJECT_SOURCE_DIR}/*.c")
-file(GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h")
-file(GLOB_RECURSE PROJECT_HEADER_PUBLIC "${PROJECT_INCLUDE_DIR_PUBLIC}/*.h")
-list (APPEND PROJECT_HEADER ${PROJECT_HEADER_PUBLIC})
+include(cmake/SourceFiles.cmake)
 
+add_library(${SE_SCOPE_PROJECT_NAME} STATIC ${SE_SCOPE_SOURCES})
 ################################################################################
 # GTest
 ################################################################################
-enable_testing()
-option(BUILD_GMOCK ON)
-add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
-set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
-add_subdirectory(test)
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-
+if(SE_SCOPE_BUILD_TESTS)
+    enable_testing()
+    set(SE_SCOPE_PROJECT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+    add_subdirectory(test)
+endif()
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
-include_directories( "${PROJECT_DEPENDENCIES_DIR}/nanopb" "${PROJECT_INCLUDE_DIR}" "${PROJECT_INCLUDE_DIR_PUBLIC}")
-
 option(nanopb_BUILD_GENERATOR OFF)
-add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/nanopb)
+add_subdirectory(${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb)
 
-add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
-target_link_libraries(${PROJECT_NAME} protobuf-nanopb-static)
-
+#Se lib c
+message("-- Adding se-lib-c")
+add_subdirectory(${SE_SCOPE_PROJECT_EXT_DIR}/se-lib-c)
 ################################################################################
 # Install project
 ################################################################################
-TARGET_INCLUDE_DIRECTORIES(se-scope
+TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE_PROJECT_NAME}
         PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:include>
+        $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
         PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ext/se-lib-c/include>
+        $<BUILD_INTERFACE:${SE_SCOPE_PROJECT_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${NANOPB_INCLUDE_DIRS}>
+        $<BUILD_INTERFACE:${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb>
+        )
+
+target_link_libraries(${SE_SCOPE_PROJECT_NAME}
+        PRIVATE
+        $<BUILD_INTERFACE:protobuf-nanopb-static>
+        $<BUILD_INTERFACE:se-lib-c>
         )
 
 message("-- Project will be installed to: ${CMAKE_INSTALL_PREFIX}")
-install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library)
-install(DIRECTORY "${PROJECT_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
-install(DIRECTORY "${PROJECT_INCLUDE_DIR_PUBLIC}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
+install(TARGETS ${SE_SCOPE_PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library)
+install(DIRECTORY "${SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC}/Scope" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")

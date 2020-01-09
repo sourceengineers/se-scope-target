@@ -12,7 +12,9 @@
 #ifndef OBSERVERMOCK_H
 #define OBSERVERMOCK_H
 
-#include <Scope/GeneralPurpose/IObserver.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <se-lib-c/util/observer/IObserver.h>
 
 typedef struct __ObserverMockPrivateData {
 
