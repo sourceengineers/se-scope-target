@@ -67,15 +67,15 @@ TEST_F(AnnounceTest, check_increment_configured_addresses){
 
     EXPECT_EQ(AnnounceStorage_getAddressToTransmit(_announce, 1)->type, SE_FLOAT);
     EXPECT_GT(AnnounceStorage_getAddressToTransmit(_announce, 1)->address, 0);
-    EXPECT_STREQ(AnnounceStorage_getAddressToTransmit(_announce, 1)->name, "testSignal0");
+    EXPECT_STREQ(AnnounceStorage_getAddressToTransmit(_announce, 1)->name, "testSignal1");
 
     EXPECT_EQ(AnnounceStorage_getAddressToTransmit(_announce, 2)->type, SE_FLOAT);
     EXPECT_GT(AnnounceStorage_getAddressToTransmit(_announce, 2)->address, 0);
-    EXPECT_STREQ(AnnounceStorage_getAddressToTransmit(_announce, 2)->name, "testSignal0");
+    EXPECT_STREQ(AnnounceStorage_getAddressToTransmit(_announce, 2)->name, "testSignal2");
 
     EXPECT_EQ(AnnounceStorage_getAddressToTransmit(_announce, 3)->type, SE_FLOAT);
     EXPECT_GT(AnnounceStorage_getAddressToTransmit(_announce, 3)->address, 0);
-    EXPECT_STREQ(AnnounceStorage_getAddressToTransmit(_announce, 3)->name, "testSignal0");
+    EXPECT_STREQ(AnnounceStorage_getAddressToTransmit(_announce, 3)->name, "testSignal3");
 
 }
 

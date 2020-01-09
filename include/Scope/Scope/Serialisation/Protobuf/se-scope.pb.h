@@ -45,6 +45,13 @@ typedef struct _PB_AddressConfig {
     PB_Var_Type type;
 } PB_AddressConfig;
 
+typedef struct _PB_Announce {
+    pb_callback_t channels;
+    uint32_t max_channels;
+    float timebase;
+    char version[5];
+} PB_Announce;
+
 typedef struct _PB_CF_TInc {
     uint32_t t_inc;
 } PB_CF_TInc;
@@ -69,6 +76,12 @@ typedef struct _PB_SC_Channel {
     pb_callback_t data;
     uint32_t id;
 } PB_SC_Channel;
+
+typedef struct _PB_SC_Channel_Configuration {
+    uint32_t id;
+    char name[30];
+    PB_Var_Type type;
+} PB_SC_Channel_Configuration;
 
 typedef struct _PB_SC_Trigger {
     uint32_t cl_id;
@@ -99,6 +112,8 @@ typedef struct _PB_SC_Data {
 #define PB_SC_Trigger_init_default               {0, 0, _PB_Trigger_Mode_MIN}
 #define PB_SC_Channel_init_default               {{{NULL}, NULL}, 0}
 #define PB_SC_Data_init_default                  {{{NULL}, NULL}, {{NULL}, NULL}, 0, false, PB_SC_Trigger_init_default}
+#define PB_SC_Channel_Configuration_init_default {0, "", _PB_Var_Type_MIN}
+#define PB_Announce_init_default                 {{{NULL}, NULL}, 0, 0, ""}
 #define PB_AddressConfig_init_default            {0, 0, _PB_Var_Type_MIN}
 #define PB_CF_Address_init_default               {{{NULL}, NULL}}
 #define PB_RunningConfig_init_default            {0, 0}
@@ -109,6 +124,8 @@ typedef struct _PB_SC_Data {
 #define PB_SC_Trigger_init_zero                  {0, 0, _PB_Trigger_Mode_MIN}
 #define PB_SC_Channel_init_zero                  {{{NULL}, NULL}, 0}
 #define PB_SC_Data_init_zero                     {{{NULL}, NULL}, {{NULL}, NULL}, 0, false, PB_SC_Trigger_init_zero}
+#define PB_SC_Channel_Configuration_init_zero    {0, "", _PB_Var_Type_MIN}
+#define PB_Announce_init_zero                    {{{NULL}, NULL}, 0, 0, ""}
 #define PB_AddressConfig_init_zero               {0, 0, _PB_Var_Type_MIN}
 #define PB_CF_Address_init_zero                  {{{NULL}, NULL}}
 #define PB_RunningConfig_init_zero               {0, 0}
@@ -123,6 +140,10 @@ typedef struct _PB_SC_Data {
 #define PB_AddressConfig_cl_id_tag               1
 #define PB_AddressConfig_address_tag             2
 #define PB_AddressConfig_type_tag                3
+#define PB_Announce_channels_tag                 1
+#define PB_Announce_max_channels_tag             2
+#define PB_Announce_timebase_tag                 3
+#define PB_Announce_version_tag                  4
 #define PB_CF_TInc_t_inc_tag                     1
 #define PB_CF_Trigger_cl_id_tag                  1
 #define PB_CF_Trigger_mode_tag                   2
@@ -133,6 +154,9 @@ typedef struct _PB_SC_Data {
 #define PB_RunningConfig_new_state_tag           2
 #define PB_SC_Channel_data_tag                   1
 #define PB_SC_Channel_id_tag                     2
+#define PB_SC_Channel_Configuration_id_tag       1
+#define PB_SC_Channel_Configuration_name_tag     2
+#define PB_SC_Channel_Configuration_type_tag     3
 #define PB_SC_Trigger_cl_id_tag                  1
 #define PB_SC_Trigger_cl_data_ind_tag            2
 #define PB_SC_Trigger_mode_tag                   3
@@ -164,6 +188,22 @@ X(a, STATIC, OPTIONAL, MESSAGE, trigger, 4)
 #define PB_SC_Data_DEFAULT NULL
 #define PB_SC_Data_channels_MSGTYPE PB_SC_Channel
 #define PB_SC_Data_trigger_MSGTYPE PB_SC_Trigger
+
+#define PB_SC_Channel_Configuration_FIELDLIST(X, a) \
+X(a, STATIC, SINGULAR, UINT32, id, 1) \
+X(a, STATIC, SINGULAR, STRING, name, 2) \
+X(a, STATIC, SINGULAR, UENUM, type, 3)
+#define PB_SC_Channel_Configuration_CALLBACK NULL
+#define PB_SC_Channel_Configuration_DEFAULT NULL
+
+#define PB_Announce_FIELDLIST(X, a) \
+X(a, CALLBACK, REPEATED, MESSAGE, channels, 1) \
+X(a, STATIC, SINGULAR, UINT32, max_channels, 2) \
+X(a, STATIC, SINGULAR, FLOAT, timebase, 3) \
+X(a, STATIC, SINGULAR, STRING, version, 4)
+#define PB_Announce_CALLBACK pb_default_field_callback
+#define PB_Announce_DEFAULT NULL
+#define PB_Announce_channels_MSGTYPE PB_SC_Channel_Configuration
 
 #define PB_AddressConfig_FIELDLIST(X, a) \
 X(a, STATIC, SINGULAR, UINT32, cl_id, 1) \
@@ -211,6 +251,8 @@ X(a, STATIC, SINGULAR, UINT32, timestamp, 1)
 extern const pb_msgdesc_t PB_SC_Trigger_msg;
 extern const pb_msgdesc_t PB_SC_Channel_msg;
 extern const pb_msgdesc_t PB_SC_Data_msg;
+extern const pb_msgdesc_t PB_SC_Channel_Configuration_msg;
+extern const pb_msgdesc_t PB_Announce_msg;
 extern const pb_msgdesc_t PB_AddressConfig_msg;
 extern const pb_msgdesc_t PB_CF_Address_msg;
 extern const pb_msgdesc_t PB_RunningConfig_msg;
@@ -223,6 +265,8 @@ extern const pb_msgdesc_t PB_EV_Poll_msg;
 #define PB_SC_Trigger_fields &PB_SC_Trigger_msg
 #define PB_SC_Channel_fields &PB_SC_Channel_msg
 #define PB_SC_Data_fields &PB_SC_Data_msg
+#define PB_SC_Channel_Configuration_fields &PB_SC_Channel_Configuration_msg
+#define PB_Announce_fields &PB_Announce_msg
 #define PB_AddressConfig_fields &PB_AddressConfig_msg
 #define PB_CF_Address_fields &PB_CF_Address_msg
 #define PB_RunningConfig_fields &PB_RunningConfig_msg
@@ -235,6 +279,8 @@ extern const pb_msgdesc_t PB_EV_Poll_msg;
 #define PB_SC_Trigger_size                       14
 /* PB_SC_Channel_size depends on runtime parameters */
 /* PB_SC_Data_size depends on runtime parameters */
+#define PB_SC_Channel_Configuration_size         39
+/* PB_Announce_size depends on runtime parameters */
 #define PB_AddressConfig_size                    14
 /* PB_CF_Address_size depends on runtime parameters */
 #define PB_RunningConfig_size                    8

@@ -16,6 +16,12 @@ PB_BIND(PB_SC_Channel, PB_SC_Channel, AUTO)
 PB_BIND(PB_SC_Data, PB_SC_Data, AUTO)
 
 
+PB_BIND(PB_SC_Channel_Configuration, PB_SC_Channel_Configuration, AUTO)
+
+
+PB_BIND(PB_Announce, PB_Announce, AUTO)
+
+
 PB_BIND(PB_AddressConfig, PB_AddressConfig, AUTO)
 
 
