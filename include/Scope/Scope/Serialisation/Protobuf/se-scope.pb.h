@@ -81,6 +81,7 @@ typedef struct _PB_SC_Channel_Configuration {
     uint32_t id;
     char name[30];
     PB_Var_Type type;
+    uint32_t address;
 } PB_SC_Channel_Configuration;
 
 typedef struct _PB_SC_Trigger {
@@ -112,7 +113,7 @@ typedef struct _PB_SC_Data {
 #define PB_SC_Trigger_init_default               {0, 0, _PB_Trigger_Mode_MIN}
 #define PB_SC_Channel_init_default               {{{NULL}, NULL}, 0}
 #define PB_SC_Data_init_default                  {{{NULL}, NULL}, {{NULL}, NULL}, 0, false, PB_SC_Trigger_init_default}
-#define PB_SC_Channel_Configuration_init_default {0, "", _PB_Var_Type_MIN}
+#define PB_SC_Channel_Configuration_init_default {0, "", _PB_Var_Type_MIN, 0}
 #define PB_SC_Announce_init_default              {{{NULL}, NULL}, 0, 0, ""}
 #define PB_AddressConfig_init_default            {0, 0, _PB_Var_Type_MIN}
 #define PB_CF_Address_init_default               {{{NULL}, NULL}}
@@ -124,7 +125,7 @@ typedef struct _PB_SC_Data {
 #define PB_SC_Trigger_init_zero                  {0, 0, _PB_Trigger_Mode_MIN}
 #define PB_SC_Channel_init_zero                  {{{NULL}, NULL}, 0}
 #define PB_SC_Data_init_zero                     {{{NULL}, NULL}, {{NULL}, NULL}, 0, false, PB_SC_Trigger_init_zero}
-#define PB_SC_Channel_Configuration_init_zero    {0, "", _PB_Var_Type_MIN}
+#define PB_SC_Channel_Configuration_init_zero    {0, "", _PB_Var_Type_MIN, 0}
 #define PB_SC_Announce_init_zero                 {{{NULL}, NULL}, 0, 0, ""}
 #define PB_AddressConfig_init_zero               {0, 0, _PB_Var_Type_MIN}
 #define PB_CF_Address_init_zero                  {{{NULL}, NULL}}
@@ -157,6 +158,7 @@ typedef struct _PB_SC_Data {
 #define PB_SC_Channel_Configuration_id_tag       1
 #define PB_SC_Channel_Configuration_name_tag     2
 #define PB_SC_Channel_Configuration_type_tag     3
+#define PB_SC_Channel_Configuration_address_tag  4
 #define PB_SC_Trigger_cl_id_tag                  1
 #define PB_SC_Trigger_cl_data_ind_tag            2
 #define PB_SC_Trigger_mode_tag                   3
@@ -192,7 +194,8 @@ X(a, STATIC,   OPTIONAL, MESSAGE,  trigger,           4)
 #define PB_SC_Channel_Configuration_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT32,   id,                1) \
 X(a, STATIC,   SINGULAR, STRING,   name,              2) \
-X(a, STATIC,   SINGULAR, UENUM,    type,              3)
+X(a, STATIC,   SINGULAR, UENUM,    type,              3) \
+X(a, STATIC,   SINGULAR, UINT32,   address,           4)
 #define PB_SC_Channel_Configuration_CALLBACK NULL
 #define PB_SC_Channel_Configuration_DEFAULT NULL
 
@@ -279,7 +282,7 @@ extern const pb_msgdesc_t PB_EV_Poll_msg;
 #define PB_SC_Trigger_size                       14
 /* PB_SC_Channel_size depends on runtime parameters */
 /* PB_SC_Data_size depends on runtime parameters */
-#define PB_SC_Channel_Configuration_size         39
+#define PB_SC_Channel_Configuration_size         45
 /* PB_SC_Announce_size depends on runtime parameters */
 #define PB_AddressConfig_size                    14
 /* PB_CF_Address_size depends on runtime parameters */

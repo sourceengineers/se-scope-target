@@ -18,7 +18,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <Scope/Serialisation/JsonParser/JsonPacker.h>
 #include <Scope/Serialisation/Protobuf/NanopbPacker.h>
 #include <Scope/Serialisation/Protobuf/NanopbUnpacker.h>
 

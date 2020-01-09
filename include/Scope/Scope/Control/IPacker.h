@@ -31,6 +31,7 @@ typedef struct __ScAnnounceChannelDef {
     uint32_t id;
     char* name;
     DATA_TYPES type;
+    uint32_t address;
 } ScAnnounceChannelDef;
 
 typedef struct __ScAnnounceMetaData {

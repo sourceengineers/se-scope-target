@@ -117,17 +117,20 @@ TEST_F(NanopbPackerTest, pack_announce
     channel1.name = name1;
     channel1.type = SE_INT8;
     channel1.id = 1;
+    channel1.address = 100;
 
     ScAnnounceChannelDef channel2;
     char* name2 = (char*) "channel2";
     channel2.name = name2;
     channel2.type = SE_UINT32;
     channel2.id = 10;
+    channel2.address = 200;
 
     ScAnnounceChannelDef channel3;
     char* name3 = (char*) "channel3";
     channel3.name = name3;
     channel3.type = SE_FLOAT;
+    channel3.address = 0;
     channel3.id = 5;
 
     ScAnnounceMetaData meta;
@@ -148,8 +151,8 @@ TEST_F(NanopbPackerTest, pack_announce
 
     vector<uint8_t> v_o;
     v_o.assign(data, data + dataPending);
-    EXPECT_THAT(v_o, ElementsAre(10, 33, 8, 1, 18, 29, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97,
-            97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 10, 14, 8, 10, 18, 8, 99, 104, 97, 110, 110,
-            101, 108, 50, 24, 5, 10, 14, 8, 5, 18, 8, 99, 104, 97, 110, 110, 101, 108, 51, 24, 6, 16, 3, 29, 25, 4,
-            158, 63, 34, 3, 48, 46, 53));
+    EXPECT_THAT(v_o, ElementsAre(10, 35, 8, 1, 18, 29, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97,
+            97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 32, 100, 10, 17, 8, 10, 18, 8, 99, 104, 97, 110,
+            110, 101, 108, 50, 24, 5, 32, 200, 1, 10, 14, 8, 5, 18, 8, 99, 104, 97, 110, 110, 101, 108, 51, 24, 6, 16,
+            3, 29, 25, 4, 158, 63, 34, 3, 48, 46, 53));
 }

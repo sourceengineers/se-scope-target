@@ -8,7 +8,6 @@ extern "C" {
 #include <Scope/Communication/Interfaces/FramedIO.h>
 #include <Scope/Control/Controller.h>
 #include <Scope/Serialisation/Serializer.h>
-#include <Scope/Serialisation/JsonParser/JsonPacker.h>
 }
 
 using namespace testing;

@@ -41,9 +41,9 @@ def pack_running_vector():
 
 
 def pack_annoucement_vector():
-    address_1 = SC_Channel_Configuration(name="aaaaaaaaaaaaaaaaaaaaaaaaaaaaa", id=1, type=0)
-    address_2 = SC_Channel_Configuration(name="channel2", id=10, type=5)
-    address_3 = SC_Channel_Configuration(name="channel3", id=5, type=6)
+    address_1 = SC_Channel_Configuration(name="aaaaaaaaaaaaaaaaaaaaaaaaaaaaa", id=1, type=0, address=100)
+    address_2 = SC_Channel_Configuration(name="channel2", id=10, type=5, address=200)
+    address_3 = SC_Channel_Configuration(name="channel3", id=5, type=6, address=0)
     announce = SC_Announce(channels=[address_1, address_2, address_3], max_channels=3, timebase=1.2345, version="0.5")
     return announce
 

@@ -113,6 +113,7 @@ static void addAddressAnnouncement(IPackerHandle packer, const ScAnnounceChannel
     self->announcement.announceChannels[self->announcement.amountOfChannels].type = address.type;
     self->announcement.announceChannels[self->announcement.amountOfChannels].name = address.name;
     self->announcement.announceChannels[self->announcement.amountOfChannels].id = address.id;
+    self->announcement.announceChannels[self->announcement.amountOfChannels].address = address.address;
     self->announcement.amountOfChannels += 1;
 }
 
@@ -263,6 +264,7 @@ static bool writeAddress(pb_ostream_t* stream, const pb_field_t* field, void* co
             return false;
 
         channel.id = announcement.announceChannels[i].id;
+        channel.address = announcement.announceChannels[i].address;
         channel.type = (PB_Var_Type) announcement.announceChannels[i].type;
         strcpy(channel.name, announcement.announceChannels[i].name);
 

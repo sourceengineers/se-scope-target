@@ -48,7 +48,7 @@ static void run(ICommandHandle command){
 
     for(uint32_t i = 0; i < maxAddresses; ++i){
         AddressDefinition* addr = AnnounceStorage_getAddressToTransmit(self->announceStorage, i);
-        ScAnnounceChannelDef address = {.type = addr->type, .id = i, .name = addr->name};
+        ScAnnounceChannelDef address = {.type = addr->type, .id = i, .name = addr->name, .address = addr->address};
         self->packer->addAddressAnnouncement(self->packer, address);
     }
     
