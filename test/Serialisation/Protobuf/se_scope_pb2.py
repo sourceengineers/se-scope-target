@@ -20,7 +20,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='PB',
   syntax='proto3',
   serialized_options=None,
-  serialized_pb=_b('\n\x0ese-scope.proto\x12\x02PB\"P\n\nSC_Trigger\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x13\n\x0b\x63l_data_ind\x18\x02 \x01(\r\x12\x1e\n\x04mode\x18\x03 \x01(\x0e\x32\x10.PB.Trigger_Mode\"&\n\nSC_Channel\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x02\x12\n\n\x02id\x18\x02 \x01(\r\"o\n\x07SC_Data\x12 \n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x0e.PB.SC_Channel\x12\x12\n\ntimestamps\x18\x02 \x03(\x07\x12\r\n\x05t_inc\x18\x03 \x01(\r\x12\x1f\n\x07trigger\x18\x04 \x01(\x0b\x32\x0e.PB.SC_Trigger\"K\n\rAddressConfig\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x0f\n\x07\x61\x64\x64ress\x18\x02 \x01(\r\x12\x1a\n\x04type\x18\x03 \x01(\x0e\x32\x0c.PB.Var_Type\"2\n\nCF_Address\x12$\n\taddresses\x18\x01 \x03(\x0b\x32\x11.PB.AddressConfig\"1\n\rRunningConfig\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x11\n\tnew_state\x18\x02 \x01(\x08\"0\n\nCF_Running\x12\"\n\x07running\x18\x01 \x03(\x0b\x32\x11.PB.RunningConfig\"X\n\nCF_Trigger\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x1e\n\x04mode\x18\x02 \x01(\x0e\x32\x10.PB.Trigger_Mode\x12\r\n\x05level\x18\x03 \x01(\x02\x12\x0c\n\x04\x65\x64ge\x18\x04 \x01(\x08\"\x18\n\x07\x43\x46_TInc\x12\r\n\x05t_inc\x18\x01 \x01(\r\"\x1c\n\x07\x45V_Poll\x12\x11\n\ttimestamp\x18\x01 \x01(\r*D\n\x08Var_Type\x12\x0c\n\x08SE_UINT8\x10\x00\x12\r\n\tSE_UINT16\x10\x01\x12\r\n\tSE_UINT32\x10\x02\x12\x0c\n\x08SE_FLOAT\x10\x03*8\n\x0cTrigger_Mode\x12\n\n\x06NORMAL\x10\x00\x12\x0e\n\nCONTINUOUS\x10\x01\x12\x0c\n\x08ONE_SHOT\x10\x02\x62\x06proto3')
+  serialized_pb=_b('\n\x0ese-scope.proto\x12\x02PB\"P\n\nSC_Trigger\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x13\n\x0b\x63l_data_ind\x18\x02 \x01(\r\x12\x1e\n\x04mode\x18\x03 \x01(\x0e\x32\x10.PB.Trigger_Mode\"&\n\nSC_Channel\x12\x0c\n\x04\x64\x61ta\x18\x01 \x03(\x02\x12\n\n\x02id\x18\x02 \x01(\r\"o\n\x07SC_Data\x12 \n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x0e.PB.SC_Channel\x12\x12\n\ntimestamps\x18\x02 \x03(\x07\x12\r\n\x05t_inc\x18\x03 \x01(\r\x12\x1f\n\x07trigger\x18\x04 \x01(\x0b\x32\x0e.PB.SC_Trigger\"P\n\x18SC_Channel_Configuration\x12\n\n\x02id\x18\x01 \x01(\r\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x1a\n\x04type\x18\x03 \x01(\x0e\x32\x0c.PB.Var_Type\"v\n\x0bSC_Announce\x12.\n\x08\x63hannels\x18\x01 \x03(\x0b\x32\x1c.PB.SC_Channel_Configuration\x12\x14\n\x0cmax_channels\x18\x02 \x01(\r\x12\x10\n\x08timebase\x18\x03 \x01(\x02\x12\x0f\n\x07version\x18\x04 \x01(\t\"K\n\rAddressConfig\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x0f\n\x07\x61\x64\x64ress\x18\x02 \x01(\r\x12\x1a\n\x04type\x18\x03 \x01(\x0e\x32\x0c.PB.Var_Type\"2\n\nCF_Address\x12$\n\taddresses\x18\x01 \x03(\x0b\x32\x11.PB.AddressConfig\"1\n\rRunningConfig\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x11\n\tnew_state\x18\x02 \x01(\x08\"0\n\nCF_Running\x12\"\n\x07running\x18\x01 \x03(\x0b\x32\x11.PB.RunningConfig\"X\n\nCF_Trigger\x12\r\n\x05\x63l_id\x18\x01 \x01(\r\x12\x1e\n\x04mode\x18\x02 \x01(\x0e\x32\x10.PB.Trigger_Mode\x12\r\n\x05level\x18\x03 \x01(\x02\x12\x0c\n\x04\x65\x64ge\x18\x04 \x01(\x08\"\x18\n\x07\x43\x46_TInc\x12\r\n\x05t_inc\x18\x01 \x01(\r\"\x1c\n\x07\x45V_Poll\x12\x11\n\ttimestamp\x18\x01 \x01(\r*m\n\x08Var_Type\x12\x0b\n\x07SE_INT8\x10\x00\x12\x0c\n\x08SE_INT16\x10\x01\x12\x0c\n\x08SE_INT32\x10\x02\x12\x0c\n\x08SE_UINT8\x10\x03\x12\r\n\tSE_UINT16\x10\x04\x12\r\n\tSE_UINT32\x10\x05\x12\x0c\n\x08SE_FLOAT\x10\x06*8\n\x0cTrigger_Mode\x12\n\n\x06NORMAL\x10\x00\x12\x0e\n\nCONTINUOUS\x10\x01\x12\x0c\n\x08ONE_SHOT\x10\x02\x62\x06proto3')
 )
 
 _VAR_TYPE = _descriptor.EnumDescriptor(
@@ -30,26 +30,38 @@ _VAR_TYPE = _descriptor.EnumDescriptor(
   file=DESCRIPTOR,
   values=[
     _descriptor.EnumValueDescriptor(
-      name='SE_UINT8', index=0, number=0,
+      name='SE_INT8', index=0, number=0,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='SE_UINT16', index=1, number=1,
+      name='SE_INT16', index=1, number=1,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='SE_UINT32', index=2, number=2,
+      name='SE_INT32', index=2, number=2,
       serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
-      name='SE_FLOAT', index=3, number=3,
+      name='SE_UINT8', index=3, number=3,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='SE_UINT16', index=4, number=4,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='SE_UINT32', index=5, number=5,
+      serialized_options=None,
+      type=None),
+    _descriptor.EnumValueDescriptor(
+      name='SE_FLOAT', index=6, number=6,
       serialized_options=None,
       type=None),
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=633,
-  serialized_end=701,
+  serialized_start=835,
+  serialized_end=944,
 )
 _sym_db.RegisterEnumDescriptor(_VAR_TYPE)
 
@@ -75,16 +87,19 @@ _TRIGGER_MODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=703,
-  serialized_end=759,
+  serialized_start=946,
+  serialized_end=1002,
 )
 _sym_db.RegisterEnumDescriptor(_TRIGGER_MODE)
 
 Trigger_Mode = enum_type_wrapper.EnumTypeWrapper(_TRIGGER_MODE)
-SE_UINT8 = 0
-SE_UINT16 = 1
-SE_UINT32 = 2
-SE_FLOAT = 3
+SE_INT8 = 0
+SE_INT16 = 1
+SE_INT32 = 2
+SE_UINT8 = 3
+SE_UINT16 = 4
+SE_UINT32 = 5
+SE_FLOAT = 6
 NORMAL = 0
 CONTINUOUS = 1
 ONE_SHOT = 2
@@ -226,6 +241,103 @@ _SC_DATA = _descriptor.Descriptor(
 )
 
 
+_SC_CHANNEL_CONFIGURATION = _descriptor.Descriptor(
+  name='SC_Channel_Configuration',
+  full_name='PB.SC_Channel_Configuration',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='id', full_name='PB.SC_Channel_Configuration.id', index=0,
+      number=1, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='name', full_name='PB.SC_Channel_Configuration.name', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='type', full_name='PB.SC_Channel_Configuration.type', index=2,
+      number=3, type=14, cpp_type=8, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=257,
+  serialized_end=337,
+)
+
+
+_SC_ANNOUNCE = _descriptor.Descriptor(
+  name='SC_Announce',
+  full_name='PB.SC_Announce',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='channels', full_name='PB.SC_Announce.channels', index=0,
+      number=1, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='max_channels', full_name='PB.SC_Announce.max_channels', index=1,
+      number=2, type=13, cpp_type=3, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='timebase', full_name='PB.SC_Announce.timebase', index=2,
+      number=3, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='version', full_name='PB.SC_Announce.version', index=3,
+      number=4, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  serialized_options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=339,
+  serialized_end=457,
+)
+
+
 _ADDRESSCONFIG = _descriptor.Descriptor(
   name='AddressConfig',
   full_name='PB.AddressConfig',
@@ -266,8 +378,8 @@ _ADDRESSCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=257,
-  serialized_end=332,
+  serialized_start=459,
+  serialized_end=534,
 )
 
 
@@ -297,8 +409,8 @@ _CF_ADDRESS = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=334,
-  serialized_end=384,
+  serialized_start=536,
+  serialized_end=586,
 )
 
 
@@ -335,8 +447,8 @@ _RUNNINGCONFIG = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=386,
-  serialized_end=435,
+  serialized_start=588,
+  serialized_end=637,
 )
 
 
@@ -366,8 +478,8 @@ _CF_RUNNING = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=437,
-  serialized_end=485,
+  serialized_start=639,
+  serialized_end=687,
 )
 
 
@@ -418,8 +530,8 @@ _CF_TRIGGER = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=487,
-  serialized_end=575,
+  serialized_start=689,
+  serialized_end=777,
 )
 
 
@@ -449,8 +561,8 @@ _CF_TINC = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=577,
-  serialized_end=601,
+  serialized_start=779,
+  serialized_end=803,
 )
 
 
@@ -480,13 +592,15 @@ _EV_POLL = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=603,
-  serialized_end=631,
+  serialized_start=805,
+  serialized_end=833,
 )
 
 _SC_TRIGGER.fields_by_name['mode'].enum_type = _TRIGGER_MODE
 _SC_DATA.fields_by_name['channels'].message_type = _SC_CHANNEL
 _SC_DATA.fields_by_name['trigger'].message_type = _SC_TRIGGER
+_SC_CHANNEL_CONFIGURATION.fields_by_name['type'].enum_type = _VAR_TYPE
+_SC_ANNOUNCE.fields_by_name['channels'].message_type = _SC_CHANNEL_CONFIGURATION
 _ADDRESSCONFIG.fields_by_name['type'].enum_type = _VAR_TYPE
 _CF_ADDRESS.fields_by_name['addresses'].message_type = _ADDRESSCONFIG
 _CF_RUNNING.fields_by_name['running'].message_type = _RUNNINGCONFIG
@@ -494,6 +608,8 @@ _CF_TRIGGER.fields_by_name['mode'].enum_type = _TRIGGER_MODE
 DESCRIPTOR.message_types_by_name['SC_Trigger'] = _SC_TRIGGER
 DESCRIPTOR.message_types_by_name['SC_Channel'] = _SC_CHANNEL
 DESCRIPTOR.message_types_by_name['SC_Data'] = _SC_DATA
+DESCRIPTOR.message_types_by_name['SC_Channel_Configuration'] = _SC_CHANNEL_CONFIGURATION
+DESCRIPTOR.message_types_by_name['SC_Announce'] = _SC_ANNOUNCE
 DESCRIPTOR.message_types_by_name['AddressConfig'] = _ADDRESSCONFIG
 DESCRIPTOR.message_types_by_name['CF_Address'] = _CF_ADDRESS
 DESCRIPTOR.message_types_by_name['RunningConfig'] = _RUNNINGCONFIG
@@ -525,6 +641,20 @@ SC_Data = _reflection.GeneratedProtocolMessageType('SC_Data', (_message.Message,
   # @@protoc_insertion_point(class_scope:PB.SC_Data)
   ))
 _sym_db.RegisterMessage(SC_Data)
+
+SC_Channel_Configuration = _reflection.GeneratedProtocolMessageType('SC_Channel_Configuration', (_message.Message,), dict(
+  DESCRIPTOR = _SC_CHANNEL_CONFIGURATION,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.SC_Channel_Configuration)
+  ))
+_sym_db.RegisterMessage(SC_Channel_Configuration)
+
+SC_Announce = _reflection.GeneratedProtocolMessageType('SC_Announce', (_message.Message,), dict(
+  DESCRIPTOR = _SC_ANNOUNCE,
+  __module__ = 'se_scope_pb2'
+  # @@protoc_insertion_point(class_scope:PB.SC_Announce)
+  ))
+_sym_db.RegisterMessage(SC_Announce)
 
 AddressConfig = _reflection.GeneratedProtocolMessageType('AddressConfig', (_message.Message,), dict(
   DESCRIPTOR = _ADDRESSCONFIG,

@@ -27,6 +27,12 @@ typedef struct __ScDataChannelsDef {
     size_t amountOfChannels;
 } ScDataChannelsDef;
 
+typedef struct __ScAnnouncementData {
+    ScAnnounceMetaData announcMeta;
+    ScAnnounceChannelDef* announceChannels;
+    size_t amountOfChannels;
+} ScAnnouncementData;
+
 /******************************************************************************
  Define private data
 ******************************************************************************/
@@ -36,26 +42,26 @@ typedef struct __NanopbPackerPrivateData {
     pb_ostream_t wrapped;
     ScDataChannelsDef channels;
     size_t maxNumberOfChannels;
+    size_t maxAddressesToAnnounce;
     ScDataTriggerDef trigger;
     uint32_t timeIncrement;
     IIntStreamHandle timestamp;
-		IByteStreamHandle output;
+    IByteStreamHandle output;
+    ScAnnouncementData announcement;
 
 } NanopbPackerPrivateData;
 
 static void addChannel(IPackerHandle packer, ScDataChannelDef channel);
 
-static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
+static void addTimeIncrement(IPackerHandle packer, uint32_t timeIncrement);
 
 static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger);
 
 static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 
-static void
-addAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address);
+static void addAddressAnnouncement(IPackerHandle packer, ScAnnounceChannelDef address);
 
-static void
-addAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels);
+static void addAnnouncement(IPackerHandle packer, ScAnnounceMetaData meta);
 
 static void reset(IPackerHandle packer);
 
@@ -73,6 +79,11 @@ static size_t getWidthOfVarint(uint32_t data);
 ******************************************************************************/
 static void addChannel(IPackerHandle packer, ScDataChannelDef channel) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
+
+    if(self->channels.amountOfChannels >= self->maxNumberOfChannels){
+        return;
+    }
+
     self->channels.channels[self->channels.amountOfChannels] = channel;
     self->channels.amountOfChannels += 1;
 }
@@ -92,17 +103,25 @@ static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger) {
     self->trigger = trigger;
 }
 
-static void
-addAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address) {
+static void addAddressAnnouncement(IPackerHandle packer, const ScAnnounceChannelDef address) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
-    // Not yet implemented for nanopb
-    return;
+
+    if(self->announcement.amountOfChannels >= self->maxAddressesToAnnounce){
+        return;
+    }
+
+    self->announcement.announceChannels[self->announcement.amountOfChannels].type = address.type;
+    self->announcement.announceChannels[self->announcement.amountOfChannels].name = address.name;
+    self->announcement.announceChannels[self->announcement.amountOfChannels].id = address.id;
+    self->announcement.amountOfChannels += 1;
 }
 
-static void addAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels){
+static void addAnnouncement(IPackerHandle packer, ScAnnounceMetaData meta){
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
-    // Not yet implemented for nanopb
-    return;
+
+    self->announcement.announcMeta.version = meta.version;
+    self->announcement.announcMeta.timebase = meta.timebase;
+    self->announcement.announcMeta.maxChannels = meta.maxChannels;
 }
 
 static void reset(IPackerHandle packer) {
@@ -233,9 +252,59 @@ static void packScData(NanopbPackerHandle self){
 
 }
 
+static bool writeAddress(pb_ostream_t* stream, const pb_field_t* field, void* const* arg){
+
+    ScAnnouncementData announcement = *(ScAnnouncementData*) (*arg);
+    PB_SC_Channel_Configuration channel = PB_SC_Channel_Configuration_init_zero;
+
+    for(size_t i = 0; i < announcement.amountOfChannels; i++){
+
+        if(!pb_encode_tag(stream, PB_WT_STRING, field->tag))
+            return false;
+
+        channel.id = announcement.announceChannels[i].id;
+        channel.type = (PB_Var_Type) announcement.announceChannels[i].type;
+        strcpy(channel.name, announcement.announceChannels[i].name);
+
+        // Size the size of the strings, and therefore the message is not know, just let nanopb pack it andd fetch the
+        // size from the written stream, as suggested by the nanopb author.
+        // This should not be significantly slower than measuring it with strlen. And speed isn't the most crucial
+        // for the SC_ANNOUNCE
+        const size_t maxBufferSize = PB_SC_Channel_Configuration_size + 10;
+        pb_byte_t buffer[maxBufferSize];
+        pb_ostream_t tmpStream = pb_ostream_from_buffer(buffer, maxBufferSize);
+        if(!pb_encode(&tmpStream, PB_SC_Channel_Configuration_fields, &channel)){
+            return false;
+        }
+
+        if(!pb_encode_varint(stream, tmpStream.bytes_written))
+            return false;
+        if(!pb_encode(stream, PB_SC_Channel_Configuration_fields, &channel)){
+            return false;
+        }
+    }
+    return true;
+
+}
+
+void packScAnnounce(NanopbPackerHandle self){
+
+    PB_SC_Announce announce = PB_SC_Announce_init_default;
+
+    announce.timebase = self->announcement.announcMeta.timebase;
+    strcpy(announce.version, self->announcement.announcMeta.version);
+    announce.max_channels = self->announcement.announcMeta.maxChannels;
+
+    announce.channels.arg = &self->announcement;
+    announce.channels.funcs.encode = &writeAddress;
+
+    pb_encode(&self->wrapped, PB_SC_Announce_fields, &announce);
+}
+
 static void resetSelf(NanopbPackerHandle self){
     self->channels.amountOfChannels = 0;
-		self->wrapped.bytes_written = 0;
+    self->wrapped.bytes_written = 0;
+    self->announcement.amountOfChannels = 0;
 }
 
 static void pack(IPackerHandle packer, MessageType type){
@@ -247,6 +316,8 @@ static void pack(IPackerHandle packer, MessageType type){
 	
     if(type == SC_DATA) {
         packScData(self);
+    }else if(type == SC_ANNOUNCE){
+        packScAnnounce(self);
     }
 		
     resetSelf(self);
@@ -268,11 +339,15 @@ NanopbPackerHandle NanopbPacker_create(size_t maxNumberOfChannels, size_t maxAdd
     self->wrapped.bytes_written = 0;
 
     self->output = output;
-    self->channels.channels = malloc(sizeof(ScDataChannelDef) * maxNumberOfChannels);
 
+    self->channels.channels = malloc(sizeof(ScDataChannelDef) * maxNumberOfChannels);
     assert(self->channels.channels);
 
+    self->announcement.announceChannels = malloc(sizeof(ScAnnounceChannelDef) * maxAddressesToAnnounce);
+    assert(self->announcement.announceChannels);
+
     self->maxNumberOfChannels = maxNumberOfChannels;
+    self->maxAddressesToAnnounce = maxAddressesToAnnounce;
 
     self->packer.handle = self;
     self->packer.addChannel = &addChannel;

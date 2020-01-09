@@ -55,7 +55,7 @@ bool testCondition(float var1, float var2, TriggerConfiguration conf){
 
 TEST(Trigger, test_normal){
 
-    TriggerConfiguration conf = {.level = 6.6f, .edge = TRIGGER_EDGE_POSITIVE, .mode = TRIGGER_NORMAL, .channelId = 0};
+    TriggerConfiguration conf = {.level = 6.6f, .edge = true, .mode = TRIGGER_NORMAL, .channelId = 0};
 
     bool isTriggered = testCondition(1.1f, 5.5f, conf);
     EXPECT_EQ(isTriggered, false);
@@ -69,37 +69,37 @@ TEST(Trigger, test_normal){
     EXPECT_EQ(isTriggered, false);
 
     conf.level = 3.3f;
-    conf.edge = TRIGGER_EDGE_NEGATIVE;
+    conf.edge = false;
     isTriggered = testCondition(5.5f, 1.1f, conf);
     EXPECT_EQ(isTriggered, true);
 
     conf.level = 6.6f;
-    conf.edge = TRIGGER_EDGE_NEGATIVE;
+    conf.edge = false;
     isTriggered = testCondition(5.5f, 1.1f, conf);
     EXPECT_EQ(isTriggered, false);
 
     conf.level = -4.4f;
-    conf.edge = TRIGGER_EDGE_NEGATIVE;
+    conf.edge = false;
     isTriggered = testCondition(-5.5f, -1.1f, conf);
     EXPECT_EQ(isTriggered, false);
 
     conf.level = -4.4f;
-    conf.edge = TRIGGER_EDGE_POSITIVE;
+    conf.edge = true;
     isTriggered = testCondition(-5.5f, -1.1f, conf);
     EXPECT_EQ(isTriggered, true);
 
     conf.level = -6.6f;
-    conf.edge = TRIGGER_EDGE_POSITIVE;
+    conf.edge = true;
     isTriggered = testCondition(-5.5f, -1.1f, conf);
     EXPECT_EQ(isTriggered, false);
 
     conf.level = 3.3f;
-    conf.edge = TRIGGER_EDGE_POSITIVE;
+    conf.edge = true;
     isTriggered = testCondition(-5.5f, 5.5f, conf);
     EXPECT_EQ(isTriggered, true);
 
     conf.level = -3.3f;
-    conf.edge = TRIGGER_EDGE_POSITIVE;
+    conf.edge = true;
     isTriggered = testCondition(-5.5f, 5.5f, conf);
     EXPECT_EQ(isTriggered, true);
 }

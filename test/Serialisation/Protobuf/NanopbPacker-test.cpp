@@ -15,7 +15,7 @@ using namespace std;
 class NanopbPackerTest : public ::testing::Test{
 #define MAX_NUMBER_OF_CHANNELS (3)
 #define SIZE_OF_CHANNELS (10)
-#define ADDRESSES_TO_ANNOUNCE (2)
+#define ADDRESSES_TO_ANNOUNCE (3)
 
 protected:
     NanopbPackerTest()
@@ -44,7 +44,7 @@ protected:
 };
 
 
-TEST_F(NanopbPackerTest, pack_announce
+TEST_F(NanopbPackerTest, pack_data
 ){
 
     IIntStreamHandle timestamp = BufferedIntStream_getIIntStream(BufferedIntStream_create(SIZE_OF_CHANNELS));
@@ -105,4 +105,51 @@ TEST_F(NanopbPackerTest, pack_announce
             103, 54, 140, 134, 103, 182, 0, 0, 0, 0, 0, 0, 192, 63, 16, 1, 18, 24, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0,
             3, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0, 24, 10, 34, 6, 8, 1, 16, 100, 24, 2
     ));
+}
+
+
+TEST_F(NanopbPackerTest, pack_announce
+){
+
+    ScAnnounceChannelDef channel1;
+    // Test if the max. amount of letters is properly written
+    char* name1 = (char*) "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    channel1.name = name1;
+    channel1.type = SE_INT8;
+    channel1.id = 1;
+
+    ScAnnounceChannelDef channel2;
+    char* name2 = (char*) "channel2";
+    channel2.name = name2;
+    channel2.type = SE_UINT32;
+    channel2.id = 10;
+
+    ScAnnounceChannelDef channel3;
+    char* name3 = (char*) "channel3";
+    channel3.name = name3;
+    channel3.type = SE_FLOAT;
+    channel3.id = 5;
+
+    ScAnnounceMetaData meta;
+    meta.maxChannels = 3;
+    meta.timebase = 1.2345f;
+    char* version = (char*) "0.5";
+    meta.version = version;
+
+    _iPacker->addAddressAnnouncement(_iPacker, channel1);
+    _iPacker->addAddressAnnouncement(_iPacker, channel2);
+    _iPacker->addAddressAnnouncement(_iPacker, channel3);
+    _iPacker->addAnnouncement(_iPacker, meta);
+    _iPacker->pack(_iPacker, SC_ANNOUNCE);
+
+    size_t dataPending = _outputStream->length(_outputStream);
+    char data[dataPending];
+    _outputStream->read(_outputStream, (uint8_t*) data, dataPending);
+
+    vector<uint8_t> v_o;
+    v_o.assign(data, data + dataPending);
+    EXPECT_THAT(v_o, ElementsAre(10, 33, 8, 1, 18, 29, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97,
+            97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 97, 10, 14, 8, 10, 18, 8, 99, 104, 97, 110, 110,
+            101, 108, 50, 24, 5, 10, 14, 8, 5, 18, 8, 99, 104, 97, 110, 110, 101, 108, 51, 24, 6, 16, 3, 29, 25, 4,
+            158, 63, 34, 3, 48, 46, 53));
 }

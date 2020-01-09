@@ -1,11 +1,11 @@
-/*!****************************************************************************************************************************************
+/*!*********************************************************************************************************************
  * @file         AnnounceStorage.c
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
- *****************************************************************************************************************************************/
+ **********************************************************************************************************************/
 
 #include "Scope/Control/AnnounceStorage.h"
 #include "Scope/GeneralPurpose/DataTypes.h"
@@ -28,7 +28,6 @@ typedef struct __AnnounceStoragePrivateData{
     size_t maxAmountOfChannels;
     float timeBase;
     const char* version;
-
 } AnnounceStoragePrivateData;
 
 /******************************************************************************
@@ -69,8 +68,8 @@ float AnnounceStorage_getTimeBase(AnnounceStorageHandle self){
     return self->timeBase;
 }
 
-void AnnounceStorage_getVersion(AnnounceStorageHandle self, char* version){
-    strncpy(version, self->version, strlen(self->version));
+const char* AnnounceStorage_getVersion(AnnounceStorageHandle self){
+    return self->version;
 }
 
 size_t AnnounceStorage_getMaxAmountOfAddresses(AnnounceStorageHandle self){
@@ -87,18 +86,18 @@ size_t AnnounceStorage_getAmountOfConfiguredAddresses(AnnounceStorageHandle self
 
 bool AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* name, const void* address,
                                        const DATA_TYPES type){
-    //
+
     if(self->configuredAmountOfAddresses >= self->maxAmountOfAddresses){
         return false;
     }
 
-    if(strlen(name) > maxAddrNameLength){
+    if(strlen(name) > MAX_LENGTH_OF_ANNOUNCE_NAME){
         return false;
     }
 
     self->addresses[self->configuredAmountOfAddresses].type = type;
     self->addresses[self->configuredAmountOfAddresses].address = (ADDRESS_DATA_TYPE) address;
-    strncpy(self->addresses[self->configuredAmountOfAddresses].name, name, maxAddrNameLength);
+    strncpy(self->addresses[self->configuredAmountOfAddresses].name, name, MAX_LENGTH_OF_ANNOUNCE_NAME);
 
     self->configuredAmountOfAddresses++;
     return true;

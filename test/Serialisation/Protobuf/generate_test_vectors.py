@@ -39,6 +39,14 @@ def pack_running_vector():
     running = CF_Running(running=[running_1, running_2, running_3])
     return running
 
+
+def pack_annoucement_vector():
+    address_1 = SC_Channel_Configuration(name="aaaaaaaaaaaaaaaaaaaaaaaaaaaaa", id=1, type=0)
+    address_2 = SC_Channel_Configuration(name="channel2", id=10, type=5)
+    address_3 = SC_Channel_Configuration(name="channel3", id=5, type=6)
+    announce = SC_Announce(channels=[address_1, address_2, address_3], max_channels=3, timebase=1.2345, version="0.5")
+    return announce
+
 def to_binary(m):
     b = [x for x in list(m)]
     return b
@@ -58,6 +66,7 @@ def main():
     print_test_case(pack_poll_vector(), "poll")
     print_test_case(pack_address_vector(), "address")
     print_test_case(pack_running_vector(), "running")
+    print_test_case(pack_annoucement_vector(), "announce")
 
 
 if __name__== "__main__":

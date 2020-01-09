@@ -40,6 +40,4 @@ set(SE_SCOPE_SOURCES
         ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/Protobuf/se-scope.pb.c
         ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/Protobuf/NanopbPacker.c
         ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/Serializer.c
-        ${SE_SCOPE_SOURCE_DIRECTORY}/Serialisation/JsonParser/JsonPacker.c
-
         )

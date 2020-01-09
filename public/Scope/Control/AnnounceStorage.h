@@ -24,12 +24,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define maxAddrNameLength 30 // Max length of an address name
+#define MAX_LENGTH_OF_ANNOUNCE_NAME 30 // Max length of an address name
 /**
  * Definitions for the AnnounceStorage
  */
 typedef struct{
-    char name[maxAddrNameLength]; // Name of an address
+    char name[MAX_LENGTH_OF_ANNOUNCE_NAME]; // Name of an address
     DATA_TYPES type; // Type of the address
     ADDRESS_DATA_TYPE address; // The address
 } AddressDefinition;
@@ -82,7 +82,7 @@ float AnnounceStorage_getTimeBase(AnnounceStorageHandle self);
  * Get the version of the se scope
  * @param version
  */
-void AnnounceStorage_getVersion(AnnounceStorageHandle self, char* version);
+const char* AnnounceStorage_getVersion(AnnounceStorageHandle self);
 
 /**
  * Updates the packObserver, triggering a pending event in the packer

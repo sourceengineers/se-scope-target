@@ -19,12 +19,25 @@
 #include <se-lib-c/stream/BufferedByteStream.h>
 #include <se-lib-c/stream/IIntStream.h>
 #include <se-lib-c/container/FloatRingBuffer.h>
+#include "Scope/Version.h"
 #include "Scope/Core/ScopeTypes.h"
 
 typedef struct __ScDataChannelDef {
     FloatRingBufferHandle stream;
     uint32_t id;
 } ScDataChannelDef;
+
+typedef struct __ScAnnounceChannelDef {
+    uint32_t id;
+    char* name;
+    DATA_TYPES type;
+} ScAnnounceChannelDef;
+
+typedef struct __ScAnnounceMetaData {
+    uint32_t maxChannels;
+    float timebase;
+    char* version;
+} ScAnnounceMetaData;
 
 typedef struct __ScDataTriggerDef {
     bool isTriggered;
@@ -92,21 +105,16 @@ typedef struct IPackerStruct{
     /**
      * Prepares address announcement
      * @param packer
-     * @param name
-     * @param type
-     * @param address
+     * @param channel
      */
-    void (* addAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type,
-                                        const ADDRESS_DATA_TYPE address);
+    void (* addAddressAnnouncement)(IPackerHandle packer, const ScAnnounceChannelDef address);
 
     /**
      * Prepares the packer to pack version, timebase and max channels
      * @param packer
-     * @param timeBase
-     * @param version
-     * @param maxChannels
+     * @param meta
      */
-    void (* addAnnouncement)(IPackerHandle packer, float timeBase, const char* version, size_t maxChannels);
+    void (* addAnnouncement)(IPackerHandle packer, const ScAnnounceMetaData meta);
 
     /**
      * Resets the packer

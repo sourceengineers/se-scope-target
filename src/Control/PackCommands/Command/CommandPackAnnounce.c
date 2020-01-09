@@ -48,20 +48,17 @@ static void run(ICommandHandle command){
 
     for(uint32_t i = 0; i < maxAddresses; ++i){
         AddressDefinition* addr = AnnounceStorage_getAddressToTransmit(self->announceStorage, i);
-
-        if(addr != NULL){
-            self->packer->addAddressAnnouncement(self->packer, addr->name, getDataTypeName(addr->type),
-                                                     addr->address);
-        }
+        ScAnnounceChannelDef address = {.type = addr->type, .id = i, .name = addr->name};
+        self->packer->addAddressAnnouncement(self->packer, address);
     }
     
     const size_t maxAmountOfChannels = AnnounceStorage_getMaxAmountOfChannels(self->announceStorage);
     const float timeBase = AnnounceStorage_getTimeBase(self->announceStorage);
 
-    char version[SE_SCOPE_TARGET_VERSION_LENGTH];
-    AnnounceStorage_getVersion(self->announceStorage, version);
+    const char* version = AnnounceStorage_getVersion(self->announceStorage);
 
-    self->packer->addAnnouncement(self->packer, timeBase, version, maxAmountOfChannels);
+    ScAnnounceMetaData meta = {.timebase = timeBase, .version = version, .maxChannels = maxAmountOfChannels};
+    self->packer->addAnnouncement(self->packer, meta);
 }
 
 /******************************************************************************

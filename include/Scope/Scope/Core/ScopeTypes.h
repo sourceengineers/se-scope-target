@@ -14,11 +14,6 @@
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 
-/* Constants to represent the different edges on which the trigger can be
-   configured */
-static const int TRIGGER_EDGE_POSITIVE = 1; // Trigger edge == Rising
-static const int TRIGGER_EDGE_NEGATIVE = -1; // Trigger edge == Falling
-
 /**
  * Enum to represent different trigger types
  * */

@@ -38,7 +38,6 @@ typedef struct __SerializerPrivateData{
 
     IObserver packObserver;
     IObserver unpackObserver;
-    JsonPackerHandle jsonPacker;
     NanopbPackerHandle nanopbPacker;
     NanopbUnpackerHandle nanopbUnpacker;
     IByteStreamHandle output;
@@ -84,28 +83,20 @@ static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger);
 
 static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
 
-static void
-addAddressAnnouncement(IPackerHandle packer, const char *name, const char *type, ADDRESS_DATA_TYPE address);
+static void addAddressAnnouncement(IPackerHandle packer, ScAnnounceChannelDef address);
 
-static void
-addAnnouncement(IPackerHandle packer, float timeBase, const char *version, size_t maxChannels);
+static void addAnnouncement(IPackerHandle packer, const ScAnnounceMetaData meta);
 
 static void reset(IPackerHandle packer);
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static IPackerHandle getPacker(SerializerHandle self, MessageType type){
-    if(type == SC_DATA){
-        return NanopbPacker_getIPacker(self->nanopbPacker);
-    }else if(type == SC_ANNOUNCE){
-        return JsonPacker_getIPacker(self->jsonPacker);
-    }else{
-        return NULL;
-    }
+inline static IPackerHandle getPacker(SerializerHandle self, MessageType type){
+    return NanopbPacker_getIPacker(self->nanopbPacker);
 }
 
-static IUnpackerHandle getUnpacker(SerializerHandle self, MessageType type){
+inline static IUnpackerHandle getUnpacker(SerializerHandle self, MessageType type){
     if(type == EV_POLL ||
        type == CF_ADDR ||
        type == CF_RUNNING ||
@@ -208,16 +199,16 @@ void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger){
     currentPacker->addTrigger(currentPacker, trigger);
 }
 
-void addAddressAnnouncement(IPackerHandle packer, const char* name, const char* type, const ADDRESS_DATA_TYPE address){
+void addAddressAnnouncement(IPackerHandle packer, ScAnnounceChannelDef address){
     SerializerHandle self = (SerializerHandle) packer->handle;
     IPackerHandle currentPacker = getPacker(self, SC_ANNOUNCE);
-    currentPacker->addAddressAnnouncement(currentPacker, name, type, address);
+    currentPacker->addAddressAnnouncement(currentPacker, address);
 }
 
-void addAnnouncement(IPackerHandle packer, float timeBase, const char* version, size_t maxChannels){
+void addAnnouncement(IPackerHandle packer, const ScAnnounceMetaData meta){
     SerializerHandle self = (SerializerHandle) packer->handle;
     IPackerHandle currentPacker = getPacker(self, SC_ANNOUNCE);
-    currentPacker->addAnnouncement(currentPacker, timeBase, version, maxChannels);
+    currentPacker->addAnnouncement(currentPacker, meta);
 }
 
 static bool unpack(IUnpackerHandle unpacker, MessageType type){
@@ -284,7 +275,6 @@ SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByt
     SerializerHandle self = malloc(sizeof(SerializerPrivateData));
     assert(self);
 
-    self->jsonPacker = JsonPacker_create(maxChannels, maxAddresses, output);
     self->nanopbPacker = NanopbPacker_create(maxChannels, maxAddresses, output);
 
     self->nanopbUnpacker = NanopbUnpacker_create(input, maxChannels);
@@ -360,13 +350,9 @@ IUnpackerHandle Serializer_getUnpacker(SerializerHandle self){
 
 size_t
 Serializer_txCalculateBufferSize(size_t amountOfChannels, size_t sizeOfChannels, size_t addressesInAddressAnnouncer){
-    size_t jsonPackerSize = JsonPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
-                                                           addressesInAddressAnnouncer);
     size_t nanopbPackerSize = NanopbPacker_calculateBufferSize(amountOfChannels, sizeOfChannels,
                                                                addressesInAddressAnnouncer);
-
-    // Return the biggest size. The buffer will be big enough for both
-    return jsonPackerSize > nanopbPackerSize ? jsonPackerSize : nanopbPackerSize;
+    return nanopbPackerSize;
 }
 
 size_t Serializer_rxCalculateBufferSize(size_t maxChannels){
@@ -374,6 +360,8 @@ size_t Serializer_rxCalculateBufferSize(size_t maxChannels){
 }
 
 void Serializer_destroy(SerializerHandle self){
+    NanopbUnpacker_destroy(self->nanopbUnpacker);
+    NanopbPacker_destroy(self->nanopbPacker);
     free(self);
     self = NULL;
 }

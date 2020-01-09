@@ -15,7 +15,6 @@ set(SE_SCOPE_UNIT_TESTS
         ${SE_SCOPE_PROJECT_TEST_DIR}/Communication/FramedIO-test.cpp
         ${SE_SCOPE_PROJECT_TEST_DIR}/Serialisation/Protobuf/NanopbUnpacker-test.cpp
         ${SE_SCOPE_PROJECT_TEST_DIR}/Serialisation/Protobuf/NanopbPacker-test.cpp
-        ${SE_SCOPE_PROJECT_TEST_DIR}/Serialisation/JsonParser/JsonPacker-test.cpp
         ${SE_SCOPE_PROJECT_TEST_DIR}/GeneralPurpose/Bytestream-test.cpp
         ${SE_SCOPE_PROJECT_TEST_DIR}/GeneralPurpose/FloatRingBuffer-test.cpp
         )
