@@ -8,7 +8,6 @@
  *****************************************************************************************************************************************/
 
 #include "Scope/Builders/ScopeBuilder.h"
-
 #include "Scope/Control/Controller.h"
 #include "Scope/Core/Scope.h"
 #include "Scope/Serialisation/Serializer.h"
@@ -23,17 +22,16 @@
 typedef struct __ScopeBuilderPrivateData{
     IByteStreamHandle input;
     IByteStreamHandle output;
-    IPackerHandle packer;
-    IUnpackerHandle unpacker;
     ICommunicatorHandle communicator;
     ScopeHandle scope;
+
     ControllerHandle controller;
     SerializerHandle serializer;
     AnnounceStorageHandle announceStorage;
 
     IMutexHandle dataMutex;
     IMutexHandle configMutex;
-
+    size_t maxAddresses;
     uint32_t* timestamp;
     size_t amountOfChannels;
     size_t sizeOfChannels;
@@ -50,8 +48,6 @@ ScopeBuilderHandle ScopeBuilder_create(void){
 
     self->input = NULL;
     self->output = NULL;
-    self->packer = NULL;
-    self->unpacker = NULL;
     self->communicator = NULL;
     self->scope = NULL;
     self->controller = NULL;
@@ -76,17 +72,13 @@ void ScopeBuilder_setTimestampReference(ScopeBuilderHandle self, uint32_t* times
     self->timestamp = timestamp;
 }
 
-void ScopeBuilder_setParser(ScopeBuilderHandle self, IPackerHandle packer, IUnpackerHandle unpacker){
-    self->packer = packer;
-    self->unpacker = unpacker;
-}
-
 void ScopeBuilder_setCommunication(ScopeBuilderHandle self, ICommunicatorHandle communicator){
     self->communicator = communicator;
 }
 
-void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle announceStorage){
+void ScopeBuilder_setAnnounceStorage(ScopeBuilderHandle self, AnnounceStorageHandle announceStorage, size_t maxAddresses){
     self->announceStorage = announceStorage;
+    self->maxAddresses = maxAddresses;
 }
 
 void ScopeBuilder_setDataMutex(ScopeBuilderHandle self, IMutexHandle mutex){
@@ -115,9 +107,6 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
     if(self->output == NULL){
         return runnable;
     }
-    if(self->packer == NULL){
-        return runnable;
-    }
     if(self->communicator == NULL){
         return runnable;
     }
@@ -127,8 +116,10 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
 
     /* Create layers */
     self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->timestamp);
-    self->controller = Controller_create(Scope_getIScope(self->scope), self->packer, self->unpacker, self->announceStorage);
-    self->serializer = Serializer_create(self->packer, self->unpacker);
+
+    self->serializer = Serializer_create(self->amountOfChannels, self->maxAddresses, self->output, self->input);
+    self->controller = Controller_create(Scope_getIScope(self->scope), Serializer_getPacker(self->serializer),
+            Serializer_getUnpacker(self->serializer), self->announceStorage);
 
     /* Connect all observers */
     self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));

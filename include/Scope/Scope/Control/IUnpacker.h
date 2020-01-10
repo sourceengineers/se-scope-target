@@ -15,104 +15,92 @@
 #define IUNPACKER_H_
 
 #include "Scope/GeneralPurpose/DataTypes.h"
+#include "Scope/Core/ScopeTypes.h"
 
 /******************************************************************************
  Define interface handle datar
 ******************************************************************************/
 typedef struct IUnpackerStruct* IUnpackerHandle;
 
-/* Struct which is used to clean up the amount of parameters passed to the fetcher functions */
-typedef struct{
-    const char* commandName;
-    const char* fieldName;
-    bool isInArray;     // Set to true if the value is in a array. Like cf_addr as example
-    size_t arrayIndex;  // Set the correct array index if isInArray is set to true
-} CommandFetchingInformation;
+typedef struct __CfRunningDef{
+    uint32_t id;
+    bool newState;
+} CfRunningDef;
+
+typedef struct __CfTriggerDef{
+    float level;
+    bool edge;
+    TRIGGER_MODE mode;
+    uint32_t channelId;
+} CfTriggerDef;
+
+typedef struct __CfAddressDef{
+    uint32_t id;
+    uint32_t address;
+    DATA_TYPES type;
+} CfAddressDef;
 
 /******************************************************************************
  Define interface
 ******************************************************************************/
 typedef struct IUnpackerStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Unpacks the data in the input stream
      * @param unpacker
      * @return
      */
-    bool (* unpack)(IUnpackerHandle unpacker);
+    bool (* unpack)(IUnpackerHandle unpacker, MessageType type);
 
     /**
-     * Returns the number of commands which were unpacked
+     * Returns the value contained in the ev_poll command
      * @param unpacker
      * @return
      */
-    size_t (* getNumberOfCommands)(IUnpackerHandle unpacker);
+    uint32_t (* evPoll_getTimestamp)(IUnpackerHandle unpacker);
 
     /**
-     * Returns the name of the command at index
+     * Returns the amount of channels that will be sarted/stopped
+     */
+    size_t (* cfRunning_getAmount)(IUnpackerHandle unpacker);
+
+    /**
+     * Returns the new configuration for each channel
      * @param unpacker
-     * @param name string into which the name will be written into
-     * @param maxLenght maximal length of the name field
      * @param index
      * @return
      */
-    bool (* getNameOfCommand)(IUnpackerHandle unpacker, char* name, const int maxLenght, const int index);
+    CfRunningDef (* cfRunning_getChannel)(IUnpackerHandle unpacker, uint32_t index);
 
     /**
-     * Returns an int value
+     * Returns the trigger configuration
      * @param unpacker
-     * @param information
      * @return
      */
-    /* Functions to fetch the data from commands */
-    ADDRESS_DATA_TYPE (* getIntFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+    CfTriggerDef (* cfTrigger_getTriggerConfig)(IUnpackerHandle unpacker);
 
     /**
-     * Returns a float value
+     * Returns the new t_inc value
      * @param unpacker
-     * @param information
      * @return
      */
-    float (* getFloatFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+    uint32_t (* cfTInc_getInc)(IUnpackerHandle unpacker);
 
     /**
-     * Returns a bool value
+     * Returns the amount of addresses to be reconfigured
      * @param unpacker
-     * @param information
      * @return
      */
-    bool (* getBoolFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information);
+    uint32_t (* cfAddress_getAmount)(IUnpackerHandle unpacker);
 
     /**
-     * Fetches a string
+     * REturns the new channel configuration
      * @param unpacker
-     * @param information
-     * @param targetStr array to which the data gets written into
-     * @param maxLenght max length of the targetStr field
-     */
-    void (* getStringFromCommand)(IUnpackerHandle unpacker, CommandFetchingInformation* information, char* targetStr,
-                                  const int maxLenght);
-
-    /**
-     * Get amount of fields in a command
-     * @param unpacker
-     * @param commandName
-     * @return
-     */
-    int (* getNumberOfFields)(IUnpackerHandle unpacker, const char* commandName);
-
-    /**
-     * Get the name of a field inside of a command
-     * @param unpacker
-     * @param commandName
-     * @param fieldName
-     * @param maxLenght
      * @param index
      * @return
      */
-    bool (* getNameOfField)(IUnpackerHandle unpacker, const char* commandName, char* fieldName, const int maxLenght,
-                            const int index);
+    CfAddressDef (* cfAddress_getChannel)(IUnpackerHandle unpacker, uint32_t index);
 
 } IUnpacker;
 

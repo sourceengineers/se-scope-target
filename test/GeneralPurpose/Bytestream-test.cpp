@@ -2,7 +2,7 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-#include <Scope/GeneralPurpose/BufferedByteStream.h>
+#include <se-lib-c/stream/BufferedByteStream.h>
 }
 
 using namespace std;

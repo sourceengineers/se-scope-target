@@ -14,12 +14,12 @@
 #ifndef SERIALIZER_H
 #define SERIALIZER_H
 
-#include "Scope/GeneralPurpose/IRunnable.h"
+#include <se-lib-c/util/runnable/IRunnable.h>
 
 #include "Scope/Communication/ICommunicator.h"
 #include "Scope/Control/IPacker.h"
 #include "Scope/Control/IUnpacker.h"
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 /******************************************************************************
  Define class handle data
@@ -30,12 +30,15 @@ typedef struct __SerializerPrivateData* SerializerHandle;
  Public functions
 ******************************************************************************/
 /**
- * Creates the Serializer layer and attaches the packer und unpacker
- * @param packer
- * @param unpacker
+ *
+ * @param maxChannels
+ * @param maxAddresses
+ * @param output
+ * @param input
  * @return
  */
-SerializerHandle Serializer_create(IPackerHandle packer, IUnpackerHandle unpacker);
+SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByteStreamHandle output,
+                                   IByteStreamHandle input);
 
 /**
  * Returns the runnable for the Rx path
@@ -78,6 +81,35 @@ IObserverHandle Serializer_getPackObserver(SerializerHandle self);
  * @return
  */
 IObserverHandle Serializer_getUnpackObserver(SerializerHandle self);
+
+/**
+ *
+ * @param self
+ * @return
+ */
+IPackerHandle Serializer_getPacker(SerializerHandle self);
+
+/**
+ *
+ * @param self
+ * @return
+ */
+IUnpackerHandle Serializer_getUnpacker(SerializerHandle self);
+
+/**
+ *
+ * @param amountOfChannels
+ * @param sizeOfChannels
+ * @param addressesInAddressAnnouncer
+ * @return
+ */
+size_t Serializer_txCalculateBufferSize(size_t amountOfChannels, size_t sizeOfChannels, size_t addressesInAddressAnnouncer);
+
+/**
+ *
+ * @return
+ */
+size_t Serializer_rxCalculateBufferSize(size_t maxChannels);
 
 /**
  * Deconstructor

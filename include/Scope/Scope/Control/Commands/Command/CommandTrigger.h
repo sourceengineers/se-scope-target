@@ -14,6 +14,7 @@
 #ifndef COMMANDTRIGGER_H_
 #define COMMANDTRIGGER_H_
 
+#include <se-lib-c/util/observer/IObserver.h>
 #include "Scope/GeneralPurpose/DataTypes.h"
 
 #include "Scope/Control/ICommand.h"
@@ -33,7 +34,7 @@ typedef struct __CommandTriggerPrivateData* CommandTriggerHandle;
  * @param scope
  * @return
  */
-CommandTriggerHandle CommandTrigger_create(IScopeHandle scope);
+CommandTriggerHandle CommandTrigger_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Set the attributes which the command will use to configure the scope

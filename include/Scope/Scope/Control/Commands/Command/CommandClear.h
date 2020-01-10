@@ -14,6 +14,7 @@
 #ifndef COMMANDCLEAR_H_
 #define COMMANDCLEAR_H_
 
+#include <se-lib-c/util/observer/IObserver.h>
 #include "Scope/GeneralPurpose/DataTypes.h"
 
 #include "Scope/Control/ICommand.h"
@@ -32,7 +33,7 @@ typedef struct __CommandClearPrivateData* CommandClearHandle;
  * @param scope Dependency to the scope interface
  * @return
  */
- CommandClearHandle CommandClear_create(IScopeHandle scope);
+ CommandClearHandle CommandClear_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Returns the ICommand interface

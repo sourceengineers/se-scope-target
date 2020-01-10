@@ -14,16 +14,16 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32G071RBUx</Device>
+          <Device>STM32G071RBTx</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32G0xx_DFP.1.0.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IRAM(0x20000000,0x00008000) IROM(0x08000000,0x00020000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x00009000) IROM(0x08000000,0x00020000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32G0xx_128 -FS08000000 -FL020000 -FP0($$Device:STM32G071RBUx$CMSIS\Flash\STM32G0xx_128.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32G0xx_128 -FS08000000 -FL020000 -FP0($$Device:STM32G071RBTx$CMSIS\Flash\STM32G0xx_128.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32G071RBUx$Drivers\CMSIS\Device\ST\STM32G0xx\Include\stm32g0xx.h</RegisterFile>
+          <RegisterFile>$$Device:STM32G071RBTx$Drivers\CMSIS\Device\ST\STM32G0xx\Include\stm32g0xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32G071RBUx$CMSIS\SVD\STM32G07x.svd</SFDFile>
+          <SFDFile>$$Device:STM32G071RBTx$CMSIS\SVD\STM32G071.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -245,7 +245,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x8000</Size>
+                <Size>0x9000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -300,7 +300,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x8000</Size>
+                <Size>0x9000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
+              <IncludePath>..\public;..\include\Scope;..\3rdparty\nanopb;..\ext\se-lib-c\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -383,9 +383,9 @@
           <GroupName>Communication</GroupName>
           <Files>
             <File>
-              <FileName>UartJson.c</FileName>
+              <FileName>FramedIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Communication\Interfaces\UartJson.c</FilePath>
+              <FilePath>..\src\Communication\Interfaces\FramedIO.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -518,11 +518,6 @@
               <FilePath>..\src\Control\PackCommands\Command\CommandPackData.c</FilePath>
             </File>
             <File>
-              <FileName>CommandPackDetect.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\PackCommands\Command\CommandPackDetect.c</FilePath>
-            </File>
-            <File>
               <FileName>CommandPackAnnounceParser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackAnnounceParser.c</FilePath>
@@ -531,11 +526,6 @@
               <FileName>CommandPackDataParser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackDataParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandPackDetectParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackDetectParser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -565,41 +555,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>GeneralPurpose</GroupName>
-          <Files>
-            <File>
-              <FileName>BufferedByteStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedByteStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>BufferedFloatStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedFloatStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>BufferedIntStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedIntStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>ByteRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\ByteRingBuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>FloatRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\FloatRingBuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>IntRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\IntRingBuffer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Serialisation</GroupName>
           <Files>
             <File>
@@ -608,14 +563,34 @@
               <FilePath>..\src\Serialisation\Serializer.c</FilePath>
             </File>
             <File>
-              <FileName>JsonPacker.c</FileName>
+              <FileName>NanopbPacker.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
             </File>
             <File>
-              <FileName>JsonUnpacker.c</FileName>
+              <FileName>se-scope.pb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
+              <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_decode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_decode.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_encode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
+            </File>
+            <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -638,19 +613,49 @@
               <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
             </File>
             <File>
-              <FileName>ScopeUartStack.c</FileName>
+              <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Builders\ScopeUartStack.c</FilePath>
+              <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Json</GroupName>
+          <GroupName>se-lib-c::container</GroupName>
           <Files>
             <File>
-              <FileName>jsmn.c</FileName>
+              <FileName>ByteRingBuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\3rdparty\jsmn\jsmn\jsmn.c</FilePath>
+              <FilePath>..\ext\se-lib-c\src\container\ByteRingBuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>FloatRingBuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\container\FloatRingBuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>IntRingBuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\container\IntRingBuffer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>se-lib-c::stream</GroupName>
+          <Files>
+            <File>
+              <FileName>BufferedByteStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedByteStream.c</FilePath>
+            </File>
+            <File>
+              <FileName>BufferedFloatStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedFloatStream.c</FilePath>
+            </File>
+            <File>
+              <FileName>BufferedIntStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedIntStream.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -666,8 +671,8 @@
         <TargetCommonOption>
           <Device>STM32F407VGTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.14.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32F4xx_DFP.2.13.0</PackID>
+          <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x20000000,0x00020000) IRAM2(0x10000000,0x00010000) IROM(0x08000000,0x00100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -988,7 +993,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\;..\ext\se-lib-c\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1033,9 +1038,9 @@
           <GroupName>Communication</GroupName>
           <Files>
             <File>
-              <FileName>UartJson.c</FileName>
+              <FileName>FramedIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Communication\Interfaces\UartJson.c</FilePath>
+              <FilePath>..\src\Communication\Interfaces\FramedIO.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1168,11 +1173,6 @@
               <FilePath>..\src\Control\PackCommands\Command\CommandPackData.c</FilePath>
             </File>
             <File>
-              <FileName>CommandPackDetect.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\PackCommands\Command\CommandPackDetect.c</FilePath>
-            </File>
-            <File>
               <FileName>CommandPackAnnounceParser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackAnnounceParser.c</FilePath>
@@ -1181,11 +1181,6 @@
               <FileName>CommandPackDataParser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackDataParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandPackDetectParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackDetectParser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1215,41 +1210,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>GeneralPurpose</GroupName>
-          <Files>
-            <File>
-              <FileName>BufferedByteStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedByteStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>BufferedFloatStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedFloatStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>BufferedIntStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedIntStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>ByteRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\ByteRingBuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>FloatRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\FloatRingBuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>IntRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\IntRingBuffer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Serialisation</GroupName>
           <Files>
             <File>
@@ -1258,14 +1218,34 @@
               <FilePath>..\src\Serialisation\Serializer.c</FilePath>
             </File>
             <File>
-              <FileName>JsonPacker.c</FileName>
+              <FileName>NanopbPacker.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
             </File>
             <File>
-              <FileName>JsonUnpacker.c</FileName>
+              <FileName>se-scope.pb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
+              <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_decode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_decode.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_encode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
+            </File>
+            <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1288,19 +1268,49 @@
               <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
             </File>
             <File>
-              <FileName>ScopeUartStack.c</FileName>
+              <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Builders\ScopeUartStack.c</FilePath>
+              <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Json</GroupName>
+          <GroupName>se-lib-c::container</GroupName>
           <Files>
             <File>
-              <FileName>jsmn.c</FileName>
+              <FileName>ByteRingBuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\3rdparty\jsmn\jsmn\jsmn.c</FilePath>
+              <FilePath>..\ext\se-lib-c\src\container\ByteRingBuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>FloatRingBuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\container\FloatRingBuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>IntRingBuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\container\IntRingBuffer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>se-lib-c::stream</GroupName>
+          <Files>
+            <File>
+              <FileName>BufferedByteStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedByteStream.c</FilePath>
+            </File>
+            <File>
+              <FileName>BufferedFloatStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedFloatStream.c</FilePath>
+            </File>
+            <File>
+              <FileName>BufferedIntStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedIntStream.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1638,7 +1648,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\;..\ext\se-lib-c\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1683,9 +1693,9 @@
           <GroupName>Communication</GroupName>
           <Files>
             <File>
-              <FileName>UartJson.c</FileName>
+              <FileName>FramedIO.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Communication\Interfaces\UartJson.c</FilePath>
+              <FilePath>..\src\Communication\Interfaces\FramedIO.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1818,11 +1828,6 @@
               <FilePath>..\src\Control\PackCommands\Command\CommandPackData.c</FilePath>
             </File>
             <File>
-              <FileName>CommandPackDetect.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\PackCommands\Command\CommandPackDetect.c</FilePath>
-            </File>
-            <File>
               <FileName>CommandPackAnnounceParser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackAnnounceParser.c</FilePath>
@@ -1831,11 +1836,6 @@
               <FileName>CommandPackDataParser.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackDataParser.c</FilePath>
-            </File>
-            <File>
-              <FileName>CommandPackDetectParser.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Control\PackCommands\CommandParser\CommandPackDetectParser.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1865,41 +1865,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>GeneralPurpose</GroupName>
-          <Files>
-            <File>
-              <FileName>BufferedByteStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedByteStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>BufferedFloatStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedFloatStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>BufferedIntStream.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\BufferedIntStream.c</FilePath>
-            </File>
-            <File>
-              <FileName>ByteRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\ByteRingBuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>FloatRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\FloatRingBuffer.c</FilePath>
-            </File>
-            <File>
-              <FileName>IntRingBuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\GeneralPurpose\IntRingBuffer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Serialisation</GroupName>
           <Files>
             <File>
@@ -1908,14 +1873,34 @@
               <FilePath>..\src\Serialisation\Serializer.c</FilePath>
             </File>
             <File>
-              <FileName>JsonPacker.c</FileName>
+              <FileName>NanopbPacker.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
             </File>
             <File>
-              <FileName>JsonUnpacker.c</FileName>
+              <FileName>se-scope.pb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonUnpacker.c</FilePath>
+              <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_decode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_decode.c</FilePath>
+            </File>
+            <File>
+              <FileName>pb_encode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
+            </File>
+            <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1938,19 +1923,49 @@
               <FilePath>..\src\Builders\ScopeThreadRunner.c</FilePath>
             </File>
             <File>
-              <FileName>ScopeUartStack.c</FileName>
+              <FileName>ScopeFramedStack.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\src\Builders\ScopeUartStack.c</FilePath>
+              <FilePath>..\src\Builders\ScopeFramedStack.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Json</GroupName>
+          <GroupName>se-lib-c::container</GroupName>
           <Files>
             <File>
-              <FileName>jsmn.c</FileName>
+              <FileName>ByteRingBuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\3rdparty\jsmn\jsmn\jsmn.c</FilePath>
+              <FilePath>..\ext\se-lib-c\src\container\ByteRingBuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>FloatRingBuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\container\FloatRingBuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>IntRingBuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\container\IntRingBuffer.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>se-lib-c::stream</GroupName>
+          <Files>
+            <File>
+              <FileName>BufferedByteStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedByteStream.c</FilePath>
+            </File>
+            <File>
+              <FileName>BufferedFloatStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedFloatStream.c</FilePath>
+            </File>
+            <File>
+              <FileName>BufferedIntStream.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\ext\se-lib-c\src\stream\BufferedIntStream.c</FilePath>
             </File>
           </Files>
         </Group>

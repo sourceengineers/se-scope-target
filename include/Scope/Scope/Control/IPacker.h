@@ -16,10 +16,36 @@
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 
-#include "Scope/GeneralPurpose/BufferedByteStream.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
+#include <se-lib-c/stream/BufferedByteStream.h>
+#include <se-lib-c/stream/IIntStream.h>
+#include <se-lib-c/container/FloatRingBuffer.h>
+#include "Scope/Version.h"
 #include "Scope/Core/ScopeTypes.h"
+
+typedef struct __ScDataChannelDef {
+    FloatRingBufferHandle stream;
+    uint32_t id;
+} ScDataChannelDef;
+
+typedef struct __ScAnnounceChannelDef {
+    uint32_t id;
+    char* name;
+    DATA_TYPES type;
+    uint32_t address;
+} ScAnnounceChannelDef;
+
+typedef struct __ScAnnounceMetaData {
+    uint32_t maxChannels;
+    float timebase;
+    char* version;
+} ScAnnounceMetaData;
+
+typedef struct __ScDataTriggerDef {
+    bool isTriggered;
+    uint32_t channelId;
+    uint32_t timestamp;
+    TRIGGER_MODE triggerMode;
+} ScDataTriggerDef;
 
 /******************************************************************************
  Define interface handle data
@@ -30,13 +56,13 @@ typedef struct IPackerStruct* IPackerHandle;
  Define interface
 ******************************************************************************/
 typedef struct IPackerStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Calls the pack function of the packer. It packs the predefined data into the output stream
      * @param packer
      */
-    void (* pack)(IPackerHandle packer);
+    void (* pack)(IPackerHandle packer, MessageType type);
 
     /**
      * Returns true if the packer is ready to serialize new data. This is the case if all previously sent data
@@ -52,21 +78,21 @@ typedef struct IPackerStruct{
      * @param buffer Passes the Swap buffer into the packer
      * @param channelId id of the channel
      */
-    void (* prepareChannel)(IPackerHandle packer, FloatRingBufferHandle buffer, const uint32_t channelId);
+    void (* addChannel)(IPackerHandle packer, ScDataChannelDef channel);
 
     /**
      * Prepares the time increment
      * @param packer
      * @param timeIncrement
      */
-    void (* prepareTimeIncrement)(IPackerHandle packer, const uint32_t timeIncrement);
+    void (* addTimeIncrement)(IPackerHandle packer, const uint32_t timeIncrement);
 
     /**
      * Prepares the timestamp
      * @param packer
      * @param timestamp Reference to the timestamp stream
      */
-    void (* prepareTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
+    void (* addTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
 
     /**
      * Prepares the trigger
@@ -75,40 +101,21 @@ typedef struct IPackerStruct{
      * @param channelId
      * @param timestamp
      */
-    void (* prepareTrigger)(IPackerHandle packer, const bool isTriggered, const uint32_t channelId,
-                            const uint32_t timestamp, char* triggerMode);
-
-    /**
-     * Prepares flow control
-     * @param packer
-     * @param flowcontrol
-     */
-    void (* prepareFlowControl)(IPackerHandle packer, const char* flowcontrol);
+    void (* addTrigger)(IPackerHandle packer, ScDataTriggerDef trigger);
 
     /**
      * Prepares address announcement
      * @param packer
-     * @param name
-     * @param type
-     * @param address
+     * @param channel
      */
-    void (* prepareAddressAnnouncement)(IPackerHandle packer, const char* name, const char* type,
-                                        const ADDRESS_DATA_TYPE address);
+    void (* addAddressAnnouncement)(IPackerHandle packer, const ScAnnounceChannelDef address);
 
     /**
      * Prepares the packer to pack version, timebase and max channels
      * @param packer
-     * @param timeBase
-     * @param version
-     * @param maxChannels
+     * @param meta
      */
-    void (* prepareAnnouncement)(IPackerHandle packer, float timeBase, char* version, size_t maxChannels);
-
-    /**
-     * Prepares detection package
-     * @param packer
-     */
-    void (* prepareDetect)(IPackerHandle packer);
+    void (* addAnnouncement)(IPackerHandle packer, const ScAnnounceMetaData meta);
 
     /**
      * Resets the packer

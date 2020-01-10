@@ -6,12 +6,12 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  * 
  ******************************************************************************/
+#include <se-lib-c/stream/IFloatStream.h>
 
 #include "Scope/Core/Timestamper.h"
 #include "Scope/Core/Trigger.h"
 #include "Scope/Core/Channel.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/IFloatStream.h"
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -42,7 +42,7 @@ typedef enum{
 /* Class data */
 typedef struct __TriggerPrivateData{
     float level;
-    int edge;
+    bool edge;
     uint32_t triggerIndexes[2];
     IFloatStreamHandle stream;
     TriggerStrategy triggerStrategies[3];
@@ -111,7 +111,7 @@ static void fillUpTillChannelFull(TriggerHandle self);
 
 static void fillUpIfTriggered(TriggerHandle self);
 
-static bool stopWithoutStoppingChannels(TriggerHandle self);
+// static bool stopWithoutStoppingChannels(TriggerHandle self);
 
 static bool stopIntoPause(TriggerHandle self);
 
@@ -239,17 +239,17 @@ static void fillUpIfTriggered(TriggerHandle self){
     setState(self, TRIGGER_CLEANUP);
 }
 
-static bool stopWithoutStoppingChannels(TriggerHandle self){
-
-    if(swapBuffers(self) == false){
-        return false;
-    }
-
-    setState(self, TRIGGER_PAUSED);
-    self->fillUpPollCount = 0;
-
-    return true;
-}
+// static bool stopWithoutStoppingChannels(TriggerHandle self){
+//
+//     if(swapBuffers(self) == false){
+//         return false;
+//     }
+//
+//     setState(self, TRIGGER_PAUSED);
+//     self->fillUpPollCount = 0;
+//
+//     return true;
+// }
 
 static bool stopIntoPause(TriggerHandle self){
 
@@ -284,7 +284,7 @@ static bool checkCurrentData(TriggerHandle self, const float* triggerData){
     const float dataCurrent = triggerData[CHANNEL_OLD_DATA];
     const float dataLast = triggerData[CHANNEL_CURRENT_DATA];
     const float triggerLevel = self->level;
-    const int edge = dataCurrent > dataLast ? 1 : -1;
+    const bool edge = dataCurrent > dataLast;
 
     if(dataCurrent == dataLast){
         return false;
@@ -319,10 +319,6 @@ static bool configSanityCheck(TriggerHandle self, TriggerConfiguration conf){
     if((conf.mode != TRIGGER_NORMAL)
        && (conf.mode != TRIGGER_CONTINUOUS)
        && (conf.mode != TRIGGER_ONESHOT)){
-        return false;
-    }
-    if((conf.edge != TRIGGER_EDGE_NEGATIVE)
-       && (conf.edge != TRIGGER_EDGE_POSITIVE)){
         return false;
     }
     if(conf.channelId >= self->amountOfChannels){
@@ -417,7 +413,7 @@ uint32_t Trigger_getTriggerIndex(TriggerHandle self){
 
 bool Trigger_configure(TriggerHandle self, TriggerConfiguration conf){
 
-    if(configSanityCheck(self, conf) == false){
+    if(!configSanityCheck(self, conf)){
         return false;
     }
     writeConfig(self, conf);

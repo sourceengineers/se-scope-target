@@ -19,9 +19,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-/* Name of the command */
-static char* commandName = "cf_t_inc";
-
 /* Class data */
 typedef struct __CommandTIncParserPrivateData{
     CommandTIncHandle command;
@@ -33,11 +30,12 @@ typedef struct __CommandTIncParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker){
+CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
+        IObserverHandle observer){
     CommandTIncParserHandle self = malloc(sizeof(CommandTIncParserPrivateData));
     assert(self);
 
-    self->command = CommandTInc_create(scope);
+    self->command = CommandTInc_create(scope, observer);
     self->unpacker = unpacker;
     return self;
 }
@@ -48,18 +46,9 @@ ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self){
         return NULL;
     }
 
-    CommandFetchingInformation information = {.commandName = commandName, .fieldName = (char*) "",
-            .isInArray = false, .arrayIndex = 0};
-
-    const uint32_t timeIncrement = self->unpacker->getIntFromCommand(self->unpacker, &information);
-
+    const uint32_t timeIncrement = self->unpacker->cfTInc_getInc(self->unpacker);
     CommandTInc_setAttributes(self->command, timeIncrement);
-
     return CommandTInc_getICommand(self->command);
-}
-
-char* CommandTIncParser_getName(void){
-    return commandName;
 }
 
 void CommandTIncParser_destroy(CommandTIncParserHandle self){

@@ -16,9 +16,6 @@
 /******************************************************************************
  Define private data
 ******************************************************************************/
-//* Name of the command */
-static char* commandName = "ev_poll";
-
 /* Class data */
 typedef struct __CommandPollParserPrivateData{
     CommandPollHandle command;
@@ -28,21 +25,17 @@ typedef struct __CommandPollParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPollParserHandle CommandPollParser_create(IScopeHandle scope){
+CommandPollParserHandle CommandPollParser_create(IScopeHandle scope, IObserverHandle observer){
     CommandPollParserHandle self = malloc(sizeof(CommandPollParserPrivateData));
     assert(self);
 
-    self->command = CommandPoll_create(scope);
+    self->command = CommandPoll_create(scope, observer);
     return self;
 }
 
 ICommandHandle CommandPollParser_getCommand(CommandPollParserHandle self){
 
     return CommandPoll_getICommand(self->command);
-}
-
-char* CommandPollParser_getName(void){
-    return commandName;
 }
 
 void CommandPollParser_destroy(CommandPollParserHandle self){

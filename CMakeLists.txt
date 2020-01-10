@@ -1,107 +1,70 @@
 cmake_minimum_required(VERSION 3.0.0)
 set(CMAKE_CXX_STANDARD 11)
-
 # Set the Project name
-set(PROJECT_NAME se-scope)
-################################################################################
-# Set options
-################################################################################
-if (ARCHITECTURE STREQUAL "X86")
-
-    # This option is used if the tests should be executed on a host machine,
-    # supporting 32 Bit architectures. This is useful since the micro controllers
-    # will probably run on 32 bit, but there are only few operating systems support this option
-    message("-- x86 architecture is on")
-    set(CMAKE_C_FLAGS -m32)
-    set(CMAKE_CXX_FLAGS "-m32 -fpermissive")
-
-    set(SE_TESTING ON)
-
-    # Inform the compiler to compile for 32 bit code
-    add_definitions(-DARCH_SIZE_32=1)
-
-elseif (ARCHITECTURE STREQUAL "X64" OR ARCHITECTURE STREQUAL "")
-
-    # X64 Host machines should be able to run tests as well as examples
-    message("-- x64 architecture is on")
-
-    set(SE_TESTING ON)
-
-    # Inform the compiler to compile for 64 bit code
-    add_definitions(-DARCH_SIZE_32=0)
-
-    set(CMAKE_MACOSX_RPATH 1)
-
-elseif (ARCHITECTURE STREQUAL "EMBEDDED")
-    message("-- EMBEDDED architecture is on")
-
-    # Disable testing and examples because they will not run on the
-    # host with a embedded compiler anyway
-    set(SE_TESTING OFF)
-
-    # Inform the compiler to compile for 32 bit code
-    add_definitions(-DARCH_SIZE_32=1)
-
-endif ()
-
-project(${PROJECT_NAME} C ASM)
+set(SE_SCOPE_PROJECT_NAME se-scope)
+project(${SE_SCOPE_PROJECT_NAME} C ASM)
 
 ################################################################################
 # Set options
 ################################################################################
-set(PROJECT_SOURCE_DIR src)
-set(PROJECT_DEPENDENCIES_DIR 3rdparty)
-set(PROJECT_DEPENDENCIES jsmn)
-set(PROJECT_INCLUDE_DIR include/Scope)
-set(PROJECT_INCLUDE_DIR_PUBLIC public)
-set(PROJECT_TEST_DIR test)
+option(SE_SCOPE_BUILD_TESTS "Build the tests" OFF)
+
+# Inform the compiler to compile for 32 bit code
+add_definitions(-DARCH_SIZE_32=1)
+
+################################################################################
+# Set options
+################################################################################
+set(SE_SCOPE_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(SE_SCOPE_PROJECT_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
+set(SE_SCOPE_PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/Scope)
+set(SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public)
+set(SE_SCOPE_PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 
 #######################################################################################################################
 ## Find all needed files
 #######################################################################################################################
-file(GLOB_RECURSE PROJECT_SOURCE "${PROJECT_SOURCE_DIR}/*.c")
-file(GLOB_RECURSE PROJECT_HEADER "${PROJECT_INCLUDE_DIR}/*.h")
-file(GLOB_RECURSE PROJECT_HEADER_PUBLIC "${PROJECT_INCLUDE_DIR_PUBLIC}/*.h")
-list (APPEND PROJECT_HEADER ${PROJECT_HEADER_PUBLIC})
+include(cmake/SourceFiles.cmake)
 
+add_library(${SE_SCOPE_PROJECT_NAME} STATIC ${SE_SCOPE_SOURCES})
 ################################################################################
 # GTest
 ################################################################################
-if (SE_TESTING)
+if(SE_SCOPE_BUILD_TESTS)
     enable_testing()
-    set(BUILD_GMOCK ON)
-    add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/gtest)
-    set(gtest_SOURCE_DIR ${PROJECT_DEPENDENCIES_DIR}/gtest/googletest)
+    set(SE_SCOPE_PROJECT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
     add_subdirectory(test)
-    include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-endif ()
-
+endif()
 ################################################################################
 # Include dirs and link libraries
 ################################################################################
-include_directories("${PROJECT_DEPENDENCIES_DIR}/jsmn" "${PROJECT_INCLUDE_DIR}" "${PROJECT_INCLUDE_DIR_PUBLIC}")
+option(nanopb_BUILD_GENERATOR OFF)
+add_subdirectory(${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb)
 
-add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE})
-
-foreach (DEPENDENCY ${PROJECT_DEPENDENCIES})
-    add_subdirectory(${PROJECT_DEPENDENCIES_DIR}/${DEPENDENCY})
-endforeach (DEPENDENCY)
-
-target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPENDENCIES})
-
+#Se lib c
+message("-- Adding se-lib-c")
+add_subdirectory(${SE_SCOPE_PROJECT_EXT_DIR}/se-lib-c)
 ################################################################################
 # Install project
 ################################################################################
-TARGET_INCLUDE_DIRECTORIES(se-scope
+TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE_PROJECT_NAME}
         PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
-        $<INSTALL_INTERFACE:include>
+        $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
         PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ext/se-lib-c/include>
+        $<BUILD_INTERFACE:${SE_SCOPE_PROJECT_INCLUDE_DIR}>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        $<BUILD_INTERFACE:${NANOPB_INCLUDE_DIRS}>
+        $<BUILD_INTERFACE:${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb>
+        )
+
+target_link_libraries(${SE_SCOPE_PROJECT_NAME}
+        PRIVATE
+        $<BUILD_INTERFACE:protobuf-nanopb-static>
+        $<BUILD_INTERFACE:se-lib-c>
         )
 
 message("-- Project will be installed to: ${CMAKE_INSTALL_PREFIX}")
-install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library)
-install(DIRECTORY "${PROJECT_INCLUDE_DIR}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
-install(DIRECTORY "${PROJECT_INCLUDE_DIR_PUBLIC}/" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
+install(TARGETS ${SE_SCOPE_PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library)
+install(DIRECTORY "${SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC}/Scope" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")

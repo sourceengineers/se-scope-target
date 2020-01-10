@@ -13,6 +13,7 @@
 #ifndef COMMANDPACKDATAPARSER_H_
 #define COMMANDPACKDATAPARSER_H_
 
+#include <se-lib-c/util/observer/IObserver.h>
 #include "Scope/Control/PackCommands/Command/CommandPackData.h"
 #include "Scope/Control/ICommand.h"
 #include "Scope/Control/IPacker.h"
@@ -40,12 +41,6 @@ CommandPackDataParserHandle CommandPackDataParser_create(IScopeHandle scope, IPa
  * @return
  */
 ICommandHandle CommandPackDataParser_getCommand(CommandPackDataParserHandle self);
-
-/**
- * Returns the name of the command
- * @return
- */
-char* CommandPackDataParser_getName(void);
 
 /**
  * Deconstructor

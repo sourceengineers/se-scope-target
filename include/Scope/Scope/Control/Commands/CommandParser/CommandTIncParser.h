@@ -32,7 +32,8 @@ typedef struct __CommandTIncParserPrivateData* CommandTIncParserHandle;
  * @param unpacker
  * @return
  */
-CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
+CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
+                                                 IObserverHandle observer);
 
 /**
  * Returns the command
@@ -40,12 +41,6 @@ CommandTIncParserHandle CommandTIncParser_create(IScopeHandle scope, IUnpackerHa
  * @return
  */
 ICommandHandle CommandTIncParser_getCommand(CommandTIncParserHandle self);
-
-/**
- * Returns the name of the command
- * @return
- */
-char* CommandTIncParser_getName(void);
 
 /**
  * Deconstructor

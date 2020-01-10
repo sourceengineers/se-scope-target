@@ -10,13 +10,11 @@
 #include "Scope/Control/CommandPackParserDispatcher.h"
 #include "Scope/Control/PackCommands/CommandParser/CommandPackAnnounceParser.h"
 #include "Scope/Control/PackCommands/CommandParser/CommandPackDataParser.h"
-#include "Scope/Control/PackCommands/CommandParser/CommandPackDetectParser.h"
 #include "Scope/Control/ParserDefinitions.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
-
 
 /******************************************************************************
  Define private data
@@ -25,7 +23,6 @@
 typedef struct __CommandPackParserDispatcherPrivateData{
     CommandPackDataParserHandle commandPackDataParser;
     CommandPackAnnounceParserHandle commandPackAnnounceParser;
-    CommandPackDetectParserHandle commandPackDetectParser;
 } CommandPackParserDispatcherPrivateData;
 
 
@@ -40,22 +37,16 @@ CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle ann
 
     self->commandPackAnnounceParser = CommandPackAnnounceParser_create(announceStorage, packer);
     self->commandPackDataParser = CommandPackDataParser_create(scope, packer);
-    self->commandPackDetectParser = CommandPackDetectParser_create(packer);
 
     return self;
 }
 
-ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, const char* command){
+ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, MessageType type){
 
-    if(strncmp(command, CommandPackDataParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    if(type == SC_DATA){
         return CommandPackDataParser_getCommand(self->commandPackDataParser);
-
-    }else if(strncmp(command, CommandPackAnnounceParser_getName(), MAX_COMMAND_LENGTH) == 0){
+    }else if(type == SC_ANNOUNCE){
         return CommandPackAnnounceParser_getCommand(self->commandPackAnnounceParser);
-
-    }else if(strncmp(command, CommandPackDetectParser_getName(), MAX_COMMAND_LENGTH) == 0){
-        return CommandPackDetectParser_getCommand(self->commandPackDetectParser);
-
     }
 
     return NULL;
@@ -65,7 +56,6 @@ void CommandPackParserDispatcher_destroy(CommandPackParserDispatcherHandle self)
 
     CommandPackDataParser_destroy(self->commandPackDataParser);
     CommandPackAnnounceParser_destroy(self->commandPackAnnounceParser);
-    CommandPackDetectParser_destroy(self->commandPackDetectParser);
 
     free(self);
     self = NULL;

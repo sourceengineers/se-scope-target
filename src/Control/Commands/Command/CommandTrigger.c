@@ -24,6 +24,7 @@ typedef struct __CommandTriggerPrivateData{
 
     IScopeHandle scope;
     TriggerConfiguration config;
+    IObserverHandle observer;
 
 } CommandTriggerPrivateData;
 
@@ -36,12 +37,14 @@ static void run(ICommandHandle command){
     CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
 
     self->scope->configureTrigger(self->scope, self->config);
+    MessageType resp = SE_ACK;
+    self->observer->update(self->observer, &resp);
 }
 
 /******************************************************************************
 Public functions
 ******************************************************************************/
-CommandTriggerHandle CommandTrigger_create(IScopeHandle scope){
+CommandTriggerHandle CommandTrigger_create(IScopeHandle scope, IObserverHandle observer){
 
     CommandTriggerHandle self = malloc(sizeof(CommandTriggerPrivateData));
     assert(self);
@@ -49,6 +52,7 @@ CommandTriggerHandle CommandTrigger_create(IScopeHandle scope){
     self->command.handle = self;
     self->scope = scope;
     self->command.run = &run;
+    self->observer = observer;
 
     return self;
 }

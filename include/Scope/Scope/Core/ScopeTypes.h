@@ -14,11 +14,6 @@
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 
-/* Constants to represent the different edges on which the trigger can be
-   configured */
-static const int TRIGGER_EDGE_POSITIVE = 1; // Trigger edge == Rising
-static const int TRIGGER_EDGE_NEGATIVE = -1; // Trigger edge == Falling
-
 /**
  * Enum to represent different trigger types
  * */
@@ -33,8 +28,7 @@ typedef enum{
  */
 typedef struct{
     float level;    // Level on which the trigger detects for
-    int edge;       // Edge which the trigger detects. This will be either TRIGGER_EDGE_POSITIVE or
-                    // TRIGGER_EDGE_NEGATIVE
+    bool edge;       // Edge which the trigger detects. False -> Negative, True -> Positive
     TRIGGER_MODE mode; // Mode which the trigger runs in
     uint32_t channelId; // Channel which the trigger should monitor
 } TriggerConfiguration;
@@ -62,10 +56,28 @@ typedef enum{
 /**
  * Enum to determine the source of the observer.
  */
-typedef enum{
-    PACK_ANNOUNCE = 1, // Announce data will be packed
-    PACK_DATA = 2, // Channel data and trigger will be packed
-    PACK_DETECT = 4 // Detect package that lets hosts discover the device
-} PACK_TYPES;
+typedef enum __MessageType {
+
+    SE_NONE = 0,
+    SE_NAK = 1,
+    SE_ACK = 2,
+
+    SC_DATA = 50,
+    SC_ANNOUNCE = 51,
+    SC_DETECT = 52,
+    SC_STREAM = 53,
+    SC_LOG = 54,
+
+    EV_ANNOUNCE = 100,
+    EV_CLEAR = 101,
+    EV_POLL = 102,
+    EV_TRANS = 103,
+    EV_DETECT = 104,
+    CF_RUNNING = 105,
+    CF_TRIGGER = 106,
+    CF_T_INC = 107,
+    CF_ADDR = 108,
+
+} MessageType;
 
 #endif

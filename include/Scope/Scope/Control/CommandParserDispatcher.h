@@ -27,7 +27,7 @@
 #include "Scope/Control/ICommand.h"
 #include "Scope/Control/IUnpacker.h"
 #include "Scope/Core/IScope.h"
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 /******************************************************************************
  Define class handle data
@@ -54,7 +54,7 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
  * @param command
  * @return Returns NULL if command matches no name of a command
  */
-ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, const char* command);
+ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, MessageType type);
 
 /**
  * Deconstructor

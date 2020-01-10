@@ -8,7 +8,6 @@
  *****************************************************************************************************************************************/
 
 #include "Scope/Builders/ScopeRunner.h"
-
 #include "Scope/Control/Controller.h"
 #include "Scope/Serialisation/Serializer.h"
 

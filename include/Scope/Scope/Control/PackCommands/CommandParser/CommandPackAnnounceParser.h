@@ -13,6 +13,7 @@
 #ifndef COMMANDPACKANNOUNCEPARSER_H_
 #define COMMANDPACKANNOUNCEPARSER_H_
 
+#include <se-lib-c/util/observer/IObserver.h>
 #include "Scope/Control/AnnounceStorage.h"
 
 #include "Scope/Control/PackCommands/Command/CommandPackAnnounce.h"
@@ -42,12 +43,6 @@ CommandPackAnnounceParserHandle CommandPackAnnounceParser_create(AnnounceStorage
  * @return
  */
 ICommandHandle CommandPackAnnounceParser_getCommand(CommandPackAnnounceParserHandle self);
-
-/**
- * Returns the name of the command
- * @return
- */
-char* CommandPackAnnounceParser_getName(void);
 
 /**
  * Deconstructor

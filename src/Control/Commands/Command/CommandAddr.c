@@ -25,7 +25,7 @@ typedef struct __CommandAddrPrivateData{
 
     CommandAddrConf config;
     IScopeHandle scope;
-
+    IObserverHandle observer;
     size_t amountOfChannels;
 
 } CommandAddrPrivateData;
@@ -51,16 +51,19 @@ static void run(ICommandHandle command){
 
         self->scope->configureChannelAddress(self->scope, newAddress, idChangingChannel, newType);
     }
+    MessageType resp = SE_ACK;
+    self->observer->update(self->observer, &resp);
 }
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandAddrHandle CommandAddr_create(IScopeHandle scope){
+CommandAddrHandle CommandAddr_create(IScopeHandle scope, IObserverHandle observer){
 
     CommandAddrHandle self = malloc(sizeof(CommandAddrPrivateData));
     assert(self);
     self->scope = scope;
+    self->observer = observer;
     self->amountOfChannels = self->scope->getAmountOfChannels(self->scope);
     self->config.newAddresses = malloc(sizeof(void*) * self->amountOfChannels);
     assert(self->config.newAddresses);

@@ -14,9 +14,9 @@
 #define ICOMMUNICATOR_H_
 
 #include "Scope/GeneralPurpose/DataTypes.h"
-#include "Scope/GeneralPurpose/IRunnable.h"
+#include <se-lib-c/util/runnable/IRunnable.h>
 
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 /******************************************************************************
  Define interface handle data
@@ -27,7 +27,7 @@ typedef struct ICommunicatorStruct* ICommunicatorHandle;
  Define interface
 ******************************************************************************/
 typedef struct ICommunicatorStruct{
-    GenericReference handle;
+    SeScopeGenericReference handle;
 
     /**
      * Returns the observer which is used to update the Tx path

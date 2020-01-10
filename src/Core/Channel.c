@@ -6,13 +6,12 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  *
  *****************************************************************************************************************************************/
+#include <se-lib-c/stream/BufferedFloatStream.h>
+#include <se-lib-c/container/FloatRingBuffer.h>
 
 #include "Scope/GeneralPurpose/DataTypes.h"
-
 #include "Scope/Core/Channel.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/GeneralPurpose/BufferedFloatStream.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -42,7 +41,7 @@ static float castDataToFloat(ChannelHandle self);
 
 /* Pushes the latest data point into the trigger stream and copies the last one
  * further back */
-static void prepareTriggerData(ChannelHandle self, float triggerData);
+static void addTriggerData(ChannelHandle self, float triggerData);
 
 /* Sets a new state */
 static void setState(ChannelHandle self, CHANNEL_STATES state);
@@ -60,6 +59,18 @@ static float castDataToFloat(ChannelHandle self) {
     float data;
 
     switch (self->pollDataType) {
+        case SE_INT8:
+            transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
+            data = ((int8_t) *((int8_t *) &transportAddr));
+            break;
+        case SE_INT16:
+            transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
+            data = ((int16_t) *((int16_t *) &transportAddr));
+            break;
+        case SE_INT32:
+            transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
+            data = ((int32_t) *((int32_t *) &transportAddr));
+            break;
         case SE_UINT8:
             transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
             data = ((uint8_t) *((uint8_t *) &transportAddr));
@@ -76,16 +87,7 @@ static float castDataToFloat(ChannelHandle self) {
             transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
             data = ((float) *((float *) &transportAddr));
             break;
-#if !(ARCH_SIZE_32)
-        case SE_UINT64:
-            transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
-            data = ((uint64_t) *((uint64_t *) &transportAddr));
-            break;
-#endif
-/*    case SE_DOUBLE:
-      transportAddr = *((ADDRESS_DATA_TYPE*)self->pollAddress);
-      data = ((double)*((double*)&transportAddr));
-      break;*/
+
         default:
             transportAddr = *((ADDRESS_DATA_TYPE *) self->pollAddress);
             data = ((float) *((float *) &transportAddr));
@@ -94,7 +96,7 @@ static float castDataToFloat(ChannelHandle self) {
     return data;
 }
 
-static void prepareTriggerData(ChannelHandle self, float triggerData) {
+static void addTriggerData(ChannelHandle self, float triggerData) {
 
     self->stream->flush(self->stream);
 
@@ -187,7 +189,7 @@ IFloatStreamHandle Channel_getTriggerDataStream(ChannelHandle self) {
 void Channel_poll(ChannelHandle self) {
     if (getState(self) == CHANNEL_RUNNING) {
         const float polledData = castDataToFloat(self);
-        prepareTriggerData(self, polledData);
+        addTriggerData(self, polledData);
 
         /* Channel start reading data out of the buffer if it is full */
         if (FloatRingBuffer_write(self->buffers[POLL_BUFFER], &polledData, 1) == -1) {

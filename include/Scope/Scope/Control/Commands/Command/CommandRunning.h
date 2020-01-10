@@ -21,6 +21,7 @@
 #define COMMANDRUNNING_H_
 
 #include "Scope/GeneralPurpose/DataTypes.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/IScope.h"
@@ -51,7 +52,7 @@ typedef struct __CommandRunningPrivateData* CommandRunningHandle;
  * @param scope
  * @return
  */
-CommandRunningHandle CommandRunning_create(IScopeHandle scope);
+CommandRunningHandle CommandRunning_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Set the attributes which the command will use to configure the scope

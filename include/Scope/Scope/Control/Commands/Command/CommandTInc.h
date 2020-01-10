@@ -22,6 +22,7 @@
 #include "Scope/Core/IScope.h"
 
 #include <stdint.h>
+#include <se-lib-c/util/observer/IObserver.h>
 
 /******************************************************************************
  Define class handle data
@@ -36,7 +37,7 @@ typedef struct __CommandTIncPrivateData* CommandTIncHandle;
  * @param scope
  * @return
  */
-CommandTIncHandle CommandTInc_create(IScopeHandle scope);
+CommandTIncHandle CommandTInc_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Set the attributes which the command will use to configure the scope

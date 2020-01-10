@@ -32,7 +32,8 @@ typedef struct __CommandRunningParserPrivateData* CommandRunningParserHandle;
  * @param unpacker
  * @return
  */
-CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
+CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
+        IObserverHandle observer);
 
 /**
  * Returns the command
@@ -40,12 +41,6 @@ CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpa
  * @return
  */
 ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self);
-
-/**
- * Returns the name of the command
- * @return
- */
-char* CommandRunningParser_getName(void);
 
 /**
  * Deconstructor

@@ -31,7 +31,7 @@ typedef struct __CommandDetectParserPrivateData* CommandDetectParserHandle;
  * @param unpacker
  * @return
  */
-CommandDetectParserHandle CommandDetectParser_create(IObserverHandle packOverser);
+CommandDetectParserHandle CommandDetectParser_create(IObserverHandle observer);
 
 /**
  * Returns the command
@@ -39,12 +39,6 @@ CommandDetectParserHandle CommandDetectParser_create(IObserverHandle packOverser
  * @return
  */
 ICommandHandle CommandDetectParser_getCommand(CommandDetectParserHandle self);
-
-/**
- * Returns the name of the command
- * @return
- */
-char* CommandDetectParser_getName(void);
 
 /**
  * Deconstructor

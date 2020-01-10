@@ -12,8 +12,8 @@
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/ScopeTypes.h"
 #include "Scope/Core/IScope.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
+#include <se-lib-c/container/FloatRingBuffer.h>
+#include <se-lib-c/stream/IIntStream.h>
 #include "Scope/Control/ParserDefinitions.h"
 
 #include <stdint.h>
@@ -36,27 +36,9 @@ typedef struct __CommandPackDataPrivateData{
 
 static void run(ICommandHandle command);
 
-static bool mapTriggerModeToString(TRIGGER_MODE mode, char* buffer, size_t maxBufferSize);
-
 /******************************************************************************
  Private functions
 ******************************************************************************/
-static bool mapTriggerModeToString(TRIGGER_MODE mode, char* buffer, size_t maxBufferSize){
-
-    if(mode == TRIGGER_CONTINUOUS){
-        strncpy(buffer, KEYWORD_CF_TGR_MODE_CONTINOUS, maxBufferSize);
-        return true;
-    } else if(mode == TRIGGER_NORMAL){
-        strncpy(buffer, KEYWORD_CF_TGR_MODE_NORMAL, maxBufferSize);
-        return true;
-    } else if(mode == TRIGGER_ONESHOT){
-        strncpy(buffer, KEYWORD_CF_TGR_MODE_ONESHOT, maxBufferSize);
-        return true;
-    }
-
-    strncpy(buffer, "", 1);
-    return false;
-}
 
 static void run(ICommandHandle command){
     CommandPackDataHandle self = (CommandPackDataHandle) command->handle;
@@ -66,8 +48,11 @@ static void run(ICommandHandle command){
     for(uint32_t i = 0; i < self->scope->getAmountOfChannels(self->scope); ++i){
         if(self->scope->channelHasToBePacked(self->scope, i) == true){
             FloatRingBufferHandle buffer = self->scope->getChannelBuffer(self->scope, i);
-            self->packer->prepareChannel(self->packer, buffer, i);
-              anyChannelIsReady = true;
+            ScDataChannelDef channel;
+            channel.stream = buffer;
+            channel.id = i;
+            self->packer->addChannel(self->packer, channel);
+            anyChannelIsReady = true;
         }
     }
 
@@ -77,17 +62,19 @@ static void run(ICommandHandle command){
 
     TriggeredValues triggeredValues = self->scope->getTriggerData(self->scope);
 
-    char triggerMode[KEYWORD_TGR_MODE_MAX_LENGTH];
-    mapTriggerModeToString(triggeredValues.mode, triggerMode, KEYWORD_TGR_MODE_MAX_LENGTH);
+    ScDataTriggerDef trigger;
+    trigger.timestamp = triggeredValues.triggerTimestamp;
+    trigger.channelId = triggeredValues.channelId;
+    trigger.triggerMode = triggeredValues.mode;
+    trigger.isTriggered = triggeredValues.isTriggered;
 
-    self->packer->prepareTrigger(self->packer, triggeredValues.isTriggered, triggeredValues.channelId, \
-                                   triggeredValues.triggerTimestamp, triggerMode);
+    self->packer->addTrigger(self->packer, trigger);
 
     IIntStreamHandle scopeTimestamp = self->scope->getTimestamp(self->scope);
-    self->packer->prepareTimestamp(self->packer, scopeTimestamp);
+    self->packer->addTimestamp(self->packer, scopeTimestamp);
 
     const uint32_t timeIncrement = self->scope->getTimeIncrement(self->scope);
-    self->packer->prepareTimeIncrement(self->packer, timeIncrement);
+    self->packer->addTimeIncrement(self->packer, timeIncrement);
 }
 
 /******************************************************************************

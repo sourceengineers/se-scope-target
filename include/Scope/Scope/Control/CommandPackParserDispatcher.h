@@ -49,7 +49,7 @@ CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle ann
  * @param command
  * @return Returns NULL if command matches no name of a command
  */
-ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, const char* command);
+ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle self, MessageType type);
 
 /**
  * Deconstructor

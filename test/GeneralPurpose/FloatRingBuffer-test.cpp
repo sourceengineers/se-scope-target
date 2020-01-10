@@ -2,8 +2,8 @@
 #include <gmock/gmock.h>
 
 extern "C" {
-#include <Scope/GeneralPurpose/FloatRingBuffer.h>
-#include <Scope/GeneralPurpose/BufferedFloatStream.h>
+#include <se-lib-c/container/FloatRingBuffer.h>
+#include <se-lib-c/stream/BufferedByteStream.h>
 }
 
 using namespace std;

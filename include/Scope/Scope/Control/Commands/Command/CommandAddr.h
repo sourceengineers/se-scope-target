@@ -24,12 +24,14 @@
 #ifndef COMMANDADDR_H_
 #define COMMANDADDR_H_
 
-#include "Scope/GeneralPurpose/DataTypes.h"
+#include <stdint.h>
 
+#include <se-lib-c/util/observer/IObserver.h>
+
+#include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/IScope.h"
 
-#include <stdint.h>
 
 /* Definition of the configuration struct */
 /**
@@ -56,7 +58,7 @@ typedef struct __CommandAddrPrivateData* CommandAddrHandle;
  * @param scope Dependency to the scope interface
  * @return
  */
-CommandAddrHandle CommandAddr_create(IScopeHandle scope);
+CommandAddrHandle CommandAddr_create(IScopeHandle scope, IObserverHandle observer);
 
 /**
  * Set the attributes which the command will use to configure the scope

@@ -13,6 +13,7 @@
 #ifndef COMMANDCLEARPARSER_H_
 #define COMMANDCLEARPARSER_H_
 
+#include <se-lib-c/util/observer/IObserver.h>
 #include "Scope/Control/Commands/Command/CommandClear.h"
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/IScope.h"
@@ -30,7 +31,7 @@ typedef struct __CommandClearParserPrivateData* CommandClearParserHandle;
  * @param scope
  * @return
  */
-CommandClearParserHandle CommandClearParser_create(IScopeHandle scope);
+CommandClearParserHandle CommandClearParser_create(IScopeHandle scope, IObserverHandle packObserver);
 
 /**
  * Returns the command
@@ -38,12 +39,6 @@ CommandClearParserHandle CommandClearParser_create(IScopeHandle scope);
  * @return
  */
 ICommandHandle CommandClearParser_getCommand(CommandClearParserHandle self);
-
-/**
- * Returns the name of the command
- * @return
- */
-char* CommandClearParser_getName(void);
 
 /**
  * Deconstructor

@@ -52,48 +52,39 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
 
     /* Initialize needed command parser
     * Not all commands need parser, which is why there are less parser as commands */
-    self->commandAddrParser = CommandAddrParser_create(scope, unpacker);
-    self->commandRunningParser = CommandRunningParser_create(scope, unpacker);
-    self->commandTIncParser = CommandTIncParser_create(scope, unpacker);
-    self->commandTriggerParser = CommandTriggerParser_create(scope, unpacker);
-    self->commandPollParser = CommandPollParser_create(scope);
+    self->commandAddrParser = CommandAddrParser_create(scope, unpacker, packObserver);
+    self->commandRunningParser = CommandRunningParser_create(scope, unpacker, packObserver);
+    self->commandTIncParser = CommandTIncParser_create(scope, unpacker, packObserver);
+    self->commandTriggerParser = CommandTriggerParser_create(scope, unpacker, packObserver);
+    self->commandPollParser = CommandPollParser_create(scope, packObserver);
     self->commandAnnounceParser = CommandAnnounceParser_create(packObserver);
-    self->commandTransParser = CommandTransParser_create(scope);
-    self->commandClearParser = CommandClearParser_create(scope);
+    self->commandTransParser = CommandTransParser_create(scope, packObserver);
+    self->commandClearParser = CommandClearParser_create(scope, packObserver);
     self->commandDetectParser = CommandDetectParser_create(packObserver);
 
     return self;
 }
 
-ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, const char *command) {
+ICommandHandle CommandParserDispatcher_run(CommandParserDispatcherHandle self, MessageType type) {
 
-    if (strncmp(command, CommandRunningParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    if (type == CF_RUNNING) {
         return CommandRunningParser_getCommand(self->commandRunningParser);
-
-    } else if (strncmp(command, CommandPollParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_POLL) {
         return CommandPollParser_getCommand(self->commandPollParser);
-
-    } else if (strncmp(command, CommandAddrParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == CF_ADDR) {
         return CommandAddrParser_getCommand(self->commandAddrParser);
-
-    } else if (strncmp(command, CommandTIncParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == CF_T_INC) {
         return CommandTIncParser_getCommand(self->commandTIncParser);
-
-    } else if (strncmp(command, CommandTransParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_TRANS) {
         return CommandTransParser_getCommand(self->commandTransParser);
-
-    } else if (strncmp(command, CommandTriggerParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == CF_TRIGGER) {
         return CommandTriggerParser_getCommand(self->commandTriggerParser);
-
-    } else if (strncmp(command, CommandAnnounceParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_ANNOUNCE) {
         return CommandAnnounceParser_getCommand(self->commandAnnounceParser);
-
-    } else if (strncmp(command, CommandClearParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_CLEAR) {
         return CommandClearParser_getCommand(self->commandClearParser);
-
-    } else if (strncmp(command, CommandDetectParser_getName(), MAX_COMMAND_LENGTH) == 0) {
+    } else if (type == EV_DETECT) {
         return CommandDetectParser_getCommand(self->commandDetectParser);
-
     }
 
     return NULL;

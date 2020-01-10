@@ -16,7 +16,7 @@
 #include "Scope/Control/Commands/Command/CommandAnnounce.h"
 #include "Scope/Control/ICommand.h"
 #include "Scope/Core/IScope.h"
-#include "Scope/GeneralPurpose/IObserver.h"
+#include <se-lib-c/util/observer/IObserver.h>
 
 /******************************************************************************
  Define class handle data
@@ -39,13 +39,6 @@ CommandAnnounceParserHandle CommandAnnounceParser_create(IObserverHandle packObs
  * @return
  */
 ICommandHandle CommandAnnounceParser_getCommand(CommandAnnounceParserHandle self);
-
-/**
- * Returns the name of the command
- * @return
- */
-char* CommandAnnounceParser_getName(void);
-
 
 /**
  * Deconstructor

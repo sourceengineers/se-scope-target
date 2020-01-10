@@ -7,18 +7,18 @@
  *
 *******************************************************************************/
 
-#include "Scope/GeneralPurpose/IRunnable.h"
-#include "Scope/GeneralPurpose/DataTypes.h"
+#include <se-lib-c/util/runnable/IRunnable.h>
+#include <se-lib-c/container/FloatRingBuffer.h>
+#include <se-lib-c/stream/IIntStream.h>
+#include <se-lib-c/util/observer/IObserver.h>
 
+#include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Core/Scope.h"
 #include "Scope/Core/Timestamper.h"
 #include "Scope/Core/Channel.h"
 #include "Scope/Core/IScope.h"
 #include "Scope/Core/ScopeTypes.h"
 #include "Scope/Core/Trigger.h"
-#include "Scope/GeneralPurpose/FloatRingBuffer.h"
-#include "Scope/GeneralPurpose/IIntStream.h"
-#include "Scope/GeneralPurpose/IObserver.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -72,7 +72,7 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
 
                                     uint32_t idOfChangedChannel, DATA_TYPES typeOfAddress);
 
-void transmit(IScopeHandle scope);
+static void transmit(IScopeHandle scope);
 
 static bool run(IRunnableHandle runnable);
 
@@ -159,7 +159,7 @@ static void configureChannelAddress(IScopeHandle scope, void* address,
     Scope_configureChannel(self, idOfChangedChannel, address, typeOfAddress);
 }
 
-void transmit(IScopeHandle scope){
+static void transmit(IScopeHandle scope){
     ScopeHandle self = (ScopeHandle) scope->handle;
 
     Scope_transmit(self);
@@ -286,7 +286,7 @@ void Scope_destroy(ScopeHandle self){
 }
 
 void Scope_transmit(ScopeHandle self){
-    PACK_TYPES typeToPack = PACK_DATA;
+    MessageType typeToPack = SC_DATA;
     self->observer->update(self->observer, &typeToPack);
 }
 

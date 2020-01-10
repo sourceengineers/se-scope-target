@@ -32,7 +32,7 @@ typedef struct __CommandAddrParserPrivateData* CommandAddrParserHandle;
  * @param unpacker
  * @return
  */
-CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker);
+CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker, IObserverHandle observer);
 
 /**
  * Returns the command
@@ -40,12 +40,6 @@ CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHa
  * @return
  */
 ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self);
-
-/**
- * Returns the name of the command
- * @return
- */
-char* CommandAddrParser_getName(void);
 
 /**
  * Deconstructor

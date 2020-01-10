@@ -32,7 +32,7 @@ static void run(ICommandHandle command);
 ******************************************************************************/
 static void run(ICommandHandle command){
     CommandDetectHandle self = (CommandDetectHandle) command->handle;
-    PACK_TYPES packType = PACK_DETECT;
+    MessageType packType = SC_DETECT;
     self->packObserver->update(self->packObserver, &packType);
 }
 
