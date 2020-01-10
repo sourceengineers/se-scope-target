@@ -14,16 +14,16 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32G071RBTx</Device>
+          <Device>STM32G071RBUx</Device>
           <Vendor>STMicroelectronics</Vendor>
           <PackID>Keil.STM32G0xx_DFP.1.0.0</PackID>
           <PackURL>http://www.keil.com/pack</PackURL>
-          <Cpu>IRAM(0x20000000,0x00009000) IROM(0x08000000,0x00020000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x00008000) IROM(0x08000000,0x00020000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32G0xx_128 -FS08000000 -FL020000 -FP0($$Device:STM32G071RBTx$CMSIS\Flash\STM32G0xx_128.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0STM32G0xx_128 -FS08000000 -FL020000 -FP0($$Device:STM32G071RBUx$CMSIS\Flash\STM32G0xx_128.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:STM32G071RBTx$Drivers\CMSIS\Device\ST\STM32G0xx\Include\stm32g0xx.h</RegisterFile>
+          <RegisterFile>$$Device:STM32G071RBUx$Drivers\CMSIS\Device\ST\STM32G0xx\Include\stm32g0xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32G071RBTx$CMSIS\SVD\STM32G071.svd</SFDFile>
+          <SFDFile>$$Device:STM32G071RBUx$CMSIS\SVD\STM32G07x.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -245,7 +245,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x9000</Size>
+                <Size>0x8000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -300,7 +300,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x9000</Size>
+                <Size>0x8000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\public;..\include\Scope;..\3rdparty\nanopb;..\ext\se-lib-c\include</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\ext\se-lib-c\include;..\3rdparty\nanopb</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -568,6 +568,11 @@
               <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
             </File>
             <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
+            </File>
+            <File>
               <FileName>se-scope.pb.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
@@ -586,11 +591,6 @@
               <FileName>pb_encode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
-            </File>
-            <File>
-              <FileName>NanopbUnpacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -620,7 +620,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>se-lib-c::container</GroupName>
+          <GroupName>SeLib</GroupName>
           <Files>
             <File>
               <FileName>ByteRingBuffer.c</FileName>
@@ -637,11 +637,6 @@
               <FileType>1</FileType>
               <FilePath>..\ext\se-lib-c\src\container\IntRingBuffer.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>se-lib-c::stream</GroupName>
-          <Files>
             <File>
               <FileName>BufferedByteStream.c</FileName>
               <FileType>1</FileType>
@@ -993,7 +988,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\;..\ext\se-lib-c\include</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1223,6 +1218,11 @@
               <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
             </File>
             <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
+            </File>
+            <File>
               <FileName>se-scope.pb.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
@@ -1241,11 +1241,6 @@
               <FileName>pb_encode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
-            </File>
-            <File>
-              <FileName>NanopbUnpacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1275,7 +1270,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>se-lib-c::container</GroupName>
+          <GroupName>SeLib</GroupName>
           <Files>
             <File>
               <FileName>ByteRingBuffer.c</FileName>
@@ -1292,11 +1287,6 @@
               <FileType>1</FileType>
               <FilePath>..\ext\se-lib-c\src\container\IntRingBuffer.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>se-lib-c::stream</GroupName>
-          <Files>
             <File>
               <FileName>BufferedByteStream.c</FileName>
               <FileType>1</FileType>
@@ -1648,7 +1638,7 @@
               <MiscControls></MiscControls>
               <Define>ARCH_SIZE_32=1</Define>
               <Undefine></Undefine>
-              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\;..\ext\se-lib-c\include</IncludePath>
+              <IncludePath>..\public\;..\include\Scope\;..\3rdparty\jsmn\</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1878,6 +1868,11 @@
               <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
             </File>
             <File>
+              <FileName>NanopbUnpacker.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
+            </File>
+            <File>
               <FileName>se-scope.pb.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Protobuf\se-scope.pb.c</FilePath>
@@ -1896,11 +1891,6 @@
               <FileName>pb_encode.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\3rdparty\nanopb\pb_encode.c</FilePath>
-            </File>
-            <File>
-              <FileName>NanopbUnpacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\Protobuf\NanopbUnpacker.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1930,7 +1920,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>se-lib-c::container</GroupName>
+          <GroupName>SeLib</GroupName>
           <Files>
             <File>
               <FileName>ByteRingBuffer.c</FileName>
@@ -1947,11 +1937,6 @@
               <FileType>1</FileType>
               <FilePath>..\ext\se-lib-c\src\container\IntRingBuffer.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>se-lib-c::stream</GroupName>
-          <Files>
             <File>
               <FileName>BufferedByteStream.c</FileName>
               <FileType>1</FileType>

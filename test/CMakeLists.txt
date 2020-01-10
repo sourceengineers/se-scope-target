@@ -1,7 +1,7 @@
 
 set(SE_SCOPE_TESTS_NAME ${SE_SCOPE_PROJECT_NAME}_TEST)
 
-project(${SE_SCOPE_TESTS_NAME})
+project(${SE_SCOPE_TESTS_NAME} C CXX)
 
 include(cmake/UnitTestFiles.cmake)
 
@@ -16,7 +16,6 @@ add_executable(${SE_SCOPE_TESTS_NAME}
         ${SE_SCOPE_TEST_MOCKS}
         )
 
-set_target_properties(${SE_SCOPE_TESTS_NAME} PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(${SE_SCOPE_TESTS_NAME} PUBLIC cmake-build-debug/gtest/googletest-src/googletest/include)
 target_include_directories(${SE_SCOPE_TESTS_NAME} PUBLIC cmake-build-debug/gtest/googletest-src/googlemock/include)
 target_include_directories(${SE_SCOPE_TESTS_NAME} PRIVATE ../include/Scope)
