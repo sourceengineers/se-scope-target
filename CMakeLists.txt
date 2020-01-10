@@ -7,7 +7,7 @@ project(${SE_SCOPE_PROJECT_NAME} C ASM)
 ################################################################################
 # Set options
 ################################################################################
-option(SE_SCOPE_BUILD_TESTS "Build the tests" ON)
+option(SE_SCOPE_BUILD_TESTS "Build the tests" OFF)
 
 # Inform the compiler to compile for 32 bit code
 add_definitions(-DARCH_SIZE_32=1)
