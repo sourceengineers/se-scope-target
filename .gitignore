@@ -4,7 +4,8 @@ build/
 *.log
 
 \.idea/
-
+\.settings
+Debug
 cmake-build-debug/
 
 examples/embedded/atollic-toolchain\.cmake
