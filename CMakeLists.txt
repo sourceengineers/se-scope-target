@@ -11,7 +11,6 @@ option(SE_SCOPE_BUILD_TESTS "Build the tests" OFF)
 
 # Inform the compiler to compile for 32 bit code
 add_definitions(-DARCH_SIZE_32=1)
-
 ################################################################################
 # Set options
 ################################################################################
@@ -47,6 +46,7 @@ add_subdirectory(${SE_SCOPE_PROJECT_EXT_DIR}/se-lib-c)
 ################################################################################
 # Install project
 ################################################################################
+set_target_properties(${SE_SCOPE_PROJECT_NAME} PROPERTIES LINKER_LANGUAGE C)
 TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE_PROJECT_NAME}
         PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>

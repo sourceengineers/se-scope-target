@@ -25,18 +25,6 @@
 #include <stdint.h>
 #include <stddef.h>
 
-/* Define the string names of the data types */
-#define SE_INT8_NAME "SE_INT8"
-#define SE_INT16_NAME "SE_INT16"
-#define SE_INT32_NAME "SE_INT32"
-#define SE_UINT8_NAME "SE_UINT8"
-#define SE_UINT16_NAME "SE_UINT16"
-#define SE_UINT32_NAME "SE_UINT32"
-#define SE_FLOAT_NAME "SE_FLOAT"
-
-/** Define list of names for easy access, matching the DATA_TYPES enum entries */
-static const char* DATA_TYPE_NAMES[7] = {SE_INT8_NAME, SE_INT16_NAME, SE_INT32_NAME, SE_UINT8_NAME, SE_UINT16_NAME, SE_UINT32_NAME, SE_FLOAT_NAME};
-
 /**
  * Enum representing the data types
  */
@@ -49,9 +37,6 @@ typedef enum  __DATA_TYPES {
     SE_UINT32,
     SE_FLOAT
 } DATA_TYPES ;
-
-/** Define macro to fetch the right data type name */
-#define getDataTypeName(type) DATA_TYPE_NAMES[type]
 
 /* Choose the right integer length */
 #if (ARCH_SIZE_32)
