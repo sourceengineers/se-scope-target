@@ -55,7 +55,7 @@ static void run(ICommandHandle command){
     const size_t maxAmountOfChannels = AnnounceStorage_getMaxAmountOfChannels(self->announceStorage);
     const float timeBase = AnnounceStorage_getTimeBase(self->announceStorage);
 
-    const char* version = AnnounceStorage_getVersion(self->announceStorage);
+    char* version = AnnounceStorage_getVersion(self->announceStorage);
 
     ScAnnounceMetaData meta = {.timebase = timeBase, .version = version, .maxChannels = maxAmountOfChannels};
     self->packer->addAnnouncement(self->packer, meta);

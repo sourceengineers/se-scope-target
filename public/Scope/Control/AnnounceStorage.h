@@ -82,7 +82,7 @@ float AnnounceStorage_getTimeBase(AnnounceStorageHandle self);
  * Get the version of the se scope
  * @param version
  */
-const char* AnnounceStorage_getVersion(AnnounceStorageHandle self);
+char* AnnounceStorage_getVersion(AnnounceStorageHandle self);
 
 /**
  * Updates the packObserver, triggering a pending event in the packer

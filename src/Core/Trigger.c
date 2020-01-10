@@ -111,7 +111,7 @@ static void fillUpTillChannelFull(TriggerHandle self);
 
 static void fillUpIfTriggered(TriggerHandle self);
 
-static bool stopWithoutStoppingChannels(TriggerHandle self);
+// static bool stopWithoutStoppingChannels(TriggerHandle self);
 
 static bool stopIntoPause(TriggerHandle self);
 
@@ -239,17 +239,17 @@ static void fillUpIfTriggered(TriggerHandle self){
     setState(self, TRIGGER_CLEANUP);
 }
 
-static bool stopWithoutStoppingChannels(TriggerHandle self){
-
-    if(swapBuffers(self) == false){
-        return false;
-    }
-
-    setState(self, TRIGGER_PAUSED);
-    self->fillUpPollCount = 0;
-
-    return true;
-}
+// static bool stopWithoutStoppingChannels(TriggerHandle self){
+//
+//     if(swapBuffers(self) == false){
+//         return false;
+//     }
+//
+//     setState(self, TRIGGER_PAUSED);
+//     self->fillUpPollCount = 0;
+//
+//     return true;
+// }
 
 static bool stopIntoPause(TriggerHandle self){
 

@@ -16,8 +16,8 @@
         <TargetCommonOption>
           <Device>STM32G071RBTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32G0xx_DFP.1.2.0</PackID>
-          <PackURL>https://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32G0xx_DFP.1.0.0</PackID>
+          <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x20000000,0x00009000) IROM(0x08000000,0x00020000) CPUTYPE("Cortex-M0+") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -563,11 +563,6 @@
               <FilePath>..\src\Serialisation\Serializer.c</FilePath>
             </File>
             <File>
-              <FileName>JsonPacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
-            </File>
-            <File>
               <FileName>NanopbPacker.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Protobuf\NanopbPacker.c</FilePath>
@@ -676,8 +671,8 @@
         <TargetCommonOption>
           <Device>STM32F407VGTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F4xx_DFP.2.14.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>Keil.STM32F4xx_DFP.2.13.0</PackID>
+          <PackURL>http://www.keil.com/pack</PackURL>
           <Cpu>IRAM(0x20000000,0x00020000) IRAM2(0x10000000,0x00010000) IROM(0x08000000,0x00100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -1221,11 +1216,6 @@
               <FileName>Serializer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Serializer.c</FilePath>
-            </File>
-            <File>
-              <FileName>JsonPacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
             </File>
             <File>
               <FileName>NanopbPacker.c</FileName>
@@ -1881,11 +1871,6 @@
               <FileName>Serializer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\Serialisation\Serializer.c</FilePath>
-            </File>
-            <File>
-              <FileName>JsonPacker.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\Serialisation\JsonParser\JsonPacker.c</FilePath>
             </File>
             <File>
               <FileName>NanopbPacker.c</FileName>
