@@ -1,70 +1,104 @@
-cmake_minimum_required(VERSION 3.0.0)
-set(CMAKE_CXX_STANDARD 11)
-# Set the Project name
-set(SE_SCOPE_PROJECT_NAME se-scope)
-project(${SE_SCOPE_PROJECT_NAME} C ASM)
+cmake_minimum_required(VERSION 3.5)
+
+################################################################################
+# Version
+################################################################################
+set(SE_SCOPE se-scope)
+project(${SE_SCOPE} C ASM)
+
+set(SE_SCOPE_MAJOR_VERSION 0)
+set(SE_SCOPE_MINOR_VERSION 4)
+set(SE_SCOPE_PATCH_VERSION 0)
+set(SE_SCOPE_VERSION
+        ${SE_SCOPE_MAJOR_VERSION}.${SE_SCOPE_MINOR_VERSION}.${SE_SCOPE_PATCH_VERSION})
+
+################################################################################
+# Sources and files
+################################################################################
+set(SE_SCOPE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(SE_SCOPE_SOURCES_IN cmake/SeScopeSources.cmake)
+set(SE_SCOPE_CONFIG_IN cmake/SeScopeConfig.cmake.in)
+set(SE_SCOPE_CONFIG_VERSION_IN cmake/SeScopeConfigVersion.cmake.in)
+# Include the lib source files files
+include(${SE_SCOPE_SOURCES_IN})
+#Add GNU paths
+include(GNUInstallDirs)
 
 ################################################################################
 # Set options
 ################################################################################
-option(SE_SCOPE_BUILD_TESTS "Build the tests" OFF)
-
-# Inform the compiler to compile for 32 bit code
-add_definitions(-DARCH_SIZE_32=1)
-################################################################################
-# Set options
-################################################################################
-set(SE_SCOPE_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(SE_SCOPE_PROJECT_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
 set(SE_SCOPE_PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/Scope)
 set(SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public)
 set(SE_SCOPE_PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 
-#######################################################################################################################
-## Find all needed files
-#######################################################################################################################
-include(cmake/SourceFiles.cmake)
+################################################################################
+# Set options
+################################################################################
+# Inform the compiler to compile for 32 bit code
 
-add_library(${SE_SCOPE_PROJECT_NAME} STATIC ${SE_SCOPE_SOURCES})
 ################################################################################
-# GTest
+# Include dependency
 ################################################################################
-if(SE_SCOPE_BUILD_TESTS)
-    enable_testing()
-    set(SE_SCOPE_PROJECT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
-    add_subdirectory(test)
-endif()
-################################################################################
-# Include dirs and link libraries
-################################################################################
+add_subdirectory(ext/se-lib-c)
+find_package(SeLibC PATHS ext/se-lib-c)
+
 option(nanopb_BUILD_GENERATOR OFF)
 add_subdirectory(${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb)
+################################################################################
+# Generate the library
+################################################################################
+add_library(${SE_SCOPE} STATIC ${SE_SCOPE_SOURCES})
 
-#Se lib c
-message("-- Adding se-lib-c")
-add_subdirectory(${SE_SCOPE_PROJECT_EXT_DIR}/se-lib-c)
-################################################################################
-# Install project
-################################################################################
-set_target_properties(${SE_SCOPE_PROJECT_NAME} PROPERTIES LINKER_LANGUAGE C)
-TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE_PROJECT_NAME}
+set_target_properties(${SE_SCOPE} PROPERTIES LINKER_LANGUAGE C)
+TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE}
         PUBLIC
-        $<INSTALL_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
+        $<INSTALL_INTERFACE:include/Scope>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/public>
         PRIVATE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/ext/se-lib-c/include>
-        $<BUILD_INTERFACE:${SE_SCOPE_PROJECT_INCLUDE_DIR}>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-        $<BUILD_INTERFACE:${NANOPB_INCLUDE_DIRS}>
-        $<BUILD_INTERFACE:${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb>
+        ${SE_SCOPE_PROJECT_INCLUDE_DIR}
         )
 
-target_link_libraries(${SE_SCOPE_PROJECT_NAME}
-        PRIVATE
-        $<BUILD_INTERFACE:protobuf-nanopb-static>
-        $<BUILD_INTERFACE:se-lib-c>
-        )
+target_link_libraries(
+        ${SE_SCOPE}
+        INTERFACE
+        protobuf-nanopbd
+        ${SE_LIB_C}
+)
 
-message("-- Project will be installed to: ${CMAKE_INSTALL_PREFIX}")
-install(TARGETS ${SE_SCOPE_PROJECT_NAME} ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/" COMPONENT library)
-install(DIRECTORY "${SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC}/Scope" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
+################################################################################
+# Add testing
+################################################################################
+enable_testing()
+set(SE_SCOPE_PROJECT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+add_subdirectory(test EXCLUDE_FROM_ALL)
+
+################################################################################
+# Export the target
+################################################################################
+export(TARGETS ${SE_SCOPE} NAMESPACE SeScope:: FILE "${PROJECT_BINARY_DIR}/SeScopeTargets.cmake")
+export(PACKAGE ${SE_SCOPE})
+
+################################################################################
+# Install the library and headers
+################################################################################
+install(TARGETS ${SE_SCOPE} EXPORT SeScopeTargets ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT library)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/public/Scope" DESTINATION "${CMAKE_INSTALL_PREFIX}/include")
+
+################################################################################
+# Generate the configuration
+################################################################################
+set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
+configure_file(${SE_SCOPE_CONFIG_IN} "${PROJECT_BINARY_DIR}/SeScopeConfig.cmake" @ONLY)
+set(CONF_INCLUDE_DIRS "\${SE_SCOPE_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+configure_file(${SE_SCOPE_CONFIG_IN} "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SeScopeConfig.cmake" @ONLY)
+configure_file(${SE_SCOPE_CONFIG_VERSION_IN} "${PROJECT_BINARY_DIR}/SeScopeConfigVersion.cmake" @ONLY)
+
+################################################################################
+# Install the generated files
+################################################################################
+install(FILES
+        "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SeScopeConfig.cmake"
+        "${PROJECT_BINARY_DIR}/SeScopeConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SeScope COMPONENT dev)
+install(EXPORT SeScopeTargets DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/SeScope" COMPONENT dev)
