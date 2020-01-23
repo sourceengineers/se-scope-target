@@ -41,7 +41,6 @@ set(SE_SCOPE_PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 # Include dependency
 ################################################################################
 add_subdirectory(ext/se-lib-c)
-find_package(SeLibC PATHS ext/se-lib-c)
 
 option(nanopb_BUILD_GENERATOR OFF)
 add_subdirectory(${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb)
@@ -61,9 +60,9 @@ TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE}
 
 target_link_libraries(
         ${SE_SCOPE}
-        INTERFACE
-        protobuf-nanopbd
-        ${SE_LIB_C}
+        PUBLIC
+        protobuf-nanopb-static
+        se-lib-c
 )
 
 ################################################################################
@@ -76,7 +75,7 @@ add_subdirectory(test EXCLUDE_FROM_ALL)
 ################################################################################
 # Export the target
 ################################################################################
-export(TARGETS ${SE_SCOPE} NAMESPACE SeScope:: FILE "${PROJECT_BINARY_DIR}/SeScopeTargets.cmake")
+export(TARGETS ${SE_SCOPE} protobuf-nanopb-static NAMESPACE SeScope:: FILE "${PROJECT_BINARY_DIR}/SeScopeTargets.cmake")
 export(PACKAGE ${SE_SCOPE})
 
 ################################################################################
@@ -88,9 +87,9 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/public/Scope" DESTINATION "${CMAK
 ################################################################################
 # Generate the configuration
 ################################################################################
-set(CONF_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}")
+set(CONF_INCLUDE_DIRS "${SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC}")
 configure_file(${SE_SCOPE_CONFIG_IN} "${PROJECT_BINARY_DIR}/SeScopeConfig.cmake" @ONLY)
-set(CONF_INCLUDE_DIRS "\${SE_SCOPE_CMAKE_DIR}/${REL_INCLUDE_DIR}")
+set(CONF_INCLUDE_DIRS "${CMAKE_INSTALL_PREFIX}/include/Scope")
 configure_file(${SE_SCOPE_CONFIG_IN} "${PROJECT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/SeScopeConfig.cmake" @ONLY)
 configure_file(${SE_SCOPE_CONFIG_VERSION_IN} "${PROJECT_BINARY_DIR}/SeScopeConfigVersion.cmake" @ONLY)
 
