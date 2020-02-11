@@ -26,8 +26,8 @@ The library will now be installed to /usr/local/
 The tests are disabled by default. To enabled them, set the SE_SCOPE_BUILD_TESTS flag to true
 ```
 ...
-cmake -DSE_SCOPE_BUILD_TESTS=ON ..
-make
+cmake ..
+make se-scope-test
 ctest -VV
 ``` 
 ## Build for embedded

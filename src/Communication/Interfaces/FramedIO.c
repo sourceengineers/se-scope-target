@@ -213,17 +213,19 @@ static bool checkChecksum(FramedIOHandle self, const uint8_t* data, uint32_t len
 
 static bool checkEndFlag(FramedIOHandle self, const uint8_t* data, uint32_t length, uint32_t* dataOffset){
     if(self->rxFramedIOState == END_FLAG){
-        uint8_t byte = data[(*dataOffset)];
-        (*dataOffset)++;
-        if(byte == ']'){
-            self->rxFramedIOState = START_FLAG;
-            self->rxDataReady = true;
-            self->rxExpectedLength = 0;
-            return true;
-        }else{
-            FramedIO_resetRx(self);
-            // Endflag wasn't found. Which means that something probably went wrong...
-            return false;
+        if(*dataOffset < length){
+            uint8_t byte = data[(*dataOffset)];
+            (*dataOffset)++;
+            if(byte == ']'){
+                self->rxFramedIOState = START_FLAG;
+                self->rxDataReady = true;
+                self->rxExpectedLength = 0;
+                return true;
+            }else{
+                FramedIO_resetRx(self);
+                // Endflag wasn't found. Which means that something probably went wrong...
+                return false;
+            }
         }
     }
     return false;
