@@ -130,7 +130,7 @@ static bool swapBuffers(TriggerHandle self){
         return false;
     }
 
-    for(int i = 0; i < self->amountOfChannels; ++i){
+    for(size_t i = 0; i < self->amountOfChannels; ++i){
         Channel_swapBuffers(self->channels[i]);
     }
     Timestamper_swapBuffers(self->timestamper);
