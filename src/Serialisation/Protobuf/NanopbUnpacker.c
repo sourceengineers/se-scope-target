@@ -68,7 +68,7 @@ static CfAddressDef cfAddress_getChannel(IUnpackerHandle unpacker, uint32_t inde
 static bool readBuffer(pb_istream_t* stream, pb_byte_t* buf, size_t count);
 
 static bool addressConfigCallback(pb_istream_t *stream, const pb_field_t *field, void **arg){
-
+    (void)(field);
     PB_AddressConfig config;
     bool status = pb_decode(stream, PB_AddressConfig_fields, &config);
 
@@ -86,7 +86,7 @@ static bool addressConfigCallback(pb_istream_t *stream, const pb_field_t *field,
 }
 
 static bool runningConfigCallback(pb_istream_t *stream, const pb_field_t *field, void **arg){
-
+    (void)(field);
     PB_RunningConfig config;
     bool status = pb_decode(stream, PB_RunningConfig_fields, &config);
 
@@ -261,7 +261,7 @@ size_t NanopbUnpacker_calculateBufferSize(size_t maxNumberOfChannels){
 
     size_t biggest = 0;
 
-    for (int i = 0; i < possibleSizes; ++i) {
+    for (size_t i = 0; i < possibleSizes; ++i) {
         if(sizes[i] > biggest){
             biggest = sizes[i];
         }

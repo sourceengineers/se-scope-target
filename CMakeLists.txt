@@ -65,6 +65,8 @@ target_link_libraries(
         se-lib-c
 )
 
+target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic -Werror)
+
 ################################################################################
 # Add testing
 ################################################################################
