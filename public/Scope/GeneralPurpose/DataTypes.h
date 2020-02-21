@@ -39,7 +39,7 @@ typedef enum  __DATA_TYPES {
 } DATA_TYPES ;
 
 #ifndef VP_SIZE
-    #error "Architecture size has to be specified"
+    #define ADDRESS_DATA_TYPE uint32_t
 #endif
 
 /* Choose the right integer length */
