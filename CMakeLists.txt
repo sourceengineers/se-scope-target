@@ -65,6 +65,15 @@ target_link_libraries(
         se-lib-c
 )
 
+message("-- Compiling for ${CMAKE_SIZEOF_VOID_P} bit architecture")
+
+if(${CMAKE_SIZEOF_VOID_P} EQUAL 8 OR ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
+    target_compile_definitions(${SE_SCOPE} PUBLIC VP_SIZE=${CMAKE_SIZEOF_VOID_P})
+else()
+    message("Target architecture not supported")
+    return()
+endif()
+
 target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic -Werror)
 
 ################################################################################
