@@ -142,14 +142,14 @@ static bool swapBuffers(TriggerHandle self){
 }
 
 static void stopChannelsAndTimestamp(TriggerHandle self){
-    for(int i = 0; i < self->amountOfChannels; ++i){
+    for(size_t i = 0; i < self->amountOfChannels; ++i){
         Channel_setStateStopped(self->channels[i]);
     }
     Timestamper_setStateStopped(self->timestamper);
 }
 
 static void resetBuffers(TriggerHandle self){
-    for(int i = 0; i < self->amountOfChannels; ++i){
+    for(size_t i = 0; i < self->amountOfChannels; ++i){
         Channel_clear(self->channels[i]);
     }
     Timestamper_clear(self->timestamper);
@@ -177,7 +177,7 @@ static void startWhenPaused(TriggerHandle self){
 }
 
 static void startNever(TriggerHandle self){
-    return;
+    (void)(self);
 }
 
 static void detectNever(TriggerHandle self){
