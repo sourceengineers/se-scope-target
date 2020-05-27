@@ -47,8 +47,6 @@ typedef enum  __DATA_TYPES {
 #define ADDRESS_DATA_TYPE uint32_t
 #elif(VP_SIZE==8)
 #define ADDRESS_DATA_TYPE uint64_t
-#else
-    #error "Unknown architecture size"
 #endif
 
 #define SeScopeGenericReference void*
