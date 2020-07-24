@@ -2,10 +2,6 @@ cmake_minimum_required (VERSION 3.5)
 
 project (GoogleTest)
 
-if(EXISTS ${CMAKE_CURRENT_BINARY_DIR}/googletest-download)
-	return()
-endif()
-
 # googletest: download and build at configuration time
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
 execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
@@ -24,3 +20,14 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/googletest-src
 		${CMAKE_CURRENT_BINARY_DIR}/googletest-build
 		EXCLUDE_FROM_ALL)
+
+add_library(gtest-lib INTERFACE)
+target_include_directories(gtest-lib INTERFACE
+		${gmock_SOURCE_DIR}
+		${gmock_SOURCE_DIR}/include
+		${gtest_SOURCE_DIR}
+		${gtest_SOURCE_DIR}/include)
+target_link_libraries(gtest-lib INTERFACE gtest gtest_main pthread)
+add_library(test::gtest ALIAS gtest-lib)
+
+target_link_libraries(gtest-lib INTERFACE test::gtest)

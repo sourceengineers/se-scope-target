@@ -63,7 +63,7 @@ target_link_libraries(
         ${SE_SCOPE}
         INTERFACE
         protobuf-nanopbd
-        ${SE_LIB_C}
+        se-lib-c
 )
 
 ################################################################################
