@@ -16,7 +16,7 @@ add_executable(${SE_SCOPE_TESTS}
         ${SE_SCOPE_TEST_MOCKS}
         )
 
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE .)
+target_include_directories(${SE_SCOPE_TESTS} PRIVATE . ${SE_SCOPE_PROJECT_INCLUDE_DIR})
 
 target_link_libraries(
         ${SE_SCOPE_TESTS}

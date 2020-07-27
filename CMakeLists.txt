@@ -28,7 +28,7 @@ include(GNUInstallDirs)
 # Set options
 ################################################################################
 set(SE_SCOPE_PROJECT_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
-set(SE_SCOPE_PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/Scope)
+set(SE_SCOPE_PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/Scope  ${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb)
 set(SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public)
 set(SE_SCOPE_PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 
@@ -61,9 +61,9 @@ TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE}
 
 target_link_libraries(
         ${SE_SCOPE}
-        INTERFACE
-        protobuf-nanopbd
-        se-lib-c
+        PUBLIC
+        protobuf-nanopbd-static
+        se-lib::c
 )
 
 ################################################################################
