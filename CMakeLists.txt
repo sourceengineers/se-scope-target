@@ -62,9 +62,12 @@ TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE}
 target_link_libraries(
         ${SE_SCOPE}
         PUBLIC
-        protobuf-nanopbd-static
         se-lib::c
+        protobuf-nanopb-static
 )
+
+add_library(se-lib::scope ALIAS ${SE_SCOPE})
+target_link_libraries(${SE_SCOPE} INTERFACE se-lib::scope)
 
 ################################################################################
 # Add testing
@@ -76,7 +79,7 @@ add_subdirectory(test EXCLUDE_FROM_ALL)
 ################################################################################
 # Export the target
 ################################################################################
-export(TARGETS ${SE_SCOPE} NAMESPACE SeScope:: FILE "${PROJECT_BINARY_DIR}/SeScopeTargets.cmake")
+export(TARGETS ${SE_SCOPE} protobuf-nanopb-static NAMESPACE SeScope:: FILE "${PROJECT_BINARY_DIR}/SeScopeTargets.cmake")
 export(PACKAGE ${SE_SCOPE})
 
 ################################################################################

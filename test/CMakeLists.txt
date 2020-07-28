@@ -21,6 +21,5 @@ target_include_directories(${SE_SCOPE_TESTS} PRIVATE . ${SE_SCOPE_PROJECT_INCLUD
 target_link_libraries(
         ${SE_SCOPE_TESTS}
         PRIVATE
-        protobuf-nanopb-static
-        ${SE_SCOPE}
+        se-lib::scope
         test::gtest)
