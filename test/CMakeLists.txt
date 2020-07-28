@@ -18,8 +18,11 @@ add_executable(${SE_SCOPE_TESTS}
 
 target_include_directories(${SE_SCOPE_TESTS} PRIVATE . ${SE_SCOPE_PROJECT_INCLUDE_DIR})
 
+target_compile_options(${SE_SCOPE} PUBLIC -DUNIT_TEST)
+
 target_link_libraries(
         ${SE_SCOPE_TESTS}
         PRIVATE
         se-lib::scope
-        test::gtest)
+        test::gtest
+)
