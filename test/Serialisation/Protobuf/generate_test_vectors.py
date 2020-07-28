@@ -31,6 +31,9 @@ def pack_address_vector():
     address = CF_Address(addresses=[address_1, address_2, address_3])
     return address
 
+def pack_log_vector():  #TODO implement
+    address = 0;
+    return address;
 
 def pack_running_vector():
     running_1 = RunningConfig(cl_id=1, new_state=False)

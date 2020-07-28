@@ -10,22 +10,17 @@
 #include "Scope/GeneralPurpose/DataTypes.h"
 
 #include "Scope/Control/Commands/CommandParser/CommandLogParser.h"
-#include "Scope/Control/Commands/Command/CommandLog.h"
 #include "Scope/Control/IUnpacker.h"
-#include "Scope/Core/ScopeTypes.h"
 #include "Scope/Control/ParserDefinitions.h"
-
-#include <stdint.h>
-#include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandLogParserPrivateData{
+typedef struct __CommandLogParserPrivateData
+{
     CommandLogHandle command;
 
     IUnpackerHandle unpacker;
@@ -40,7 +35,8 @@ typedef struct __CommandLogParserPrivateData{
  Public functions
 ******************************************************************************/
 CommandLogParserHandle
-CommandLogParser_create(IObserverHandle observer){
+CommandLogParser_create(IObserverHandle observer)
+{
     //TODO implement for LogParser
 	CommandLogParserHandle self = malloc(sizeof(CommandLogParserPrivateData));
 
@@ -50,7 +46,8 @@ CommandLogParser_create(IObserverHandle observer){
 }
 
 //TODO implement
-ICommandHandle CommandLogParser_getCommand(CommandLogParserHandle self){
+ICommandHandle CommandLogParser_getCommand(CommandLogParserHandle self)
+{
 
     if(self->unpacker == NULL){
         return NULL;
@@ -60,7 +57,8 @@ ICommandHandle CommandLogParser_getCommand(CommandLogParserHandle self){
 
 }
 
-void CommandLogParser_destroy(CommandLogParserHandle self){
+void CommandLogParser_destroy(CommandLogParserHandle self)
+{
 	CommandLog_destroy(self->command);
     free(self);
     self = NULL;

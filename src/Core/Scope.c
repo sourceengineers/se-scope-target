@@ -290,6 +290,14 @@ void Scope_transmit(ScopeHandle self){
     self->observer->update(self->observer, &typeToPack);
 }
 
+
+//TODO do this but MessageType typeToPack = SC_LOG oder so
+
+void Scope_log(ScopeHandle self){
+    MessageType typeToPack = SC_LOG;
+    self->observer->update(self->observer, &typeToPack);
+}
+
 bool Scope_poll(ScopeHandle self){
 
 	if(self->scopeIsReadyToRun == false){

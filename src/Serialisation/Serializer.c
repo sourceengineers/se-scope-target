@@ -1,3 +1,4 @@
+#include <limits.h>
 /*!****************************************************************************************************************************************
  * @file         Serializer.c
  *
@@ -75,6 +76,8 @@ static uint32_t cfAddress_getAmount(IUnpackerHandle unpacker);
 static CfAddressDef cfAddress_getChannel(IUnpackerHandle unpacker, uint32_t index);
 
 static void addChannel(IPackerHandle packer, ScDataChannelDef channel);
+
+static void addLog(IPackerHandle packer, ScLogDataDef log);
 
 static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
 
@@ -179,6 +182,13 @@ void addChannel(IPackerHandle packer, ScDataChannelDef channel){
     SerializerHandle self = (SerializerHandle) packer->handle;
     IPackerHandle currentPacker = getPacker(self, SC_DATA);
     currentPacker->addChannel(currentPacker, channel);
+}
+
+//TODO
+__unused void addLog(IPackerHandle packer, ScLogDataDef log){
+    SerializerHandle self = (SerializerHandle) packer->handle;
+    IPackerHandle currentPacker = getPacker(self, SC_LOG);
+    currentPacker->addLog(currentPacker, log);
 }
 
 void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement){
