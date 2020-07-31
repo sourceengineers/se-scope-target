@@ -61,9 +61,12 @@ TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE}
 target_link_libraries(
         ${SE_SCOPE}
         PUBLIC
+        se-lib::c
         protobuf-nanopb-static
-        se-lib-c
 )
+
+add_library(se-lib::scope ALIAS ${SE_SCOPE})
+target_link_libraries(${SE_SCOPE} INTERFACE se-lib::scope)
 
 message("-- Compiling for ${CMAKE_SIZEOF_VOID_P} bit architecture")
 

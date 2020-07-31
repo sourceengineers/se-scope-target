@@ -16,20 +16,13 @@ add_executable(${SE_SCOPE_TESTS}
         ${SE_SCOPE_TEST_MOCKS}
         )
 
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE ${gmock_SOURCE_DIR}/include)
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE ${gmock_SOURCE_DIR})
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE ${gtest_SOURCE_DIR}/include)
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE ${gtest_SOURCE_DIR})
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE ../include/Scope)
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE ../public)
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE ../ext/se-lib-c/include)
-target_include_directories(${SE_SCOPE_TESTS} PRIVATE .)
+target_include_directories(${SE_SCOPE_TESTS} PRIVATE . ${SE_SCOPE_PROJECT_INCLUDE_DIR})
+
+target_compile_options(${SE_SCOPE} PUBLIC -DUNIT_TEST)
 
 target_link_libraries(
         ${SE_SCOPE_TESTS}
         PRIVATE
-        protobuf-nanopb-static
-        ${SE_SCOPE}
-        gtest
-        gtest_main
-        pthread)
+        se-lib::scope
+        test::gtest
+)
