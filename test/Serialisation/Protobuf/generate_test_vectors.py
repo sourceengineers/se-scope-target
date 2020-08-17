@@ -32,8 +32,11 @@ def pack_address_vector():
     return address
 
 def pack_log_vector():  #TODO implement
-    address = 0;
-    return address;
+    log_info = SC_Log(severity = INFO, message = "Test Log!", timestamp = 10)
+    # log_debug = SC_Log(severity = DEBUG, message = "Test Log!", timestamp = 10)
+    # log_warning = SC_Log(severity = WARNING, message = "Test Log!", timestamp = 10)
+    # log_error = SC_Log(severity = ERROR, message = "Test Log!", timestamp = 10)
+    return log_info;
 
 def pack_running_vector():
     running_1 = RunningConfig(cl_id=1, new_state=False)
