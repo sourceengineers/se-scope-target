@@ -5,7 +5,8 @@ pipelines:
     - step:
         script: # Modify the commands below to build your repository.
           - git submodule update --init
-          - mkdir build && cd build
+          - mkdir build
+          - cd build
           - cmake ..
           - make se-scope-test
           - ctest -VV
