@@ -10,6 +10,7 @@
 #include "Scope/Control/CommandPackParserDispatcher.h"
 #include "Scope/Control/PackCommands/CommandParser/CommandPackAnnounceParser.h"
 #include "Scope/Control/PackCommands/CommandParser/CommandPackDataParser.h"
+#include "Scope/Control/PackCommands/CommandParser/CommandPackLogParser.h"
 #include "Scope/Control/ParserDefinitions.h"
 
 #include <stdlib.h>
@@ -23,6 +24,7 @@
 typedef struct __CommandPackParserDispatcherPrivateData{
     CommandPackDataParserHandle commandPackDataParser;
     CommandPackAnnounceParserHandle commandPackAnnounceParser;
+    CommandPackLogParserHandle commandPackLogParser;
 } CommandPackParserDispatcherPrivateData;
 
 
@@ -48,7 +50,9 @@ ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle
     }else if(type == SC_ANNOUNCE){
         return CommandPackAnnounceParser_getCommand(self->commandPackAnnounceParser);
     }
-
+    else if(type == SC_LOG){
+    	return CommandPackLogParser_getCommand(self->commandPackLogParser);
+    }
     return NULL;
 }
 

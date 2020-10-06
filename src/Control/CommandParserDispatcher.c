@@ -12,7 +12,6 @@
 #include "Scope/Control/Commands/CommandParser/CommandAnnounceParser.h"
 #include "Scope/Control/Commands/CommandParser/CommandClearParser.h"
 #include "Scope/Control/Commands/CommandParser/CommandPollParser.h"
-#include "Scope/Control/Commands/CommandParser/CommandLogParser.h"
 #include "Scope/Control/Commands/CommandParser/CommandRunningParser.h"
 #include "Scope/Control/Commands/CommandParser/CommandTIncParser.h"
 #include "Scope/Control/Commands/CommandParser/CommandTransParser.h"
@@ -34,7 +33,6 @@ typedef struct __CommandParserDispatcherPrivateData {
     CommandAnnounceParserHandle commandAnnounceParser;
     CommandClearParserHandle commandClearParser;
     CommandDetectParserHandle commandDetectParser;
-    CommandLogParserHandle commandLogParser;
     CommandPollParserHandle commandPollParser;
     CommandRunningParserHandle commandRunningParser;
     CommandTIncParserHandle commandTIncParser;
@@ -58,7 +56,6 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
     self->commandAnnounceParser = CommandAnnounceParser_create(packObserver);
     self->commandClearParser = CommandClearParser_create(scope, packObserver);
     self->commandDetectParser = CommandDetectParser_create(packObserver);
-    self->commandLogParser = CommandLogParser_create(packObserver);
     self->commandPollParser = CommandPollParser_create(scope, packObserver);
     self->commandRunningParser = CommandRunningParser_create(scope, unpacker, packObserver);
     self->commandTIncParser = CommandTIncParser_create(scope, unpacker, packObserver);
@@ -104,7 +101,6 @@ void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self) {
     CommandAnnounceParser_destroy(self->commandAnnounceParser);
     CommandTransParser_destroy(self->commandTransParser);
     CommandDetectParser_destroy(self->commandDetectParser);
-    CommandLogParser_destroy(self->commandLogParser);
     free(self);
     self = NULL;
 }

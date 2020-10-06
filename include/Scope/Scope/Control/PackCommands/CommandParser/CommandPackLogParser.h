@@ -1,49 +1,51 @@
 /*!*****************************************************************************
- * @file         CommandLogParser.h
+ * @file         CommandPackLogParser.h
  *
  * @copyright    Copyright (c) 2020 by Sourceengineers. All Rights Reserved.
  *
- * @authors      Anselm Fuhrer - anselm.fuhrer@sourceengineers.com
+ * @authors      Anselm Fuhrer anselm.fuhrer@sourceengineers.com
  *
- * @brief        TODO
+ * @brief        Implementation of the configurator for the ev_pack.
  *
  *
  ******************************************************************************/
 
-#ifndef COMMANDLOGPARSER_H_
-#define COMMANDLOGPARSER_H_
+#ifndef COMMANDPACKLOGPARSER_H_
+#define COMMANDPACKLOGPARSER_H_
 
-#include "Scope/Control/Commands/Command/CommandLog.h"
-#include "Scope/Control/ICommand.h"
-#include "Scope/Core/IScope.h"
 #include <se-lib-c/util/observer/IObserver.h>
+#include "Scope/Control/PackCommands/Command/CommandPackLog.h"
+#include "Scope/Control/ICommand.h"
+#include "Scope/Control/IPacker.h"
+#include "Scope/Core/IScope.h"
 
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
-typedef struct __CommandLogParserPrivateData* CommandLogParserHandle;
+typedef struct __CommandPackLogParserPrivateData* CommandPackLogParserHandle;
 
 /******************************************************************************
- Public functions
+ Public functions 
 ******************************************************************************/
 /**
  * Constructor
- * @param packObserver
+ * @param scope
+ * @param packer
  * @return
  */
-CommandLogParserHandle CommandLogParser_create(IObserverHandle packObserver);
+CommandPackLogParserHandle CommandPackLogParser_create(ScLogDataDef log, IPackerHandle packer);
 
 /**
  * Returns the command
  * @param self
  * @return
  */
-ICommandHandle CommandLogParser_getCommand(CommandLogParserHandle self);
+ICommandHandle CommandPackLogParser_getCommand(CommandPackLogParserHandle self);
 
 /**
  * Deconstructor
  * @param self
  */
- void CommandLogParser_destroy(CommandLogParserHandle self);
+void CommandPackLogParser_destroy(CommandPackLogParserHandle self);
 
 #endif
