@@ -11,4 +11,5 @@ pipelines:
           - cd build
           - cmake ..
           - make se-scope-test
-          - ctest --no-compress-output -T Test
+          - ctest --no-compress-output --output-on-failure -VV -T Test
+          - mv Testing test-results
