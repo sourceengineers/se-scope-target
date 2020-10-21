@@ -1,0 +1,12 @@
+image: gcc:6.5
+
+pipelines:
+  default:
+    - step:
+        script: # Modify the commands below to build your repository.
+          - git submodule update --init
+          - mkdir build
+          - cd build
+          - cmake ..
+          - make se-scope-test
+          - ctest -VV
