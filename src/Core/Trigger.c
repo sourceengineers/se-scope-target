@@ -364,6 +364,8 @@ TriggerHandle Trigger_create(ChannelHandle* channels, size_t amountOfChannels, \
     self->amountOfChannels = amountOfChannels;
     self->channelCapacity = channelCapacity;
     self->timestamper = timestamper;
+    self->isTriggereds[SWAP_BUFFER] = false;
+    self->isTriggereds[POLL_BUFFER] = false;
 
     /* Continious trigger strategy */
     TriggerStrategy continuous;

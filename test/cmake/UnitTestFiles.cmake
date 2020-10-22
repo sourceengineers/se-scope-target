@@ -6,7 +6,6 @@ set(SE_SCOPE_TEST_MOCKS
 
 set(SE_SCOPE_UNIT_TESTS
         ${SE_SCOPE_PROJECT_TEST_DIR}/Control/AnnounceStorage-test.cpp
-        ${SE_SCOPE_PROJECT_TEST_DIR}/Control/Stack-test.cpp
         ${SE_SCOPE_PROJECT_TEST_DIR}/Core/channel-test.cpp
         ${SE_SCOPE_PROJECT_TEST_DIR}/Core/trigger-test.cpp
         ${SE_SCOPE_PROJECT_TEST_DIR}/main.cpp
