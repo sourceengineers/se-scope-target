@@ -28,7 +28,7 @@ include(GNUInstallDirs)
 # Set options
 ################################################################################
 set(SE_SCOPE_PROJECT_DEPENDENCIES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty)
-set(SE_SCOPE_PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/Scope)
+set(SE_SCOPE_PROJECT_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include/Scope  ${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb)
 set(SE_SCOPE_PROJECT_INCLUDE_DIR_PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/public)
 set(SE_SCOPE_PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 
@@ -61,9 +61,23 @@ TARGET_INCLUDE_DIRECTORIES(${SE_SCOPE}
 target_link_libraries(
         ${SE_SCOPE}
         PUBLIC
+        se-lib::c
         protobuf-nanopb-static
-        se-lib-c
 )
+
+add_library(se-lib::scope ALIAS ${SE_SCOPE})
+target_link_libraries(${SE_SCOPE} INTERFACE se-lib::scope)
+
+message("-- Compiling for ${CMAKE_SIZEOF_VOID_P} bit architecture")
+
+if(${CMAKE_SIZEOF_VOID_P} EQUAL 8 OR ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
+    target_compile_definitions(${SE_SCOPE} PUBLIC VP_SIZE=${CMAKE_SIZEOF_VOID_P})
+else()
+    message("Target architecture not supported")
+    return()
+endif()
+
+target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic -Werror)
 
 ################################################################################
 # Add testing

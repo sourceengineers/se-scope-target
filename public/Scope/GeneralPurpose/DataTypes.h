@@ -38,10 +38,14 @@ typedef enum  __DATA_TYPES {
     SE_FLOAT
 } DATA_TYPES ;
 
+#ifndef VP_SIZE
+    #define ADDRESS_DATA_TYPE uint32_t
+#endif
+
 /* Choose the right integer length */
-#if (ARCH_SIZE_32)
+#if (VP_SIZE==4)
 #define ADDRESS_DATA_TYPE uint32_t
-#else
+#elif(VP_SIZE==8)
 #define ADDRESS_DATA_TYPE uint64_t
 #endif
 

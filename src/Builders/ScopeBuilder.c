@@ -125,6 +125,8 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
     self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));
     Serializer_attachControlObserver(self->serializer, Controller_getCommandObserver(self->controller));
     Scope_attachPackObserver(self->scope, Controller_getCommandPackObserver(self->controller));
+    //TODO connect logger observer
+//    Logger_attachPackObserver(self->scope, Controller_getCommandPackObserver(self->controller));
     Controller_attachPackObserver(self->controller, Serializer_getPackObserver(self->serializer));
     Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));
 

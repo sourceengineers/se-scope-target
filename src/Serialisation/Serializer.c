@@ -92,6 +92,7 @@ static void reset(IPackerHandle packer);
  Private functions
 ******************************************************************************/
 inline static IPackerHandle getPacker(SerializerHandle self, MessageType type){
+    (void)(type);
     return NanopbPacker_getIPacker(self->nanopbPacker);
 }
 
@@ -262,8 +263,8 @@ static CfAddressDef cfAddress_getChannel(IUnpackerHandle unpacker, uint32_t inde
 }
 
 void reset(IPackerHandle packer){
-    return;
-};
+    (void)(packer);
+}
 
 /******************************************************************************
  Public functions

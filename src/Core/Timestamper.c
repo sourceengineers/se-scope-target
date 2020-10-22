@@ -111,7 +111,7 @@ void Timestamper_setStateRunning(TimestamperHandle self){
 
 uint32_t Timestamper_getCurrentTime(TimestamperHandle self){
     return self->lastTimestamp;
-};
+}
 
 void Timestamper_setStateStopped(TimestamperHandle self){
     setState(self, TIMESTAMPER_STOPPED);

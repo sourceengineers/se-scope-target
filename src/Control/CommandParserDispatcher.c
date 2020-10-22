@@ -30,14 +30,14 @@
 /* Class data */
 typedef struct __CommandParserDispatcherPrivateData {
     CommandAddrParserHandle commandAddrParser;
-    CommandRunningParserHandle commandRunningParser;
-    CommandTIncParserHandle commandTIncParser;
-    CommandTriggerParserHandle commandTriggerParser;
-    CommandPollParserHandle commandPollParser;
     CommandAnnounceParserHandle commandAnnounceParser;
-    CommandTransParserHandle commandTransParser;
     CommandClearParserHandle commandClearParser;
     CommandDetectParserHandle commandDetectParser;
+    CommandPollParserHandle commandPollParser;
+    CommandRunningParserHandle commandRunningParser;
+    CommandTIncParserHandle commandTIncParser;
+    CommandTransParserHandle commandTransParser;
+    CommandTriggerParserHandle commandTriggerParser;
 } CommandParserDispatcherPrivateData;
 
 
@@ -53,14 +53,14 @@ CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver,
     /* Initialize needed command parser
     * Not all commands need parser, which is why there are less parser as commands */
     self->commandAddrParser = CommandAddrParser_create(scope, unpacker, packObserver);
-    self->commandRunningParser = CommandRunningParser_create(scope, unpacker, packObserver);
-    self->commandTIncParser = CommandTIncParser_create(scope, unpacker, packObserver);
-    self->commandTriggerParser = CommandTriggerParser_create(scope, unpacker, packObserver);
-    self->commandPollParser = CommandPollParser_create(scope, packObserver);
     self->commandAnnounceParser = CommandAnnounceParser_create(packObserver);
-    self->commandTransParser = CommandTransParser_create(scope, packObserver);
     self->commandClearParser = CommandClearParser_create(scope, packObserver);
     self->commandDetectParser = CommandDetectParser_create(packObserver);
+    self->commandPollParser = CommandPollParser_create(scope, packObserver);
+    self->commandRunningParser = CommandRunningParser_create(scope, unpacker, packObserver);
+    self->commandTIncParser = CommandTIncParser_create(scope, unpacker, packObserver);
+    self->commandTransParser = CommandTransParser_create(scope, packObserver);
+    self->commandTriggerParser = CommandTriggerParser_create(scope, unpacker, packObserver);
 
     return self;
 }
@@ -101,7 +101,6 @@ void CommandParserDispatcher_destroy(CommandParserDispatcherHandle self) {
     CommandAnnounceParser_destroy(self->commandAnnounceParser);
     CommandTransParser_destroy(self->commandTransParser);
     CommandDetectParser_destroy(self->commandDetectParser);
-
     free(self);
     self = NULL;
 }
