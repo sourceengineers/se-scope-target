@@ -53,7 +53,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="ext/se-lib-c/src/logger|test|ext/se-lib-c/test|cmake-build-debug|3rdparty/nanopb/examples|3rdparty/nanopb/tests|3rdparty/gtest" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="test|ext/se-lib-c/test|cmake-build-debug|3rdparty/nanopb/examples|3rdparty/nanopb/tests|3rdparty/gtest" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

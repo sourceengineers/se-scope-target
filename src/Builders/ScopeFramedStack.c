@@ -124,6 +124,8 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig 
     return self;
 }
 
+// hier Funktion machen, die Stream generiert 
+
 void ScopeFramedStack_run(ScopeFramedStackHandle self){
     ScopeRunner_run(self->scopeRunnable);
 }
