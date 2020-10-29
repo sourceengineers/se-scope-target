@@ -24,6 +24,7 @@ typedef struct __ScopeBuilderPrivateData{
     IByteStreamHandle output;
     ICommunicatorHandle communicator;
     ScopeHandle scope;
+    LoggerHandle log;	//TODO how to correctly build the log in the scope? And does this have to be here?
 
     ControllerHandle controller;
     SerializerHandle serializer;
@@ -31,6 +32,7 @@ typedef struct __ScopeBuilderPrivateData{
 
     IMutexHandle dataMutex;
     IMutexHandle configMutex;
+    IMutexHandle logBufferMutex;
     size_t maxAddresses;
     uint32_t* timestamp;
     size_t amountOfChannels;
@@ -50,6 +52,7 @@ ScopeBuilderHandle ScopeBuilder_create(void){
     self->output = NULL;
     self->communicator = NULL;
     self->scope = NULL;
+    self->log = NULL;
     self->controller = NULL;
     self->serializer = NULL;
     self->timestamp = NULL;
