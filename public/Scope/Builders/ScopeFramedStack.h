@@ -44,6 +44,7 @@ typedef struct __ScopeFramedStackConfig {
 typedef struct __ScopeFramedStackMutex {
     IMutexHandle configMutex;
     IMutexHandle dataMutex;
+    IMutexHandle logBufferMutex;
 } ScopeFramedStackMutex;
 
 /******************************************************************************
