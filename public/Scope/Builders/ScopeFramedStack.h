@@ -20,6 +20,7 @@
 #include "Scope/Control/AnnounceStorage.h"
 #include "Scope/GeneralPurpose/IMutex.h"
 #include "Scope/Communication/ITransceiver.h"
+#include "se-lib-c/stream/IByteStream.h"
 
 /******************************************************************************
  Configuration interface for the ScopeFramedStack
@@ -47,6 +48,15 @@ typedef struct __ScopeFramedStackMutex {
     IMutexHandle logBufferMutex;
 } ScopeFramedStackMutex;
 
+
+/**
+ * Settings for the logger of the scope. If it is empty,
+ * it will not be logging
+ */
+typedef struct __ScopeFramedStackLogOptions {
+	IByteStreamHandle logByteStream;
+} ScopeFramedStackLogOptions;
+
 /******************************************************************************
  Define class handle data
 ******************************************************************************/
@@ -68,7 +78,7 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config);
  * @param config
  * @param mutexes
  */
-ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig config, ScopeFramedStackMutex mutexes);
+ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig config, ScopeFramedStackMutex mutexes, ScopeFramedStackLogOptions scopeLogOptions);
 
 /**
  * Runs the JsonUart stack
@@ -107,4 +117,4 @@ ITransceiverHandle ScopeFramedStack_getTranscevier(ScopeFramedStackHandle self);
  * @param self
  */
 void ScopeFramedStack_destroy(ScopeFramedStackHandle self);
-#endif
+#endif //SCOPEFRAMEDSTACK_H_

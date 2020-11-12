@@ -82,7 +82,11 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config){
 
 }
 
-ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig config, ScopeFramedStackMutex mutexes){
+ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
+		ScopeFramedStackConfig config,
+		ScopeFramedStackMutex mutexes,
+		ScopeFramedStackLogOptions scopeLogOptions
+	){
 
     ScopeFramedStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
     assert(self);
@@ -117,7 +121,8 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig 
     ScopeBuilder_setTimestampReference(self->builder, config.timestamp);
     ScopeBuilder_setCommunication(self->builder, FramedIO_getCommunicator(self->framedIO));
     ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage, config.addressesInAddressAnnouncer);
-//    ScopeBuilder_setLogger(self->builder, self->)
+    //TODO set the builder
+    ScopeBuilder_setLogBuffer(self->builder, scopeLogOptions.logByteStream);
 
     /* Build the scope */
     self->scopeRunnable = ScopeBuilder_build(self->builder);
@@ -125,7 +130,7 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig 
     return self;
 }
 
-// hier Funktion machen, die Stream generiert 
+// hier Funktion machen, die Stream generiert ScopeFramedStack_log..
 
 void ScopeFramedStack_run(ScopeFramedStackHandle self){
     ScopeRunner_run(self->scopeRunnable);

@@ -1,7 +1,7 @@
 /*!****************************************************************************************************************************************
 * @file         CommandPackLog.c
 *
-* @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+* @copyright    Copyright (c) 2020 by Sourceengineers. All Rights Reserved.
 *
 * @authors      Anselm Fuhrer anselm.fuhrer@sourceengineers.com
 *
@@ -29,7 +29,6 @@ typedef struct __CommandPackLogPrivateData{
     ICommand command;
     IPackerHandle packer;
     ScLogDataDef log;
-
 } CommandPackLogPrivateData;
 
 static void run(ICommandHandle command);

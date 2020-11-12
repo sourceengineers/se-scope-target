@@ -125,6 +125,14 @@ void ScopeBuilder_setDataMutex(ScopeBuilderHandle self, IMutexHandle mutex);
 void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex);
 
 /**
+ * Appends the mutex which protects the Rx path of the runner. If no mutex is passed,
+ * only the ScopeRunner can be used. Otherwise the ScopeThreadRunner can be used.
+ * @param self
+ * @param mutex
+ */
+void ScopeBuilder_setLogBuffer(ScopeBuilderHandle self, IByteStreamHandle logByteStream);
+
+/**
  * Deconstructor
  * @param self
  */

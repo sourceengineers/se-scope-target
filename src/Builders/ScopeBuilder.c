@@ -93,7 +93,6 @@ void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex){
     self->configMutex = mutex;
 }
 
-
 void ScopeBuilder_setLogBuffer(ScopeBuilderHandle self, IByteStreamHandle logByteStream){
 	self->logByteStream = logByteStream;
 }
@@ -110,6 +109,7 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
     runnable.runCommunicationRx = NULL;
     runnable.runCommunicationTx = NULL;
 
+
     if(self->timestamp == NULL){
         return runnable;
     }
@@ -123,12 +123,17 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
         return runnable;
     }
 
+    if((self->logByteStream == NULL)){
+    	//TODO how to correctly handle when the LogByteStream is NULL, can it be NULL?
+    	return runnable;
+    }
+
     /* Create layers */
     self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->timestamp);
 
     self->serializer = Serializer_create(self->amountOfChannels, self->maxAddresses, self->output, self->input);
     self->controller = Controller_create(Scope_getIScope(self->scope), Serializer_getPacker(self->serializer),
-            Serializer_getUnpacker(self->serializer), self->announceStorage);
+            Serializer_getUnpacker(self->serializer), self->announceStorage, self->logByteStream);
 
     /* Connect all observers */
     self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));
@@ -155,7 +160,6 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
 }
 
 void ScopeBuilder_destroy(ScopeBuilderHandle self){
-
     Scope_destroy(self->scope);
     Controller_destroy(self->controller);
     Serializer_destroy(self->serializer);

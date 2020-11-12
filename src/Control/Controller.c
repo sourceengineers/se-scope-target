@@ -36,6 +36,7 @@ typedef struct __ControllerPrivateData {
     IPackerHandle packer;
     CommandParserDispatcherHandle commandParserDispatcher;
     CommandPackParserDispatcherHandle commandPackParserDispatcher;
+    IByteStreamHandle logByteStream;
 
     IObserver commandObserver;
     IObserver commandPackObserver;
@@ -96,6 +97,21 @@ static bool runTx(IRunnableHandle runnable) {
         return false;
     }
 
+    // TODO
+    // wenn hier LogByteStream Daten hat, das schicken, aber nur, wenn sonst nichts geschickt werden kann. Wenn nicht, SC_Log();
+
+    // TODO wenn Commands verfügbar sind, schauen, was zuletzt gemacht wurde und dann das andere machen
+    //		also zuletzt geloggt -> plotten, zuletzt geplottet -> loggen. So kommt beides an die Reihe
+    //
+
+
+    if (self->logByteStream->byteIsReady) {		// there is data available to send
+    	uint8_t debug = 0;
+    }
+    else{
+    	uint8_t debug = 0;
+    }
+
     ICommandHandle packCommand;
 
     packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
@@ -104,7 +120,7 @@ static bool runTx(IRunnableHandle runnable) {
     }
 
     self->packObserver->update(self->packObserver, &self->packCommandPending);
-		self->packCommandPending = SE_NONE;
+	self->packCommandPending = SE_NONE;
 		
     return true;
 }
@@ -126,7 +142,7 @@ static void commandUpdate(IObserverHandle observer, void *state) {
  Public functions
 ******************************************************************************/
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                   AnnounceStorageHandle announceStorage) {
+                                   AnnounceStorageHandle announceStorage, IByteStreamHandle logByteStream) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
     assert(self);
@@ -147,6 +163,8 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
 
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
     self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer);
+
+    self->logByteStream = logByteStream;
 
     self->commandPending = SE_NONE;
     return self;

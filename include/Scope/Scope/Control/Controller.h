@@ -39,7 +39,7 @@ typedef struct __ControllerPrivateData* ControllerHandle;
  * @return
  */
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                   AnnounceStorageHandle announceStorage);
+                                   AnnounceStorageHandle announceStorage, IByteStreamHandle logByteStream);
 
 /**
  * Returns the runnable of the rx controller
