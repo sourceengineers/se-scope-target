@@ -23,8 +23,8 @@ typedef struct __ScopeBuilderPrivateData{
     IByteStreamHandle input;
     IByteStreamHandle output;
     ICommunicatorHandle communicator;
-    ScopeHandle scope;
-    LoggerHandle log;	//TODO how to correctly build the log in the scope? And does this have to be here?
+    ScopeHandle scope;	//TODO instead give the stream
+    LoggerHandle logger;	//TODO how to correctly build the logger in the scope? And does this have to be here?
 
     ControllerHandle controller;
     SerializerHandle serializer;
@@ -52,7 +52,7 @@ ScopeBuilderHandle ScopeBuilder_create(void){
     self->output = NULL;
     self->communicator = NULL;
     self->scope = NULL;
-    self->log = NULL;
+    self->logger = NULL;
     self->controller = NULL;
     self->serializer = NULL;
     self->timestamp = NULL;
@@ -92,6 +92,11 @@ void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex){
     self->configMutex = mutex;
 }
 
+
+void ScopeBuilder_setLogger(ScopeBuilderHandler self, ILoggerHandle logger){
+	self->logger = logger;
+}
+
 ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
 
     ScopeRunnable runnable;
@@ -129,6 +134,7 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
     Serializer_attachControlObserver(self->serializer, Controller_getCommandObserver(self->controller));
     Scope_attachPackObserver(self->scope, Controller_getCommandPackObserver(self->controller));
     //TODO does the logger observer have to be attached too?
+
     Controller_attachPackObserver(self->controller, Serializer_getPackObserver(self->serializer));
     Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));
 
