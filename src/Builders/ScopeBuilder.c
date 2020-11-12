@@ -22,9 +22,10 @@
 typedef struct __ScopeBuilderPrivateData{
     IByteStreamHandle input;
     IByteStreamHandle output;
+    IByteStreamHandle logByteStream;	//TODO use this
+
     ICommunicatorHandle communicator;
-    ScopeHandle scope;	//TODO instead give the stream
-    LoggerHandle logger;	//TODO how to correctly build the logger in the scope? And does this have to be here?
+    ScopeHandle scope;
 
     ControllerHandle controller;
     SerializerHandle serializer;
@@ -52,7 +53,7 @@ ScopeBuilderHandle ScopeBuilder_create(void){
     self->output = NULL;
     self->communicator = NULL;
     self->scope = NULL;
-    self->logger = NULL;
+    self->logByteStream = NULL;
     self->controller = NULL;
     self->serializer = NULL;
     self->timestamp = NULL;
@@ -93,8 +94,8 @@ void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex){
 }
 
 
-void ScopeBuilder_setLogger(ScopeBuilderHandler self, ILoggerHandle logger){
-	self->logger = logger;
+void ScopeBuilder_setLogBuffer(ScopeBuilderHandle self, IByteStreamHandle logByteStream){
+	self->logByteStream = logByteStream;
 }
 
 ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
