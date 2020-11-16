@@ -33,17 +33,17 @@
 		<link>
 			<name>3rdparty</name>
 			<type>2</type>
-			<location>C:/Users/anselm/SourceEngineers/se-scope-target-examples/se-scope-target/3rdparty</location>
+			<locationURI>$%7BPARENT-4-PROJECT_LOC%7D/se-scope-target/3rdparty</locationURI>
 		</link>
 		<link>
 			<name>se-lib-c</name>
 			<type>2</type>
-			<location>C:/Users/anselm/SourceEngineers/se-scope-target-examples/se-scope-target/ext/se-lib-c</location>
+			<locationURI>$%7BPARENT-4-PROJECT_LOC%7D/se-scope-target/ext/se-lib-c</locationURI>
 		</link>
 		<link>
 			<name>src</name>
 			<type>2</type>
-			<location>C:/Users/anselm/SourceEngineers/se-scope-target-examples/se-scope-target/src</location>
+			<locationURI>$%7BPARENT-4-PROJECT_LOC%7D/se-scope-target/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
