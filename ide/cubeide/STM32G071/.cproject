@@ -74,7 +74,9 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="3rdparty/nanopb/tests|3rdparty/nanopb/examples|se-lib-c/test" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="nanopb/examples/|nanopb/tests/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="3rdparty"/>
+						<entry excluding="test/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="se-lib-c"/>
+						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
