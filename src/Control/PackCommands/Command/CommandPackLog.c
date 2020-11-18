@@ -28,27 +28,38 @@
 typedef struct __CommandPackLogPrivateData{
     ICommand command;
     IPackerHandle packer;
-    ScLogDataDef log;
+    IByteStreamHandle logStream;
 } CommandPackLogPrivateData;
+
 
 static void run(ICommandHandle command);
 
-/******************************************************************************
- Private functions
-******************************************************************************/
-static void run(ICommandHandle command){
-    CommandPackLogHandle self = (CommandPackLogHandle) command->handle;
-    self->packer->addLog(self->packer, self->log);
-}
 
 /******************************************************************************
  Private functions
 ******************************************************************************/
-CommandPackLogHandle CommandPackLog_create(ScLogDataDef log, IPackerHandle packer){
+
+/* TODO: read only a few bytes! */
+static void run(ICommandHandle command){
+    CommandPackLogHandle self = (CommandPackLogHandle) command->handle;
+    ScLogDataDef logStreamData;
+    /* TODO: actually read the message from the logStream */
+    logStreamData.message = "I stole your msg!";
+    //these are included in the code, not needed
+    logStreamData.severity = SC_INFO;
+    logStreamData.timestamp = (uint32_t) 100;
+    self->packer->addLog(self->packer, logStreamData);		//TODO the pointer to addLog is wrong! Where should this be set?
+}
+
+
+/******************************************************************************
+ Private functions
+******************************************************************************/
+CommandPackLogHandle CommandPackLog_create(IByteStreamHandle logStream, IPackerHandle packer){
     CommandPackLogHandle self = malloc(sizeof(CommandPackLogPrivateData));
     assert(self);
 
-    self->log = log;	//TODO where do i get this from?
+    self->logStream = logStream;
     self->packer = packer;
 
     self->command.handle = self;

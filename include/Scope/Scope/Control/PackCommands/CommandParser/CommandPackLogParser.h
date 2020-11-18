@@ -33,7 +33,8 @@ typedef struct __CommandPackLogParserPrivateData* CommandPackLogParserHandle;
  * @param packer
  * @return
  */
-CommandPackLogParserHandle CommandPackLogParser_create(ScLogDataDef log, IPackerHandle packer);
+CommandPackLogParserHandle CommandPackLogParser_create(IByteStreamHandle logStream, IPackerHandle packer);
+//CommandPackLogParserHandle CommandPackLogParser_create(IScopeHandle scope, IPackerHandle packer);
 
 /**
  * Returns the command

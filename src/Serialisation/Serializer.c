@@ -77,7 +77,7 @@ static CfAddressDef cfAddress_getChannel(IUnpackerHandle unpacker, uint32_t inde
 
 static void addChannel(IPackerHandle packer, ScDataChannelDef channel);
 
-static void addLog(IPackerHandle packer, ScLogDataDef log);
+static void addLog(IPackerHandle packer, ScLogDataDef logStream);
 
 static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
 
@@ -184,11 +184,10 @@ void addChannel(IPackerHandle packer, ScDataChannelDef channel){
     currentPacker->addChannel(currentPacker, channel);
 }
 
-//TODO
-__unused void addLog(IPackerHandle packer, ScLogDataDef log){
+void addLog(IPackerHandle packer, ScLogDataDef logStream){
     SerializerHandle self = (SerializerHandle) packer->handle;
     IPackerHandle currentPacker = getPacker(self, SC_LOG);
-    currentPacker->addLog(currentPacker, log);
+    currentPacker->addLog(currentPacker, logStream);
 }
 
 void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement){
@@ -310,6 +309,7 @@ SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByt
     self->packer.addChannel = &addChannel;
     self->packer.addAddressAnnouncement = &addAddressAnnouncement;
     self->packer.addTimestamp = &addTimestamp;
+    self->packer.addLog = &addLog;
 
     self->unpacker.handle = self;
     self->unpacker.cfAddress_getAmount = &cfAddress_getAmount;

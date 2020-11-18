@@ -34,7 +34,6 @@ typedef struct __ScAnnouncementData {
     size_t amountOfChannels;
 } ScAnnouncementData;
 
-//TODO check if this works
 typedef struct __ScLogData {
 	SEVERITY severity;
 	char* message;
@@ -341,7 +340,7 @@ static void pack(IPackerHandle packer, MessageType type){
     if(self->output->length(self->output) != 0) {
         return;
     }
-	
+
     if(type == SC_DATA) {
         packScData(self);
     }else if(type == SC_ANNOUNCE){
@@ -350,7 +349,7 @@ static void pack(IPackerHandle packer, MessageType type){
     else if (type == SC_LOG){
     	packScLog(self);
     }
-		
+
     resetSelf(self);
 }
 

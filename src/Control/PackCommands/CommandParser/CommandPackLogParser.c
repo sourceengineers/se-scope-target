@@ -24,10 +24,11 @@ typedef struct __CommandPackLogParserPrivateData{
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandPackLogParserHandle CommandPackLogParser_create(ScLogDataDef log, IPackerHandle packer){
+
+CommandPackLogParserHandle CommandPackLogParser_create(IByteStreamHandle logStream, IPackerHandle packer){
     CommandPackLogParserHandle self = malloc(sizeof(CommandPackLogParserPrivateData));
     assert(self);
-    self->command = CommandPackLog_create(log, packer);
+    self->command = CommandPackLog_create(logStream, packer);
     return self;
 }
 

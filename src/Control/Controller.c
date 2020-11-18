@@ -88,6 +88,13 @@ static bool runRx(IRunnableHandle runnable) {
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
+    if(self->logByteStream->byteIsReady(self->logByteStream)){
+    	uint8_t debug = 0;
+
+    	Scope_log(self->scope->handle);
+    	//TODO check if also other commands are ready
+    }
+
     if (self->packer->isReady(self->packer) == false){
         return false;
     }
@@ -97,20 +104,14 @@ static bool runTx(IRunnableHandle runnable) {
         return false;
     }
 
+
+
     // TODO
     // wenn hier LogByteStream Daten hat, das schicken, aber nur, wenn sonst nichts geschickt werden kann. Wenn nicht, SC_Log();
 
     // TODO wenn Commands verfügbar sind, schauen, was zuletzt gemacht wurde und dann das andere machen
     //		also zuletzt geloggt -> plotten, zuletzt geplottet -> loggen. So kommt beides an die Reihe
     //
-
-
-    if (self->logByteStream->byteIsReady) {		// there is data available to send
-    	uint8_t debug = 0;
-    }
-    else{
-    	uint8_t debug = 0;
-    }
 
     ICommandHandle packCommand;
 
@@ -161,10 +162,13 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->commandPackObserver.update = &commandPackUpdate;
     self->commandObserver.update = &commandUpdate;
 
-    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
-    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer);
-
     self->logByteStream = logByteStream;
+
+    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
+
+    //TODO this needs to have access to the log message
+    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer, logByteStream);
+
 
     self->commandPending = SE_NONE;
     return self;

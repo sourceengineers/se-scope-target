@@ -34,7 +34,7 @@ typedef struct __CommandPackLogPrivateData* CommandPackLogHandle;
  * @param packer
  * @return
  */
-CommandPackLogHandle CommandPackLog_create(ScLogDataDef scope, IPackerHandle packer);
+CommandPackLogHandle CommandPackLog_create(IByteStreamHandle logStream, IPackerHandle packer);
 
 /**
  * Returns the ICommand interface
