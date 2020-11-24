@@ -50,7 +50,7 @@ typedef struct __ScDataTriggerDef {
 
 typedef struct __ScLogDataDef{
 	SEVERITY severity;
-	char* message;
+	char message[50];
 	uint32_t timestamp;
 } ScLogDataDef;
 

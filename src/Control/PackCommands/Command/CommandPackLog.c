@@ -39,16 +39,21 @@ static void run(ICommandHandle command);
  Private functions
 ******************************************************************************/
 
-/* TODO: read only a few bytes! */
-static void run(ICommandHandle command){
-    CommandPackLogHandle self = (CommandPackLogHandle) command->handle;
-    ScLogDataDef logStreamData;
-    /* TODO: actually read the message from the logStream */
-    logStreamData.message = "I stole your msg!";
-    //these are included in the code, not needed
-    logStreamData.severity = SC_INFO;
-    logStreamData.timestamp = (uint32_t) 100;
-    self->packer->addLog(self->packer, logStreamData);		//TODO the pointer to addLog is wrong! Where should this be set?
+	static void run(ICommandHandle command){
+	//TODO this just writes SC_INFO and a set timestamp, this is not the idea
+	CommandPackLogHandle self = (CommandPackLogHandle) command->handle;
+	ScLogDataDef logStreamData;
+	logStreamData.severity = SC_INFO;
+	logStreamData.timestamp = (uint32_t) 100;
+
+	char msg[50];
+	size_t length = self->logStream->length(self->logStream);
+	if (length > 50){
+		length = 50;
+	}
+	self->logStream->read(self->logStream, &msg, length);
+	strcpy(logStreamData.message, msg);
+	self->packer->addLog(self->packer, logStreamData);		//TODO the pointer to addLog is wrong! Where should this be set?
 }
 
 

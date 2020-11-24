@@ -88,30 +88,25 @@ static bool runRx(IRunnableHandle runnable) {
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
-    if(self->logByteStream->byteIsReady(self->logByteStream)){
-    	uint8_t debug = 0;
 
-    	Scope_log(self->scope->handle);
-    	//TODO check if also other commands are ready
-    }
 
     if (self->packer->isReady(self->packer) == false){
         return false;
     }
 
-    // Check if messages have to be packed
+    // TODO smarter handling of this
     if (self->packCommandPending == SE_NONE) {
-        return false;
+	   if(self->logByteStream->byteIsReady(self->logByteStream)){
+			Scope_log(self->scope->handle);
+		}
+	   else{
+	        return false;
+	   }
     }
-
-
-
-    // TODO
-    // wenn hier LogByteStream Daten hat, das schicken, aber nur, wenn sonst nichts geschickt werden kann. Wenn nicht, SC_Log();
 
     // TODO wenn Commands verfügbar sind, schauen, was zuletzt gemacht wurde und dann das andere machen
     //		also zuletzt geloggt -> plotten, zuletzt geplottet -> loggen. So kommt beides an die Reihe
-    //
+
 
     ICommandHandle packCommand;
 
