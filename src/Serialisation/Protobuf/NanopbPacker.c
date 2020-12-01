@@ -319,12 +319,11 @@ void packScAnnounce(NanopbPackerHandle self){
 }
 
 
-//TODO check if this works
 void packScLog(NanopbPackerHandle self){
 	PB_SC_Log log = PB_SC_Log_init_default;
-	log.severity = self->logData.severity;
+//	log.severity = self->logData.severity;
 	strcpy(log.message, self->logData.message);
-	log.timestamp = self->logData.timestamp;
+//	log.timestamp = self->logData.timestamp;
     pb_encode(&self->wrapped, PB_SC_Log_fields, &log);
 }
 

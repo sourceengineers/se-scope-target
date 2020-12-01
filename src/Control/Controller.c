@@ -95,7 +95,8 @@ static bool runTx(IRunnableHandle runnable) {
     }
 
     // TODO smarter handling of this
-    if (self->packCommandPending == SE_NONE) {
+
+    if (self->packCommandPending == SE_NONE) {	// only send the log, if no other command is pending
 	   if(self->logByteStream->byteIsReady(self->logByteStream)){
 			Scope_log(self->scope->handle);
 		}
