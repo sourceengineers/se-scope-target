@@ -87,7 +87,7 @@
 						<entry excluding="se-lib-c/test/|se-lib-c/src/logger/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="ext"/>
 						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="public"/>
 						<entry excluding="src/logger/" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="se-lib-c"/>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
+						<entry excluding="Control/Commands/Command/CommandLog.c|Control/Commands/CommandParser/CommandLogParser.c" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
