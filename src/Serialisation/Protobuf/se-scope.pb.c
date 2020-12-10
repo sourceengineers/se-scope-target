@@ -6,9 +6,6 @@
 #error Regenerate this file with the current version of nanopb generator.
 #endif
 
-PB_BIND(PB_SC_Log, PB_SC_Log, AUTO)
-
-
 PB_BIND(PB_SC_Trigger, PB_SC_Trigger, AUTO)
 
 
@@ -36,6 +33,9 @@ PB_BIND(PB_RunningConfig, PB_RunningConfig, AUTO)
 PB_BIND(PB_CF_Running, PB_CF_Running, AUTO)
 
 
+PB_BIND(PB_SC_Log, PB_SC_Log, 2)
+
+
 PB_BIND(PB_CF_Trigger, PB_CF_Trigger, AUTO)
 
 
@@ -43,7 +43,6 @@ PB_BIND(PB_CF_TInc, PB_CF_TInc, AUTO)
 
 
 PB_BIND(PB_EV_Poll, PB_EV_Poll, AUTO)
-
 
 
 

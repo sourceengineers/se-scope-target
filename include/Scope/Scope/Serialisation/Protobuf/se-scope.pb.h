@@ -24,13 +24,6 @@ typedef enum _PB_Var_Type {
     PB_Var_Type_SE_FLOAT = 6
 } PB_Var_Type;
 
-typedef enum _PB_Log_Severity {
-    PB_Log_Severity_INFO = 0,
-    PB_Log_Severity_DEBUG = 1,
-    PB_Log_Severity_WARNING = 2,
-    PB_Log_Severity_ERROR = 3
-} PB_Log_Severity;
-
 typedef enum _PB_Trigger_Mode {
     PB_Trigger_Mode_NORMAL = 0,
     PB_Trigger_Mode_CONTINUOUS = 1,
@@ -92,7 +85,7 @@ typedef struct _PB_SC_Channel_Configuration {
 } PB_SC_Channel_Configuration;
 
 typedef struct _PB_SC_Log {
-    char message[50];
+    char message[300];
 } PB_SC_Log;
 
 typedef struct _PB_SC_Trigger {
@@ -115,17 +108,12 @@ typedef struct _PB_SC_Data {
 #define _PB_Var_Type_MAX PB_Var_Type_SE_FLOAT
 #define _PB_Var_Type_ARRAYSIZE ((PB_Var_Type)(PB_Var_Type_SE_FLOAT+1))
 
-#define _PB_Log_Severity_MIN PB_Log_Severity_INFO
-#define _PB_Log_Severity_MAX PB_Log_Severity_ERROR
-#define _PB_Log_Severity_ARRAYSIZE ((PB_Log_Severity)(PB_Log_Severity_ERROR+1))
-
 #define _PB_Trigger_Mode_MIN PB_Trigger_Mode_NORMAL
 #define _PB_Trigger_Mode_MAX PB_Trigger_Mode_ONE_SHOT
 #define _PB_Trigger_Mode_ARRAYSIZE ((PB_Trigger_Mode)(PB_Trigger_Mode_ONE_SHOT+1))
 
 
 /* Initializer values for message structs */
-#define PB_SC_Log_init_default                   {""}
 #define PB_SC_Trigger_init_default               {0, 0, _PB_Trigger_Mode_MIN}
 #define PB_SC_Channel_init_default               {{{NULL}, NULL}, 0}
 #define PB_SC_Data_init_default                  {{{NULL}, NULL}, {{NULL}, NULL}, 0, false, PB_SC_Trigger_init_default}
@@ -135,10 +123,10 @@ typedef struct _PB_SC_Data {
 #define PB_CF_Address_init_default               {{{NULL}, NULL}}
 #define PB_RunningConfig_init_default            {0, 0}
 #define PB_CF_Running_init_default               {{{NULL}, NULL}}
+#define PB_SC_Log_init_default                   {""}
 #define PB_CF_Trigger_init_default               {0, _PB_Trigger_Mode_MIN, 0, 0}
 #define PB_CF_TInc_init_default                  {0}
 #define PB_EV_Poll_init_default                  {0}
-#define PB_SC_Log_init_zero                      {""}
 #define PB_SC_Trigger_init_zero                  {0, 0, _PB_Trigger_Mode_MIN}
 #define PB_SC_Channel_init_zero                  {{{NULL}, NULL}, 0}
 #define PB_SC_Data_init_zero                     {{{NULL}, NULL}, {{NULL}, NULL}, 0, false, PB_SC_Trigger_init_zero}
@@ -148,6 +136,7 @@ typedef struct _PB_SC_Data {
 #define PB_CF_Address_init_zero                  {{{NULL}, NULL}}
 #define PB_RunningConfig_init_zero               {0, 0}
 #define PB_CF_Running_init_zero                  {{{NULL}, NULL}}
+#define PB_SC_Log_init_zero                      {""}
 #define PB_CF_Trigger_init_zero                  {0, _PB_Trigger_Mode_MIN, 0, 0}
 #define PB_CF_TInc_init_zero                     {0}
 #define PB_EV_Poll_init_zero                     {0}
@@ -186,11 +175,6 @@ typedef struct _PB_SC_Data {
 #define PB_SC_Data_trigger_tag                   4
 
 /* Struct field encoding specification for nanopb */
-#define PB_SC_Log_FIELDLIST(X, a) \
-X(a, STATIC,   SINGULAR, STRING,   message,           1)
-#define PB_SC_Log_CALLBACK NULL
-#define PB_SC_Log_DEFAULT NULL
-
 #define PB_SC_Trigger_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT32,   cl_id,             1) \
 X(a, STATIC,   SINGULAR, UINT32,   cl_data_ind,       2) \
@@ -256,6 +240,11 @@ X(a, CALLBACK, REPEATED, MESSAGE,  running,           1)
 #define PB_CF_Running_DEFAULT NULL
 #define PB_CF_Running_running_MSGTYPE PB_RunningConfig
 
+#define PB_SC_Log_FIELDLIST(X, a) \
+X(a, STATIC,   SINGULAR, STRING,   message,           1)
+#define PB_SC_Log_CALLBACK NULL
+#define PB_SC_Log_DEFAULT NULL
+
 #define PB_CF_Trigger_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT32,   cl_id,             1) \
 X(a, STATIC,   SINGULAR, UENUM,    mode,              2) \
@@ -274,7 +263,6 @@ X(a, STATIC,   SINGULAR, UINT32,   timestamp,         1)
 #define PB_EV_Poll_CALLBACK NULL
 #define PB_EV_Poll_DEFAULT NULL
 
-extern const pb_msgdesc_t PB_SC_Log_msg;
 extern const pb_msgdesc_t PB_SC_Trigger_msg;
 extern const pb_msgdesc_t PB_SC_Channel_msg;
 extern const pb_msgdesc_t PB_SC_Data_msg;
@@ -284,12 +272,12 @@ extern const pb_msgdesc_t PB_AddressConfig_msg;
 extern const pb_msgdesc_t PB_CF_Address_msg;
 extern const pb_msgdesc_t PB_RunningConfig_msg;
 extern const pb_msgdesc_t PB_CF_Running_msg;
+extern const pb_msgdesc_t PB_SC_Log_msg;
 extern const pb_msgdesc_t PB_CF_Trigger_msg;
 extern const pb_msgdesc_t PB_CF_TInc_msg;
 extern const pb_msgdesc_t PB_EV_Poll_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
-#define PB_SC_Log_fields &PB_SC_Log_msg
 #define PB_SC_Trigger_fields &PB_SC_Trigger_msg
 #define PB_SC_Channel_fields &PB_SC_Channel_msg
 #define PB_SC_Data_fields &PB_SC_Data_msg
@@ -299,12 +287,12 @@ extern const pb_msgdesc_t PB_EV_Poll_msg;
 #define PB_CF_Address_fields &PB_CF_Address_msg
 #define PB_RunningConfig_fields &PB_RunningConfig_msg
 #define PB_CF_Running_fields &PB_CF_Running_msg
+#define PB_SC_Log_fields &PB_SC_Log_msg
 #define PB_CF_Trigger_fields &PB_CF_Trigger_msg
 #define PB_CF_TInc_fields &PB_CF_TInc_msg
 #define PB_EV_Poll_fields &PB_EV_Poll_msg
 
 /* Maximum encoded size of messages (where known) */
-#define PB_SC_Log_size                           51
 #define PB_SC_Trigger_size                       14
 /* PB_SC_Channel_size depends on runtime parameters */
 /* PB_SC_Data_size depends on runtime parameters */
@@ -314,6 +302,7 @@ extern const pb_msgdesc_t PB_EV_Poll_msg;
 /* PB_CF_Address_size depends on runtime parameters */
 #define PB_RunningConfig_size                    8
 /* PB_CF_Running_size depends on runtime parameters */
+#define PB_SC_Log_size                           302
 #define PB_CF_Trigger_size                       15
 #define PB_CF_TInc_size                          6
 #define PB_EV_Poll_size                          6

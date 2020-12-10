@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 /******************************************************************************
  Define private data
@@ -40,19 +41,19 @@ static void run(ICommandHandle command);
 ******************************************************************************/
 
 static void run(ICommandHandle command){
-	//TODO this just writes SC_INFO and a set timestamp, this is not the idea
 	CommandPackLogHandle self = (CommandPackLogHandle) command->handle;
 	ScLogDataDef logStreamData;
-//	logStreamData.severity = SC_INFO;
-//	logStreamData.timestamp = (uint32_t) 100;
+	size_t lengthOfOneMessage = 50;
 
-	char msg[50];
+	char msg[lengthOfOneMessage];
+	// how many bytes are in the buffer
 	size_t length = self->logStream->length(self->logStream);
-	if (length > 50){
-		length = 50;
+	if (length > lengthOfOneMessage-2){
+		length = lengthOfOneMessage-2;
 	}
-	self->logStream->read(self->logStream, &msg, length);
-	strcpy(logStreamData.message, msg);
+	self->logStream->read(self->logStream, (uint8_t *) &msg, length);
+	msg[length] = '\0';
+	memcpy((uint8_t *) logStreamData.message, (uint8_t *) msg, (length+1) * sizeof(msg[0]));
 	self->packer->addLog(self->packer, logStreamData);
 }
 
