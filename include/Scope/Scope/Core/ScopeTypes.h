@@ -80,4 +80,8 @@ typedef enum __MessageType {
 
 } MessageType;
 
+#define ENUM_START_CLIENT_TO_HOST SC_DATA
+#define ENUM_START_HOST_TO_CLIENT EV_ANNOUNCE
+
+
 #endif

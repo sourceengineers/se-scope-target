@@ -18,7 +18,6 @@
 #include "Scope/Control/IUnpacker.h"
 #include "Scope/Core/IScope.h"
 #include "Scope/Core/ScopeTypes.h"
-#include "Scope/Control/ParserDefinitions.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -36,26 +35,19 @@ typedef struct __ControllerPrivateData {
     IPackerHandle packer;
     CommandParserDispatcherHandle commandParserDispatcher;
     CommandPackParserDispatcherHandle commandPackParserDispatcher;
-
     IObserver commandObserver;
     IObserver commandPackObserver;
-
     IObserverHandle packObserver;
-
     MessageType packCommandPending;
-
     MessageType commandPending;
 
-    uint8_t pendingToPack;
-
+    bool waitForAck;
 } ControllerPrivateData;
 
 static bool runRx(IRunnableHandle runnable);
-
 static bool runTx(IRunnableHandle runnable);
-
 static void commandPackUpdate(IObserverHandle observer, void *state);
-
+static bool messageNeedsToBeAcked(MessageType message) ;
 static void commandUpdate(IObserverHandle observer, void *state);
 
 /******************************************************************************
@@ -74,6 +66,10 @@ static bool runRx(IRunnableHandle runnable) {
         return true;
     }
 
+    if (self->commandPending == SE_ACK) {
+        self->waitForAck = false;
+    }
+
     ICommandHandle command = CommandParserDispatcher_run(self->commandParserDispatcher, self->commandPending);
     if(command != NULL){
         command->run(command);
@@ -87,12 +83,16 @@ static bool runRx(IRunnableHandle runnable) {
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
+    // Check if messages have to be packed
+    if (self->packCommandPending == SE_NONE) {
+        return false;
+    }
+
     if (self->packer->isReady(self->packer) == false){
         return false;
     }
 
-    // Check if messages have to be packed
-    if (self->packCommandPending == SE_NONE) {
+    if (self->waitForAck == true){
         return false;
     }
 
@@ -104,7 +104,8 @@ static bool runTx(IRunnableHandle runnable) {
     }
 
     self->packObserver->update(self->packObserver, &self->packCommandPending);
-		self->packCommandPending = SE_NONE;
+    self->waitForAck = messageNeedsToBeAcked(self->packCommandPending);
+    self->packCommandPending = SE_NONE;
 		
     return true;
 }
@@ -120,6 +121,14 @@ static void commandPackUpdate(IObserverHandle observer, void *state) {
 static void commandUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
     self->commandPending = *(MessageType*) state;
+}
+
+/**
+ * All messages other than ack and nack, must be acked
+ * @param message
+ */
+static bool messageNeedsToBeAcked(MessageType message) {
+    return message > ENUM_START_CLIENT_TO_HOST && message < ENUM_START_HOST_TO_CLIENT;
 }
 
 /******************************************************************************
