@@ -1,4 +1,3 @@
-
 set(SE_SCOPE_TESTS ${SE_SCOPE}-test)
 
 project(${SE_SCOPE_TESTS} C CXX)

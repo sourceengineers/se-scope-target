@@ -71,11 +71,10 @@ target_link_libraries(${SE_SCOPE} INTERFACE se-lib::scope)
 message("-- Compiling for ${CMAKE_SIZEOF_VOID_P} bit architecture")
 
 if (NOT WIN32)
-    if(${CMAKE_SIZEOF_VOID_P} EQUAL 8 OR ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
+    if(${CMAKE_SIZEOF_VOID_P})
         target_compile_definitions(${SE_SCOPE} PUBLIC VP_SIZE=${CMAKE_SIZEOF_VOID_P})
     else()
-        message("Target architecture not supported")
-        return()
+        target_compile_definitions(${SE_SCOPE} PUBLIC VP_SIZE=4)
     endif()
 else()
     target_compile_definitions(${SE_SCOPE} PUBLIC VP_SIZE=8)
@@ -86,9 +85,11 @@ target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic -Werror)
 ################################################################################
 # Add testing
 ################################################################################
-enable_testing()
-set(SE_SCOPE_PROJECT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
-add_subdirectory(test EXCLUDE_FROM_ALL)
+if (NOT ${CMAKE_CROSSCOMPILING})
+    enable_testing()
+    set(SE_SCOPE_PROJECT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
+    add_subdirectory(test EXCLUDE_FROM_ALL)
+endif()
 
 ################################################################################
 # Export the target
