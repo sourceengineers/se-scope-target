@@ -34,8 +34,6 @@ static void run(ICommandHandle command);
 static void run(ICommandHandle command){
     CommandTransHandle self = (CommandTransHandle) command->handle;
     self->scope->transmit(self->scope);
-    MessageType resp = SE_ACK;
-    self->observer->update(self->observer, &resp);
 }
 
 /******************************************************************************

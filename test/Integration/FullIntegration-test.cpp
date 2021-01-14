@@ -73,6 +73,10 @@ TEST_F(FullIntegrationTest, normal_run
     v_o.assign(a_o, a_o + a_o_s);
     EXPECT_THAT(extractMessageType(v_o), SC_DETECT);
 
+    v_i = prepareMessage(SE_ACK, v_d);
+    _transceiver->put(_transceiver, (uint8_t*) &v_i[0], v_i.size());
+    ScopeFramedStack_run(_stack);
+
     v_i = prepareMessage(EV_ANNOUNCE, v_d);
     _transceiver->put(_transceiver, (uint8_t*) &v_i[0], v_i.size());
     ScopeFramedStack_run(_stack);
@@ -80,6 +84,10 @@ TEST_F(FullIntegrationTest, normal_run
     _transceiver->get(_transceiver, a_o, a_o_s);
     v_o.assign(a_o, a_o + a_o_s);
     EXPECT_THAT(extractMessageType(v_o), SC_ANNOUNCE);
+
+    v_i = prepareMessage(SE_ACK, v_d);
+    _transceiver->put(_transceiver, (uint8_t*) &v_i[0], v_i.size());
+    ScopeFramedStack_run(_stack);
 
     // CF_RUNNING, channeld 1 = false, channeld 2 = false,
     v_d = {10, 2, 8, 1, 10, 0};
