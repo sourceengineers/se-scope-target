@@ -5,7 +5,7 @@ pipelines:
     - step:
         script: # Modify the commands below to build your repository.
           - apt update
-          - apt install cmake -y
+          - apt install cmake ninja-build -y
           - git submodule update --init
           - mkdir build
           - cd build
