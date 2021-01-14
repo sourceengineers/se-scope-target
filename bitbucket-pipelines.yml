@@ -10,6 +10,6 @@ pipelines:
           - mkdir build
           - cd build
           - cmake -G Ninja ..
-          - make se-scope-test
+          - ninja se-scope-test
           - export GTEST_OUTPUT="xml:test-results/test-results.xml"
           - ./test/se-scope-test
