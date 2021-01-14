@@ -9,7 +9,7 @@ pipelines:
           - git submodule update --init
           - mkdir build
           - cd build
-          - cmake ..
+          - cmake -G Ninja ..
           - make se-scope-test
           - export GTEST_OUTPUT="xml:test-results/test-results.xml"
           - ./test/se-scope-test
