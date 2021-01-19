@@ -35,9 +35,7 @@ typedef struct __ScAnnouncementData {
 } ScAnnouncementData;
 
 typedef struct __ScLogData {
-	SEVERITY severity;
 	char* message;
-	uint32_t timestamp;
 } ScLogData;
 
 /******************************************************************************

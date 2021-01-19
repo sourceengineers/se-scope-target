@@ -47,7 +47,9 @@ typedef struct __ControllerPrivateData {
 
     MessageType commandPending;
 
-    uint8_t pendingToPack;
+	uint8_t pendingToPack;
+
+    uint16_t numberOfPackedLogmessagesSent;
 
 } ControllerPrivateData;
 
@@ -85,9 +87,10 @@ static bool runRx(IRunnableHandle runnable) {
     return true;
 }
 
+
+//		/* OLD RUNTX */
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
-
 
 
     if (self->packer->isReady(self->packer) == false){
@@ -98,7 +101,9 @@ static bool runTx(IRunnableHandle runnable) {
 
     if (self->packCommandPending == SE_NONE) {	// only send the log, if no other command is pending
 	   if(self->logByteStream->byteIsReady(self->logByteStream)){
-			Scope_log(self->scope->handle);
+			Scope_log(self->scope->handle);	//TODO replace this with the following:
+//		    MessageType typeToPack = SC_LOG;
+//		    self->packObserver->update(self->packObserver, &typeToPack);
 		}
 	   else{
 	        return false;
@@ -118,9 +123,90 @@ static bool runTx(IRunnableHandle runnable) {
 
     self->packObserver->update(self->packObserver, &self->packCommandPending);
 	self->packCommandPending = SE_NONE;
-		
+
     return true;
 }
+
+
+
+//		/* NEW RUNTX. Not working yet */
+//static bool runTx(IRunnableHandle runnable) {
+//    ControllerHandle self = (ControllerHandle) runnable->handle;
+//    ICommandHandle packCommand = NULL;
+//    // wait here until packer is no more busy and until byte transport layer has emptied the output buffer
+//    // TODO is it possible that packCommandPending is overwritten and therefore messages are lost?
+//    if (self->packer->isReady(self->packer) == false){
+//        return false;
+//    }
+//
+//    // if isImageTransferCompleted
+//    //    startLog Transfer
+//    // if isLogTransferCompleted
+//
+//    // TODO smarter handling of this
+//	if (self->packCommandPending == SE_NONE) {
+//	   if(self->logByteStream->byteIsReady(self->logByteStream)){
+//		   // if no command is pending, but there is something in the LogByteStream, send this.
+////		   packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, SC_LOG);
+//		   Scope_log(self->scope->handle);	//TODO replace this
+//		   self->numberOfPackedLogmessagesSent++;
+//		}
+//    }
+//    //another, probably importand command is pending, do this.
+//    else if(self->packCommandPending != SC_DATA)
+//    {
+//        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
+//        self->packCommandPending = SE_NONE;
+//    }
+//    //SC_DATA is available
+//    else
+//    {
+//    	// nothing to log, just send SC_DATA
+//    	if(!self->logByteStream->byteIsReady(self->logByteStream))
+//    	{
+//    		packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
+//            self->packCommandPending = SE_NONE;
+//    	}
+//    	// if many logs have been sent, send the data and reset numberOfPackedLogmessagesSent
+//    	else if(self->numberOfPackedLogmessagesSent > 10u)
+//    	{
+//    		packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
+//            self->packCommandPending = SE_NONE;
+//    		self->numberOfPackedLogmessagesSent = 0;
+//    	}
+//    	else
+//    	{
+//    	// send the log, inc the counter
+//			packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, SC_LOG);
+//			self->numberOfPackedLogmessagesSent++;
+//    	}
+//    }
+//
+//
+//
+//	//TODO wann muss self->packCommandPending = SE_NONE; gesetzt werden?
+//
+//    // TODO wird scope zu krass bevorzugt? Macht es sinn nach einem scope-bild einige kByte log messages zu versendne bevor das
+//    //      scope wider dran kommt?
+//
+//    // TODO wenn Commands verfügbar sind, schauen, was zuletzt gemacht wurde und dann das andere machen
+//    //		also zuletzt geloggt -> plotten, zuletzt geplottet -> loggen. So kommt beides an die Reihe
+//
+//
+//
+//
+//    if(packCommand != NULL){
+//        packCommand->run(packCommand);
+//        self->packCommandPending = SE_NONE;
+//    }
+//
+//    self->packObserver->update(self->packObserver, &self->packCommandPending);
+//
+//    // TODO reset this flag only after output buffer is empty?
+////	self->packCommandPending = SE_NONE;
+//
+//    return true;
+//}
 
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
@@ -162,11 +248,14 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
 
     self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
 
-    //TODO this needs to have access to the log message
     self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer, logByteStream);
 
 
+    self->packCommandPending = SE_NONE;
     self->commandPending = SE_NONE;
+
+    self->numberOfPackedLogmessagesSent = 0;
+
     return self;
 }
 
