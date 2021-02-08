@@ -80,4 +80,4 @@ typedef enum __MessageType {
 
 } MessageType;
 
-#endif
+#endif	//SCOPETYPES_H
