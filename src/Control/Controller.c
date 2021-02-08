@@ -100,8 +100,9 @@ static bool runTx(IRunnableHandle runnable) {
 	if (self->packCommandPending == SE_NONE) {
 		// no command pending, log ready
 	   if(self->logByteStream->byteIsReady(self->logByteStream)){
-		   Scope_log(self->scope->handle);
-			self->numberOfPackedLogmessagesSent++;
+		   Scope_log(self->scope->handle); //TODO self->packCommandPending = SC_LOG;
+//		   self->packCommandPending = SC_LOG;
+		   self->numberOfPackedLogmessagesSent++;
 		}
 	   else{
 		   return true;	// no pack command pending, nothing to log. Return.
@@ -129,7 +130,8 @@ static bool runTx(IRunnableHandle runnable) {
     	}
     	else	// send the log, increase the counter
     	{
-    		Scope_log(self->scope->handle);
+    		Scope_log(self->scope->handle); //TODO self->packCommandPending = SC_LOG;
+//    		self->packCommandPending = SC_LOG;
 			self->numberOfPackedLogmessagesSent++;
     	}
     }
@@ -138,7 +140,6 @@ static bool runTx(IRunnableHandle runnable) {
 	if(packCommand != NULL){
 		packCommand->run(packCommand);
 	}
-
 	self->packObserver->update(self->packObserver, &self->packCommandPending);
 	self->packCommandPending = SE_NONE;
 	return true;
