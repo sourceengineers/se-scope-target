@@ -88,125 +88,62 @@ static bool runRx(IRunnableHandle runnable) {
 }
 
 
-//		/* OLD RUNTX */
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
+    ICommandHandle packCommand = NULL;
 
 
     if (self->packer->isReady(self->packer) == false){
         return false;
     }
 
-    // TODO smarter handling of this
-
-    if (self->packCommandPending == SE_NONE) {	// only send the log, if no other command is pending
+	if (self->packCommandPending == SE_NONE) {
+		// no command pending, log ready
 	   if(self->logByteStream->byteIsReady(self->logByteStream)){
-			Scope_log(self->scope->handle);	//TODO replace this with the following:
-//		    MessageType typeToPack = SC_LOG;
-//		    self->packObserver->update(self->packObserver, &typeToPack);
+		   Scope_log(self->scope->handle);
+			self->numberOfPackedLogmessagesSent++;
 		}
 	   else{
-	        return false;
+		   return true;	// no pack command pending, nothing to log. Return.
 	   }
     }
 
-    // TODO wenn Commands verfügbar sind, schauen, was zuletzt gemacht wurde und dann das andere machen
-    //		also zuletzt geloggt -> plotten, zuletzt geplottet -> loggen. So kommt beides an die Reihe
-
-
-    ICommandHandle packCommand;
-
-    packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
-    if(packCommand != NULL){
-        packCommand->run(packCommand);
+    //another command is pending, do this command (is probably important). Prioritize over log
+    else if(self->packCommandPending != SC_DATA && self->packCommandPending != SC_LOG)
+    {
+       //do nothing special, just skip to  CommandPackParserDispatcher_run
+    }
+	else	 //SC_DATA or SC_LOG is available
+    {
+    	// nothing to log, send SC_DATA
+    	if(!self->logByteStream->byteIsReady(self->logByteStream))
+    	{
+    		self->packCommandPending = SC_DATA;
+    		self->numberOfPackedLogmessagesSent = 0;
+    	}
+    	//log available, but 10 log Messages send. Send Data.
+    	else if(self->numberOfPackedLogmessagesSent > 10u)
+    	{
+    		self->packCommandPending = SC_DATA;
+    		self->numberOfPackedLogmessagesSent = 0;
+    	}
+    	else	// send the log, increase the counter
+    	{
+    		Scope_log(self->scope->handle);
+			self->numberOfPackedLogmessagesSent++;
+    	}
     }
 
-    self->packObserver->update(self->packObserver, &self->packCommandPending);
-	self->packCommandPending = SE_NONE;
+	packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
+	if(packCommand != NULL){
+		packCommand->run(packCommand);
+	}
 
-    return true;
+	self->packObserver->update(self->packObserver, &self->packCommandPending);
+	self->packCommandPending = SE_NONE;
+	return true;
 }
 
-
-
-//		/* NEW RUNTX. Not working yet */
-//static bool runTx(IRunnableHandle runnable) {
-//    ControllerHandle self = (ControllerHandle) runnable->handle;
-//    ICommandHandle packCommand = NULL;
-//    // wait here until packer is no more busy and until byte transport layer has emptied the output buffer
-//    // TODO is it possible that packCommandPending is overwritten and therefore messages are lost?
-//    if (self->packer->isReady(self->packer) == false){
-//        return false;
-//    }
-//
-//    // if isImageTransferCompleted
-//    //    startLog Transfer
-//    // if isLogTransferCompleted
-//
-//    // TODO smarter handling of this
-//	if (self->packCommandPending == SE_NONE) {
-//	   if(self->logByteStream->byteIsReady(self->logByteStream)){
-//		   // if no command is pending, but there is something in the LogByteStream, send this.
-////		   packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, SC_LOG);
-//		   Scope_log(self->scope->handle);	//TODO replace this
-//		   self->numberOfPackedLogmessagesSent++;
-//		}
-//    }
-//    //another, probably importand command is pending, do this.
-//    else if(self->packCommandPending != SC_DATA)
-//    {
-//        packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
-//        self->packCommandPending = SE_NONE;
-//    }
-//    //SC_DATA is available
-//    else
-//    {
-//    	// nothing to log, just send SC_DATA
-//    	if(!self->logByteStream->byteIsReady(self->logByteStream))
-//    	{
-//    		packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
-//            self->packCommandPending = SE_NONE;
-//    	}
-//    	// if many logs have been sent, send the data and reset numberOfPackedLogmessagesSent
-//    	else if(self->numberOfPackedLogmessagesSent > 10u)
-//    	{
-//    		packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
-//            self->packCommandPending = SE_NONE;
-//    		self->numberOfPackedLogmessagesSent = 0;
-//    	}
-//    	else
-//    	{
-//    	// send the log, inc the counter
-//			packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, SC_LOG);
-//			self->numberOfPackedLogmessagesSent++;
-//    	}
-//    }
-//
-//
-//
-//	//TODO wann muss self->packCommandPending = SE_NONE; gesetzt werden?
-//
-//    // TODO wird scope zu krass bevorzugt? Macht es sinn nach einem scope-bild einige kByte log messages zu versendne bevor das
-//    //      scope wider dran kommt?
-//
-//    // TODO wenn Commands verfügbar sind, schauen, was zuletzt gemacht wurde und dann das andere machen
-//    //		also zuletzt geloggt -> plotten, zuletzt geplottet -> loggen. So kommt beides an die Reihe
-//
-//
-//
-//
-//    if(packCommand != NULL){
-//        packCommand->run(packCommand);
-//        self->packCommandPending = SE_NONE;
-//    }
-//
-//    self->packObserver->update(self->packObserver, &self->packCommandPending);
-//
-//    // TODO reset this flag only after output buffer is empty?
-////	self->packCommandPending = SE_NONE;
-//
-//    return true;
-//}
 
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
