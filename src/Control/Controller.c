@@ -92,7 +92,6 @@ static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
     ICommandHandle packCommand = NULL;
 
-
     if (self->packer->isReady(self->packer) == false){
         return false;
     }
@@ -109,17 +108,21 @@ static bool runTx(IRunnableHandle runnable) {
 	   }
     }
 
-    //another command is pending, do this command (is probably important). Prioritize over log
-    else if(self->packCommandPending != SC_DATA && self->packCommandPending != SC_LOG)
-    {
-       //do nothing special, just skip to  CommandPackParserDispatcher_run
+    //another command is pending. Prioritize over log
+	else if(self->packCommandPending == SE_ACK || self->packCommandPending == SE_NAK ||
+			self->packCommandPending == SC_ANNOUNCE || self->packCommandPending == SC_DETECT ||
+			self->packCommandPending == SC_STREAM)
+	{
+		//important command, skip to packing
     }
 	else	 //SC_DATA or SC_LOG is available
     {
-    	// nothing to log, send SC_DATA
-    	if(!self->logByteStream->byteIsReady(self->logByteStream))
+		//TODO check if it actually is sc_log or sc_data
+
+    	// data ready, nothing to log
+    	if(self->packCommandPending == SC_DATA && !self->logByteStream->byteIsReady(self->logByteStream) && !(self->packCommandPending==SC_LOG))
     	{
-    		self->packCommandPending = SC_DATA;
+//    		self->packCommandPending = SC_DATA;
     		self->numberOfPackedLogmessagesSent = 0;
     	}
     	//log available, but 10 log Messages send. Send Data.
@@ -141,7 +144,7 @@ static bool runTx(IRunnableHandle runnable) {
 		packCommand->run(packCommand);
 	}
 	self->packObserver->update(self->packObserver, &self->packCommandPending);
-	self->packCommandPending = SE_NONE;
+	self->packCommandPending = SE_NONE;	//TODO can this be set to NONE?
 	return true;
 }
 
