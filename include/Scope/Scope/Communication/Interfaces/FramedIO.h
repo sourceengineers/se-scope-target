@@ -12,7 +12,7 @@
 #ifndef FRAMEDIO_H
 #define FRAMEDIO_H
 
-#include <se-lib-c/stream/IByteStream.h>
+#include "../../../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
 #include <se-lib-c/util/runnable/IRunnable.h>
 
 #include "Scope/Communication/ITransceiver.h"
