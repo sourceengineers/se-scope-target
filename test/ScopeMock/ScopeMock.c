@@ -14,7 +14,7 @@
 #include "Scope/Core/Trigger.h"
 
 #include <se-lib-c/container/FloatRingBuffer.h>
-#include <se-lib-c/stream/IIntStream.h>
+#include "../../ext/se-lib-c/public/se-lib-c/stream/IIntStream.h"
 #include <se-lib-c/util/observer/IObserver.h>
 #include "ScopeMock.h"
 

@@ -13,7 +13,7 @@
 #include "Scope/Core/ScopeTypes.h"
 #include "Scope/Core/IScope.h"
 #include <se-lib-c/container/FloatRingBuffer.h>
-#include <se-lib-c/stream/IIntStream.h>
+#include "../../../../ext/se-lib-c/public/se-lib-c/stream/IIntStream.h"
 #include "Scope/Control/ParserDefinitions.h"
 
 #include <stdint.h>

@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 #include <se-lib-c/util/runnable/IRunnable.h>
-#include <se-lib-c/stream/IByteStream.h>
+#include "../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
 #include <se-lib-c/util/observer/IObserver.h>
 #include <se-lib-c/container/ByteRingBuffer.h>
 
@@ -470,6 +470,7 @@ void FramedIO_resetTx(FramedIOHandle self){
     self->txDataFramingReady = true;
     self->txType = SE_NONE;
     self->txFramedIOState = NONE;
+    self->txChecksum = 0;
 }
 
 bool FramedIO_putRxData(FramedIOHandle self, const uint8_t* data, size_t length){

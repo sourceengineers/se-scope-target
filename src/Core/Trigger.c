@@ -6,7 +6,7 @@
  * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
  * 
  ******************************************************************************/
-#include <se-lib-c/stream/IFloatStream.h>
+#include "../../ext/se-lib-c/public/se-lib-c/stream/IFloatStream.h"
 
 #include "Scope/Core/Timestamper.h"
 #include "Scope/Core/Trigger.h"

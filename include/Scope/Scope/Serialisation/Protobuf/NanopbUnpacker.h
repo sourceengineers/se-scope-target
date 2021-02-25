@@ -13,7 +13,7 @@
 #ifndef NANOPBUNPACKER_H_
 #define NANOPBUNPACKER_H_
 
-#include <se-lib-c/stream/IByteStream.h>
+#include "../../../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Communication/ICommunicator.h"
