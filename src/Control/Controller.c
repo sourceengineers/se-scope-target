@@ -99,12 +99,12 @@ static bool runTx(IRunnableHandle runnable) {
 	if (self->packCommandPending == SE_NONE) {
 		// no command pending, log ready
 	   if(self->logByteStream->byteIsReady(self->logByteStream)){
-		   Scope_log(self->scope->handle); //TODO self->packCommandPending = SC_LOG;
-//		   self->packCommandPending = SC_LOG;
+		   MessageType typeToPack = SC_LOG;
+		   self->commandPackObserver.update(&self->commandPackObserver, &typeToPack);
 		   self->numberOfPackedLogmessagesSent++;
 		}
 	   else{
-		   return true;	// no pack command pending, nothing to log. Return.
+		   return true;
 	   }
     }
 
@@ -117,15 +117,12 @@ static bool runTx(IRunnableHandle runnable) {
     }
 	else	 //SC_DATA or SC_LOG is available
     {
-		//TODO check if it actually is sc_log or sc_data
-
     	// data ready, nothing to log
     	if(self->packCommandPending == SC_DATA && !self->logByteStream->byteIsReady(self->logByteStream) && !(self->packCommandPending==SC_LOG))
     	{
-//    		self->packCommandPending = SC_DATA;
     		self->numberOfPackedLogmessagesSent = 0;
     	}
-    	//log available, but 10 log Messages send. Send Data.
+    	//log available, but 10 log Messages sent. Send Data.
     	else if(self->numberOfPackedLogmessagesSent > 10u)
     	{
     		self->packCommandPending = SC_DATA;
@@ -133,9 +130,9 @@ static bool runTx(IRunnableHandle runnable) {
     	}
     	else	// send the log, increase the counter
     	{
-    		Scope_log(self->scope->handle); //TODO self->packCommandPending = SC_LOG;
-//    		self->packCommandPending = SC_LOG;
-			self->numberOfPackedLogmessagesSent++;
+ 		   MessageType typeToPack = SC_LOG;
+ 		   self->commandPackObserver.update(&self->commandPackObserver, &typeToPack);
+ 		   self->numberOfPackedLogmessagesSent++;
     	}
     }
 
@@ -144,7 +141,7 @@ static bool runTx(IRunnableHandle runnable) {
 		packCommand->run(packCommand);
 	}
 	self->packObserver->update(self->packObserver, &self->packCommandPending);
-	self->packCommandPending = SE_NONE;	//TODO can this be set to NONE?
+	self->packCommandPending = SE_NONE;
 	return true;
 }
 
