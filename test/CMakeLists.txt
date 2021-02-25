@@ -25,4 +25,5 @@ target_link_libraries(
         PRIVATE
         se-lib::scope
         test::gtest
+        se-lib::c::mock
 )

@@ -70,7 +70,9 @@ typedef struct __ScopeFramedStackPrivateData* ScopeFramedStackHandle;
  * @param config
  * @return
  */
-ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config);
+ScopeFramedStackHandle ScopeFramedStack_create(
+		ScopeFramedStackConfig scopeConfig,
+		ScopeFramedStackLogOptions logConfig);
 
 /**
  * Constructor. Creates a static instance of the stack and scope. If the stack is created with this function, it can be used in a
@@ -78,7 +80,10 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config);
  * @param config
  * @param mutexes
  */
-ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig config, ScopeFramedStackMutex mutexes, ScopeFramedStackLogOptions scopeLogOptions);
+ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
+		ScopeFramedStackConfig scopeConfig,
+		ScopeFramedStackMutex mutexes,
+		ScopeFramedStackLogOptions logConfig);
 
 /**
  * Runs the JsonUart stack

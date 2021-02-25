@@ -4,6 +4,7 @@
 #include <Communication/FramedIOTestFunctions.h>
 
 extern "C" {
+#include <stream/MockByteStream.h>
 #include <Scope/Core/Scope.h>
 #include <Scope/Communication/Interfaces/FramedIO.h>
 #include <Scope/Builders/ScopeFramedStack.h>
@@ -40,7 +41,14 @@ protected:
         config.timebase = TIMEBASE;
         config.addressesInAddressAnnouncer = ADDRESSES_TO_ANNOUNCE;
         config.sizeOfChannels = SIZE_OF_CHANNELS;
-        _stack = ScopeFramedStack_create(config);
+
+        MockByteStream_init(&_mockBytestream);
+
+        ScopeFramedStackLogOptions logOptions = {
+                .logByteStream = &_mockBytestream.parent,
+        };
+
+        _stack = ScopeFramedStack_create(config, logOptions);
         _transceiver = ScopeFramedStack_getTranscevier(_stack);
     }
 
@@ -50,6 +58,7 @@ protected:
     ~FullIntegrationTest() override{
     }
 
+    MockByteStream _mockBytestream;
     ScopeFramedStackHandle _stack;
     uint32_t _timestamp;
     ITransceiverHandle _transceiver;
