@@ -1,3 +1,4 @@
+#include <limits.h>
 /*!****************************************************************************************************************************************
  * @file         NanopbPacker.c
  *
@@ -7,14 +8,14 @@
  *
  *****************************************************************************************************************************************/
 
-#include <se-lib-c/stream/IByteStream.h>
+#include "../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Serialisation/Protobuf/NanopbPacker.h"
 #include "Scope/Control/IPacker.h"
 #include "Scope/Core/ScopeTypes.h"
 #include <se-lib-c/container/FloatRingBuffer.h>
-#include <se-lib-c/stream/IIntStream.h>
+#include "../../../ext/se-lib-c/public/se-lib-c/stream/IIntStream.h"
 #include "Scope/Serialisation/Protobuf/se-scope.pb.h"
 
 #include <assert.h>
@@ -33,6 +34,10 @@ typedef struct __ScAnnouncementData {
     size_t amountOfChannels;
 } ScAnnouncementData;
 
+typedef struct __ScLogData {
+	char* message;
+} ScLogData;
+
 /******************************************************************************
  Define private data
 ******************************************************************************/
@@ -48,6 +53,7 @@ typedef struct __NanopbPackerPrivateData {
     IIntStreamHandle timestamp;
     IByteStreamHandle output;
     ScAnnouncementData announcement;
+    ScLogDataDef logData;
 
 } NanopbPackerPrivateData;
 
@@ -58,6 +64,8 @@ static void addTimeIncrement(IPackerHandle packer, uint32_t timeIncrement);
 static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger);
 
 static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
+
+static void addLog(IPackerHandle packer, ScLogDataDef log);
 
 static void addAddressAnnouncement(IPackerHandle packer, ScAnnounceChannelDef address);
 
@@ -96,6 +104,11 @@ static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement)
 static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
     self->timestamp = timestamp;
+}
+
+static void addLog(IPackerHandle packer, ScLogDataDef log) {
+    NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
+    self->logData = log;
 }
 
 static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger) {
@@ -303,6 +316,15 @@ void packScAnnounce(NanopbPackerHandle self){
     pb_encode(&self->wrapped, PB_SC_Announce_fields, &announce);
 }
 
+
+void packScLog(NanopbPackerHandle self){
+	PB_SC_Log log = PB_SC_Log_init_default;
+//	log.severity = self->logData.severity;
+	strcpy(log.message, self->logData.message);
+//	log.timestamp = self->logData.timestamp;
+    pb_encode(&self->wrapped, PB_SC_Log_fields, &log);
+}
+
 static void resetSelf(NanopbPackerHandle self){
     self->channels.amountOfChannels = 0;
     self->wrapped.bytes_written = 0;
@@ -315,13 +337,16 @@ static void pack(IPackerHandle packer, MessageType type){
     if(self->output->length(self->output) != 0) {
         return;
     }
-	
+
     if(type == SC_DATA) {
         packScData(self);
     }else if(type == SC_ANNOUNCE){
         packScAnnounce(self);
     }
-		
+    else if (type == SC_LOG){
+    	packScLog(self);
+    }
+
     resetSelf(self);
 }
 
@@ -358,6 +383,7 @@ NanopbPackerHandle NanopbPacker_create(size_t maxNumberOfChannels, size_t maxAdd
     self->packer.addTrigger = &addTrigger;
     self->packer.addAddressAnnouncement = &addAddressAnnouncement;
     self->packer.addAnnouncement = &addAnnouncement;
+    self->packer.addLog = &addLog;
     self->packer.pack = &pack;
     self->packer.isReady = &isReady;
     self->packer.reset = &reset;

@@ -20,6 +20,7 @@
 #include "Scope/Control/AnnounceStorage.h"
 #include "Scope/GeneralPurpose/IMutex.h"
 #include "Scope/Communication/ITransceiver.h"
+#include "../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
 
 /******************************************************************************
  Configuration interface for the ScopeFramedStack
@@ -44,7 +45,17 @@ typedef struct __ScopeFramedStackConfig {
 typedef struct __ScopeFramedStackMutex {
     IMutexHandle configMutex;
     IMutexHandle dataMutex;
+    IMutexHandle logBufferMutex;
 } ScopeFramedStackMutex;
+
+
+/**
+ * Settings for the logger of the scope. If it is empty,
+ * it will not be logging
+ */
+typedef struct __ScopeFramedStackLogOptions {
+	IByteStreamHandle logByteStream;
+} ScopeFramedStackLogOptions;
 
 /******************************************************************************
  Define class handle data
@@ -59,7 +70,9 @@ typedef struct __ScopeFramedStackPrivateData* ScopeFramedStackHandle;
  * @param config
  * @return
  */
-ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config);
+ScopeFramedStackHandle ScopeFramedStack_create(
+		ScopeFramedStackConfig scopeConfig,
+		ScopeFramedStackLogOptions logConfig);
 
 /**
  * Constructor. Creates a static instance of the stack and scope. If the stack is created with this function, it can be used in a
@@ -67,7 +80,10 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config);
  * @param config
  * @param mutexes
  */
-ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig config, ScopeFramedStackMutex mutexes);
+ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
+		ScopeFramedStackConfig scopeConfig,
+		ScopeFramedStackMutex mutexes,
+		ScopeFramedStackLogOptions logConfig);
 
 /**
  * Runs the JsonUart stack
@@ -106,4 +122,4 @@ ITransceiverHandle ScopeFramedStack_getTranscevier(ScopeFramedStackHandle self);
  * @param self
  */
 void ScopeFramedStack_destroy(ScopeFramedStackHandle self);
-#endif
+#endif //SCOPEFRAMEDSTACK_H_

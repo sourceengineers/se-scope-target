@@ -9,7 +9,7 @@
 
 #include <se-lib-c/util/runnable/IRunnable.h>
 #include <se-lib-c/container/FloatRingBuffer.h>
-#include <se-lib-c/stream/IIntStream.h>
+#include "../../ext/se-lib-c/public/se-lib-c/stream/IIntStream.h"
 #include <se-lib-c/util/observer/IObserver.h>
 
 #include "Scope/GeneralPurpose/DataTypes.h"
@@ -287,6 +287,11 @@ void Scope_destroy(ScopeHandle self){
 
 void Scope_transmit(ScopeHandle self){
     MessageType typeToPack = SC_DATA;
+    self->observer->update(self->observer, &typeToPack);
+}
+
+void Scope_log(ScopeHandle self){
+    MessageType typeToPack = SC_LOG;
     self->observer->update(self->observer, &typeToPack);
 }
 

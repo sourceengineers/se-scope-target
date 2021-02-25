@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 
-#include <se-lib-c/stream/IByteStream.h>
+#include "../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
 
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Serialisation/Protobuf/NanopbUnpacker.h"
