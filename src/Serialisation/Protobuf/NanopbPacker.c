@@ -388,6 +388,8 @@ NanopbPackerHandle NanopbPacker_create(size_t maxNumberOfChannels, size_t maxAdd
     self->packer.isReady = &isReady;
     self->packer.reset = &reset;
 
+    resetSelf(self);
+
     return self;
 }
 
