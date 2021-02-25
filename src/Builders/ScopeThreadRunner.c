@@ -33,8 +33,6 @@ void ScopeThreadRunner_runScope(ScopeRunnable scope) {
         
 			if(scope.dataMutex->lock(scope.dataMutex, 0) == true){
 					scope.runScope->run(scope.runScope);
-
-					//TODO is it ok du release
 					scope.dataMutex->unlock(scope.dataMutex);
 				}
     }
@@ -69,8 +67,6 @@ void ScopeThreadRunner_runStack(ScopeRunnable scope) {
         scope.runDataAggregator->run(scope.runDataAggregator);
         scope.runPacker->run(scope.runPacker);
         scope.runCommunicationTx->run(scope.runCommunicationTx);
-
-        //TODO release mutex only after whole framed io package was sent?
         scope.dataMutex->unlock(scope.dataMutex);
     }
 }

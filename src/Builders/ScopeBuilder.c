@@ -22,7 +22,7 @@
 typedef struct __ScopeBuilderPrivateData{
     IByteStreamHandle input;
     IByteStreamHandle output;
-    IByteStreamHandle logByteStream;	//TODO use this
+    IByteStreamHandle logByteStream;
 
     ICommunicatorHandle communicator;
     ScopeHandle scope;
@@ -124,7 +124,6 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
     }
 
     if((self->logByteStream == NULL)){
-    	//TODO how to correctly handle when the LogByteStream is NULL, can it be NULL?
     	return runnable;
     }
 
@@ -139,7 +138,6 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
     self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));
     Serializer_attachControlObserver(self->serializer, Controller_getCommandObserver(self->controller));
     Scope_attachPackObserver(self->scope, Controller_getCommandPackObserver(self->controller));
-    //TODO does the logger observer have to be attached too?
 
     Controller_attachPackObserver(self->controller, Serializer_getPackObserver(self->serializer));
     Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));

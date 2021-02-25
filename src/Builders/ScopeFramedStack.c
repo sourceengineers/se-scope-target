@@ -121,7 +121,6 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
     ScopeBuilder_setTimestampReference(self->builder, config.timestamp);
     ScopeBuilder_setCommunication(self->builder, FramedIO_getCommunicator(self->framedIO));
     ScopeBuilder_setAnnounceStorage(self->builder, self->announceStorage, config.addressesInAddressAnnouncer);
-    //TODO set the builder
     ScopeBuilder_setLogBuffer(self->builder, scopeLogOptions.logByteStream);
 
     /* Build the scope */
