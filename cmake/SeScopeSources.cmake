@@ -6,7 +6,6 @@ set(SE_SCOPE_SOURCES
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/CommandParser/CommandRunningParser.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/CommandParser/CommandPollParser.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/CommandParser/CommandDetectParser.c
-        ${SE_SCOPE_SOURCE_DIR}/Control/Commands/CommandParser/CommandLogParser.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/CommandParser/CommandAnnounceParser.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/CommandParser/CommandTriggerParser.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/CommandParser/CommandAddrParser.c
@@ -15,7 +14,6 @@ set(SE_SCOPE_SOURCES
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandTrigger.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandAnnounce.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandTrans.c
-        ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandLog.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandAddr.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandPoll.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandRunning.c
@@ -26,6 +24,8 @@ set(SE_SCOPE_SOURCES
         ${SE_SCOPE_SOURCE_DIR}/Control/ParserDefinitions.c
         ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/CommandParser/CommandPackAnnounceParser.c
         ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/CommandParser/CommandPackDataParser.c
+        ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/CommandParser/CommandPackLogParser.c
+        ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/Command/CommandPackLog.c
         ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/Command/CommandPackAnnounce.c
         ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/Command/CommandPackData.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Controller.c
