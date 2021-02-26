@@ -12,7 +12,7 @@
 #ifndef ISCOPE_H_
 #define ISCOPE_H_
 
-#include "../../../../ext/se-lib-c/public/se-lib-c/stream/IIntStream.h"
+#include <se-lib-c/stream/IIntStream.h>
 #include <se-lib-c/container/FloatRingBuffer.h>
 
 #include "Scope/Core/ScopeTypes.h"

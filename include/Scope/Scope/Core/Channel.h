@@ -16,7 +16,7 @@
 
 #include "Scope/Core/ScopeTypes.h"
 #include <se-lib-c/container/FloatRingBuffer.h>
-#include "../../../../ext/se-lib-c/public/se-lib-c/stream/IFloatStream.h"
+#include <se-lib-c/stream/IFloatStream.h>
 
 #include <stdbool.h>
 #include <stddef.h>

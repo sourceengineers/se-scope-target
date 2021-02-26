@@ -17,7 +17,7 @@
 #include "Scope/GeneralPurpose/DataTypes.h"
 
 #include <se-lib-c/stream/BufferedByteStream.h>
-#include "../../../../ext/se-lib-c/public/se-lib-c/stream/IIntStream.h"
+#include <se-lib-c/stream/IIntStream.h>
 #include <se-lib-c/container/FloatRingBuffer.h>
 #include <se-lib-c/logger/ILogger.h>
 #include "Scope/Version.h"

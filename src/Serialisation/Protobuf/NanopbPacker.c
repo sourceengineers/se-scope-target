@@ -8,14 +8,14 @@
  *
  *****************************************************************************************************************************************/
 
-#include "../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
 
+#include <se-lib-c/stream/IByteStream.h>
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Serialisation/Protobuf/NanopbPacker.h"
 #include "Scope/Control/IPacker.h"
 #include "Scope/Core/ScopeTypes.h"
 #include <se-lib-c/container/FloatRingBuffer.h>
-#include "../../../ext/se-lib-c/public/se-lib-c/stream/IIntStream.h"
+#include <se-lib-c/stream/IIntStream.h>
 #include "Scope/Serialisation/Protobuf/se-scope.pb.h"
 
 #include <assert.h>
