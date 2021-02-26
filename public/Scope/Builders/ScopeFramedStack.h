@@ -20,7 +20,7 @@
 #include "Scope/Control/AnnounceStorage.h"
 #include "Scope/GeneralPurpose/IMutex.h"
 #include "Scope/Communication/ITransceiver.h"
-#include "../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
+#include <se-lib-c/stream/IByteStream.h>
 
 /******************************************************************************
  Configuration interface for the ScopeFramedStack

@@ -7,7 +7,7 @@
  *
  *****************************************************************************************************************************************/
 #include <se-lib-c/util/runnable/IRunnable.h>
-#include "../../../ext/se-lib-c/public/se-lib-c/stream/IByteStream.h"
+#include <se-lib-c/stream/IByteStream.h>
 #include <se-lib-c/util/observer/IObserver.h>
 #include <se-lib-c/container/ByteRingBuffer.h>
 
