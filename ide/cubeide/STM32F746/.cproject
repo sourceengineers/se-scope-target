@@ -57,6 +57,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../ext/protocol&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../ext/se-lib-c/include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../public&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/../../../ext/se-lib-c/public&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1810187313" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
