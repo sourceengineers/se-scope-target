@@ -34,7 +34,6 @@
 #define NANOPBUNPACKER_H_
 
 #include <se-lib-c/stream/IByteStream.h>
-
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Communication/ICommunicator.h"
 #include "Scope/Control/IUnpacker.h"

@@ -30,6 +30,7 @@
 #include "Scope/Control/CommandPackParserDispatcher.h"
 #include "Scope/Control/PackCommands/CommandParser/CommandPackAnnounceParser.h"
 #include "Scope/Control/PackCommands/CommandParser/CommandPackDataParser.h"
+#include "Scope/Control/PackCommands/CommandParser/CommandPackLogParser.h"
 #include "Scope/Control/ParserDefinitions.h"
 
 #include <stdlib.h>
@@ -43,6 +44,7 @@
 typedef struct __CommandPackParserDispatcherPrivateData{
     CommandPackDataParserHandle commandPackDataParser;
     CommandPackAnnounceParserHandle commandPackAnnounceParser;
+    CommandPackLogParserHandle commandPackLogParser;
 } CommandPackParserDispatcherPrivateData;
 
 
@@ -50,13 +52,14 @@ typedef struct __CommandPackParserDispatcherPrivateData{
  Public functions
 ******************************************************************************/
 CommandPackParserDispatcherHandle
-CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle announceStorage, IPackerHandle packer){
+CommandPackParserDispatcher_create(IScopeHandle scope, AnnounceStorageHandle announceStorage, IPackerHandle packer, IByteStreamHandle logStream){
 
     CommandPackParserDispatcherHandle self = malloc(sizeof(CommandPackParserDispatcherPrivateData));
     assert(self);
 
     self->commandPackAnnounceParser = CommandPackAnnounceParser_create(announceStorage, packer);
     self->commandPackDataParser = CommandPackDataParser_create(scope, packer);
+    self->commandPackLogParser = CommandPackLogParser_create(logStream, packer);
 
     return self;
 }
@@ -68,7 +71,9 @@ ICommandHandle CommandPackParserDispatcher_run(CommandPackParserDispatcherHandle
     }else if(type == SC_ANNOUNCE){
         return CommandPackAnnounceParser_getCommand(self->commandPackAnnounceParser);
     }
-
+    else if(type == SC_LOG){
+    	return CommandPackLogParser_getCommand(self->commandPackLogParser);
+    }
     return NULL;
 }
 

@@ -1,5 +1,5 @@
 /*!****************************************************************************************************************************************
- * @file         CommandLogParser.c
+ * @file         CommandPackLogParser.c
  *
  * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
@@ -23,65 +23,41 @@
  *               Please contact us at scope@sourceengineers.com for a commercial license.
  * }
  *
- * @authors      Anselm Fuhrer anselm.fuhrer@sourceengineers.com
+ * @authors     Anselm Fuhrer anselm.fuhrer@sourceengineers.com
  *
  *****************************************************************************************************************************************/
 
-#include "Scope/GeneralPurpose/DataTypes.h"
+#include "Scope/Control/PackCommands/CommandParser/CommandPackLogParser.h"
+#include "Scope/Control/PackCommands/Command/CommandPackLog.h"
 
-#include "Scope/Control/Commands/CommandParser/CommandLogParser.h"
-#include "Scope/Control/Commands/Command/CommandLog.h"
-#include "Scope/Control/IUnpacker.h"
-#include "Scope/Core/ScopeTypes.h"
-#include "Scope/Control/ParserDefinitions.h"
-
-#include <stdint.h>
-#include <stdbool.h>
 #include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
-typedef struct __CommandLogParserPrivateData{
-    CommandLogHandle command;
-
-    IUnpackerHandle unpacker;
-
-} CommandLogParserPrivateData;
-
-/******************************************************************************
- Private functions
-******************************************************************************/
+typedef struct __CommandPackLogParserPrivateData{
+	CommandPackLogHandle command;
+} CommandPackLogParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandLogParserHandle
-CommandLogParser_create(IObserverHandle observer){
-    //TODO implement for LogParser
-	CommandLogParserHandle self = malloc(sizeof(CommandLogParserPrivateData));
 
+CommandPackLogParserHandle CommandPackLogParser_create(IByteStreamHandle logStream, IPackerHandle packer){
+    CommandPackLogParserHandle self = malloc(sizeof(CommandPackLogParserPrivateData));
     assert(self);
-    self->command = CommandLog_create(observer);
+    self->command = CommandPackLog_create(logStream, packer);
     return self;
 }
 
-//TODO implement
-ICommandHandle CommandLogParser_getCommand(CommandLogParserHandle self){
-
-    if(self->unpacker == NULL){
-        return NULL;
-    }
-    return NULL;	//TODO
-    //return CommandLog_getICommand(self->command);
-
+ICommandHandle CommandPackLogParser_getCommand(CommandPackLogParserHandle self){
+    return CommandPackLog_getICommand(self->command);
 }
 
-void CommandLogParser_destroy(CommandLogParserHandle self){
-	CommandLog_destroy(self->command);
+void CommandPackLogParser_destroy(CommandPackLogParserHandle self){
+    CommandPackLog_destroy(self->command);
     free(self);
     self = NULL;
 }

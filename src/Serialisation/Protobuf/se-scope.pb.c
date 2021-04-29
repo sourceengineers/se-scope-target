@@ -33,6 +33,9 @@ PB_BIND(PB_RunningConfig, PB_RunningConfig, AUTO)
 PB_BIND(PB_CF_Running, PB_CF_Running, AUTO)
 
 
+PB_BIND(PB_SC_Log, PB_SC_Log, 2)
+
+
 PB_BIND(PB_CF_Trigger, PB_CF_Trigger, AUTO)
 
 

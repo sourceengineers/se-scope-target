@@ -39,6 +39,7 @@
 #include <se-lib-c/stream/BufferedByteStream.h>
 #include <se-lib-c/stream/IIntStream.h>
 #include <se-lib-c/container/FloatRingBuffer.h>
+#include <se-lib-c/logger/ILogger.h>
 #include "Scope/Version.h"
 #include "Scope/Core/ScopeTypes.h"
 
@@ -66,6 +67,10 @@ typedef struct __ScDataTriggerDef {
     uint32_t timestamp;
     TRIGGER_MODE triggerMode;
 } ScDataTriggerDef;
+
+typedef struct __ScLogDataDef{
+	char message[50];
+} ScLogDataDef;
 
 /******************************************************************************
  Define interface handle data
@@ -114,6 +119,14 @@ typedef struct IPackerStruct{
      */
     void (* addTimestamp)(IPackerHandle packer, IIntStreamHandle timestamp);
 
+
+    /**
+        * Prepares the log
+        * @param packer
+        * @param timestamp Reference to the timestamp stream
+        */
+    void (* addLog)(IPackerHandle packer, ScLogDataDef log);
+
     /**
      * Prepares the trigger
      * @param packer
@@ -145,4 +158,4 @@ typedef struct IPackerStruct{
 
 } IPacker;
 
-#endif
+#endif  //IPACKER_H_

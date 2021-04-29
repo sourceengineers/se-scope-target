@@ -26,7 +26,7 @@
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  * @brief        Implementation of the Scope.
- * 
+ *
  ******************************************************************************/
 
 #ifndef SCOPE_H_
@@ -52,7 +52,7 @@
 typedef struct __ScopePrivateData* ScopeHandle;
 
 /******************************************************************************
- Public functions 
+ Public functions
 ******************************************************************************/
 /**
  * Constructor
@@ -68,6 +68,12 @@ ScopeHandle Scope_create(size_t channelSize, size_t amountOfChannels, uint32_t* 
  * @param self
  */
 void Scope_transmit(ScopeHandle self);
+
+/**
+*   Tells the observer that a SC_LOG message is ready
+*
+*/
+void Scope_log(ScopeHandle self);
 
 /**
  * Tells the scope to poll data in the active channels
@@ -150,5 +156,4 @@ IScopeHandle Scope_getIScope(ScopeHandle self);
  */
 void Scope_destroy(ScopeHandle self);
 
-#endif
-
+#endif  //SCOPE_H_

@@ -490,6 +490,7 @@ void FramedIO_resetTx(FramedIOHandle self){
     self->txDataFramingReady = true;
     self->txType = SE_NONE;
     self->txFramedIOState = NONE;
+    self->txChecksum = 0;
 }
 
 bool FramedIO_putRxData(FramedIOHandle self, const uint8_t* data, size_t length){

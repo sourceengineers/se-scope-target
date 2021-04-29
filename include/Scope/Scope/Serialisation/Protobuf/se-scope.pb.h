@@ -84,6 +84,10 @@ typedef struct _PB_SC_Channel_Configuration {
     uint32_t address;
 } PB_SC_Channel_Configuration;
 
+typedef struct _PB_SC_Log {
+    char message[300];
+} PB_SC_Log;
+
 typedef struct _PB_SC_Trigger {
     uint32_t cl_id;
     uint32_t cl_data_ind;
@@ -119,6 +123,7 @@ typedef struct _PB_SC_Data {
 #define PB_CF_Address_init_default               {{{NULL}, NULL}}
 #define PB_RunningConfig_init_default            {0, 0}
 #define PB_CF_Running_init_default               {{{NULL}, NULL}}
+#define PB_SC_Log_init_default                   {""}
 #define PB_CF_Trigger_init_default               {0, _PB_Trigger_Mode_MIN, 0, 0}
 #define PB_CF_TInc_init_default                  {0}
 #define PB_EV_Poll_init_default                  {0}
@@ -131,6 +136,7 @@ typedef struct _PB_SC_Data {
 #define PB_CF_Address_init_zero                  {{{NULL}, NULL}}
 #define PB_RunningConfig_init_zero               {0, 0}
 #define PB_CF_Running_init_zero                  {{{NULL}, NULL}}
+#define PB_SC_Log_init_zero                      {""}
 #define PB_CF_Trigger_init_zero                  {0, _PB_Trigger_Mode_MIN, 0, 0}
 #define PB_CF_TInc_init_zero                     {0}
 #define PB_EV_Poll_init_zero                     {0}
@@ -159,6 +165,7 @@ typedef struct _PB_SC_Data {
 #define PB_SC_Channel_Configuration_name_tag     2
 #define PB_SC_Channel_Configuration_type_tag     3
 #define PB_SC_Channel_Configuration_address_tag  4
+#define PB_SC_Log_message_tag                    1
 #define PB_SC_Trigger_cl_id_tag                  1
 #define PB_SC_Trigger_cl_data_ind_tag            2
 #define PB_SC_Trigger_mode_tag                   3
@@ -233,6 +240,11 @@ X(a, CALLBACK, REPEATED, MESSAGE,  running,           1)
 #define PB_CF_Running_DEFAULT NULL
 #define PB_CF_Running_running_MSGTYPE PB_RunningConfig
 
+#define PB_SC_Log_FIELDLIST(X, a) \
+X(a, STATIC,   SINGULAR, STRING,   message,           1)
+#define PB_SC_Log_CALLBACK NULL
+#define PB_SC_Log_DEFAULT NULL
+
 #define PB_CF_Trigger_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, UINT32,   cl_id,             1) \
 X(a, STATIC,   SINGULAR, UENUM,    mode,              2) \
@@ -260,6 +272,7 @@ extern const pb_msgdesc_t PB_AddressConfig_msg;
 extern const pb_msgdesc_t PB_CF_Address_msg;
 extern const pb_msgdesc_t PB_RunningConfig_msg;
 extern const pb_msgdesc_t PB_CF_Running_msg;
+extern const pb_msgdesc_t PB_SC_Log_msg;
 extern const pb_msgdesc_t PB_CF_Trigger_msg;
 extern const pb_msgdesc_t PB_CF_TInc_msg;
 extern const pb_msgdesc_t PB_EV_Poll_msg;
@@ -274,6 +287,7 @@ extern const pb_msgdesc_t PB_EV_Poll_msg;
 #define PB_CF_Address_fields &PB_CF_Address_msg
 #define PB_RunningConfig_fields &PB_RunningConfig_msg
 #define PB_CF_Running_fields &PB_CF_Running_msg
+#define PB_SC_Log_fields &PB_SC_Log_msg
 #define PB_CF_Trigger_fields &PB_CF_Trigger_msg
 #define PB_CF_TInc_fields &PB_CF_TInc_msg
 #define PB_EV_Poll_fields &PB_EV_Poll_msg
@@ -288,6 +302,7 @@ extern const pb_msgdesc_t PB_EV_Poll_msg;
 /* PB_CF_Address_size depends on runtime parameters */
 #define PB_RunningConfig_size                    8
 /* PB_CF_Running_size depends on runtime parameters */
+#define PB_SC_Log_size                           302
 #define PB_CF_Trigger_size                       15
 #define PB_CF_TInc_size                          6
 #define PB_EV_Poll_size                          6

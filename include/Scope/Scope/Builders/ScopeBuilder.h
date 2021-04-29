@@ -35,10 +35,12 @@
 #include "Scope/Control/AnnounceStorage.h"
 #include <se-lib-c/stream/IByteStream.h>
 #include <se-lib-c/util/runnable/IRunnable.h>
+#include <se-lib-c/logger/Logger.h>
 #include "Scope/GeneralPurpose/IMutex.h"
 #include "Scope/Core/IScope.h"
 #include "Scope/Control/Controller.h"
 #include "Scope/Communication/ICommunicator.h"
+
 
 #include <stddef.h>
 #include <stdint.h>
@@ -141,6 +143,14 @@ void ScopeBuilder_setDataMutex(ScopeBuilderHandle self, IMutexHandle mutex);
  * @param mutex
  */
 void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex);
+
+/**
+ * Appends the mutex which protects the Rx path of the runner. If no mutex is passed,
+ * only the ScopeRunner can be used. Otherwise the ScopeThreadRunner can be used.
+ * @param self
+ * @param mutex
+ */
+void ScopeBuilder_setLogBuffer(ScopeBuilderHandle self, IByteStreamHandle logByteStream);
 
 /**
  * Deconstructor

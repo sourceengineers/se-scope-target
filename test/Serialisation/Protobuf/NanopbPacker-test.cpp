@@ -101,12 +101,31 @@ TEST_F(NanopbPackerTest, pack_data
     vector<uint8_t> v_o;
     v_o.assign(data, data + dataPending);
     EXPECT_THAT(v_o, ElementsAre(10, 26, 10, 24, 128, 72, 188, 193, 104, 171, 95, 77, 140, 134, 103, 54, 140,
-            134, 103, 182, 0, 0, 0, 0, 0, 0, 192, 63, 10, 28, 10, 24, 128, 72, 188, 193, 104, 171, 95, 77, 140, 134,
-            103, 54, 140, 134, 103, 182, 0, 0, 0, 0, 0, 0, 192, 63, 16, 1, 18, 24, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0,
-            3, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0, 24, 10, 34, 6, 8, 1, 16, 100, 24, 2
+                                 134, 103, 182, 0, 0, 0, 0, 0, 0, 192, 63, 10, 28, 10, 24, 128, 72, 188, 193, 104, 171, 95, 77, 140, 134,
+                                 103, 54, 140, 134, 103, 182, 0, 0, 0, 0, 0, 0, 192, 63, 16, 1, 18, 24, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0,
+                                 3, 0, 0, 0, 4, 0, 0, 0, 5, 0, 0, 0, 24, 10, 34, 6, 8, 1, 16, 100, 24, 2
     ));
 }
 
+
+
+
+TEST_F(NanopbPackerTest, pack_log)
+{
+    ScLogDataDef log;
+    strcpy(log.message, "Test Log Message");
+    _iPacker->addLog(_iPacker, log);
+    _iPacker->pack(_iPacker, SC_LOG);
+
+    size_t dataPending = _outputStream->length(_outputStream);
+    char data[dataPending];
+    _outputStream->read(_outputStream, (uint8_t*) data, dataPending);
+
+    vector<uint8_t> v_o;
+    v_o.assign(data, data + dataPending);
+
+    EXPECT_THAT(v_o, ElementsAre(10, 16, 84, 101, 115, 116, 32, 76, 111, 103, 32, 77, 101, 115, 115, 97, 103, 101));
+}
 
 TEST_F(NanopbPackerTest, pack_announce
 ){

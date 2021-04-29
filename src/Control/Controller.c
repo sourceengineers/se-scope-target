@@ -56,6 +56,7 @@ typedef struct __ControllerPrivateData {
     IPackerHandle packer;
     CommandParserDispatcherHandle commandParserDispatcher;
     CommandPackParserDispatcherHandle commandPackParserDispatcher;
+    IByteStreamHandle logByteStream;
 
     IObserver commandObserver;
     IObserver commandPackObserver;
@@ -66,7 +67,9 @@ typedef struct __ControllerPrivateData {
 
     MessageType commandPending;
 
-    uint8_t pendingToPack;
+	uint8_t pendingToPack;
+
+    uint16_t numberOfPackedLogmessagesSent;
 
 } ControllerPrivateData;
 
@@ -104,30 +107,64 @@ static bool runRx(IRunnableHandle runnable) {
     return true;
 }
 
+
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
+    ICommandHandle packCommand = NULL;
 
     if (self->packer->isReady(self->packer) == false){
         return false;
     }
 
-    // Check if messages have to be packed
-    if (self->packCommandPending == SE_NONE) {
-        return false;
+	if (self->packCommandPending == SE_NONE) {
+		// no command pending, log ready
+	   if(self->logByteStream->byteIsReady(self->logByteStream)){
+		   MessageType typeToPack = SC_LOG;
+		   self->commandPackObserver.update(&self->commandPackObserver, &typeToPack);
+		   self->numberOfPackedLogmessagesSent++;
+		}
+	   else{
+		   return true;
+	   }
     }
 
-    ICommandHandle packCommand;
-
-    packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
-    if(packCommand != NULL){
-        packCommand->run(packCommand);
+    //another command is pending. Prioritize over log
+	else if(self->packCommandPending == SE_ACK || self->packCommandPending == SE_NAK ||
+			self->packCommandPending == SC_ANNOUNCE || self->packCommandPending == SC_DETECT ||
+			self->packCommandPending == SC_STREAM)
+	{
+		//important command, skip to packing
+    }
+	else	 //SC_DATA or SC_LOG is available
+    {
+    	// data ready, nothing to log
+    	if(self->packCommandPending == SC_DATA && !self->logByteStream->byteIsReady(self->logByteStream) && !(self->packCommandPending==SC_LOG))
+    	{
+    		self->numberOfPackedLogmessagesSent = 0;
+    	}
+    	//log available, but 10 log Messages sent. Send Data.
+    	else if(self->numberOfPackedLogmessagesSent > 10u)
+    	{
+    		self->packCommandPending = SC_DATA;
+    		self->numberOfPackedLogmessagesSent = 0;
+    	}
+    	else	// send the log, increase the counter
+    	{
+ 		   MessageType typeToPack = SC_LOG;
+ 		   self->commandPackObserver.update(&self->commandPackObserver, &typeToPack);
+ 		   self->numberOfPackedLogmessagesSent++;
+    	}
     }
 
-    self->packObserver->update(self->packObserver, &self->packCommandPending);
-		self->packCommandPending = SE_NONE;
-		
-    return true;
+	packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, self->packCommandPending);
+	if(packCommand != NULL){
+		packCommand->run(packCommand);
+	}
+	self->packObserver->update(self->packObserver, &self->packCommandPending);
+	self->packCommandPending = SE_NONE;
+	return true;
 }
+
 
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
@@ -146,7 +183,7 @@ static void commandUpdate(IObserverHandle observer, void *state) {
  Public functions
 ******************************************************************************/
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                   AnnounceStorageHandle announceStorage) {
+                                   AnnounceStorageHandle announceStorage, IByteStreamHandle logByteStream) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
     assert(self);
@@ -165,10 +202,18 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->commandPackObserver.update = &commandPackUpdate;
     self->commandObserver.update = &commandUpdate;
 
-    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
-    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer);
+    self->logByteStream = logByteStream;
 
+    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
+
+    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer, logByteStream);
+
+
+    self->packCommandPending = SE_NONE;
     self->commandPending = SE_NONE;
+
+    self->numberOfPackedLogmessagesSent = 0;
+
     return self;
 }
 

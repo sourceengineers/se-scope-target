@@ -42,6 +42,8 @@
 typedef struct __ScopeBuilderPrivateData {
     IByteStreamHandle input;
     IByteStreamHandle output;
+    IByteStreamHandle logByteStream;
+
     ICommunicatorHandle communicator;
     ScopeHandle scope;
 
@@ -51,6 +53,7 @@ typedef struct __ScopeBuilderPrivateData {
 
     IMutexHandle dataMutex;
     IMutexHandle configMutex;
+    IMutexHandle logBufferMutex;
     size_t maxAddresses;
     uint32_t* timestamp;
     size_t amountOfChannels;
@@ -70,6 +73,7 @@ ScopeBuilderHandle ScopeBuilder_create(void){
     self->output = NULL;
     self->communicator = NULL;
     self->scope = NULL;
+    self->logByteStream = NULL;
     self->controller = NULL;
     self->serializer = NULL;
     self->timestamp = NULL;
@@ -109,6 +113,10 @@ void ScopeBuilder_setConfigMutex(ScopeBuilderHandle self, IMutexHandle mutex){
     self->configMutex = mutex;
 }
 
+void ScopeBuilder_setLogBuffer(ScopeBuilderHandle self, IByteStreamHandle logByteStream){
+	self->logByteStream = logByteStream;
+}
+
 ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
 
     ScopeRunnable runnable;
@@ -120,6 +128,7 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
     runnable.runPacker = NULL;
     runnable.runCommunicationRx = NULL;
     runnable.runCommunicationTx = NULL;
+
 
     if(self->timestamp == NULL){
         return runnable;
@@ -134,19 +143,22 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
         return runnable;
     }
 
+    if((self->logByteStream == NULL)){
+    	return runnable;
+    }
+
     /* Create layers */
     self->scope = Scope_create(self->sizeOfChannels, self->amountOfChannels, self->timestamp);
 
     self->serializer = Serializer_create(self->amountOfChannels, self->maxAddresses, self->output, self->input);
     self->controller = Controller_create(Scope_getIScope(self->scope), Serializer_getPacker(self->serializer),
-            Serializer_getUnpacker(self->serializer), self->announceStorage);
+            Serializer_getUnpacker(self->serializer), self->announceStorage, self->logByteStream);
 
     /* Connect all observers */
     self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));
     Serializer_attachControlObserver(self->serializer, Controller_getCommandObserver(self->controller));
     Scope_attachPackObserver(self->scope, Controller_getCommandPackObserver(self->controller));
-    //TODO connect logger observer
-//    Logger_attachPackObserver(self->scope, Controller_getCommandPackObserver(self->controller));
+
     Controller_attachPackObserver(self->controller, Serializer_getPackObserver(self->serializer));
     Serializer_attachCommunicationObserver(self->serializer, self->communicator->getObserver(self->communicator));
 
@@ -166,7 +178,6 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
 }
 
 void ScopeBuilder_destroy(ScopeBuilderHandle self){
-
     Scope_destroy(self->scope);
     Controller_destroy(self->controller);
     Serializer_destroy(self->serializer);
