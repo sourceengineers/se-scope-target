@@ -1,7 +1,7 @@
 /*!****************************************************************************************************************************************
  * @file         ScopeBuilder.c
  *
- * @copyright    Copyright (c) 2018 by Source Engineers GmbH. All Rights Reserved.
+ * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
  * @license {    This file is part of se-scope-target.
  *
@@ -23,7 +23,7 @@
  *               Please contact us at scope@sourceengineers.com for a commercial license.
  * }
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  *****************************************************************************************************************************************/
 

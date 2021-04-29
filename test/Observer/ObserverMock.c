@@ -3,7 +3,7 @@
  *
  * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  * @brief        Mock of a observer implementation to be used for testing
  *
