@@ -81,7 +81,7 @@ else()
     target_compile_definitions(${SE_SCOPE} PUBLIC VP_SIZE=8)
 endif()
 
-target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic -Werror)
+target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic)
 
 ################################################################################
 # Add testing
