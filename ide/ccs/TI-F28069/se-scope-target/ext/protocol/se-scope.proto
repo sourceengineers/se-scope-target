@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package PB;
+
+//**********************************************************************************************************************
+// General
+// Enum types should ideally have to match locally defined enums. That way they don't have to be parsed which is faster
+//**********************************************************************************************************************
+enum Var_Type {
+    SE_INT8 = 0;
+    SE_INT16 = 1;
+    SE_INT32 = 2;
+    SE_UINT8 = 3;
+    SE_UINT16 = 4;
+    SE_UINT32 = 5;
+    SE_FLOAT = 6;
+}
+
+enum Trigger_Mode {
+    NORMAL = 0;
+    CONTINUOUS = 1;
+    ONE_SHOT = 2;
+}
+
+//**********************************************************************************************************************
+// Target -> Host
+//**********************************************************************************************************************
+// sc_data
+message SC_Trigger {
+    uint32 cl_id = 1;
+    uint32 cl_data_ind = 2;
+    Trigger_Mode mode = 3;
+}
+message SC_Channel {
+    repeated float data = 1;
+    uint32 id = 2;
+}
+message SC_Data {
+    repeated SC_Channel channels = 1;
+    repeated fixed32 timestamps = 2;
+    uint32 t_inc = 3;
+    SC_Trigger trigger = 4;
+}
+
+// sc_announce
+message SC_Channel_Configuration {
+    uint32 id = 1;
+    string name = 2;
+    Var_Type type = 3;
+    uint32 address = 4;
+}
+message SC_Announce {
+    repeated SC_Channel_Configuration channels = 1;
+    uint32 max_channels = 2;
+    float timebase = 3;
+    string version = 4;
+}
+
+//**********************************************************************************************************************
+// Target -> Host
+//**********************************************************************************************************************
+// cf_addr
+message AddressConfig {
+    uint32 cl_id = 1;
+    uint32 address = 2;
+    Var_Type type = 3;
+}
+message CF_Address {
+    repeated AddressConfig addresses = 1;
+}
+
+// cf_running
+message RunningConfig {
+    uint32 cl_id = 1;
+    bool new_state = 2;
+}
+message CF_Running {
+    repeated RunningConfig running = 1;
+}
+
+// cf_trigger
+message CF_Trigger {
+    uint32 cl_id = 1;
+    Trigger_Mode mode = 2;
+    float level = 3;
+    bool edge = 4;
+}
+
+// cf_tinc
+message CF_TInc {
+    uint32 t_inc = 1;
+}
+
+// ev_poll
+message EV_Poll {
+    uint32 timestamp = 1;
+}

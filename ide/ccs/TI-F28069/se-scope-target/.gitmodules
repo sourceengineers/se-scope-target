@@ -1,0 +1,9 @@
+[submodule "3rdparty/nanopb"]
+	path = 3rdparty/nanopb
+	url = https://github.com/nanopb/nanopb.git
+[submodule "ext/protocol"]
+	path = ext/protocol
+	url = git@bitbucket.org:sourceengineers/se-scope-protocol.git
+[submodule "ext/se-lib-c"]
+	path = ext/se-lib-c
+	url = git@bitbucket.org:sourceengineers/se-lib-c.git
