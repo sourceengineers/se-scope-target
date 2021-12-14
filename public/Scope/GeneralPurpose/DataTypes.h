@@ -58,6 +58,11 @@ typedef enum  __DATA_TYPES {
     #define ADDRESS_DATA_TYPE uint32_t
 #endif
 
+#ifdef TI_TARGET
+    typedef uint16_t uint8_t;
+    typedef int16_t int8_t;
+#endif
+
 /* Choose the right integer length */
 #if (VP_SIZE==4)
 #define ADDRESS_DATA_TYPE uint32_t

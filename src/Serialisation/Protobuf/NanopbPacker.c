@@ -305,7 +305,7 @@ static bool writeAddress(pb_ostream_t* stream, const pb_field_t* field, void* co
         // size from the written stream, as suggested by the nanopb author.
         // This should not be significantly slower than measuring it with strlen. And speed isn't the most crucial
         // for the SC_ANNOUNCE
-        const size_t maxBufferSize = PB_SC_Channel_Configuration_size;
+        size_t maxBufferSize = PB_SC_Channel_Configuration_size;
         pb_byte_t buffer[maxBufferSize];
         pb_ostream_t tmpStream = pb_ostream_from_buffer(buffer, maxBufferSize);
         if(!pb_encode(&tmpStream, PB_SC_Channel_Configuration_fields, &channel)){
