@@ -421,6 +421,11 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
         }
     }
 
+    // In this case we are done reading and we return
+    if (index == length) {
+        return;
+    }
+
     if(self->txFramedIOState == BODY) {
         size_t bytesLeft = ByteRingBuffer_getNumberOfUsedData(self->output);
         size_t bytesRead = bytesLeft < (length - index) ? bytesLeft : (length - index);
@@ -447,13 +452,14 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
         }
     }
 
+    // In this case we are done reading and we return
+    if (index == length) {
+        return;
+    }
+
     if(self->txFramedIOState == FOOT){
         size_t bytesLeft = ByteRingBuffer_getNumberOfUsedData(self->frameTail);
         size_t bytesRead = bytesLeft < (length - index) ? bytesLeft : (length - index);
-
-        if (bytesRead == 0) {
-            return;
-        }
 
         ByteRingBuffer_read(self->frameTail, &data[index], bytesRead);
         if (bytesLeft - bytesRead == 0) {
