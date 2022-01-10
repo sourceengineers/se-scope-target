@@ -484,12 +484,12 @@ TEST_F(FramedTest, output_try_overflow){
 
 TEST_F(FramedTest, performance_with_large_buffer){
 
-    auto single_run = [this] {
+    std::vector<uint8_t> data = {};
+    for(size_t i = 0; i < BUFFER_SIZE; ++i){
+        data.push_back(i);
+    }
 
-        std::vector<uint8_t> data = {};
-        for(uint8_t i = 0; i < BUFFER_SIZE; ++i){
-            data.push_back(i);
-        }
+    auto single_run = [this, data] {
 
         for (auto d : data) {
             _ioutput->writeByte(_ioutput, d);
@@ -503,8 +503,15 @@ TEST_F(FramedTest, performance_with_large_buffer){
         FramedIO_getTxData(_frame, readData, dataPending);
     };
 
-    for (int i = 0; i < 1; ++i) {
+    const auto t0 = clock();
+
+    for (int i = 0; i < 10000; ++i) {
         single_run();
     }
 
+    const auto t1 = clock();
+
+    const double elapsedSec = (t1 - t0) / (double)CLOCKS_PER_SEC;
+
+    std::cout << "Performance test ran in " << elapsedSec << " seconds" << std::endl;
 }
