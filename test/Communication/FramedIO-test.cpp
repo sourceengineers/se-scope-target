@@ -27,7 +27,7 @@ protected:
 
         _output = BufferedByteStream_create(BUFFER_SIZE);
         _ioutput = BufferedByteStream_getIByteStream(_output);
-        _frame = FramedIO_create(NULL, _iinput, _ioutput);
+        _frame = FramedIO_create(NULL, BufferedByteStream_getByteRingBufferHandle(_input), BufferedByteStream_getByteRingBufferHandle(_output));
         _observer = ObserverMock_create();
         ICommunicatorHandle comm = FramedIO_getCommunicator(_frame);
         comm->attachObserver(comm, ObserverMock_getIObserver(_observer));

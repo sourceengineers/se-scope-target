@@ -34,10 +34,11 @@
 
 #include <se-lib-c/stream/IByteStream.h>
 #include <se-lib-c/util/runnable/IRunnable.h>
+#include <se-lib-c/container/ByteRingBuffer.h>
+#include <se-lib-c/util/observer/IObserver.h>
 
 #include "Scope/Communication/ITransceiver.h"
 #include "Scope/Communication/ICommunicator.h"
-#include <se-lib-c/util/observer/IObserver.h>
 
 #include <stdint.h>
 #include <stddef.h>
@@ -58,7 +59,7 @@ typedef struct __FramedIOPrivateData* FramedIOHandle;
  * @param output
  * @return
  */
-FramedIOHandle FramedIO_create(TransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output);
+FramedIOHandle FramedIO_create(TransmitCallback callback, ByteRingBufferHandle input, ByteRingBufferHandle output);
 
 /**
  * Returns the communicator interface
