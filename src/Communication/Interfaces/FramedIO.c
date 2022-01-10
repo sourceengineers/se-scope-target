@@ -410,21 +410,18 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
 
     size_t index = 0;
 
-    if(self->txFramedIOState == HEAD){
-        for(; index < length; index++){
-            uint8_t byte;
-            ByteRingBuffer_read(self->frameHead, &byte, 1);
-            data[index] = byte;
+    if(self->txFramedIOState == HEAD) {
+        size_t bytesLeft = ByteRingBuffer_getNumberOfUsedData(self->frameHead);
+        size_t bytesRead = bytesLeft < (length - index) ? bytesLeft : (length - index);
 
-            if(ByteRingBuffer_getNumberOfUsedData(self->frameHead) == 0){
-                self->txFramedIOState = BODY;
-                index++;
-                break;
-            }
+        ByteRingBuffer_read(self->frameHead, &data[index], bytesRead);
+        index += bytesRead;
+        if (bytesLeft - bytesRead == 0) {
+            self->txFramedIOState = BODY;
         }
     }
 
-    if(self->txFramedIOState == BODY){
+    if(self->txFramedIOState == BODY) {
         size_t bytesLeft = ByteRingBuffer_getNumberOfUsedData(self->output);
         size_t bytesRead = bytesLeft < (length - index) ? bytesLeft : (length - index);
 
@@ -442,6 +439,7 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
             uint8_t checksumLeft = (self->txChecksum & 0xFF00) >> 8;
             uint8_t checksumRight = self->txChecksum & 0xFF;
             self->txChecksum = 0;
+            ByteRingBuffer_clear(self->frameTail);
             ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumLeft, 1);
             ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumRight, 1);
             char endByte = ']';
@@ -450,16 +448,16 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
     }
 
     if(self->txFramedIOState == FOOT){
-        for(; index < length; index++){
+        size_t bytesLeft = ByteRingBuffer_getNumberOfUsedData(self->frameTail);
+        size_t bytesRead = bytesLeft < (length - index) ? bytesLeft : (length - index);
 
-            uint8_t byte;
-            ByteRingBuffer_read(self->frameTail, &byte, 1);
-            data[index] = byte;
-            if(ByteRingBuffer_getNumberOfUsedData(self->frameTail) == 0){
-                self->txFramedIOState = NONE;
-                index++;
-                break;
-            }
+        if (bytesRead == 0) {
+            return;
+        }
+
+        ByteRingBuffer_read(self->frameTail, &data[index], bytesRead);
+        if (bytesLeft - bytesRead == 0) {
+            self->txFramedIOState = NONE;
         }
     }
 }
