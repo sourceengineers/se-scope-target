@@ -503,15 +503,29 @@ TEST_F(FramedTest, performance_with_large_buffer){
         FramedIO_getTxData(_frame, readData, dataPending);
     };
 
-    const auto t0 = clock();
+    const auto run_tests = [&single_run]() -> float {
 
-    for (int i = 0; i < 10000; ++i) {
-        single_run();
+        const auto t0 = clock();
+
+        for (int i = 0; i < 10000; ++i) {
+            single_run();
+        }
+
+        const auto t1 = clock();
+
+        const double elapsedSec = (t1 - t0) / (double)CLOCKS_PER_SEC;
+
+        return elapsedSec;
+    };
+
+    float time_passed = 0.0f;
+    const size_t runs = 5;
+
+    for (int i = 0; i < runs; ++i) {
+        time_passed += run_tests();
     }
 
-    const auto t1 = clock();
+    time_passed = time_passed / runs;
 
-    const double elapsedSec = (t1 - t0) / (double)CLOCKS_PER_SEC;
-
-    std::cout << "Performance test ran in " << elapsedSec << " seconds" << std::endl;
+    std::cout << "Performance test ran in average " << time_passed << " seconds" << std::endl;
 }
