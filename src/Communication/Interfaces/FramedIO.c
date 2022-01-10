@@ -74,8 +74,8 @@ typedef struct __FramedIOPrivateData{
     ITransceiver transceiver;
 
     TransmitCallback callback;
-    IByteStreamHandle input;
-    IByteStreamHandle output;
+    ByteRingBufferHandle input;
+    ByteRingBufferHandle output;
 
     ByteRingBufferHandle frameHead;
     ByteRingBufferHandle frameTail;
@@ -185,13 +185,13 @@ static bool checkLength(FramedIOHandle self, const uint8_t* data, uint32_t lengt
 static bool checkData(FramedIOHandle self, const uint8_t* data, uint32_t length, uint32_t* dataOffset){
     if(self->rxFramedIOState == DATA){
 
-        for(; self->input->length(self->input) < self->rxExpectedLength && (*dataOffset) < length; (*dataOffset)++){
+        for(; ByteRingBuffer_getNumberOfUsedData(self->input) < self->rxExpectedLength && (*dataOffset) < length; (*dataOffset)++){
             uint8_t byte = data[(*dataOffset)];
             self->rxChecksum += byte;
-            self->input->writeByte(self->input, byte);
+            ByteRingBuffer_write(self->input, &byte, 1);
         }
 
-        size_t writtenData = self->input->length(self->input);
+        size_t writtenData = ByteRingBuffer_getNumberOfUsedData(self->input);
 
         if(writtenData == self->rxExpectedLength){
             self->rxFramedIOState = CHECKSUM;
@@ -276,7 +276,7 @@ static bool runTx(IRunnableHandle runnable){
         return false;
     }
 
-    uint32_t outputBufferLength = self->output->length(self->output);
+    uint32_t outputBufferLength = ByteRingBuffer_getNumberOfUsedData(self->output);
 
     // Write the startbyte in a temporary buffer
     char startByte = '[';
@@ -354,7 +354,7 @@ void resetOutput(ITransceiverHandle transceiver){
 /******************************************************************************
  Public functions
 ******************************************************************************/
-FramedIOHandle FramedIO_create(TransmitCallback callback, IByteStreamHandle input, IByteStreamHandle output){
+FramedIOHandle FramedIO_create(TransmitCallback callback, ByteRingBufferHandle input, ByteRingBufferHandle output){
 
     FramedIOHandle self = malloc(sizeof(FramedIOPrivateData));
     assert(self);
@@ -410,64 +410,70 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
 
     size_t index = 0;
 
-    if(self->txFramedIOState == HEAD){
-        for(; index < length; index++){
-            uint8_t byte;
-            ByteRingBuffer_read(self->frameHead, &byte, 1);
-            data[index] = byte;
+    if(self->txFramedIOState == HEAD) {
+        size_t bytesLeft = ByteRingBuffer_getNumberOfUsedData(self->frameHead);
+        size_t bytesRead = bytesLeft < (length - index) ? bytesLeft : (length - index);
 
-            if(ByteRingBuffer_getNumberOfUsedData(self->frameHead) == 0){
-                self->txFramedIOState = BODY;
-                index++;
-                break;
-            }
+        ByteRingBuffer_read(self->frameHead, &data[index], bytesRead);
+        index += bytesRead;
+        if (bytesLeft - bytesRead == 0) {
+            self->txFramedIOState = BODY;
         }
     }
 
-    if(self->txFramedIOState == BODY){
-        for(; index < length; index++){
-            // Looping the bytes in one by one to allow to produce a checksum while doing so.
-            size_t bytesLeft = self->output->length(self->output);
-            if(bytesLeft > 0){
-                uint8_t byte = self->output->readByte(self->output);
-                data[index] = byte;
-                self->txChecksum += byte;
-            } else {
-                self->txFramedIOState = FOOT;
-                // Currently the checksum is not written in the buffer yet
-                uint8_t checksumLeft = (self->txChecksum & 0xFF00) >> 8;
-                uint8_t checksumRight = self->txChecksum & 0xFF;
-                self->txChecksum = 0;
-                ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumLeft, 1);
-                ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumRight, 1);
-                char endByte = ']';
-                ByteRingBuffer_write(self->frameTail, (uint8_t*) &endByte, 1);
-                break;
-            }
+    // In this case we are done reading and we return
+    if (index == length) {
+        return;
+    }
+
+    if(self->txFramedIOState == BODY) {
+        size_t bytesLeft = ByteRingBuffer_getNumberOfUsedData(self->output);
+        size_t bytesRead = bytesLeft < (length - index) ? bytesLeft : (length - index);
+
+        ByteRingBuffer_read(self->output, &data[index], bytesRead);
+
+        for (size_t i = 0; i < bytesRead; ++i) {
+            self->txChecksum += data[index + i];
         }
+
+        index += bytesRead;
+
+        if (bytesLeft - bytesRead == 0) {
+            self->txFramedIOState = FOOT;
+            // Currently the checksum is not written in the buffer yet
+            uint8_t checksumLeft = (self->txChecksum & 0xFF00) >> 8;
+            uint8_t checksumRight = self->txChecksum & 0xFF;
+            self->txChecksum = 0;
+            ByteRingBuffer_clear(self->frameTail);
+            ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumLeft, 1);
+            ByteRingBuffer_write(self->frameTail, (uint8_t*) &checksumRight, 1);
+            char endByte = ']';
+            ByteRingBuffer_write(self->frameTail, (uint8_t*) &endByte, 1);
+        }
+    }
+
+    // In this case we are done reading and we return
+    if (index == length) {
+        return;
     }
 
     if(self->txFramedIOState == FOOT){
-        for(; index < length; index++){
+        size_t bytesLeft = ByteRingBuffer_getNumberOfUsedData(self->frameTail);
+        size_t bytesRead = bytesLeft < (length - index) ? bytesLeft : (length - index);
 
-            uint8_t byte;
-            ByteRingBuffer_read(self->frameTail, &byte, 1);
-            data[index] = byte;
-            if(ByteRingBuffer_getNumberOfUsedData(self->frameTail) == 0){
-                self->txFramedIOState = NONE;
-                index++;
-                break;
-            }
+        ByteRingBuffer_read(self->frameTail, &data[index], bytesRead);
+        if (bytesLeft - bytesRead == 0) {
+            self->txFramedIOState = NONE;
         }
     }
 }
 
 size_t FramedIO_amountOfTxDataPending(FramedIOHandle self){
     if(self->txFramedIOState == HEAD){
-        return ByteRingBuffer_getNumberOfUsedData(self->frameHead) + self->output->length(self->output)
+        return ByteRingBuffer_getNumberOfUsedData(self->frameHead) + ByteRingBuffer_getNumberOfUsedData(self->output)
                + ByteRingBuffer_getCapacity(self->frameTail);
     }else if(self->txFramedIOState == BODY){
-        return self->output->length(self->output) + ByteRingBuffer_getCapacity(self->frameTail);
+        return ByteRingBuffer_getNumberOfUsedData(self->output) + ByteRingBuffer_getCapacity(self->frameTail);
     }else if(self->txFramedIOState == FOOT){
         return ByteRingBuffer_getNumberOfUsedData(self->frameTail);
     }
@@ -475,7 +481,7 @@ size_t FramedIO_amountOfTxDataPending(FramedIOHandle self){
 }
 
 void FramedIO_resetRx(FramedIOHandle self){
-    self->input->flush(self->input);
+    ByteRingBuffer_clear(self->input);
     self->rxChecksum = 0;
     self->rxDataReady = false;
     self->rxExpectedLength = 0;
@@ -486,7 +492,7 @@ void FramedIO_resetRx(FramedIOHandle self){
 }
 
 void FramedIO_resetTx(FramedIOHandle self){
-    self->output->flush(self->output);
+    ByteRingBuffer_clear(self->output);
     self->txDataFramingReady = true;
     self->txType = SE_NONE;
     self->txFramedIOState = NONE;

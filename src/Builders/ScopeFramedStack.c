@@ -74,8 +74,9 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig scopeConfi
     self->output = BufferedByteStream_create(self->outputBufferSize);
 
     /* Generate the communication handler */
-    self->framedIO = FramedIO_create(scopeConfig.callback, BufferedByteStream_getIByteStream(self->input),
-                                     BufferedByteStream_getIByteStream(self->output));
+    self->framedIO = FramedIO_create(scopeConfig.callback,
+                                     BufferedByteStream_getByteRingBufferHandle(self->input),
+                                     BufferedByteStream_getByteRingBufferHandle(self->output));
 
     self->transceiver = FramedIO_getTransceiver(self->framedIO);
 
@@ -122,8 +123,9 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
     self->output = BufferedByteStream_create(self->outputBufferSize);
 
     /* Generate the communication handler */
-    self->framedIO = FramedIO_create(scopeConfig.callback, BufferedByteStream_getIByteStream(self->input),
-                                     BufferedByteStream_getIByteStream(self->output));
+    self->framedIO = FramedIO_create(scopeConfig.callback,
+                                     BufferedByteStream_getByteRingBufferHandle(self->input),
+                                     BufferedByteStream_getByteRingBufferHandle(self->output));
 
     self->transceiver = FramedIO_getTransceiver(self->framedIO);
 
