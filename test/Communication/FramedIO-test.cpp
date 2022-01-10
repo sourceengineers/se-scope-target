@@ -13,7 +13,8 @@ using namespace testing;
 using namespace std;
 
 class FramedTest : public ::testing::Test{
-#define BUFFER_SIZE (40)
+#define BUFFER_SIZE (1000)
+#define HEADER_LENGTH 9
 
 protected:
     FramedTest()
@@ -478,5 +479,32 @@ TEST_F(FramedTest, output_try_overflow){
     FramedIO_getTxData(_frame, readData, 5);
     v_o.assign(readData, readData + 5);
     EXPECT_THAT(v_o, ElementsAre(4, 5, 0, 15, ']'));
+
+}
+
+TEST_F(FramedTest, performance_with_large_buffer){
+
+    auto single_run = [this] {
+
+        std::vector<uint8_t> data = {};
+        for(uint8_t i = 0; i < BUFFER_SIZE; ++i){
+            data.push_back(i);
+        }
+
+        for (auto d : data) {
+            _ioutput->writeByte(_ioutput, d);
+        }
+
+        runTx(SC_ANNOUNCE);
+        size_t dataPending = FramedIO_amountOfTxDataPending(_frame);
+        EXPECT_EQ(dataPending, BUFFER_SIZE + HEADER_LENGTH);
+        vector<uint8_t> v_o;
+        uint8_t readData[dataPending];
+        FramedIO_getTxData(_frame, readData, dataPending);
+    };
+
+    for (int i = 0; i < 1; ++i) {
+        single_run();
+    }
 
 }
