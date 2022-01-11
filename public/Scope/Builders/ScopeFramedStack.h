@@ -1,14 +1,29 @@
 /*!*****************************************************************************
  * @file         ScopeFramedStack.h
  *
- * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+ * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
- * @license This file is part of "se-scope-target". It is release under a commercial 
- *          license. Refer to the license PDF file received together with this code 
- *          for the exact licensing terms. 
+ * @license {    This file is part of se-scope-target.
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ *               se-scope-target is free software; you can redistribute it and/or
+ *               modify it under the terms of the GPLv3 General Public License Version 3
+ *               as published by the Free Software Foundation.
  *
+ *               se-scope-target is distributed in the hope that it will be useful,
+ *               but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *               MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *               GNU General Public License for more details.
+ *
+ *               You should have received a copy of the GPLv3 General Public License Version 3
+ *               along with se-scope-target.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *               In closed source or commercial projects, GPLv3 General Public License Version 3
+ *               is not valid. In this case the commercial license received with the purchase
+ *               is applied (See SeScopeLicense.pdf).
+ *               Please contact us at scope@sourceengineers.com for a commercial license.
+ * }
+ *
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  * @brief        Builds a Framed Json stack.
  *
@@ -20,6 +35,7 @@
 #include "Scope/Control/AnnounceStorage.h"
 #include "Scope/GeneralPurpose/IMutex.h"
 #include "Scope/Communication/ITransceiver.h"
+#include <se-lib-c/stream/IByteStream.h>
 
 /******************************************************************************
  Configuration interface for the ScopeFramedStack
@@ -44,7 +60,17 @@ typedef struct __ScopeFramedStackConfig {
 typedef struct __ScopeFramedStackMutex {
     IMutexHandle configMutex;
     IMutexHandle dataMutex;
+    IMutexHandle logBufferMutex;
 } ScopeFramedStackMutex;
+
+
+/**
+ * Settings for the logger of the scope. If it is empty,
+ * it will not be logging
+ */
+typedef struct __ScopeFramedStackLogOptions {
+	IByteStreamHandle logByteStream;
+} ScopeFramedStackLogOptions;
 
 /******************************************************************************
  Define class handle data
@@ -59,7 +85,9 @@ typedef struct __ScopeFramedStackPrivateData* ScopeFramedStackHandle;
  * @param config
  * @return
  */
-ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config);
+ScopeFramedStackHandle ScopeFramedStack_create(
+		ScopeFramedStackConfig scopeConfig,
+		ScopeFramedStackLogOptions logConfig);
 
 /**
  * Constructor. Creates a static instance of the stack and scope. If the stack is created with this function, it can be used in a
@@ -67,7 +95,10 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig config);
  * @param config
  * @param mutexes
  */
-ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(ScopeFramedStackConfig config, ScopeFramedStackMutex mutexes);
+ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
+		ScopeFramedStackConfig scopeConfig,
+		ScopeFramedStackMutex mutexes,
+		ScopeFramedStackLogOptions logConfig);
 
 /**
  * Runs the JsonUart stack
@@ -106,4 +137,4 @@ ITransceiverHandle ScopeFramedStack_getTranscevier(ScopeFramedStackHandle self);
  * @param self
  */
 void ScopeFramedStack_destroy(ScopeFramedStackHandle self);
-#endif
+#endif //SCOPEFRAMEDSTACK_H_

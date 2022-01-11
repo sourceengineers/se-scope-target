@@ -1,9 +1,29 @@
 /*!****************************************************************************************************************************************
  * @file         Controller.c
  *
- * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+ * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ * @license {    This file is part of se-scope-target.
+ *
+ *               se-scope-target is free software; you can redistribute it and/or
+ *               modify it under the terms of the GPLv3 General Public License Version 3
+ *               as published by the Free Software Foundation.
+ *
+ *               se-scope-target is distributed in the hope that it will be useful,
+ *               but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *               MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *               GNU General Public License for more details.
+ *
+ *               You should have received a copy of the GPLv3 General Public License Version 3
+ *               along with se-scope-target.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *               In closed source or commercial projects, GPLv3 General Public License Version 3
+ *               is not valid. In this case the commercial license received with the purchase
+ *               is applied (See SeScopeLicense.pdf).
+ *               Please contact us at scope@sourceengineers.com for a commercial license.
+ * }
+ *
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  *****************************************************************************************************************************************/
 
@@ -35,6 +55,7 @@ typedef struct __ControllerPrivateData {
     IPackerHandle packer;
     CommandParserDispatcherHandle commandParserDispatcher;
     CommandPackParserDispatcherHandle commandPackParserDispatcher;
+    IByteStreamHandle logByteStream;
     IObserver commandObserver;
     IObserver commandPackObserver;
     IObserverHandle packObserver;
@@ -44,6 +65,8 @@ typedef struct __ControllerPrivateData {
     MessageType eventQueue[NUM_CLIENT_TO_HOST_MESSAGES];
     uint32_t eventQueueReadPos;
     uint32_t eventQueueWritePos;
+
+    uint16_t numberOfPackedLogmessagesSent;
 
 } ControllerPrivateData;
 
@@ -86,8 +109,10 @@ static bool runRx(IRunnableHandle runnable) {
     return true;
 }
 
+
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
+    ICommandHandle packCommand = NULL;
 
     // Check if messages have to be packed
     if (!eventQueueIsEventPending(self)) {
@@ -111,12 +136,33 @@ static bool runTx(IRunnableHandle runnable) {
     if(packCommand != NULL){
         packCommand->run(packCommand);
     }
+	else	 //SC_DATA or SC_LOG is available
+    {
+    	// data ready, nothing to log
+    	if(self->packCommandPending == SC_DATA && !self->logByteStream->byteIsReady(self->logByteStream) && !(self->packCommandPending==SC_LOG))
+    	{
+    		self->numberOfPackedLogmessagesSent = 0;
+    	}
+    	//log available, but 10 log Messages sent. Send Data.
+    	else if(self->numberOfPackedLogmessagesSent > 10u)
+    	{
+    		self->packCommandPending = SC_DATA;
+    		self->numberOfPackedLogmessagesSent = 0;
+    	}
+    	else	// send the log, increase the counter
+    	{
+ 		   MessageType typeToPack = SC_LOG;
+ 		   self->commandPackObserver.update(&self->commandPackObserver, &typeToPack);
+ 		   self->numberOfPackedLogmessagesSent++;
+    	}
+    }
 
     self->packObserver->update(self->packObserver, &event);
     self->waitForAck = messageNeedsToBeAcked(event);
 
     return true;
 }
+
 
 static void commandPackUpdate(IObserverHandle observer, void *state) {
     ControllerHandle self = (ControllerHandle) observer->handle;
@@ -187,7 +233,7 @@ static MessageType eventQueuePop(ControllerHandle self) {
  Public functions
 ******************************************************************************/
 ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                   AnnounceStorageHandle announceStorage) {
+                                   AnnounceStorageHandle announceStorage, IByteStreamHandle logByteStream) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
     assert(self);
@@ -206,9 +252,14 @@ ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUn
     self->commandPackObserver.update = &commandPackUpdate;
     self->commandObserver.update = &commandUpdate;
 
-    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
-    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer);
+    self->logByteStream = logByteStream;
 
+    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
+
+    self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer, logByteStream);
+
+
+    self->packCommandPending = SE_NONE;
     self->commandPending = SE_NONE;
 
     for(size_t i = 0; i < NUM_CLIENT_TO_HOST_MESSAGES; ++i){

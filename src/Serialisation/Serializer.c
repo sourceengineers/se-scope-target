@@ -1,9 +1,30 @@
+#include <limits.h>
 /*!****************************************************************************************************************************************
  * @file         Serializer.c
  *
- * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+ * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ * @license {    This file is part of se-scope-target.
+ *
+ *               se-scope-target is free software; you can redistribute it and/or
+ *               modify it under the terms of the GPLv3 General Public License Version 3
+ *               as published by the Free Software Foundation.
+ *
+ *               se-scope-target is distributed in the hope that it will be useful,
+ *               but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *               MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *               GNU General Public License for more details.
+ *
+ *               You should have received a copy of the GPLv3 General Public License Version 3
+ *               along with se-scope-target.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *               In closed source or commercial projects, GPLv3 General Public License Version 3
+ *               is not valid. In this case the commercial license received with the purchase
+ *               is applied (See SeScopeLicense.pdf).
+ *               Please contact us at scope@sourceengineers.com for a commercial license.
+ * }
+ *
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  *****************************************************************************************************************************************/
 
@@ -75,6 +96,8 @@ static uint32_t cfAddress_getAmount(IUnpackerHandle unpacker);
 static CfAddressDef cfAddress_getChannel(IUnpackerHandle unpacker, uint32_t index);
 
 static void addChannel(IPackerHandle packer, ScDataChannelDef channel);
+
+static void addLog(IPackerHandle packer, ScLogDataDef logStream);
 
 static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement);
 
@@ -179,6 +202,12 @@ void addChannel(IPackerHandle packer, ScDataChannelDef channel){
     SerializerHandle self = (SerializerHandle) packer->handle;
     IPackerHandle currentPacker = getPacker(self, SC_DATA);
     currentPacker->addChannel(currentPacker, channel);
+}
+
+void addLog(IPackerHandle packer, ScLogDataDef logStream){
+    SerializerHandle self = (SerializerHandle) packer->handle;
+    IPackerHandle currentPacker = getPacker(self, SC_LOG);
+    currentPacker->addLog(currentPacker, logStream);
 }
 
 void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement){
@@ -300,6 +329,7 @@ SerializerHandle Serializer_create(size_t maxChannels, size_t maxAddresses, IByt
     self->packer.addChannel = &addChannel;
     self->packer.addAddressAnnouncement = &addAddressAnnouncement;
     self->packer.addTimestamp = &addTimestamp;
+    self->packer.addLog = &addLog;
 
     self->unpacker.handle = self;
     self->unpacker.cfAddress_getAmount = &cfAddress_getAmount;

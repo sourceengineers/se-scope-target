@@ -24,6 +24,8 @@ set(SE_SCOPE_SOURCES
         ${SE_SCOPE_SOURCE_DIR}/Control/ParserDefinitions.c
         ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/CommandParser/CommandPackAnnounceParser.c
         ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/CommandParser/CommandPackDataParser.c
+        ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/CommandParser/CommandPackLogParser.c
+        ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/Command/CommandPackLog.c
         ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/Command/CommandPackAnnounce.c
         ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/Command/CommandPackData.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Controller.c

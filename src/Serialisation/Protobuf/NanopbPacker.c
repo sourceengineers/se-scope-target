@@ -1,14 +1,35 @@
+#include <limits.h>
 /*!****************************************************************************************************************************************
  * @file         NanopbPacker.c
  *
- * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+ * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ * @license {    This file is part of se-scope-target.
+ *
+ *               se-scope-target is free software; you can redistribute it and/or
+ *               modify it under the terms of the GPLv3 General Public License Version 3
+ *               as published by the Free Software Foundation.
+ *
+ *               se-scope-target is distributed in the hope that it will be useful,
+ *               but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *               MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *               GNU General Public License for more details.
+ *
+ *               You should have received a copy of the GPLv3 General Public License Version 3
+ *               along with se-scope-target.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *               In closed source or commercial projects, GPLv3 General Public License Version 3
+ *               is not valid. In this case the commercial license received with the purchase
+ *               is applied (See SeScopeLicense.pdf).
+ *               Please contact us at scope@sourceengineers.com for a commercial license.
+ * }
+ *
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  *****************************************************************************************************************************************/
 
-#include <se-lib-c/stream/IByteStream.h>
 
+#include <se-lib-c/stream/IByteStream.h>
 #include "Scope/GeneralPurpose/DataTypes.h"
 #include "Scope/Serialisation/Protobuf/NanopbPacker.h"
 #include "Scope/Control/IPacker.h"
@@ -33,6 +54,10 @@ typedef struct __ScAnnouncementData {
     size_t amountOfChannels;
 } ScAnnouncementData;
 
+typedef struct __ScLogData {
+	char* message;
+} ScLogData;
+
 /******************************************************************************
  Define private data
 ******************************************************************************/
@@ -48,6 +73,7 @@ typedef struct __NanopbPackerPrivateData {
     IIntStreamHandle timestamp;
     IByteStreamHandle output;
     ScAnnouncementData announcement;
+    ScLogDataDef logData;
 
 } NanopbPackerPrivateData;
 
@@ -58,6 +84,8 @@ static void addTimeIncrement(IPackerHandle packer, uint32_t timeIncrement);
 static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger);
 
 static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp);
+
+static void addLog(IPackerHandle packer, ScLogDataDef log);
 
 static void addAddressAnnouncement(IPackerHandle packer, ScAnnounceChannelDef address);
 
@@ -96,6 +124,11 @@ static void addTimeIncrement(IPackerHandle packer, const uint32_t timeIncrement)
 static void addTimestamp(IPackerHandle packer, IIntStreamHandle timestamp) {
     NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
     self->timestamp = timestamp;
+}
+
+static void addLog(IPackerHandle packer, ScLogDataDef log) {
+    NanopbPackerHandle self = (NanopbPackerHandle) packer->handle;
+    self->logData = log;
 }
 
 static void addTrigger(IPackerHandle packer, ScDataTriggerDef trigger) {
@@ -272,7 +305,7 @@ static bool writeAddress(pb_ostream_t* stream, const pb_field_t* field, void* co
         // size from the written stream, as suggested by the nanopb author.
         // This should not be significantly slower than measuring it with strlen. And speed isn't the most crucial
         // for the SC_ANNOUNCE
-        const size_t maxBufferSize = PB_SC_Channel_Configuration_size;
+        size_t maxBufferSize = PB_SC_Channel_Configuration_size;
         pb_byte_t buffer[maxBufferSize];
         pb_ostream_t tmpStream = pb_ostream_from_buffer(buffer, maxBufferSize);
         if(!pb_encode(&tmpStream, PB_SC_Channel_Configuration_fields, &channel)){
@@ -303,6 +336,15 @@ void packScAnnounce(NanopbPackerHandle self){
     pb_encode(&self->wrapped, PB_SC_Announce_fields, &announce);
 }
 
+
+void packScLog(NanopbPackerHandle self){
+	PB_SC_Log log = PB_SC_Log_init_default;
+//	log.severity = self->logData.severity;
+	strcpy(log.message, self->logData.message);
+//	log.timestamp = self->logData.timestamp;
+    pb_encode(&self->wrapped, PB_SC_Log_fields, &log);
+}
+
 static void resetSelf(NanopbPackerHandle self){
     self->channels.amountOfChannels = 0;
     self->wrapped.bytes_written = 0;
@@ -315,13 +357,16 @@ static void pack(IPackerHandle packer, MessageType type){
     if(self->output->length(self->output) != 0) {
         return;
     }
-	
+
     if(type == SC_DATA) {
         packScData(self);
     }else if(type == SC_ANNOUNCE){
         packScAnnounce(self);
     }
-		
+    else if (type == SC_LOG){
+    	packScLog(self);
+    }
+
     resetSelf(self);
 }
 
@@ -358,6 +403,7 @@ NanopbPackerHandle NanopbPacker_create(size_t maxNumberOfChannels, size_t maxAdd
     self->packer.addTrigger = &addTrigger;
     self->packer.addAddressAnnouncement = &addAddressAnnouncement;
     self->packer.addAnnouncement = &addAnnouncement;
+    self->packer.addLog = &addLog;
     self->packer.pack = &pack;
     self->packer.isReady = &isReady;
     self->packer.reset = &reset;

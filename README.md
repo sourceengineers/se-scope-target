@@ -12,7 +12,7 @@ Besides the platform specific tools build tools as well as CMake, no further dep
 ```bash
 sudo apt install cmake build-essential
 ```
-## Build for OS
+## Build
 Once the dependencies are installed, download the repo to what ever folder and run:
 ```bash
 git clone https://bitbucket.org/sourceengineers/se-scope-target.git
@@ -21,21 +21,9 @@ cmake ..
 make
 sudo make install
 ```
-The library will now be installed to /usr/local/
-### Tests
-The tests are disabled by default. To enabled them, set the SE_SCOPE_BUILD_TESTS flag to true
-```
-...
-cmake ..
-make se-scope-test
-ctest -VV
-``` 
-## Build for embedded
-Building the library for embedded systems a bit more complicated, since a specific toolchain has to be specified.
-The following procedure has to be followed.
-1. Download the toolchain matching the platform you want to cross compile. As example the gcc-arm-none-eabi for ARM platforms.
-2. Specify the toolchain in a separate file.
-3. The rest of the procedure is largely the same as the one for unix systems. The only difference is, that the toolchain has to be linked to the CMake.
+By providing a toolchain file, the library will automatically be compile for the respective target architecture. 
+
+As example:
 ```bash
 git clone https://bitbucket.org/sourceengineers/se-scope-target.git
 mkdir se-scope-target/build && cd se-scope-target/build 
@@ -43,6 +31,17 @@ cmake -DCMAKE_TOOLCHAIN_FILE=TOOLCHAIN_FILE_PATH -DCMAKE_C_FLAGS="COMPILER_FLAGS
 make
 sudo make install
 ```
+
+Other than with CMake building is currently supported for Keil and Atollic.
+
+### Tests
+Run the internal unit tests with:
+```
+...
+cmake ..
+make se-scope-test
+ctest -VV
+``` 
 
 # Usage
 The scope supports to being run in a parallel or sequential context. 
@@ -64,8 +63,14 @@ and the ScopeFramedThreadedStack_* instead of the ScopeFramedStack_* functions h
             // Channels size
             .sizeOfChannels = 50
     };
+
+    // Provide a buffer for the logger
+    ScopeFramedStackLogOptions logOptions = {
+            .logByteStream = &bufferInterface,
+    };
+
     // Create the scope according to the specified configuration
-    scopeStack = ScopeFramedStack_create(config);
+    scopeStack = ScopeFramedStack_create(config, logOptions);
     
     // Add addresses to the scope. These addresses will be sent to the host.
     // This allows the user to attach addresses to the channels from the GUI application
@@ -114,6 +119,7 @@ As a visualization GUI, the [SE-Scope](https://bitbucket.org/sourceengineers/se-
 
 # Allocation
 For embedded systems, dynamic resource allocation is often not possible. To support these cases, 
-the scope avoids any sort of heap allocation after being built. 
+the scope avoids any sort of heap allocation after being built.
+In future versions, a interface will be available to provide custom allocator in case the scope must be fully run on the stack.
 The allocator used during the building process, will be able to be swapped out for a custom allocator. Thus calls to 
 malloc can be entirely avoided of necessary.

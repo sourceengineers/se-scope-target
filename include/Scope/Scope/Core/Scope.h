@@ -1,12 +1,32 @@
 /*!*****************************************************************************
  * @file         Scope.h
  *
- * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+ * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ * @license {    This file is part of se-scope-target.
+ *
+ *               se-scope-target is free software; you can redistribute it and/or
+ *               modify it under the terms of the GPLv3 General Public License Version 3
+ *               as published by the Free Software Foundation.
+ *
+ *               se-scope-target is distributed in the hope that it will be useful,
+ *               but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *               MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *               GNU General Public License for more details.
+ *
+ *               You should have received a copy of the GPLv3 General Public License Version 3
+ *               along with se-scope-target.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *               In closed source or commercial projects, GPLv3 General Public License Version 3
+ *               is not valid. In this case the commercial license received with the purchase
+ *               is applied (See SeScopeLicense.pdf).
+ *               Please contact us at scope@sourceengineers.com for a commercial license.
+ * }
+ *
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  * @brief        Implementation of the Scope.
- * 
+ *
  ******************************************************************************/
 
 #ifndef SCOPE_H_
@@ -32,7 +52,7 @@
 typedef struct __ScopePrivateData* ScopeHandle;
 
 /******************************************************************************
- Public functions 
+ Public functions
 ******************************************************************************/
 /**
  * Constructor
@@ -48,6 +68,12 @@ ScopeHandle Scope_create(size_t channelSize, size_t amountOfChannels, uint32_t* 
  * @param self
  */
 void Scope_transmit(ScopeHandle self);
+
+/**
+*   Tells the observer that a SC_LOG message is ready
+*
+*/
+void Scope_log(ScopeHandle self);
 
 /**
  * Tells the scope to poll data in the active channels
@@ -130,5 +156,4 @@ IScopeHandle Scope_getIScope(ScopeHandle self);
  */
 void Scope_destroy(ScopeHandle self);
 
-#endif
-
+#endif  //SCOPE_H_

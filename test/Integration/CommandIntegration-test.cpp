@@ -3,6 +3,7 @@
 #include <gmock/gmock-matchers.h>
 
 extern "C" {
+#include <stream/MockByteStream.h>
 #include <Scope/Core/Scope.h>
 #include <Observer/ObserverMock.h>
 #include <Scope/Serialisation/Protobuf/NanopbPacker.h>
@@ -38,6 +39,8 @@ protected:
         _input = BufferedByteStream_create(_inputSize);
         _output = BufferedByteStream_create(_outputSize);
 
+        MockByteStream_init(&_mockBytesream);
+
         /* Generate the address storage. The address storage is optional and doesn't have to be used */
         _announcement = AnnounceStorage_create(ADDRESSES_TO_ANNOUNCE,
                                                        MAX_NUMBER_OF_CHANNELS, TIMEBASE);
@@ -49,7 +52,7 @@ protected:
 
         _serializer = Serializer_create(MAX_NUMBER_OF_CHANNELS, ADDRESSES_TO_ANNOUNCE, _ioutput, _iinput);
         _controller = Controller_create(Scope_getIScope(_scope), Serializer_getPacker(_serializer),
-                                             Serializer_getUnpacker(_serializer), _announcement);
+                                             Serializer_getUnpacker(_serializer), _announcement, &_mockBytesream.parent);
 
         _oObserver = ObserverMock_create();
         /* Connect all observers */
@@ -104,6 +107,7 @@ protected:
     ObserverMockHandle _oObserver;
     IObserverHandle _iObserver;
     ScopeRunnable _runnable;
+    MockByteStream _mockBytesream;
 };
 
 
