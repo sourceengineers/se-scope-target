@@ -422,7 +422,7 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
     }
 
     // In this case we are done reading and we return
-    if (index == length) {
+    if (index >= length) {
         return;
     }
 
@@ -453,7 +453,7 @@ void FramedIO_getTxData(FramedIOHandle self, uint8_t* data, size_t length){
     }
 
     // In this case we are done reading and we return
-    if (index == length) {
+    if (index >= length) {
         return;
     }
 
