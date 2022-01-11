@@ -1,6 +1,15 @@
 cmake_minimum_required(VERSION 3.5)
 
 ################################################################################
+# Options
+################################################################################
+option(TARGET_64BIT_SUPPORT OFF) # Set to true if the target architecture is 64 bits
+option(TARGET_TI_SUPPORT OFF) # Set to true if the target is from TI
+
+# 3rd party
+option(nanopb_BUILD_GENERATOR OFF)
+
+################################################################################
 # Version
 ################################################################################
 set(SE_SCOPE se-scope)
@@ -42,7 +51,6 @@ set(SE_SCOPE_PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 ################################################################################
 add_subdirectory(ext/se-lib-c)
 
-option(nanopb_BUILD_GENERATOR OFF)
 add_subdirectory(${SE_SCOPE_PROJECT_DEPENDENCIES_DIR}/nanopb)
 ################################################################################
 # Generate the library
@@ -70,15 +78,12 @@ target_link_libraries(${SE_SCOPE} INTERFACE se-lib::scope)
 
 message("-- Compiling for ${CMAKE_SIZEOF_VOID_P} bit architecture")
 
-if (NOT WIN32)
-    if(${CMAKE_SIZEOF_VOID_P} EQUAL 8 OR ${CMAKE_SIZEOF_VOID_P} EQUAL 4)
-        target_compile_definitions(${SE_SCOPE} PUBLIC VP_SIZE=${CMAKE_SIZEOF_VOID_P})
-    else()
-        message("Target architecture not supported")
-        return()
-    endif()
-else()
-    target_compile_definitions(${SE_SCOPE} PUBLIC VP_SIZE=8)
+if (TARGET_64BIT_SUPPORT)
+    target_compile_definitions(${SE_SCOPE} PUBLIC SCOPE_TARGET_64BIT_SUPPORT)
+endif()
+
+if (TARGET_TI_SUPPORT)
+    target_compile_definitions(${SE_SCOPE} PUBLIC SCOPE_TARGET_TI_SUPPORT)
 endif()
 
 target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic -Werror)
