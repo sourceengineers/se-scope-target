@@ -50,9 +50,19 @@ protected:
         _ioutput = BufferedByteStream_getIByteStream(_output);
         _iinput = BufferedByteStream_getIByteStream(_input);
 
+        Message_Priorities priorities = {
+                .data = HIGH,
+                .log = MEDIUM,
+                .stream = LOW,
+        };
+
         _serializer = Serializer_create(MAX_NUMBER_OF_CHANNELS, ADDRESSES_TO_ANNOUNCE, _ioutput, _iinput);
-        _controller = Controller_create(Scope_getIScope(_scope), Serializer_getPacker(_serializer),
-                                             Serializer_getUnpacker(_serializer), _announcement, &_mockBytesream.parent);
+        _controller = Controller_create(Scope_getIScope(_scope),
+                                        Serializer_getPacker(_serializer),
+                                        Serializer_getUnpacker(_serializer),
+                                        _announcement,
+                                        &_mockBytesream.parent,
+                                        priorities);
 
         _oObserver = ObserverMock_create();
         /* Connect all observers */

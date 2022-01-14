@@ -78,7 +78,7 @@ typedef struct ScopeRunnableStruct{
  * Constructor
  * @return ScopeBuilderHandle
  */
-ScopeBuilderHandle ScopeBuilder_create(void);
+ScopeBuilderHandle ScopeBuilder_create(Message_Priorities priorities);
 
 /**
  * Builds the scope and returns an object with runnables

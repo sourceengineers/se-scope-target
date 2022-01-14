@@ -48,7 +48,13 @@ protected:
                 .logByteStream = &_mockBytestream.parent,
         };
 
-        _stack = ScopeFramedStack_create(config, logOptions);
+        Message_Priorities priorities = {
+                .data = HIGH,
+                .log = MEDIUM,
+                .stream = LOW,
+        };
+
+        _stack = ScopeFramedStack_create(config, logOptions, priorities);
         _transceiver = ScopeFramedStack_getTranscevier(_stack);
     }
 

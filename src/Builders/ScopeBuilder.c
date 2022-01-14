@@ -59,12 +59,14 @@ typedef struct __ScopeBuilderPrivateData {
     size_t amountOfChannels;
     size_t sizeOfChannels;
 
+    Message_Priorities priorities;
+
 } ScopeBuilderPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-ScopeBuilderHandle ScopeBuilder_create(void){
+ScopeBuilderHandle ScopeBuilder_create(Message_Priorities priorities){
 
     ScopeBuilderHandle self = malloc(sizeof(ScopeBuilderPrivateData));
     assert(self);
@@ -78,6 +80,8 @@ ScopeBuilderHandle ScopeBuilder_create(void){
     self->serializer = NULL;
     self->timestamp = NULL;
     self->announceStorage = NULL;
+
+    self->priorities = priorities;
 
     return self;
 }
@@ -143,7 +147,7 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
         return runnable;
     }
 
-    if((self->logByteStream == NULL)){
+    if(self->logByteStream == NULL){
     	return runnable;
     }
 
@@ -152,7 +156,10 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
 
     self->serializer = Serializer_create(self->amountOfChannels, self->maxAddresses, self->output, self->input);
     self->controller = Controller_create(Scope_getIScope(self->scope), Serializer_getPacker(self->serializer),
-            Serializer_getUnpacker(self->serializer), self->announceStorage, self->logByteStream);
+            Serializer_getUnpacker(self->serializer),
+            self->announceStorage,
+            self->logByteStream,
+             self->priorities);
 
     /* Connect all observers */
     self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));

@@ -41,6 +41,7 @@
 #include "Scope/Control/IPacker.h"
 #include "Scope/Control/IUnpacker.h"
 #include "Scope/Core/IScope.h"
+#include "Scope/Communication/MessagePriorities.h"
 
 /******************************************************************************
  Define class handle data
@@ -58,8 +59,12 @@ typedef struct __ControllerPrivateData* ControllerHandle;
  * @param announceStorage
  * @return
  */
-ControllerHandle Controller_create(IScopeHandle scope, IPackerHandle packer, IUnpackerHandle unpacker,
-                                   AnnounceStorageHandle announceStorage, IByteStreamHandle logByteStream);
+ControllerHandle Controller_create(IScopeHandle scope,
+                                   IPackerHandle packer,
+                                   IUnpackerHandle unpacker,
+                                   AnnounceStorageHandle announceStorage,
+                                   IByteStreamHandle logByteStream,
+                                   Message_Priorities priorities);
 
 /**
  * Returns the runnable of the rx controller
