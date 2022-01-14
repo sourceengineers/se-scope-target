@@ -124,8 +124,9 @@ static bool runTx(IRunnableHandle runnable) {
     }
 
     // Pop the latest event once everything is ready
-    MessageType event;
-    AgingPriorityQueue_pop(self->queue, &event);
+    uint32_t item;
+    AgingPriorityQueue_pop(self->queue, &item);
+    MessageType event = (MessageType) item;
 
     ICommandHandle packCommand;
 
@@ -187,7 +188,7 @@ static void commandUpdate(IObserverHandle observer, void *state) {
  * @param message
  */
 static bool messageNeedsToBeAcked(MessageType message) {
-    return message > ENUM_START_CLIENT_TO_HOST && message < ENUM_START_HOST_TO_CLIENT;
+    return message == SC_DATA || message == SC_STREAM || message == SC_LOG;
 }
 
 /******************************************************************************
