@@ -188,7 +188,7 @@ static void commandUpdate(IObserverHandle observer, void *state) {
  * @param message
  */
 static bool messageNeedsToBeAcked(MessageType message) {
-    return message == SC_DATA || message == SC_STREAM || message == SC_LOG;
+    return message > ENUM_START_CLIENT_TO_HOST && message < ENUM_START_HOST_TO_CLIENT;
 }
 
 /******************************************************************************
