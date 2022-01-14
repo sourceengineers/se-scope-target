@@ -9,7 +9,7 @@ pipelines:
           - git submodule update --init
           - mkdir build
           - cd build
-          - cmake -G Ninja ..
+          - cmake -DTARGET_64BIT_SUPPORT=ON ..
           - ninja se-scope-test
           - export GTEST_OUTPUT="xml:test-results/test-results.xml"
           - ./test/se-scope-test
