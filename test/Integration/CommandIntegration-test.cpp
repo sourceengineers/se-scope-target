@@ -216,18 +216,17 @@ TEST_F(CommandIntegrationTest, tx_event_buffering
     // Now we are staring to ack events
     ackEvent();
     EXPECT_TRUE(_oObserver->updateHasBeenCalled);
-    EXPECT_THAT(_oObserver->updateCalledWidth, SC_DATA);
+    EXPECT_THAT(_oObserver->updateCalledWidth, SC_ANNOUNCE);
     _oObserver->updateHasBeenCalled = false;
     _oObserver->updateCalledWidth = SE_NONE;
+    _ioutput->flush(_ioutput->handle);
 
     // Now we are staring to ack events
     ackEvent();
     EXPECT_TRUE(_oObserver->updateHasBeenCalled);
-    EXPECT_THAT(_oObserver->updateCalledWidth, SC_ANNOUNCE);
+    EXPECT_THAT(_oObserver->updateCalledWidth, SC_DATA);
     _oObserver->updateHasBeenCalled = false;
     _oObserver->updateCalledWidth = SE_NONE;
-
-
 }
 
 TEST_F(CommandIntegrationTest, tx_event_buffering_overflow

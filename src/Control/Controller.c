@@ -106,6 +106,10 @@ static bool runRx(IRunnableHandle runnable) {
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
+    if (self->logByteStream->length(self->logByteStream->handle) > 0) {
+        commandPackPushEvent(self, SC_LOG);
+    }
+
     if (self->packer->isReady(self->packer) == false){
         return false;
     }
@@ -114,12 +118,8 @@ static bool runTx(IRunnableHandle runnable) {
         return false;
     }
 
-    if (self->logByteStream->length(self->logByteStream->handle) > 0) {
-        commandPackPushEvent(self, SC_LOG);
-    }
-
     // Check if messages have to be packed
-    if (!AgingPriorityQueue_empty(self->queue)) {
+    if (AgingPriorityQueue_empty(self->queue)) {
         return false;
     }
 
