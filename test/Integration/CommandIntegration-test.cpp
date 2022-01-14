@@ -219,7 +219,7 @@ TEST_F(CommandIntegrationTest, tx_event_buffering
     EXPECT_THAT(_oObserver->updateCalledWidth, SC_ANNOUNCE);
     _oObserver->updateHasBeenCalled = false;
     _oObserver->updateCalledWidth = SE_NONE;
-    _ioutput->flush(_ioutput->handle);
+    _ioutput->flush(_ioutput);
 
     // Now we are staring to ack events
     ackEvent();
