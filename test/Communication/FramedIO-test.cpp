@@ -481,51 +481,51 @@ TEST_F(FramedTest, output_try_overflow){
     EXPECT_THAT(v_o, ElementsAre(4, 5, 0, 15, ']'));
 
 }
-
-TEST_F(FramedTest, performance_with_large_buffer){
-
-    std::vector<uint8_t> data = {};
-    for(size_t i = 0; i < BUFFER_SIZE; ++i){
-        data.push_back(i);
-    }
-
-    auto single_run = [this, data] {
-
-        for (auto d : data) {
-            _ioutput->writeByte(_ioutput, d);
-        }
-
-        runTx(SC_ANNOUNCE);
-        size_t dataPending = FramedIO_amountOfTxDataPending(_frame);
-        EXPECT_EQ(dataPending, BUFFER_SIZE + HEADER_LENGTH);
-        vector<uint8_t> v_o;
-        uint8_t readData[dataPending];
-        FramedIO_getTxData(_frame, readData, dataPending);
-    };
-
-    const auto run_tests = [&single_run]() -> float {
-
-        const auto t0 = clock();
-
-        for (int i = 0; i < 10000; ++i) {
-            single_run();
-        }
-
-        const auto t1 = clock();
-
-        const double elapsedSec = (t1 - t0) / (double)CLOCKS_PER_SEC;
-
-        return elapsedSec;
-    };
-
-    float time_passed = 0.0f;
-    const size_t runs = 5;
-
-    for (int i = 0; i < runs; ++i) {
-        time_passed += run_tests();
-    }
-
-    time_passed = time_passed / runs;
-
-    std::cout << "Performance test ran in average " << time_passed << " seconds" << std::endl;
-}
+// Note, use this for performance testing
+// TEST_F(FramedTest, performance_with_large_buffer){
+//
+//     std::vector<uint8_t> data = {};
+//     for(size_t i = 0; i < BUFFER_SIZE; ++i){
+//         data.push_back(i);
+//     }
+//
+//     auto single_run = [this, data] {
+//
+//         for (auto d : data) {
+//             _ioutput->writeByte(_ioutput, d);
+//         }
+//
+//         runTx(SC_ANNOUNCE);
+//         size_t dataPending = FramedIO_amountOfTxDataPending(_frame);
+//         EXPECT_EQ(dataPending, BUFFER_SIZE + HEADER_LENGTH);
+//         vector<uint8_t> v_o;
+//         uint8_t readData[dataPending];
+//         FramedIO_getTxData(_frame, readData, dataPending);
+//     };
+//
+//     const auto run_tests = [&single_run]() -> float {
+//
+//         const auto t0 = clock();
+//
+//         for (int i = 0; i < 10000; ++i) {
+//             single_run();
+//         }
+//
+//         const auto t1 = clock();
+//
+//         const double elapsedSec = (t1 - t0) / (double)CLOCKS_PER_SEC;
+//
+//         return elapsedSec;
+//     };
+//
+//     float time_passed = 0.0f;
+//     const size_t runs = 5;
+//
+//     for (int i = 0; i < runs; ++i) {
+//         time_passed += run_tests();
+//     }
+//
+//     time_passed = time_passed / runs;
+//
+//     std::cout << "Performance test ran in average " << time_passed << " seconds" << std::endl;
+// }
