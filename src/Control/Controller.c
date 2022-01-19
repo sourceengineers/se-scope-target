@@ -93,6 +93,12 @@ static bool runRx(IRunnableHandle runnable) {
         self->waitForAck = false;
     }
 
+    // Allow the sc_detect command to unlock the waiting for ack in case that the communication
+    // got lost and the controller needs to unlock itself.
+    if (self->waitForAck && self->commandPending == EV_DETECT) {
+        self->waitForAck = false;
+    }
+
     ICommandHandle command = CommandParserDispatcher_run(self->commandParserDispatcher, self->commandPending);
     if(command != NULL){
         command->run(command);
