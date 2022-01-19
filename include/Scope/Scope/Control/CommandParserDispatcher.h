@@ -66,7 +66,7 @@ typedef struct __CommandParserDispatcherPrivateData* CommandParserDispatcherHand
  * @return
  */
 CommandParserDispatcherHandle
-CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver, IUnpackerHandle unpacker);
+CommandParserDispatcher_create(IScopeHandle scope, IObserverHandle packObserver, IUnpackerHandle unpacker, size_t amountOfChannels);
 
 /**
  * Returns the command with name matching command.

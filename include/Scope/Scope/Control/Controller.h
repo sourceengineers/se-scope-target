@@ -64,7 +64,8 @@ ControllerHandle Controller_create(IScopeHandle scope,
                                    IUnpackerHandle unpacker,
                                    AnnounceStorageHandle announceStorage,
                                    IByteStreamHandle logByteStream,
-                                   Message_Priorities priorities);
+                                   Message_Priorities priorities,
+                                   size_t amountOfChannels);
 
 /**
  * Returns the runnable of the rx controller

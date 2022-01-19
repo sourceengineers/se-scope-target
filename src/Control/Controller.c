@@ -70,7 +70,8 @@ static bool runRx(IRunnableHandle runnable);
 static bool runTx(IRunnableHandle runnable);
 static void commandPackUpdate(IObserverHandle observer, void *state);
 static void commandPackPushEvent(ControllerHandle self, MessageType event);
-static bool messageNeedsToBeAcked(MessageType message) ;
+static bool messageNeedsToBeAcked(MessageType message);
+static bool messageCanUnlockAckLock(MessageType message);
 static void commandUpdate(IObserverHandle observer, void *state);
 
 /******************************************************************************
@@ -89,13 +90,7 @@ static bool runRx(IRunnableHandle runnable) {
         return true;
     }
 
-    if (self->commandPending == SE_ACK) {
-        self->waitForAck = false;
-    }
-
-    // Allow the sc_detect command to unlock the waiting for ack in case that the communication
-    // got lost and the controller needs to unlock itself.
-    if (self->waitForAck && self->commandPending == EV_DETECT) {
+    if (messageCanUnlockAckLock(self->commandPending)) {
         self->waitForAck = false;
     }
 
@@ -131,12 +126,14 @@ static bool runTx(IRunnableHandle runnable) {
 
     // Pop the latest event once everything is ready
     uint32_t item;
-    AgingPriorityQueue_pop(self->queue, &item);
+    int ret = AgingPriorityQueue_pop(self->queue, &item);
     MessageType event = (MessageType) item;
 
-    ICommandHandle packCommand;
+    if (ret < 0) {
+        return false;
+    }
 
-    packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, event);
+    ICommandHandle packCommand = CommandPackParserDispatcher_run(self->commandPackParserDispatcher, event);
     if(packCommand != NULL){
         packCommand->run(packCommand);
     }
@@ -194,7 +191,12 @@ static void commandUpdate(IObserverHandle observer, void *state) {
  * @param message
  */
 static bool messageNeedsToBeAcked(MessageType message) {
-    return message > ENUM_START_CLIENT_TO_HOST && message < ENUM_START_HOST_TO_CLIENT;
+    return message == SC_LOG || message == SC_DATA || message == SC_STREAM;
+//    return message > ENUM_START_CLIENT_TO_HOST && message < ENUM_START_HOST_TO_CLIENT;
+}
+
+static bool messageCanUnlockAckLock(MessageType message) {
+    return message >= ENUM_START_HOST_TO_CLIENT || message == SE_NAK || message == SE_ACK;
 }
 
 /******************************************************************************
@@ -205,7 +207,8 @@ ControllerHandle Controller_create(IScopeHandle scope,
                                    IUnpackerHandle unpacker,
                                    AnnounceStorageHandle announceStorage,
                                    IByteStreamHandle logByteStream,
-                                   Message_Priorities priorities) {
+                                   Message_Priorities priorities,
+                                   size_t amountOfChannels) {
 
     ControllerHandle self = malloc(sizeof(ControllerPrivateData));
     assert(self);
@@ -229,7 +232,7 @@ ControllerHandle Controller_create(IScopeHandle scope,
 
     self->logByteStream = logByteStream;
 
-    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker);
+    self->commandParserDispatcher = CommandParserDispatcher_create(scope, &self->commandPackObserver, unpacker, amountOfChannels);
 
     self->commandPackParserDispatcher = CommandPackParserDispatcher_create(scope, announceStorage, packer, logByteStream);
 

@@ -159,7 +159,8 @@ ScopeRunnable ScopeBuilder_build(ScopeBuilderHandle self){
             Serializer_getUnpacker(self->serializer),
             self->announceStorage,
             self->logByteStream,
-             self->priorities);
+            self->priorities,
+            self->amountOfChannels);
 
     /* Connect all observers */
     self->communicator->attachObserver(self->communicator, Serializer_getUnpackObserver(self->serializer));

@@ -43,18 +43,26 @@
 ******************************************************************************/
 /* Class data */
 typedef struct __CommandRunningParserPrivateData{
+    uint32_t* channelIds;
+    CHANNEL_STATES* newStates;
     CommandRunningHandle command;
     IUnpackerHandle unpacker;
-
 } CommandRunningParserPrivateData;
 
 /******************************************************************************
  Public functions
 ******************************************************************************/
-CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
-        IObserverHandle observer){
+CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope,
+                                                       IUnpackerHandle unpacker,
+                                                       IObserverHandle observer,
+                                                       size_t amountOfChannels) {
     CommandRunningParserHandle self = malloc(sizeof(CommandRunningParserPrivateData));
     assert(self);
+    self->channelIds = (uint32_t*) malloc(sizeof(uint32_t) * amountOfChannels);
+    assert(self->channelIds != NULL);
+    self->newStates = (CHANNEL_STATES*) malloc(sizeof(CHANNEL_STATES) * amountOfChannels);
+    assert(self->newStates != NULL);
+
     self->command = CommandRunning_create(scope, observer);
     self->unpacker = unpacker;
     return self;
@@ -66,24 +74,21 @@ ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
         return NULL;
     }
 
-    const size_t amount = self->unpacker->cfRunning_getAmount(self->unpacker);
-
-    uint32_t channelIds[amount];
-    CHANNEL_STATES newStates[amount];
+    size_t amount = self->unpacker->cfRunning_getAmount(self->unpacker);
 
     for(size_t i = 0; i < amount; ++i){
 
         CfRunningDef running = self->unpacker->cfRunning_getChannel(self->unpacker, i);
-        channelIds[i] = running.id;
+        self->channelIds[i] = running.id;
         if(running.newState == true){
-            newStates[i] = CHANNEL_RUNNING;
+            self->newStates[i] = CHANNEL_RUNNING;
         }else{
-            newStates[i] = CHANNEL_STOPPED;
+            self->newStates[i] = CHANNEL_STOPPED;
         }
     }
 
-    CommandRunningConf conf = {.newStates = newStates, \
-                          .changedChannels = channelIds, \
+    CommandRunningConf conf = {.newStates = self->newStates, \
+                          .changedChannels = self->channelIds, \
                           .numberOfChangedChannels = amount};
 
     CommandRunning_setAttributes(self->command, conf);
@@ -93,7 +98,8 @@ ICommandHandle CommandRunningParser_getCommand(CommandRunningParserHandle self){
 
 void CommandRunningParser_destroy(CommandRunningParserHandle self){
     CommandRunning_destroy(self->command);
-
+    free(self->newStates);
+    free(self->channelIds);
     free(self);
     self = NULL;
 }

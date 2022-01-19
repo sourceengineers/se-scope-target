@@ -62,7 +62,8 @@ protected:
                                         Serializer_getUnpacker(_serializer),
                                         _announcement,
                                         &_mockBytesream.parent,
-                                        priorities);
+                                        priorities,
+                                        MAX_NUMBER_OF_CHANNELS);
 
         _oObserver = ObserverMock_create();
         /* Connect all observers */

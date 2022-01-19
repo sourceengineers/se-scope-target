@@ -52,8 +52,10 @@ typedef struct __CommandRunningParserPrivateData* CommandRunningParserHandle;
  * @param unpacker
  * @return
  */
-CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope, IUnpackerHandle unpacker,
-        IObserverHandle observer);
+CommandRunningParserHandle CommandRunningParser_create(IScopeHandle scope,
+                                                       IUnpackerHandle unpacker,
+                                                       IObserverHandle observer,
+                                                       size_t amountOfChannels);
 
 /**
  * Returns the command
