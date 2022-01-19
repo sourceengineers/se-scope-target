@@ -107,16 +107,16 @@ static bool runRx(IRunnableHandle runnable) {
 static bool runTx(IRunnableHandle runnable) {
     ControllerHandle self = (ControllerHandle) runnable->handle;
 
-    if (self->logByteStream->length(self->logByteStream->handle) > 0) {
-        commandPackPushEvent(self, SC_LOG);
-    }
-
     if (self->packer->isReady(self->packer) == false){
         return false;
     }
 
     if (self->waitForAck == true){
         return false;
+    }
+
+    if (self->logByteStream->length(self->logByteStream->handle) > 0) {
+        commandPackPushEvent(self, SC_LOG);
     }
 
     // Check if messages have to be packed
@@ -153,7 +153,10 @@ static void commandPackPushEvent(ControllerHandle self, MessageType event) {
             AgingPriorityQueue_push(self->queue, SE_ACK, 0);
             break;
         case SC_DATA:
-            AgingPriorityQueue_push(self->queue, SC_DATA, self->priorities.data);
+            {
+            uint32_t prio = (uint32_t) self->priorities.data;
+            AgingPriorityQueue_push(self->queue, SC_DATA, prio);
+            }
             break;
         case SC_ANNOUNCE:
             AgingPriorityQueue_push(self->queue, SC_ANNOUNCE, 1);
@@ -162,13 +165,17 @@ static void commandPackPushEvent(ControllerHandle self, MessageType event) {
             AgingPriorityQueue_push(self->queue, SC_DETECT, 1);
             break;
         case SC_STREAM:
-            AgingPriorityQueue_push(self->queue, SC_STREAM, self->priorities.stream);
+            {
+            uint32_t prio = (uint32_t) self->priorities.stream;
+            AgingPriorityQueue_push(self->queue, SC_STREAM, prio);
+            }
             break;
         case SC_LOG:
             // Only append the sc log event if it doesn't already exist to avoid flooding the queue with messages.
             // This is necessary because the log is polled and not event driven.
-            if (AgingPriorityQueue_contains(self->queue, SC_LOG)) {
-                AgingPriorityQueue_push(self->queue, SC_LOG, self->priorities.log);
+            if (!AgingPriorityQueue_contains(self->queue, SC_LOG)) {
+                uint32_t prio = self->priorities.log;
+                AgingPriorityQueue_push(self->queue, SC_LOG, prio);
             }
             break;
         default:
@@ -239,6 +246,8 @@ ControllerHandle Controller_create(IScopeHandle scope,
     self->commandPending = SE_NONE;
 
     self->queue = AgingPriorityQueue_create(LOW + 1, 10, 3);
+
+    self->waitForAck = true;
 
     return self;
 }
