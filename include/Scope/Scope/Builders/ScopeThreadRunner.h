@@ -32,7 +32,7 @@
 #ifndef SCOPETHREADRUNNER_H
 #define SCOPETHREADRUNNER_H
 
-#include "Scope/GeneralPurpose/IMutex.h"
+#include <se-lib-c/osal/IMutex.h>
 #include "Scope/Builders/ScopeBuilder.h"
 
 /******************************************************************************

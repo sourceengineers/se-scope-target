@@ -31,7 +31,7 @@
 #include "Scope/Communication/Interfaces/FramedIO.h"
 #include "Scope/Builders/ScopeRunner.h"
 #include "Scope/Builders/ScopeThreadRunner.h"
-#include "Scope/GeneralPurpose/IMutex.h"
+#include <se-lib-c/osal/IMutex.h>
 
 #include <assert.h>
 #include <stdlib.h>

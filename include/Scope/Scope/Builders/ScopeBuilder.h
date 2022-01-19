@@ -36,7 +36,7 @@
 #include <se-lib-c/stream/IByteStream.h>
 #include <se-lib-c/util/runnable/IRunnable.h>
 #include <se-lib-c/logger/Logger.h>
-#include "Scope/GeneralPurpose/IMutex.h"
+#include <se-lib-c/osal/IMutex.h>
 #include "Scope/Core/IScope.h"
 #include "Scope/Control/Controller.h"
 #include "Scope/Communication/ICommunicator.h"

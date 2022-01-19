@@ -33,11 +33,11 @@
 #define SCOPEFRAMEDSTACK_H_
 
 #include "Scope/Control/AnnounceStorage.h"
-#include "Scope/GeneralPurpose/IMutex.h"
+#include <se-lib-c/osal/IMutex.h>
 #include "Scope/Communication/ITransceiver.h"
 #include "Scope/Communication/MessagePriorities.h"
 #include <se-lib-c/stream/IByteStream.h>
-
+#include <se-lib-c/osal/IMutex.h>
 /******************************************************************************
  Configuration interface for the ScopeFramedStack
 ******************************************************************************/
