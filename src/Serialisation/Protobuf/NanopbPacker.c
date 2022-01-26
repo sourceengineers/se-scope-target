@@ -2,9 +2,29 @@
 /*!****************************************************************************************************************************************
  * @file         NanopbPacker.c
  *
- * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+ * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ * @license {    This file is part of se-scope-target.
+ *
+ *               se-scope-target is free software; you can redistribute it and/or
+ *               modify it under the terms of the GPLv3 General Public License Version 3
+ *               as published by the Free Software Foundation.
+ *
+ *               se-scope-target is distributed in the hope that it will be useful,
+ *               but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *               MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *               GNU General Public License for more details.
+ *
+ *               You should have received a copy of the GPLv3 General Public License Version 3
+ *               along with se-scope-target.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *               In closed source or commercial projects, GPLv3 General Public License Version 3
+ *               is not valid. In this case the commercial license received with the purchase
+ *               is applied (See SeScopeLicense.pdf).
+ *               Please contact us at scope@sourceengineers.com for a commercial license.
+ * }
+ *
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  *****************************************************************************************************************************************/
 
@@ -281,13 +301,12 @@ static bool writeAddress(pb_ostream_t* stream, const pb_field_t* field, void* co
         channel.type = (PB_Var_Type) announcement.announceChannels[i].type;
         strcpy(channel.name, announcement.announceChannels[i].name);
 
-        // Size the size of the strings, and therefore the message is not know, just let nanopb pack it andd fetch the
+        // Size the size of the strings, and therefore the message is not know, just let nanopb pack it and fetch the
         // size from the written stream, as suggested by the nanopb author.
         // This should not be significantly slower than measuring it with strlen. And speed isn't the most crucial
         // for the SC_ANNOUNCE
-        const size_t maxBufferSize = PB_SC_Channel_Configuration_size;
-        pb_byte_t buffer[maxBufferSize];
-        pb_ostream_t tmpStream = pb_ostream_from_buffer(buffer, maxBufferSize);
+        pb_byte_t buffer[PB_SC_Channel_Configuration_size];
+        pb_ostream_t tmpStream = pb_ostream_from_buffer(buffer, PB_SC_Channel_Configuration_size);
         if(!pb_encode(&tmpStream, PB_SC_Channel_Configuration_fields, &channel)){
             return false;
         }

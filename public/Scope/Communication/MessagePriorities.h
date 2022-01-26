@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         Version.h
+ * @file         MessagePriorities.h
  *
  * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
@@ -25,14 +25,23 @@
  *
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
- * @brief        Version file
+ * @brief        Supplies an Interface to access the communication interfaces
  *
  ******************************************************************************/
 
-#ifndef SE_SCOPE_VERSION_H
-#define SE_SCOPE_VERSION_H
+#ifndef SE_SCOPE_MESSAGEPRIORITIES_H
+#define SE_SCOPE_MESSAGEPRIORITIES_H
 
-#define SE_SCOPE_TARGET_VERSION "0.5";
-#define SE_SCOPE_TARGET_VERSION_LENGTH 3;
+typedef enum __Message_Priority {
+    HIGH = 2,
+    MEDIUM = 3,
+    LOW = 4,
+} Message_Priority;
 
-#endif
+typedef struct __Message_Priorities {
+    Message_Priority data;
+    Message_Priority log;
+    Message_Priority stream;
+} Message_Priorities;
+
+#endif //SE_SCOPE_MESSAGEPRIORITIES_H

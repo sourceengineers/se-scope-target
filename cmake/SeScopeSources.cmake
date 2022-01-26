@@ -14,7 +14,6 @@ set(SE_SCOPE_SOURCES
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandTrigger.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandAnnounce.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandTrans.c
-        ${SE_SCOPE_SOURCE_DIR}/Control/PackCommands/Command/CommandPackLog.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandAddr.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandPoll.c
         ${SE_SCOPE_SOURCE_DIR}/Control/Commands/Command/CommandRunning.c

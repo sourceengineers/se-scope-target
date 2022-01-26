@@ -1,9 +1,29 @@
 /*!****************************************************************************************************************************************
  * @file         ScopeBuilder.c
  *
- * @copyright    Copyright (c) 2018 by Sourceengineers. All Rights Reserved.
+ * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
- * @authors      Samuel Schuepbach samuel.schuepbach@sourceengineers.com
+ * @license {    This file is part of se-scope-target.
+ *
+ *               se-scope-target is free software; you can redistribute it and/or
+ *               modify it under the terms of the GPLv3 General Public License Version 3
+ *               as published by the Free Software Foundation.
+ *
+ *               se-scope-target is distributed in the hope that it will be useful,
+ *               but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *               MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *               GNU General Public License for more details.
+ *
+ *               You should have received a copy of the GPLv3 General Public License Version 3
+ *               along with se-scope-target.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ *               In closed source or commercial projects, GPLv3 General Public License Version 3
+ *               is not valid. In this case the commercial license received with the purchase
+ *               is applied (See SeScopeLicense.pdf).
+ *               Please contact us at scope@sourceengineers.com for a commercial license.
+ * }
+ *
+ * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
  *****************************************************************************************************************************************/
 
@@ -11,7 +31,7 @@
 #include "Scope/Communication/Interfaces/FramedIO.h"
 #include "Scope/Builders/ScopeRunner.h"
 #include "Scope/Builders/ScopeThreadRunner.h"
-#include "Scope/GeneralPurpose/IMutex.h"
+#include <se-lib-c/osal/IMutex.h>
 
 #include <assert.h>
 #include <stdlib.h>
@@ -39,7 +59,8 @@ typedef struct __ScopeFramedStackPrivateData{
  Private functions
 ******************************************************************************/
 ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig scopeConfig,
-                                               ScopeFramedStackLogOptions logConfig) {
+                                               ScopeFramedStackLogOptions logConfig,
+                                               Message_Priorities priorities) {
 
     ScopeFramedStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
     assert(self);
@@ -54,8 +75,9 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig scopeConfi
     self->output = BufferedByteStream_create(self->outputBufferSize);
 
     /* Generate the communication handler */
-    self->framedIO = FramedIO_create(scopeConfig.callback, BufferedByteStream_getIByteStream(self->input),
-                                     BufferedByteStream_getIByteStream(self->output));
+    self->framedIO = FramedIO_create(scopeConfig.callback,
+                                     BufferedByteStream_getByteRingBufferHandle(self->input),
+                                     BufferedByteStream_getByteRingBufferHandle(self->output));
 
     self->transceiver = FramedIO_getTransceiver(self->framedIO);
 
@@ -64,7 +86,7 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig scopeConfi
                                                    scopeConfig.amountOfChannels, scopeConfig.timebase);
 
     /* Create the builder itself */
-    self->builder = ScopeBuilder_create();
+    self->builder = ScopeBuilder_create(priorities);
 
     /* Pass all the wanted elements into the builder */
     ScopeBuilder_setChannels(self->builder, scopeConfig.amountOfChannels, scopeConfig.sizeOfChannels);
@@ -87,7 +109,8 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig scopeConfi
 ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
 		ScopeFramedStackConfig scopeConfig,
 		ScopeFramedStackMutex mutexes,
-		ScopeFramedStackLogOptions logConfig){
+		ScopeFramedStackLogOptions logConfig,
+        Message_Priorities priorities){
 
     ScopeFramedStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
     assert(self);
@@ -102,8 +125,9 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
     self->output = BufferedByteStream_create(self->outputBufferSize);
 
     /* Generate the communication handler */
-    self->framedIO = FramedIO_create(scopeConfig.callback, BufferedByteStream_getIByteStream(self->input),
-                                     BufferedByteStream_getIByteStream(self->output));
+    self->framedIO = FramedIO_create(scopeConfig.callback,
+                                     BufferedByteStream_getByteRingBufferHandle(self->input),
+                                     BufferedByteStream_getByteRingBufferHandle(self->output));
 
     self->transceiver = FramedIO_getTransceiver(self->framedIO);
 
@@ -111,7 +135,7 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
     self->announceStorage = AnnounceStorage_create(scopeConfig.addressesInAddressAnnouncer, scopeConfig.amountOfChannels, scopeConfig.timebase);
 
     /* Create the builder itself */
-    self->builder = ScopeBuilder_create();
+    self->builder = ScopeBuilder_create(priorities);
 
     /* Pass all the wanted elements into the builder */
     ScopeBuilder_setChannels(self->builder, scopeConfig.amountOfChannels, scopeConfig.sizeOfChannels);
