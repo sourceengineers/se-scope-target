@@ -28,7 +28,7 @@
  *****************************************************************************************************************************************/
 
 #include "Scope/Builders/ScopeThreadRunner.h"
-#include "Scope/GeneralPurpose/IMutex.h"
+#include <se-lib-c/osal/IMutex.h>
 #include "Scope/Control/Controller.h"
 #include "Scope/Serialisation/Serializer.h"
 

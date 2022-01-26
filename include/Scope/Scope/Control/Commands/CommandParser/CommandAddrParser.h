@@ -52,7 +52,10 @@ typedef struct __CommandAddrParserPrivateData* CommandAddrParserHandle;
  * @param unpacker
  * @return
  */
-CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker, IObserverHandle observer);
+CommandAddrParserHandle CommandAddrParser_create(IScopeHandle scope,
+                                                 IUnpackerHandle unpacker,
+                                                 IObserverHandle observer,
+                                                 size_t amountOfChannels);
 
 /**
  * Returns the command

@@ -31,7 +31,7 @@
 #include "Scope/Communication/Interfaces/FramedIO.h"
 #include "Scope/Builders/ScopeRunner.h"
 #include "Scope/Builders/ScopeThreadRunner.h"
-#include "Scope/GeneralPurpose/IMutex.h"
+#include <se-lib-c/osal/IMutex.h>
 
 #include <assert.h>
 #include <stdlib.h>
@@ -59,7 +59,8 @@ typedef struct __ScopeFramedStackPrivateData{
  Private functions
 ******************************************************************************/
 ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig scopeConfig,
-                                               ScopeFramedStackLogOptions logConfig) {
+                                               ScopeFramedStackLogOptions logConfig,
+                                               Message_Priorities priorities) {
 
     ScopeFramedStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
     assert(self);
@@ -85,7 +86,7 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig scopeConfi
                                                    scopeConfig.amountOfChannels, scopeConfig.timebase);
 
     /* Create the builder itself */
-    self->builder = ScopeBuilder_create();
+    self->builder = ScopeBuilder_create(priorities);
 
     /* Pass all the wanted elements into the builder */
     ScopeBuilder_setChannels(self->builder, scopeConfig.amountOfChannels, scopeConfig.sizeOfChannels);
@@ -108,7 +109,8 @@ ScopeFramedStackHandle ScopeFramedStack_create(ScopeFramedStackConfig scopeConfi
 ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
 		ScopeFramedStackConfig scopeConfig,
 		ScopeFramedStackMutex mutexes,
-		ScopeFramedStackLogOptions logConfig){
+		ScopeFramedStackLogOptions logConfig,
+        Message_Priorities priorities){
 
     ScopeFramedStackHandle self = malloc(sizeof(ScopeFramedStackPrivateData));
     assert(self);
@@ -133,7 +135,7 @@ ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
     self->announceStorage = AnnounceStorage_create(scopeConfig.addressesInAddressAnnouncer, scopeConfig.amountOfChannels, scopeConfig.timebase);
 
     /* Create the builder itself */
-    self->builder = ScopeBuilder_create();
+    self->builder = ScopeBuilder_create(priorities);
 
     /* Pass all the wanted elements into the builder */
     ScopeBuilder_setChannels(self->builder, scopeConfig.amountOfChannels, scopeConfig.sizeOfChannels);

@@ -55,7 +55,6 @@ static void run(ICommandHandle command);
 ******************************************************************************/
 static void run(ICommandHandle command){
     CommandTriggerHandle self = (CommandTriggerHandle) command->handle;
-
     self->scope->configureTrigger(self->scope, self->config);
     MessageType resp = SE_ACK;
     self->observer->update(self->observer, &resp);
