@@ -64,7 +64,6 @@ protected:
                                         &_mockBytesream.parent,
                                         priorities,
                                         MAX_NUMBER_OF_CHANNELS);
-
         _oObserver = ObserverMock_create();
         /* Connect all observers */
         _iObserver = Serializer_getUnpackObserver(_serializer);
@@ -80,6 +79,9 @@ protected:
         _runnable.runDataAggregator = Controller_getTxRunnable(_controller);
         _runnable.runUnpacker = Serializer_getRxRunnable(_serializer);
         _runnable.runPacker = Serializer_getTxRunnable(_serializer);
+
+        _mockBytesream.parent.flush(&_mockBytesream.parent);
+
     }
 
     void runStack(){
@@ -124,9 +126,7 @@ protected:
 
 TEST_F(CommandIntegrationTest, normal_run
 ){
-
     MessageType messageType;
-
     messageType = EV_DETECT;
     _iObserver->update(_iObserver, &messageType);
     runStack();
@@ -140,11 +140,6 @@ TEST_F(CommandIntegrationTest, normal_run
     messageType = EV_ANNOUNCE;
     _iObserver->update(_iObserver, &messageType);
     runStack();
-
-    // Expect false since the SC_DETECT event has to be acked first
-    EXPECT_FALSE(_oObserver->updateHasBeenCalled);
-
-    ackEvent();
 
     // Now the announce should automatically be sent as it has been buffered
     EXPECT_TRUE(_oObserver->updateHasBeenCalled);
@@ -180,55 +175,6 @@ TEST_F(CommandIntegrationTest, normal_run
     _ioutput->flush(_ioutput);
 }
 
-TEST_F(CommandIntegrationTest, tx_event_buffering
-){
-
-    MessageType messageType;
-
-    messageType = EV_DETECT;
-    _iObserver->update(_iObserver, &messageType);
-    runStack();
-    EXPECT_TRUE(_oObserver->updateHasBeenCalled);
-    EXPECT_THAT(_oObserver->updateCalledWidth, SC_DETECT);
-    _oObserver->updateHasBeenCalled = false;
-    _oObserver->updateCalledWidth = SE_NONE;
-
-    // The control layer is now waiting for an ack which allows us to test the buffering by filling the buffer up
-    messageType = EV_DETECT;
-    _iObserver->update(_iObserver, &messageType);
-    runStack();
-    EXPECT_FALSE(_oObserver->updateHasBeenCalled);
-    messageType = EV_TRANS;
-    _iObserver->update(_iObserver, &messageType);
-    runStack();
-    EXPECT_FALSE(_oObserver->updateHasBeenCalled);
-    messageType = EV_ANNOUNCE;
-    _iObserver->update(_iObserver, &messageType);
-    runStack();
-    EXPECT_FALSE(_oObserver->updateHasBeenCalled);
-
-    // Now we are staring to ack events
-    ackEvent();
-    EXPECT_TRUE(_oObserver->updateHasBeenCalled);
-    EXPECT_THAT(_oObserver->updateCalledWidth, SC_DETECT);
-    _oObserver->updateHasBeenCalled = false;
-    _oObserver->updateCalledWidth = SE_NONE;
-
-    // Now we are staring to ack events
-    ackEvent();
-    EXPECT_TRUE(_oObserver->updateHasBeenCalled);
-    EXPECT_THAT(_oObserver->updateCalledWidth, SC_ANNOUNCE);
-    _oObserver->updateHasBeenCalled = false;
-    _oObserver->updateCalledWidth = SE_NONE;
-    _ioutput->flush(_ioutput);
-
-    // Now we are staring to ack events
-    ackEvent();
-    EXPECT_TRUE(_oObserver->updateHasBeenCalled);
-    EXPECT_THAT(_oObserver->updateCalledWidth, SC_DATA);
-    _oObserver->updateHasBeenCalled = false;
-    _oObserver->updateCalledWidth = SE_NONE;
-}
 
 TEST_F(CommandIntegrationTest, tx_event_buffering_overflow
 ){
