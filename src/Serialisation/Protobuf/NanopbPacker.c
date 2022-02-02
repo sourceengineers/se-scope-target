@@ -19,8 +19,7 @@
  *               along with se-scope-target.  If not, see <http://www.gnu.org/licenses/>.
  *
  *               In closed source or commercial projects, GPLv3 General Public License Version 3
- *               is not valid. In this case the commercial license received with the purchase
- *               is applied (See SeScopeLicense.pdf).
+ *               is not valid. In these cases the purchased commercial license is applied.
  *               Please contact us at scope@sourceengineers.com for a commercial license.
  * }
  *
