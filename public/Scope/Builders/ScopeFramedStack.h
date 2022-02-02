@@ -33,10 +33,11 @@
 #define SCOPEFRAMEDSTACK_H_
 
 #include "Scope/Control/AnnounceStorage.h"
-#include "Scope/GeneralPurpose/IMutex.h"
+#include <se-lib-c/osal/IMutex.h>
 #include "Scope/Communication/ITransceiver.h"
+#include "Scope/Communication/MessagePriorities.h"
 #include <se-lib-c/stream/IByteStream.h>
-
+#include <se-lib-c/osal/IMutex.h>
 /******************************************************************************
  Configuration interface for the ScopeFramedStack
 ******************************************************************************/
@@ -87,7 +88,8 @@ typedef struct __ScopeFramedStackPrivateData* ScopeFramedStackHandle;
  */
 ScopeFramedStackHandle ScopeFramedStack_create(
 		ScopeFramedStackConfig scopeConfig,
-		ScopeFramedStackLogOptions logConfig);
+		ScopeFramedStackLogOptions logConfig,
+        Message_Priorities priorities);
 
 /**
  * Constructor. Creates a static instance of the stack and scope. If the stack is created with this function, it can be used in a
@@ -98,7 +100,8 @@ ScopeFramedStackHandle ScopeFramedStack_create(
 ScopeFramedStackHandle ScopeFramedStack_createThreadSafe(
 		ScopeFramedStackConfig scopeConfig,
 		ScopeFramedStackMutex mutexes,
-		ScopeFramedStackLogOptions logConfig);
+		ScopeFramedStackLogOptions logConfig,
+        Message_Priorities priorities);
 
 /**
  * Runs the JsonUart stack

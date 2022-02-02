@@ -5,11 +5,11 @@ pipelines:
     - step:
         script: # Modify the commands below to build your repository.
           - apt update
-          - apt install cmake -y
+          - apt install cmake ninja-build -y
           - git submodule update --init
           - mkdir build
           - cd build
-          - cmake ..
-          - make se-scope-test
+          - cmake -DTARGET_64BIT_SUPPORT=ON -GNinja ..
+          - ninja se-scope-test
           - export GTEST_OUTPUT="xml:test-results/test-results.xml"
           - ./test/se-scope-test

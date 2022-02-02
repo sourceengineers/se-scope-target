@@ -60,16 +60,17 @@ static void run(ICommandHandle command);
  Private functions
 ******************************************************************************/
 
+#define MAX_MESSAGE_LENGTH 50
+
 static void run(ICommandHandle command){
     CommandPackLogHandle self = (CommandPackLogHandle) command->handle;
     ScLogDataDef logStreamData;
-    size_t lengthOfOneMessage = 50;
 
-    char msg[lengthOfOneMessage];
+    char msg[MAX_MESSAGE_LENGTH];
     // how many bytes are in the buffer
     size_t length = self->logStream->length(self->logStream);
-    if (length > lengthOfOneMessage-2){
-        length = lengthOfOneMessage-2;
+    if (length > MAX_MESSAGE_LENGTH - 2){
+        length = MAX_MESSAGE_LENGTH - 2;
     }
     self->logStream->read(self->logStream, (uint8_t *) &msg, length);
     msg[length] = '\0';

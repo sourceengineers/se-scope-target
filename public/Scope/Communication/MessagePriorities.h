@@ -1,5 +1,5 @@
 /*!*****************************************************************************
- * @file         IMutex.h
+ * @file         MessagePriorities.h
  *
  * @copyright    Copyright (c) 2021 by Source Engineers GmbH. All Rights Reserved.
  *
@@ -25,43 +25,23 @@
  *
  * @authors      Samuel Schuepbach <samuel.schuepbach@sourceengineers.com>
  *
- * @brief        Supplies an Interface which has to be implemented to be able to synchronise
- *               tasks. Implementing this Interface, enables to run the scope as a multi task
- *               application on various operating systems such as RTOS.
+ * @brief        Supplies an Interface to access the communication interfaces
  *
  ******************************************************************************/
 
-#ifndef IMUTEX_H
-#define IMUTEX_H
+#ifndef SE_SCOPE_MESSAGEPRIORITIES_H
+#define SE_SCOPE_MESSAGEPRIORITIES_H
 
-#include "Scope/GeneralPurpose/DataTypes.h"
+typedef enum __Message_Priority {
+    HIGH = 2,
+    MEDIUM = 3,
+    LOW = 4,
+} Message_Priority;
 
-/******************************************************************************
- Define interface handle data
-******************************************************************************/
-typedef struct IMutexStruct* IMutexHandle;
+typedef struct __Message_Priorities {
+    Message_Priority data;
+    Message_Priority log;
+    Message_Priority stream;
+} Message_Priorities;
 
-/******************************************************************************
- Define interface
-******************************************************************************/
-typedef struct IMutexStruct{
-    SeScopeGenericReference handle;
-
-    /**
-     * Implement lock for the specific operating system mutex lock operation.
-     * Locks the mutex
-     * @param self
-     * @return
-     */
-    bool (*lock)(IMutexHandle self, uint32_t timeout);
-
-    /**
-     * Implement unlock for the specific operating system mutex unlock operation.
-     * Unlocks the mutex
-     * @param self
-     */
-    void (*unlock)(IMutexHandle self);
-
-} IMutex;
-
-#endif
+#endif //SE_SCOPE_MESSAGEPRIORITIES_H

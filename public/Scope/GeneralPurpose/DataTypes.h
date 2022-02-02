@@ -54,18 +54,18 @@ typedef enum  __DATA_TYPES {
     SE_FLOAT
 } DATA_TYPES ;
 
-#ifndef VP_SIZE
-    #define ADDRESS_DATA_TYPE uint32_t
+#ifdef SCOPE_TARGET_TI_SUPPORT
+    typedef uint16_t uint8_t;
+    typedef int16_t int8_t;
 #endif
 
 /* Choose the right integer length */
-#if (VP_SIZE==4)
+#ifndef SCOPE_TARGET_64BIT_SUPPORT
 #define ADDRESS_DATA_TYPE uint32_t
-#elif(VP_SIZE==8)
+#else
 #define ADDRESS_DATA_TYPE uint64_t
 #endif
 
 #define SeScopeGenericReference void*
-
 
 #endif

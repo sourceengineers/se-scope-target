@@ -41,15 +41,19 @@
 #include <string.h>
 #include <assert.h>
 
+#define MAX_CHANNELS 10
+
 /******************************************************************************
  Define private data
 ******************************************************************************/
 /* Class data */
 typedef struct __CommandAddrParserPrivateData{
+    uint32_t* channelIds;
+    void** newAddresses;
+    DATA_TYPES* types;
+    uint32_t amountOfChannels;
     CommandAddrHandle command;
-
     IUnpackerHandle unpacker;
-
 } CommandAddrParserPrivateData;
 
 /******************************************************************************
@@ -60,12 +64,24 @@ typedef struct __CommandAddrParserPrivateData{
  Public functions
 ******************************************************************************/
 CommandAddrParserHandle
-CommandAddrParser_create(IScopeHandle scope, IUnpackerHandle unpacker, IObserverHandle observer){
+CommandAddrParser_create(IScopeHandle scope,
+                         IUnpackerHandle unpacker,
+                         IObserverHandle observer,
+                         size_t amountOfChannels) {
     CommandAddrParserHandle self = malloc(sizeof(CommandAddrParserPrivateData));
     assert(self);
 
+    self->channelIds = (uint32_t*) malloc(sizeof(uint32_t) * amountOfChannels);
+    assert(self->channelIds != NULL);
+    self->newAddresses = (void**) malloc(sizeof(void*) * amountOfChannels);
+    assert(self->newAddresses != NULL);
+    self->types = (DATA_TYPES*) malloc(sizeof(DATA_TYPES) * amountOfChannels);
+    assert(self->types != NULL);
+
     self->command = CommandAddr_create(scope, observer);
     self->unpacker = unpacker;
+    self->amountOfChannels = amountOfChannels;
+
     return self;
 }
 
@@ -75,22 +91,22 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self){
         return NULL;
     }
 
-    const size_t amount = self->unpacker->cfAddress_getAmount(self->unpacker);
+    size_t amount = self->unpacker->cfAddress_getAmount(self->unpacker);
 
-    uint32_t channelIds[amount];
-    void* newAddresses[amount];
-    DATA_TYPES types[amount];
+    if (amount > self->amountOfChannels) {
+        amount = self->amountOfChannels;
+    }
 
     for(uint32_t i = 0; i < amount; i++){
         CfAddressDef addr = self->unpacker->cfAddress_getChannel(self->unpacker, i);
-        newAddresses[i] = (void*) (ADDRESS_DATA_TYPE) addr.address;
-        channelIds[i] = addr.id;
-        types[i] = addr.type;
+        self->newAddresses[i] = (void*) (ADDRESS_DATA_TYPE) addr.address;
+        self->channelIds[i] = addr.id;
+        self->types[i] = addr.type;
     }
 
-    CommandAddrConf conf = {.newAddresses = newAddresses, \
-                          .changedChannels = channelIds, \
-                          .types = types, \
+    CommandAddrConf conf = {.newAddresses = self->newAddresses, \
+                          .changedChannels = self->channelIds, \
+                          .types = self->types, \
                           .numberOfChangedChannels = amount};
 
     CommandAddr_setAttributes(self->command, conf);
@@ -101,7 +117,9 @@ ICommandHandle CommandAddrParser_getCommand(CommandAddrParserHandle self){
 /* Deconstructor: Deletes the instance of the channel */
 void CommandAddrParser_destroy(CommandAddrParserHandle self){
     CommandAddr_destroy(self->command);
-
+    free(self->channelIds);
+    free(self->newAddresses);
+    free(self->types);
     free(self);
     self = NULL;
 }

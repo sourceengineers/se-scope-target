@@ -301,13 +301,12 @@ static bool writeAddress(pb_ostream_t* stream, const pb_field_t* field, void* co
         channel.type = (PB_Var_Type) announcement.announceChannels[i].type;
         strcpy(channel.name, announcement.announceChannels[i].name);
 
-        // Size the size of the strings, and therefore the message is not know, just let nanopb pack it andd fetch the
+        // Size the size of the strings, and therefore the message is not know, just let nanopb pack it and fetch the
         // size from the written stream, as suggested by the nanopb author.
         // This should not be significantly slower than measuring it with strlen. And speed isn't the most crucial
         // for the SC_ANNOUNCE
-        const size_t maxBufferSize = PB_SC_Channel_Configuration_size;
-        pb_byte_t buffer[maxBufferSize];
-        pb_ostream_t tmpStream = pb_ostream_from_buffer(buffer, maxBufferSize);
+        pb_byte_t buffer[PB_SC_Channel_Configuration_size];
+        pb_ostream_t tmpStream = pb_ostream_from_buffer(buffer, PB_SC_Channel_Configuration_size);
         if(!pb_encode(&tmpStream, PB_SC_Channel_Configuration_fields, &channel)){
             return false;
         }

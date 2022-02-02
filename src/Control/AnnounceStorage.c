@@ -117,7 +117,7 @@ bool AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* 
 
     self->addresses[self->configuredAmountOfAddresses].type = type;
     self->addresses[self->configuredAmountOfAddresses].address = (ADDRESS_DATA_TYPE) address;
-    strncpy(self->addresses[self->configuredAmountOfAddresses].name, name, MAX_LENGTH_OF_ANNOUNCE_NAME-1);
+    strncpy(self->addresses[self->configuredAmountOfAddresses].name, name, MAX_LENGTH_OF_ANNOUNCE_NAME - 1);
 
     self->configuredAmountOfAddresses++;
     return true;
