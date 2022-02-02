@@ -53,11 +53,6 @@ typedef enum  __DATA_TYPES {
     SE_FLOAT
 } DATA_TYPES ;
 
-#ifdef SCOPE_TARGET_TI_SUPPORT
-    typedef uint16_t uint8_t;
-    typedef int16_t int8_t;
-#endif
-
 /* Choose the right integer length */
 #ifndef SCOPE_TARGET_64BIT_SUPPORT
 #define ADDRESS_DATA_TYPE uint32_t

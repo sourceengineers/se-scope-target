@@ -56,6 +56,8 @@
 								<option id="com.ti.ccstudio.buildDefinitions.C2000_18.12.compilerID.C_DIALECT.1903777871" name="C Dialect" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.12.compilerID.C_DIALECT" value="com.ti.ccstudio.buildDefinitions.C2000_18.12.compilerID.C_DIALECT.C11" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.C2000_18.12.compilerID.DEFINE.2004457043" name="Pre-define NAME (--define, -D)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.12.compilerID.DEFINE" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="SCOPE_TARGET_TI_SUPPORT"/>
+									<listOptionValue builtIn="false" value="uint8_t=uint16_t"/>
+									<listOptionValue builtIn="false" value="int8_t=int16_t"/>
 									<listOptionValue builtIn="false" value="TI_SUPPORT"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.ti.ccstudio.buildDefinitions.C2000_18.12.compilerID.PREINCLUDE.957722343" name="Specify a preinclude file (--preinclude)" superClass="com.ti.ccstudio.buildDefinitions.C2000_18.12.compilerID.PREINCLUDE" valueType="includeFiles">
@@ -74,6 +76,7 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="3rdparty/nanopb/generator|3rdparty/nanopb/extra|3rdparty/nanopb/examples|3rdparty/nanopb/docs|3rdparty/nanopb/conan-wrapper|3rdparty/nanopb/tools|3rdparty/nanopb/tests|cmake|cmake-build-debug|ext/se-lib-c/test|ext/se-lib-c/config|ext/se-lib-c/cmake|ext/protocol|ide|test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="cmake/toolchains"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
