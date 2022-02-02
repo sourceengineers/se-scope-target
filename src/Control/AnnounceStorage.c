@@ -117,10 +117,20 @@ bool AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* 
 
     self->addresses[self->configuredAmountOfAddresses].type = type;
     self->addresses[self->configuredAmountOfAddresses].address = (ADDRESS_DATA_TYPE) address;
-    strncpy(self->addresses[self->configuredAmountOfAddresses].name, name, MAX_LENGTH_OF_ANNOUNCE_NAME);
+    strncpy(self->addresses[self->configuredAmountOfAddresses].name, name, MAX_LENGTH_OF_ANNOUNCE_NAME - 1);
 
     self->configuredAmountOfAddresses++;
     return true;
+}
+
+void AnnounceStorage_clearAddresses(AnnounceStorageHandle self){
+    /* Set all addresses to have a defined state */
+    for(size_t i = 0; i < self->maxAmountOfAddresses; ++i){
+        self->addresses[i].type = SE_FLOAT;
+        self->addresses[i].address = 0;
+        self->addresses[i].name[0] = '\0';
+    }
+    self->configuredAmountOfAddresses = 0;
 }
 
 void AnnounceStorage_destroy(AnnounceStorageHandle self){

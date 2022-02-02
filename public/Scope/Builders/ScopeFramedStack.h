@@ -122,7 +122,7 @@ void ScopeFramedStack_runThreadScope(ScopeFramedStackHandle self);
 void ScopeFramedStack_runThreadStack(ScopeFramedStackHandle self);
 
 /**
- * Returns the handle to the announcement sotrage.
+ * Returns the handle to the announcement storage.
  * @return
  * @param self
  */

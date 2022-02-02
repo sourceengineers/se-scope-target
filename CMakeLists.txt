@@ -86,7 +86,7 @@ if (TARGET_TI_SUPPORT)
     target_compile_definitions(${SE_SCOPE} PUBLIC SCOPE_TARGET_TI_SUPPORT)
 endif()
 
-target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic -Werror)
+target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic)
 
 ################################################################################
 # Add testing

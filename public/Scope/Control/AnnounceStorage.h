@@ -123,6 +123,13 @@ AddressDefinition* AnnounceStorage_getAddressToTransmit(AnnounceStorageHandle se
 
 
 /**
+ * Clear all announced addresses
+ *
+ * @param self
+ */
+void AnnounceStorage_clearAddresses(AnnounceStorageHandle self);
+
+/**
  * Returns the amount of configured addresses
  * @param self
  * @return
