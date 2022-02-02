@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.5)
 # Options
 ################################################################################
 option(TARGET_64BIT_SUPPORT OFF) # Set to true if the target architecture is 64 bits
-option(TARGET_TI_SUPPORT OFF) # Set to true if the target is from TI
 
 # 3rd party
 option(nanopb_BUILD_GENERATOR OFF)
@@ -46,6 +45,8 @@ set(SE_SCOPE_PROJECT_EXT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ext)
 ################################################################################
 # Inform the compiler to compile for 32 bit code
 
+add_definitions("${GLOBAL_COMPILER_FLAGS}")
+
 ################################################################################
 # Include dependency
 ################################################################################
@@ -81,12 +82,6 @@ message("-- Compiling for ${CMAKE_SIZEOF_VOID_P} bit architecture")
 if (TARGET_64BIT_SUPPORT)
     target_compile_definitions(${SE_SCOPE} PUBLIC SCOPE_TARGET_64BIT_SUPPORT)
 endif()
-
-if (TARGET_TI_SUPPORT)
-    target_compile_definitions(${SE_SCOPE} PUBLIC SCOPE_TARGET_TI_SUPPORT)
-endif()
-
-target_compile_options(${SE_SCOPE} PRIVATE -Wall -Wextra -pedantic)
 
 ################################################################################
 # Add testing
