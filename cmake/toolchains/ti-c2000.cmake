@@ -11,7 +11,8 @@
 #     cmake -DCMAKE_TOOLCHAIN_FILE=../cmake/tolchains/ti-c2000.cmake \
 #           -DCG_TOOL_ROOT=/opt/ccstudio/ccs/tools/compiler/ti-cgt-c2000_21.6.0.LTS \
 #           -DDEVICE_SUPPORT_ROOT=/opt/ti/c2000/C2000Ware_3_04_00_00/device_support/f2806x \
-#           -DGLOBAL_COMPILER_FLAGS="-v28 -ml -mt --cla_support=cla0 --float_support=fpu32 --vcu_support=vcu0 --advice:performance=all  -g --c11 --diag_warning=225 --diag_wrap=off --display_error_number --abi=coffabi --preproc_with_compile --define=uint8_t=uint16_t --define=int8_t=int16_t"  ..
+#           -DGLOBAL_COMPILER_FLAGS="-v28 -ml -mt --cla_support=cla0 --float_support=fpu32 --vcu_support=vcu0 --advice:performance=all  -g --c11 --diag_warning=225 --diag_wrap=off --display_error_number --abi=coffabi --preproc_with_compile --define=uint8_t=uint16_t --define=int8_t=int16_t" \
+#           ..
 
 if(NOT DEFINED CG_TOOL_ROOT)
     message(FATAL_ERROR "CG_TOOL_ROOT is not defined in options.cmake")
