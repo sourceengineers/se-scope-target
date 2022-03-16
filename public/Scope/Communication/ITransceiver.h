@@ -47,7 +47,7 @@ typedef void(*TransmitCallback)(ITransceiverHandle self);
  Define interface
 ******************************************************************************/
 typedef struct ITransceiverStruct{
-    SeScopeGenericReference handle;
+    ITransceiverHandle handle;
 
     /**
      * Read data from the output stream
