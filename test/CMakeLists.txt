@@ -2,6 +2,12 @@ set(SE_SCOPE_TESTS ${SE_SCOPE}-test)
 
 project(${SE_SCOPE_TESTS} C CXX)
 
+# Enable testing for this project
+enable_testing()
+
+# Set the dir for the test sources
+set(SE_SCOPE_PROJECT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+# Include all testing files
 include(cmake/UnitTestFiles.cmake)
 
 if(NOT TARGET gtest)

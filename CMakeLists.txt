@@ -87,8 +87,6 @@ endif()
 # Add testing
 ################################################################################
 if (NOT ${CMAKE_CROSSCOMPILING})
-    enable_testing()
-    set(SE_SCOPE_PROJECT_TEST_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test)
     add_subdirectory(test EXCLUDE_FROM_ALL)
 endif()
 
