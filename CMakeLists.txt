@@ -77,10 +77,11 @@ target_link_libraries(
 add_library(se-lib::scope ALIAS ${SE_SCOPE})
 target_link_libraries(${SE_SCOPE} INTERFACE se-lib::scope)
 
-message("-- Compiling for ${CMAKE_SIZEOF_VOID_P} bit architecture")
-
 if (TARGET_64BIT_SUPPORT)
+    message("-- Compiling for 64 bit architecture")
     target_compile_definitions(${SE_SCOPE} PUBLIC SCOPE_TARGET_64BIT_SUPPORT)
+else()
+    message("-- Compiling for 32 bit architecture")
 endif()
 
 ################################################################################
