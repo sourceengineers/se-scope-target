@@ -106,6 +106,10 @@ size_t AnnounceStorage_getAmountOfConfiguredAddresses(AnnounceStorageHandle self
 bool AnnounceStorage_addAnnounceAddress(AnnounceStorageHandle self, const char* name, const void* address,
                                        const DATA_TYPES type){
 
+    if (address == NULL) {
+        return false;
+    }
+
     if(self->configuredAmountOfAddresses >= self->maxAmountOfAddresses){
         return false;
     }
