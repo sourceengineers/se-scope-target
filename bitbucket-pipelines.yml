@@ -6,6 +6,7 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - apt update
           - apt install cmake ninja-build -y
+          - sed -i 's/url = \.\.\(.*\)/url = git@bitbucket.org:<your org>\1\.git/g' .gitmodules # See: https://stackoverflow.com/questions/70301880/bitbucket-pipeline-does-not-handle-relative-git-submodule-url-for-ssh-checkout
           - git submodule update --init
           - mkdir build
           - cd build
