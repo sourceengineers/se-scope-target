@@ -43,3 +43,7 @@ ctest -VV
 ``` 
 ## Vendor IDE's
 Other than building the project with CMake, the project currently also provides support for CubeIde, Keil and CCS.
+
+# Contribution
+No contributions are accepted at this moment.
+
